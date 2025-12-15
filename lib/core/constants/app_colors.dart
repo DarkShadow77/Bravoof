@@ -1,0 +1,70 @@
+import 'package:flutter/material.dart';
+
+class AppColors {
+  //State-Colors ---Primary
+  static const Color primary = Color(0xFF9013FE);
+  static Color get primary75 => primary.withValues(alpha: .75);
+  static Color get primary60 => primary.withValues(alpha: .60);
+  static Color get primary50 => primary.withValues(alpha: .50);
+  static Color get primary40 => primary.withValues(alpha: .40);
+  static Color get primary30 => primary.withValues(alpha: .30);
+  static Color get primary25 => primary.withValues(alpha: .25);
+  static Color get primary20 => primary.withValues(alpha: .20);
+  static Color get primary15 => primary.withValues(alpha: .15);
+  static Color get primary10 => primary.withValues(alpha: .10);
+  static Color get primary05 => primary.withValues(alpha: .05);
+
+  //State-Colors ---Purple
+  static const Color purple = Color(0xFF2C0066);
+
+  //State-Colors ---Dark
+  static const Color dark = Color(0xFF1E1E1E);
+  static Color get dark75 => dark.withValues(alpha: .75);
+  static Color get dark60 => dark.withValues(alpha: .60);
+  static Color get dark50 => dark.withValues(alpha: .50);
+  static Color get dark40 => dark.withValues(alpha: .40);
+  static Color get dark30 => dark.withValues(alpha: .30);
+  static Color get dark25 => dark.withValues(alpha: .25);
+  static Color get dark20 => dark.withValues(alpha: .20);
+  static Color get dark10 => dark.withValues(alpha: .10);
+  static Color get dark05 => dark.withValues(alpha: .05);
+
+  //State-Colors ---Secondary
+  static const Color secondary = Color(0xFF757575);
+
+  //State-Colors ---Grey
+  static const Color grey = Color(0xFFD9D9D9);
+  static const Color grey550 = Color(0xFF5F5F5F);
+  static const Color grey500 = Color(0xFF767676);
+  static const Color grey300 = Color(0xFFCDCDCD);
+
+  //State-Colors ---Black
+  static const Color black = Color(0xFF000000);
+  static Color get black85 => black.withValues(alpha: .85);
+  static Color get black75 => black.withValues(alpha: .75);
+  static Color get black50 => black.withValues(alpha: .50);
+  static Color get black25 => black.withValues(alpha: .25);
+  static Color get black29 => black.withValues(alpha: .29);
+  static Color get black15 => black.withValues(alpha: .15);
+  static Color get black10 => black.withValues(alpha: .10);
+  static Color get black05 => black.withValues(alpha: .05);
+
+  //State-Colors ---White
+  static const Color white = Color(0xFFFFFFFF);
+  static Color get white85 => white.withValues(alpha: .85);
+  static Color get white75 => white.withValues(alpha: .75);
+  static Color get white50 => white.withValues(alpha: .50);
+  static Color get white25 => white.withValues(alpha: .25);
+  static Color get white29 => white.withValues(alpha: .29);
+  static Color get white10 => white.withValues(alpha: .10);
+  static Color get white05 => white.withValues(alpha: .05);
+
+  //State-Colors ---Error
+  static const Color error = Color(0xFFDC0D18);
+  static Color get error70 => error.withValues(alpha: .70);
+  static Color get error50 => error.withValues(alpha: .50);
+  static Color get error39 => error.withValues(alpha: .39);
+  static Color get error20 => error.withValues(alpha: .20);
+  static Color get error11 => error.withValues(alpha: .11);
+  static Color get error5 => error.withValues(alpha: .05);
+}

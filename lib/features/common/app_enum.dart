@@ -1,0 +1,2 @@
+enum AppButtonState { idle, loading }
+

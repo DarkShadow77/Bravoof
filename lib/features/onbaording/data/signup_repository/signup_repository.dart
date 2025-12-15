@@ -1,0 +1,21 @@
+import 'dart:io';
+
+import 'package:dartz/dartz.dart';
+import 'package:flowva/features/common/model/app_base_response.dart';
+import 'package:flowva/features/onbaording/data/model/user_profile.dart';
+
+abstract class SignupRepository {
+  Future<Either<String, AppBaseResponse>> signUp({UserProfile userProfile});
+  Future<Either<String, AppBaseResponse>> forgotPassword({
+    required String email,
+  });
+  Future<Either<String, AppBaseResponse>> resetPassword({
+    required String password,
+  });
+  Future<Either<String, AppBaseResponse>> signIn({UserProfile userProfile});
+  Future<Either<String, AppBaseResponse>> googleAuth();
+  Future<Either<String, AppBaseResponse>> appleAuth();
+  Future<Either<String, UserProfile>> updateProfile({UserProfile data});
+  Future<Either<String, UserProfile>> fetchUserProfile();
+  Future<Either<String, String>> uploadProfileImage(File imageFile);
+}

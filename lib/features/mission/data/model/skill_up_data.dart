@@ -1,0 +1,22 @@
+final data={
+  "aiPrompting":{
+    "title":"",
+    "subtitle":"",
+    "body":""
+  },
+  "design":{
+    "title":"",
+    "subtitle":"",
+    "body":""
+  },
+  "contentCreation":{
+    "title":"",
+    "subtitle":"",
+    "body":""
+  },
+  "vibeCoding":{
+    "title":"",
+    "subtitle":"",
+    "body":""
+  }
+};
