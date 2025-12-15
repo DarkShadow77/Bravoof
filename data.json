@@ -1,0 +1,114 @@
+[
+  {
+    "id": "8b1f1f48-6e71-4e3a-a90e-7d586254205f",
+    "title": "Calendly",
+    "description": "Schedule meetings effortlessly with automated, customizable calendar invites.",
+    "category": [
+      "Communications"
+    ],
+    "url": "https://calendly.com/",
+    "oauth_provider": null,
+    "icon_url": "https://api.flowvahub.com/storage/v1/object/public/icons//calendly.png"
+  },
+  {
+    "id": "23eba6ed-137a-428a-a199-c703063d85dc",
+    "title": "Notion",
+    "description": "Create, organize, and collaborate on notes, tasks, and projects with a fully customizable workspace.",
+    "category": [
+      "Productivity"
+    ],
+    "url": "https://www.notion.so/",
+    "oauth_provider": null,
+    "icon_url": "https://api.flowvahub.com/storage/v1/object/public/icons//notion.png"
+  },
+  {
+    "id": "58ad256e-5dfa-4f40-bde7-a301b86e10bc",
+    "title": "Zoom",
+    "description": "Seamless video calls, meetings, and webinars for remote teams.",
+    "category": [
+      "Communications"
+    ],
+    "url": "https://www.zoom.com",
+    "oauth_provider": null,
+    "icon_url": "https://api.flowvahub.com/storage/v1/object/public/icons//zoom.jpg"
+  },
+  {
+    "id": "7a876f59-a5c8-4240-b296-38f93de4bd80",
+    "title": "Canva",
+    "description": "Design anything, effortlessly. Create like a pro, no experience needed.",
+    "category": [
+      "Design & Creativity"
+    ],
+    "url": "https://canva.com",
+    "oauth_provider": null,
+    "icon_url": "https://api.flowvahub.com/storage/v1/object/public/icons//canva.png"
+  },
+  {
+    "id": "d69e4d4d-aa6f-4442-b73f-3e3e6f096493",
+    "title": "Capcut",
+    "description": "Video editing, effects, user-friendly, creative, social media.",
+    "category": [
+      "Content Creation"
+    ],
+    "url": "https://capcutaffiliateprogram.pxf.io/DyMZYb",
+    "oauth_provider": null,
+    "icon_url": "https://api.flowvahub.com/storage/v1/object/public/icons//capcut.png"
+  },
+  {
+    "id": "8446dd94-8c0e-4b50-a304-c806b89cdfe1",
+    "title": "ChatGPT",
+    "description": "Conversational AI for natural language processing and interactive assistance.",
+    "category": [
+      "AI Tools"
+    ],
+    "url": "https://chat.openai.com/",
+    "oauth_provider": null,
+    "icon_url": "https://api.flowvahub.com/storage/v1/object/public/icons//chatgpt.png"
+  },
+  {
+    "id": "5bc9f4bd-6f0a-43b2-8584-522af3a2d48c",
+    "title": "Logome",
+    "description": "AI-generated custom logo design assistant",
+    "category": [
+      "Design & Creativity",
+      "AI Tools"
+    ],
+    "url": "https://logomeai.partnerlinks.io/xydumt4x59fh",
+    "oauth_provider": null,
+    "icon_url": "https://api.flowvahub.com/storage/v1/object/public/icons//logomeai.png"
+  },
+  {
+    "id": "5e648e82-508f-44d8-87d8-be775c1186ec",
+    "title": "Reclaim",
+    "description": "Smart calendar assistant. Automatically schedule tasks and protect your time.",
+    "category": [
+      "Sales & Marketing",
+      "Communications"
+    ],
+    "url": "https://go.reclaim.ai/ur9i6g5eznps",
+    "oauth_provider": null,
+    "icon_url": "https://api.flowvahub.com/storage/v1/object/public/icons//reclaim%20(1).png"
+  },
+  {
+    "id": "c757d302-4864-4978-bf87-7bc465cbb1f9",
+    "title": "Keeper",
+    "description": "Accelerate cybersecurity with the world's best password manager",
+    "category": [
+      "Security"
+    ],
+    "url": "https://keepersecurity.partnerlinks.io/bdj2jco6dsy8",
+    "oauth_provider": null,
+    "icon_url": "https://api.flowvahub.com/storage/v1/object/public/icons//Keepersecurity.jpg"
+  },
+  {
+    "id": "ffedb9a7-072f-4395-8fde-d5ee7d76cd70",
+    "title": "Campaigner",
+    "description": "Email Sales & Marketing automation. Create, send, and track email campaigns that convert.",
+    "category": [
+      "Sales & Marketing"
+    ],
+    "url": "https://pstk.campaigner.com/cvanplia4oc2",
+    "oauth_provider": null,
+    "icon_url": "https://api.flowvahub.com/storage/v1/object/public/icons//campaigner.jpeg"
+  }
+]
