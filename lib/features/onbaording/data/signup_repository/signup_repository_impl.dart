@@ -98,17 +98,13 @@ class SignupRepositoryImpl extends SignupRepository {
       print(data!.toJson());
       final res = await supabase
           .from('user_profile')
-          .update(data!.toJson())
+          .update(data.toJson())
           .eq('user_id', SessionManager().userIdVal)
           .select()
           .single(); // if you expect only one row
 
-      if (res != null) {
-        UserProfile userProfile = UserProfile.fromJson(res);
-        return Right(userProfile);
-      } else {
-        return Left("Invalid credentials");
-      }
+      UserProfile userProfile = UserProfile.fromJson(res);
+      return Right(userProfile);
     } on AuthException catch (e) {
       return Left(e.message);
     }

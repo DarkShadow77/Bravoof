@@ -6,20 +6,20 @@ import 'package:google_fonts/google_fonts.dart';
 import 'leader_board.dart';
 
 class TopLeaderBoard extends StatelessWidget {
-  List<RewardsSummary>rewardsSummary=[];
-   TopLeaderBoard({required this.rewardsSummary,super.key});
+  List<RewardsSummary> rewardsSummary = [];
+  TopLeaderBoard({required this.rewardsSummary, super.key});
 
   @override
   Widget build(BuildContext context) {
-    rewardsSummary.sort((a, b) => b.totalPointRedeemed!.compareTo(a.totalPointRedeemed!));
+    rewardsSummary.sort(
+      (a, b) => b.totalPointRedeemed!.compareTo(a.totalPointRedeemed!),
+    );
 
     final first = rewardsSummary[0];
     final second = rewardsSummary.length > 1 ? rewardsSummary[1] : null;
     final third = rewardsSummary.length > 2 ? rewardsSummary[2] : null;
-    return  Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 16.0,
-      ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Container(
         padding: EdgeInsets.all(16),
         decoration: BoxDecoration(
@@ -27,10 +27,7 @@ class TopLeaderBoard extends StatelessWidget {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [
-              Color(0xFF9419FD),
-              Color(0xFFFDD3D8),
-            ],
+            colors: [Color(0xFF9419FD), Color(0xFFFDD3D8)],
           ),
         ),
         child: Column(
@@ -38,12 +35,9 @@ class TopLeaderBoard extends StatelessWidget {
           children: [
             // Top Leaderboard Info
             Row(
-              mainAxisAlignment:
-              MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Image.asset(
-                  "assets/images/left_hand.png",
-                ),
+                Image.asset("assets/images/left_hand.png"),
                 Text(
                   'Celebrate Consistency',
                   style: GoogleFonts.manrope(
@@ -52,9 +46,7 @@ class TopLeaderBoard extends StatelessWidget {
                     color: Colors.white,
                   ),
                 ),
-                Image.asset(
-                  "assets/images/right_hand.png",
-                ),
+                Image.asset("assets/images/right_hand.png"),
               ],
             ),
             SizedBox(height: 20),
@@ -63,8 +55,7 @@ class TopLeaderBoard extends StatelessWidget {
             Container(
               height: 165,
               child: Row(
-                mainAxisAlignment:
-                MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
 
                 children: [
                   Column(
@@ -77,42 +68,31 @@ class TopLeaderBoard extends StatelessWidget {
                           children: [
                             CircleAvatar(
                               radius: 35,
-                              backgroundImage: NetworkImage(second!.userProfile!.profilePic!),
+                              backgroundImage: NetworkImage(
+                                second!.userProfile!.profilePic!,
+                              ),
                             ),
                             Positioned(
                               top: 2,
                               right: 0,
                               child: Container(
-                                padding:
-                                EdgeInsets.all(2),
+                                padding: EdgeInsets.all(2),
                                 width: 20,
                                 height: 20,
                                 decoration: BoxDecoration(
-                                  color: Color(
-                                    0xFFFF8687,
-                                  ).withOpacity(0.54),
-                                  borderRadius:
-                                  BorderRadius.circular(
-                                    100,
-                                  ),
+                                  color: Color(0xFFFF8687).withOpacity(0.54),
+                                  borderRadius: BorderRadius.circular(100),
                                   border: Border.all(
-                                    color: Colors
-                                        .white
-                                        .withOpacity(
-                                      0.5,
-                                    ),
+                                    color: Colors.white.withOpacity(0.5),
                                   ),
                                 ),
                                 child: Center(
                                   child: Text(
                                     "2",
                                     style: GoogleFonts.manrope(
-                                      fontWeight:
-                                      FontWeight
-                                          .w800,
+                                      fontWeight: FontWeight.w800,
                                       fontSize: 11,
-                                      color: Colors
-                                          .white,
+                                      color: Colors.white,
                                     ),
                                   ),
                                 ),
@@ -131,38 +111,25 @@ class TopLeaderBoard extends StatelessWidget {
                         ),
                       ),
                       Container(
-                        padding:
-                        const EdgeInsets.symmetric(
+                        padding: const EdgeInsets.symmetric(
                           horizontal: 8,
                           vertical: 6,
                         ),
                         decoration: BoxDecoration(
-                          color: Colors.black
-                              .withOpacity(0.04),
-                          borderRadius:
-                          BorderRadius.circular(
-                            30,
-                          ),
+                          color: Colors.black.withOpacity(0.04),
+                          borderRadius: BorderRadius.circular(30),
                         ),
                         child: Row(
-                          mainAxisSize:
-                          MainAxisSize.min,
+                          mainAxisSize: MainAxisSize.min,
                           children: [
-                            Image.asset(
-                              "assets/images/one_50.png",
-                              height: 14,
-                            ),
+                            Image.asset("assets/images/one_50.png", height: 14),
                             const SizedBox(width: 6),
                             Text(
                               second.totalPointRedeemed.toString(),
-                              style:
-                              GoogleFonts.manrope(
-                                fontWeight:
-                                FontWeight
-                                    .w700,
+                              style: GoogleFonts.manrope(
+                                fontWeight: FontWeight.w700,
                                 fontSize: 10,
-                                color:
-                                Colors.white,
+                                color: Colors.white,
                               ),
                             ),
                           ],
@@ -179,42 +146,31 @@ class TopLeaderBoard extends StatelessWidget {
                           children: [
                             CircleAvatar(
                               radius: 40,
-                              backgroundImage: NetworkImage(first.userProfile!.profilePic!),
+                              backgroundImage: NetworkImage(
+                                first.userProfile!.profilePic!,
+                              ),
                             ),
                             Positioned(
                               top: 2,
                               right: 2,
                               child: Container(
-                                padding:
-                                EdgeInsets.all(2),
+                                padding: EdgeInsets.all(2),
                                 width: 20,
                                 height: 20,
                                 decoration: BoxDecoration(
-                                  color: Color(
-                                    0xFFFAC60A,
-                                  ).withOpacity(0.54),
-                                  borderRadius:
-                                  BorderRadius.circular(
-                                    100,
-                                  ),
+                                  color: Color(0xFFFAC60A).withOpacity(0.54),
+                                  borderRadius: BorderRadius.circular(100),
                                   border: Border.all(
-                                    color: Colors
-                                        .white
-                                        .withOpacity(
-                                      0.5,
-                                    ),
+                                    color: Colors.white.withOpacity(0.5),
                                   ),
                                 ),
                                 child: Center(
                                   child: Text(
                                     "1",
                                     style: GoogleFonts.manrope(
-                                      fontWeight:
-                                      FontWeight
-                                          .w800,
+                                      fontWeight: FontWeight.w800,
                                       fontSize: 11,
-                                      color: Colors
-                                          .white,
+                                      color: Colors.white,
                                     ),
                                   ),
                                 ),
@@ -233,18 +189,13 @@ class TopLeaderBoard extends StatelessWidget {
                         ),
                       ),
                       Container(
-                        padding:
-                        const EdgeInsets.symmetric(
+                        padding: const EdgeInsets.symmetric(
                           horizontal: 8,
                           vertical: 6,
                         ),
                         decoration: BoxDecoration(
-                          color: Colors.black
-                              .withOpacity(0.04),
-                          borderRadius:
-                          BorderRadius.circular(
-                            30,
-                          ),
+                          color: Colors.black.withOpacity(0.04),
+                          borderRadius: BorderRadius.circular(30),
                           // boxShadow: [
                           //   BoxShadow(
                           //     color: Colors.black.withOpacity(0.06),
@@ -253,24 +204,16 @@ class TopLeaderBoard extends StatelessWidget {
                           // ],
                         ),
                         child: Row(
-                          mainAxisSize:
-                          MainAxisSize.min,
+                          mainAxisSize: MainAxisSize.min,
                           children: [
-                            Image.asset(
-                              "assets/images/one_50.png",
-                              height: 12,
-                            ),
+                            Image.asset("assets/images/one_50.png", height: 12),
                             const SizedBox(width: 6),
                             Text(
                               first.totalPointRedeemed.toString(),
-                              style:
-                              GoogleFonts.manrope(
-                                fontWeight:
-                                FontWeight
-                                    .w700,
+                              style: GoogleFonts.manrope(
+                                fontWeight: FontWeight.w700,
                                 fontSize: 10,
-                                color:
-                                Colors.white,
+                                color: Colors.white,
                               ),
                             ),
                           ],
@@ -289,42 +232,31 @@ class TopLeaderBoard extends StatelessWidget {
                           children: [
                             CircleAvatar(
                               radius: 35,
-                              backgroundImage: NetworkImage(third!.userProfile!.profilePic!),
+                              backgroundImage: NetworkImage(
+                                third!.userProfile!.profilePic!,
+                              ),
                             ),
                             Positioned(
                               top: 2,
                               right: 0,
                               child: Container(
-                                padding:
-                                EdgeInsets.all(2),
+                                padding: EdgeInsets.all(2),
                                 width: 20,
                                 height: 20,
                                 decoration: BoxDecoration(
-                                  color: Color(
-                                    0xFF72410A,
-                                  ).withOpacity(0.54),
-                                  borderRadius:
-                                  BorderRadius.circular(
-                                    100,
-                                  ),
+                                  color: Color(0xFF72410A).withOpacity(0.54),
+                                  borderRadius: BorderRadius.circular(100),
                                   border: Border.all(
-                                    color: Colors
-                                        .white
-                                        .withOpacity(
-                                      0.5,
-                                    ),
+                                    color: Colors.white.withOpacity(0.5),
                                   ),
                                 ),
                                 child: Center(
                                   child: Text(
                                     "3",
                                     style: GoogleFonts.manrope(
-                                      fontWeight:
-                                      FontWeight
-                                          .w800,
+                                      fontWeight: FontWeight.w800,
                                       fontSize: 11,
-                                      color: Colors
-                                          .white,
+                                      color: Colors.white,
                                     ),
                                   ),
                                 ),
@@ -335,7 +267,7 @@ class TopLeaderBoard extends StatelessWidget {
                       ),
 
                       Text(
-                       third.userProfile!.name.toString(),
+                        third.userProfile!.name.toString(),
                         style: GoogleFonts.manrope(
                           color: Colors.white,
                           fontWeight: FontWeight.w600,
@@ -343,18 +275,13 @@ class TopLeaderBoard extends StatelessWidget {
                         ),
                       ),
                       Container(
-                        padding:
-                        const EdgeInsets.symmetric(
+                        padding: const EdgeInsets.symmetric(
                           horizontal: 8,
                           vertical: 6,
                         ),
                         decoration: BoxDecoration(
-                          color: Colors.black
-                              .withOpacity(0.04),
-                          borderRadius:
-                          BorderRadius.circular(
-                            30,
-                          ),
+                          color: Colors.black.withOpacity(0.04),
+                          borderRadius: BorderRadius.circular(30),
                           // boxShadow: [
                           //   BoxShadow(
                           //     color: Colors.black.withOpacity(0.06),
@@ -363,24 +290,16 @@ class TopLeaderBoard extends StatelessWidget {
                           // ],
                         ),
                         child: Row(
-                          mainAxisSize:
-                          MainAxisSize.min,
+                          mainAxisSize: MainAxisSize.min,
                           children: [
-                            Image.asset(
-                              "assets/images/one_50.png",
-                              height: 12,
-                            ),
+                            Image.asset("assets/images/one_50.png", height: 12),
                             const SizedBox(width: 6),
                             Text(
                               third.totalPointRedeemed.toString(),
-                              style:
-                              GoogleFonts.manrope(
-                                fontWeight:
-                                FontWeight
-                                    .w700,
+                              style: GoogleFonts.manrope(
+                                fontWeight: FontWeight.w700,
                                 fontSize: 10,
-                                color:
-                                Colors.white,
+                                color: Colors.white,
                               ),
                             ),
                           ],
@@ -407,7 +326,7 @@ class TopLeaderBoard extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                   builder: (ctx) =>
-                      LeaderboardScreen(),
+                      LeaderboardScreen(leaderboardList: rewardsSummary),
                 ),
               ),
             ),

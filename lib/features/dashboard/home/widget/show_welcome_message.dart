@@ -62,89 +62,94 @@ class ShowWelcomeMessage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
-          child: Container(color: Colors.black.withOpacity(0.6)),
-        ),
-        Center(
-          child: Material(
-            color: Colors.transparent,
-            child: Container(
-              width: MediaQuery.of(context).size.width * 0.85,
-              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(24),
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Image.asset(
-                    AssetsPngImages.welcome,
-                    height: 92.h,
-                    fit: BoxFit.contain,
-                  ),
-                  SizedBox(height: 20.h),
-                  RichText(
-                    text: TextSpan(
-                      text: "We’ve missed you! 🥺",
-                      style: TextStyles.bodyBold16(context),
+    return PopScope(
+      onPopInvokedWithResult: (canPop, result) {
+        SessionManager().firstWelcomeUserVal = "NO";
+      },
+      child: Stack(
+        children: [
+          BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+            child: Container(color: Colors.black.withOpacity(0.6)),
+          ),
+          Center(
+            child: Material(
+              color: Colors.transparent,
+              child: Container(
+                width: MediaQuery.of(context).size.width * 0.85,
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(24),
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Image.asset(
+                      AssetsPngImages.welcome,
+                      height: 92.h,
+                      fit: BoxFit.contain,
                     ),
-                  ),
-                  SizedBox(height: 16.h),
-                  RichText(
-                    textAlign: TextAlign.center,
-                    text: TextSpan(
-                      text:
-                          "Others earned rewards while you were away, but guess what? We saved yours. 😉 🎁",
-                      style: TextStyles.normalMedium14(
-                        context,
-                      ).copyWith(color: AppColors.grey550),
+                    SizedBox(height: 20.h),
+                    RichText(
+                      text: TextSpan(
+                        text: "We’ve missed you! 🥺",
+                        style: TextStyles.bodyBold16(context),
+                      ),
                     ),
-                  ),
-                  SizedBox(height: 20.h),
-                  Row(
-                    spacing: 16.w,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      _rewardBox("assets/images/ear_pod.png"),
-                      _rewardBox("assets/images/blue_cards.png"),
-                      _rewardBox("assets/images/one_50.png"),
-                    ],
-                  ),
-                  SizedBox(height: 20.h),
-                  FlowvaButton.blueButton(
-                    apply: () {
-                      SessionManager().firstWelcomeUserVal = "No";
-                      Navigator.pop(context);
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => BottomNavBar(index: 1),
-                        ),
-                      );
-                      //TODO: Look into this
-                      SessionManager().firstTimeUserVal == "YES"
-                          ? Future.delayed(
-                              Duration(seconds: 1),
-                              () => showDialog(
-                                context: context,
-                                barrierColor: Colors.black.withOpacity(0.3),
-                                builder: (_) => ShowAdMessage(),
-                              ),
-                            )
-                          : null;
-                    },
-                    name: "Claim your rewards now",
-                  ),
-                ],
+                    SizedBox(height: 16.h),
+                    RichText(
+                      textAlign: TextAlign.center,
+                      text: TextSpan(
+                        text:
+                            "Others earned rewards while you were away, but guess what? We saved yours. 😉 🎁",
+                        style: TextStyles.normalMedium14(
+                          context,
+                        ).copyWith(color: AppColors.grey550),
+                      ),
+                    ),
+                    SizedBox(height: 20.h),
+                    Row(
+                      spacing: 16.w,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        _rewardBox("assets/images/ear_pod.png"),
+                        _rewardBox("assets/images/blue_cards.png"),
+                        _rewardBox("assets/images/one_50.png"),
+                      ],
+                    ),
+                    SizedBox(height: 20.h),
+                    FlowvaButton.blueButton(
+                      apply: () {
+                        SessionManager().firstWelcomeUserVal = "No";
+                        Navigator.pop(context);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => BottomNavBar(index: 1),
+                          ),
+                        );
+                        //TODO: Look into this
+                        SessionManager().firstTimeUserVal == "YES"
+                            ? Future.delayed(
+                                Duration(seconds: 1),
+                                () => showDialog(
+                                  context: context,
+                                  barrierColor: Colors.black.withOpacity(0.3),
+                                  builder: (_) => ShowAdMessage(),
+                                ),
+                              )
+                            : null;
+                      },
+                      name: "Claim your rewards now",
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 

@@ -8,7 +8,6 @@ import 'package:flowva/features/mission/data/model/social_trivia_response.dart';
 import 'package:flowva/features/mission/data/model/streak_response.dart';
 import 'package:flowva/features/mission/data/model/trivia_response.dart';
 import 'package:flowva/features/mission/data/repository/mission_repository.dart';
-import 'package:flowva/session/session_manager.dart';
 import 'package:meta/meta.dart';
 
 part 'mission_state.dart';
@@ -30,9 +29,6 @@ class MissionCubit extends Cubit<MissionState> {
   }
 
   void updateReward(Map<String, dynamic> mission) async {
-
-    emit(MissionUpdateLoading());
-
     final either = await missionRepository.updateMission(mission);
     print(either);
     either.fold(
@@ -63,17 +59,19 @@ class MissionCubit extends Cubit<MissionState> {
       emit(MissionLoaded(mission));
     });
   }
+
   void fetchSkillUpChallenge() async {
     // emit(MissionLoading());
 
     final either = await missionRepository.fetchSkillUpChallenge();
     print(either);
     either.fold((failure) => emit(MissionFailed(failure.toString())), (
-        mission,
-        ) {
+      mission,
+    ) {
       emit(SocialMissionLoaded(mission));
     });
   }
+
   void claimStreakToday() async {
     emit(StreakLoading());
 
@@ -110,6 +108,7 @@ class MissionCubit extends Cubit<MissionState> {
       emit(QuizLoaded(quiz));
     });
   }
+
   void fetchQuizCompleted() async {
     // emit(MissionLoading());
 

@@ -100,7 +100,19 @@ class _ChangePasswordState extends State<ChangePassword> with UIToolMixin {
                       const SizedBox(height: 12),
 
                       // Password field
-                      AppPassword(pass: cp, hintText: 'Confirm password'),
+                      AppPassword(
+                        pass: cp,
+                        hintText: 'Confirm password',
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please confirm your password';
+                          }
+                          if (value != pass.text) {
+                            return 'Passwords do not match';
+                          }
+                          return null;
+                        },
+                      ),
                       const SizedBox(height: 20),
 
                       // Continue button with gradient
@@ -126,7 +138,9 @@ class _ChangePasswordState extends State<ChangePassword> with UIToolMixin {
                                 styleColor: Colors.white,
                               );
 
-                              // Send them to your onboarding stage
+                              // Send them to your onboarding page
+                              Navigator.pop(context);
+                              Navigator.pop(context);
                               Navigator.pop(context);
                               return;
                             }

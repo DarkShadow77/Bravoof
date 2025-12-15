@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:dartz/dartz.dart';
@@ -12,7 +11,6 @@ import 'package:flowva/features/mission/data/model/streak_response.dart';
 import 'package:flowva/features/mission/data/model/trivia_response.dart';
 import 'package:flowva/session/session_manager.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:path/path.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class MissionRepository {
@@ -229,98 +227,94 @@ class MissionRepository {
 
   Future<Either<String, MissionResponse>> fetchMission() async {
     try {
-      var res = await supabase.from('mission').select();
-      var response = await supabase.from('mission_completed').select();
-      print(res);
-      if (res != null) {
-        MissionResponse missionResponse = MissionResponse.fromJson({
-          "mission": res,
-        });
-        if (sessionManager.missionVal.isNotEmpty) {
+      final userId = sessionManager.userIdVal;
 
-          final Map completedMap = {
-            for (var item in response) item['mission_id']: item['completed']
-          };
-print(completedMap);
-          missionResponse.mission = missionResponse.mission!.map((mission) {
-            if (completedMap.containsKey(mission.id)) {
-              mission.completed = completedMap[mission.id];
-            }
-            return mission;
-          }).toList();
+      final missionsRes = await supabase.from('mission').select();
+      final completedRes = await supabase
+          .from('mission_completed')
+          .select()
+          .eq('user_id', userId);
 
-        }
-        missionResponse.mission!.forEach((e){
-          print(e.completed);
-          print(e.id);
-        });
-        missionResponse.mission!.sort((a, b) => a.id!.compareTo(b.id!));
-        return Right(missionResponse);
-      } else {
-        return Left("Invalid credentials");
-      }
+      // Create a map of mission_id -> completed
+      final completedMap = {
+        for (var item in completedRes) item['mission_id']: item['completed'],
+      };
+
+      MissionResponse missionResponse = MissionResponse.fromJson({
+        "mission": missionsRes,
+      });
+
+      // Mark completed missions for this user
+      missionResponse.mission = missionResponse.mission!.map((mission) {
+        mission.completed = completedMap[mission.id] ?? false;
+        return mission;
+      }).toList();
+
+      missionResponse.mission!.sort((a, b) => a.id!.compareTo(b.id!));
+
+      return Right(missionResponse);
     } on AuthException catch (e) {
       return Left(e.message);
     }
   }
+
   Future<Either<String, SocialTriviaResponse>> fetchSkillUpChallenge() async {
     try {
-
       var res = await supabase.from('skill_up_challenge').select();
       print("===============================");
       print(res);
       print("===============================");
-      SocialTriviaResponse socialTriviaResponse=SocialTriviaResponse.fromJson({"social":res});
-        return Right(socialTriviaResponse);
-
+      SocialTriviaResponse socialTriviaResponse = SocialTriviaResponse.fromJson(
+        {"social": res},
+      );
+      return Right(socialTriviaResponse);
     } on AuthException catch (e) {
       return Left(e.message);
     }
   }
+
   Future<Either<String, AppBaseResponse>> updateMission(
     Map<String, dynamic> mission,
   ) async {
     try {
-      print(mission);
-      var res = await supabase.from('claim_rewards').insert({
-        "mission_id": mission['id'],
-        "name": mission['name'],
-        "reward_title": mission['reward_title'],
-        "points":mission['points'],
-        "number_of_spins": mission['number_of_spins'],
-        "user_id": sessionManager.userIdVal,
-        "email": sessionManager.userEmailval,
+      final userId = sessionManager.userIdVal;
+      final email = sessionManager.userEmailval;
 
+      // Upsert: insert if not exists, else update
+      await supabase
+          .from('mission_completed')
+          .upsert(
+            {
+              "user_id": userId,
+              "mission_id": mission['id'],
+              "completed": true,
+              "points": mission['points'] ?? 0,
+              "name": mission['name'],
+              "reward_title": mission['reward_title'],
+              "number_of_spins": mission['number_of_spins'] ?? 0,
+              "updated_at": DateTime.now().toIso8601String(),
+              "email": email,
+            },
+            onConflict: 'user_id, mission_id',
+            ignoreDuplicates: false,
+          );
 
-      });
-       await supabase.from('mission_completed').insert({
-         "completed":mission['completed'],
-         "mission_id":mission['mission_id']
-       });
-      print(res);
-      if (res == null) {
-        // Update profile total points
-        final profileRes = await supabase
-            .from('user_profile')
-            .select('total_points')
-            .eq('user_id', mission['user_id'])
-            .maybeSingle();
+      // Update total points
+      final profileRes = await supabase
+          .from('user_profile')
+          .select('total_points')
+          .eq('user_id', userId)
+          .maybeSingle();
 
-        int currentPoints = profileRes!['total_points'] ?? 0;
-        final newPoints = currentPoints + int.parse(mission['points']);
-        debugPrint("................$newPoints new point");
-        var res = await supabase
-            .from('user_profile')
-            .update({'total_points': newPoints})
-            .eq('user_id', mission['user_id']);
+      int currentPoints = profileRes!['total_points'] ?? 0;
+      final newPoints = currentPoints + int.parse(mission['points']);
+      await supabase
+          .from('user_profile')
+          .update({'total_points': newPoints})
+          .eq('user_id', userId);
 
-        AppBaseResponse appBaseResponse = AppBaseResponse(status: true);
-        return Right(appBaseResponse);
-      } else {
-        return Left("Something went wrong while updating your mission");
-      }
+      return Right(AppBaseResponse(status: true));
     } on AuthException catch (e) {
-      print(e);
       return Left(e.message);
     }
   }
@@ -396,7 +390,7 @@ print(completedMap);
           .from('skill_up_uploads')
           .getPublicUrl('$fileName');
       if (publicUrl.isNotEmpty) {
-        mission['image_url']=publicUrl;
+        mission['image_url'] = publicUrl;
         await supabase.from('skill_up_challenge').insert(mission);
 
         AppBaseResponse appBaseResponse = AppBaseResponse(status: true);
@@ -430,6 +424,7 @@ print(completedMap);
       return Left(e.toString());
     }
   }
+
   Future<Either<String, QuizResponse>> fetchQuizCompleted() async {
     try {
       final quiz = await supabase
@@ -437,7 +432,7 @@ print(completedMap);
           .select()
           .eq('user_id', sessionManager.userIdVal)
           .eq('name', 'quiz')
-      .single();
+          .single();
 
       print(quiz);
       QuizResponse quizResponse = QuizResponse.fromJson({"quiz": quiz});
@@ -446,6 +441,7 @@ print(completedMap);
       return Left(e.toString());
     }
   }
+
   Future<Either<String, SkillUpTaskResponse>> fetchSkillUPTask() async {
     try {
       final task = await supabase.from('skill_up_task').select("*");
@@ -462,7 +458,7 @@ print(completedMap);
   Future<Either<String, TriviaResponse>> fetchTrivia() async {
     try {
       final response = await supabase.rpc('get_quiz_leaderboard_top50');
-print(response);
+      print(response);
       TriviaResponse triviaResponse = TriviaResponse.fromJson({
         "trivia": response,
       });

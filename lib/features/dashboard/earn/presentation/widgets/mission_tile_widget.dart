@@ -11,11 +11,13 @@ class MissionTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-print(mission.rightIcon!);
+    print(mission.rightIcon!);
     return Container(
       padding: const EdgeInsets.only(left: 10, top: 2, right: 2, bottom: 2),
       decoration: BoxDecoration(
-        color: mission.completed! ?Color(0xFFF6FDF5):Color(0xFFF6FDF5),
+        color: mission.completed == true
+            ? Color(0xFFF6FDF5)
+            : Color(0xFFF6FDF5),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -40,15 +42,17 @@ print(mission.rightIcon!);
                     style: GoogleFonts.baloo2(
                       fontSize: 18,
                       fontWeight: FontWeight.w700,
-                      color:mission.id=="rate"?Colors.black.withOpacity(0.24): Colors.black.withOpacity(0.50),
+                      color: mission.id == "rate"
+                          ? Colors.black.withOpacity(0.24)
+                          : Colors.black.withOpacity(0.50),
                     ),
                     textAlign: TextAlign.center,
                   ),
                 ),
                 const SizedBox(height: 6),
-                mission.completed!
+                mission.completed == true
                     ? Image.asset("assets/images/mark.png")
-                    : Container()
+                    : Container(),
 
                 // Container(
                 //   padding: EdgeInsets.symmetric(horizontal: 15),
@@ -127,7 +131,9 @@ print(mission.rightIcon!);
             // height: 80,
             width: 88,
             decoration: BoxDecoration(
-              color: mission.completed! ?Color(0xFFF1F1F1):Color(0xFF9013FE).withOpacity(0.08),
+              color: mission.completed == true
+                  ? Color(0xFFF1F1F1)
+                  : Color(0xFF9013FE).withOpacity(0.08),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Column(
@@ -136,7 +142,9 @@ print(mission.rightIcon!);
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    mission.id==null?Image.asset(mission.rightIcon!,height: 22,):Image.network(mission.rightIcon!,height: 22,),
+                    mission.id == null
+                        ? Image.asset(mission.rightIcon!, height: 22)
+                        : Image.network(mission.rightIcon!, height: 22),
                     SizedBox(width: 5),
                     Text(
                       "${mission.points}",
@@ -150,12 +158,11 @@ print(mission.rightIcon!);
                 ),
                 // SizedBox(height: 5),
                 // const SizedBox(height: 10),
-
-               FlowvaButton.purpleButton(
-                 color: mission.completed!?Colors.grey:null,
+                FlowvaButton.purpleButton(
+                  color: mission.completed == true ? Colors.grey : null,
                   name: "${mission.subject}",
-                  apply: onClaim
-                )
+                  apply: onClaim,
+                ),
               ],
             ),
           ),

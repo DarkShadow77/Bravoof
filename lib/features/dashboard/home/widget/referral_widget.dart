@@ -1,26 +1,26 @@
+import 'package:flowva/app/styles/text_styles.dart';
+import 'package:flowva/core/constants/app_assets.dart';
 import 'package:flowva/features/common/flowva_button.dart';
 import 'package:flowva/features/common/flowva_colors.dart';
-import 'package:flowva/features/dashboard/earn/presentation/pages/badge_page.dart';
 import 'package:flowva/features/dashboard/earn/presentation/pages/invite_earn.dart';
 import 'package:flowva/features/onbaording/data/model/user_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-
+import '../../../../core/constants/app_colors.dart';
 
 class ReferralPage extends StatelessWidget {
   UserProfile? userProfile;
-   ReferralPage( {super.key,required this.userProfile });
+  ReferralPage({super.key, required this.userProfile});
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-
-
-
         // Big invite card / illustration
         Container(
           height: 220,
@@ -49,7 +49,15 @@ class ReferralPage extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: 16),
-                  Image.asset("assets/images/logo.png", height: 30),
+                  SvgPicture.asset(
+                    AssetsLogo.logo,
+                    height: 42.h,
+                    fit: BoxFit.contain,
+                    colorFilter: ColorFilter.mode(
+                      AppColors.primary,
+                      BlendMode.srcIn,
+                    ),
+                  ),
                   SizedBox(height: 8),
                   Text(
                     'Invite and Earn',
@@ -76,9 +84,7 @@ class ReferralPage extends StatelessWidget {
             ),
           ),
         ),
-
         const SizedBox(height: 20),
-
         // Referral card
         Container(
           width: double.infinity,
@@ -96,9 +102,9 @@ class ReferralPage extends StatelessWidget {
           ),
           padding: const EdgeInsets.only(top: 20),
           child: GestureDetector(
-            onTap: (){
+            onTap: () {
               Clipboard.setData(
-                ClipboardData(text: 'https://app.flowvahub.com?ref=${userProfile!.referralCode}'),
+                ClipboardData(text: '${userProfile!.referralCode}'),
               );
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
@@ -115,19 +121,23 @@ class ReferralPage extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'Your Referral Link',
+                      'Your Referral Code',
                       style: GoogleFonts.manrope(
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
                         color: Colors.black,
                       ),
                     ),
-                    SizedBox(width: 8),
-                    Image.asset(
-                      "assets/images/copy.png"),
+                    SizedBox(width: 8.w),
+                    SvgPicture.asset(
+                      AssetsSvgImages.copy,
+                      height: 12.r,
+                      width: 12.r,
+                      fit: BoxFit.contain,
+                    ),
                   ],
                 ),
-                SizedBox(height: 8),
+                SizedBox(height: 8.h),
                 // Referral link pill
                 Container(
                   width: 270,
@@ -148,23 +158,22 @@ class ReferralPage extends StatelessWidget {
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children:  [
-                      Icon(Icons.link, size: 18, color: kPurple),
-                      SizedBox(width: 8),
-                      Text(
-                        'https://app.flowvahub.com?ref=${userProfile!.referralCode}',
-                        style: GoogleFonts.manrope(
-                          fontSize: 10,
-                          fontWeight: FontWeight.w800,
-                          color: kPurple,
+                    children: [
+                      Icon(Icons.link, size: 18.sp, color: kPurple),
+                      SizedBox(width: 8.w),
+                      RichText(
+                        text: TextSpan(
+                          // 'https://app.flowvahub.com?ref=${userProfile!.referralCode}',
+                          text: '${userProfile!.referralCode}',
+                          style: TextStyles.bodySemiBold16(
+                            context,
+                          ).copyWith(color: AppColors.primary),
                         ),
-
                       ),
                     ],
                   ),
                 ),
-                const SizedBox(height: 14),
-
+                SizedBox(height: 14.h),
                 Container(
                   width: double.infinity,
                   height: 220,
@@ -188,8 +197,13 @@ class ReferralPage extends StatelessWidget {
                       FlowvaButton.blueButton(
                         name: "Invite friends",
                         color: Colors.white,
-                        icon: Icon(Icons.person_add_alt_1,color: Colors.white),
-                        apply: ()=>Navigator.push(context, MaterialPageRoute(builder: (ctx)=>InviteAndEarnPage()))
+                        icon: Icon(Icons.person_add_alt_1, color: Colors.white),
+                        apply: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (ctx) => InviteAndEarnPage(),
+                          ),
+                        ),
                       ),
                       const SizedBox(height: 20),
                       // Progress row
@@ -214,8 +228,7 @@ class ReferralPage extends StatelessWidget {
                                 ),
                                 const SizedBox(height: 2),
                                 Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.end,
+                                  mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
                                     // Text(
                                     //   "${userProfile!.referralCount}",
@@ -225,12 +238,12 @@ class ReferralPage extends StatelessWidget {
                                     //     color: kPurple,
                                     //   ),
                                     // ),
-
                                     RichText(
                                       text: TextSpan(
                                         children: [
                                           TextSpan(
-                                            text: "${userProfile!.referralCount}",
+                                            text:
+                                                "${userProfile!.referralCount}",
                                             style: GoogleFonts.manrope(
                                               fontSize: 16,
                                               color: kPurple,
@@ -256,9 +269,13 @@ class ReferralPage extends StatelessWidget {
                                     borderRadius: BorderRadius.circular(12),
                                     child: LinearProgressIndicator(
                                       minHeight: 8,
-                                      value:userProfile!.referralCount!/10, // 1 / 10 shown in screenshot
+                                      value:
+                                          userProfile!.referralCount! /
+                                          10, // 1 / 10 shown in screenshot
                                       backgroundColor: kLightGray,
-                                      valueColor: AlwaysStoppedAnimation(kPurple),
+                                      valueColor: AlwaysStoppedAnimation(
+                                        kPurple,
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -274,24 +291,20 @@ class ReferralPage extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            'You referred',
-                            style: GoogleFonts.manrope(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.black,
+                          RichText(
+                            text: TextSpan(
+                              text: 'You referred',
+                              style: TextStyles.normalSemibold14(context),
                             ),
                           ),
                           Row(
-                            children:  [
+                            children: [
                               Image.asset("assets/images/user.png"),
-                              SizedBox(width: 6),
-                              Text(
-                                "${userProfile!.referralCount}",
-                                style: GoogleFonts.manrope(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                  color: Color(0xFF191919),
+                              SizedBox(width: 6.w),
+                              RichText(
+                                text: TextSpan(
+                                  text: "${userProfile!.referralCount}",
+                                  style: TextStyles.bodySemiBold16(context),
                                 ),
                               ),
                             ],

@@ -1,6 +1,5 @@
-import 'dart:convert';
-
 import 'package:flowva/app/styles/text_styles.dart';
+import 'package:flowva/core/constants/app_assets.dart';
 import 'package:flowva/features/common/custom_success.dart';
 import 'package:flowva/features/common/model/campaign_response.dart';
 import 'package:flowva/features/common/routes.dart';
@@ -21,11 +20,14 @@ import 'package:flowva/session/session_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/constants/app_colors.dart';
+import '../../../utility/in_app_review.dart';
+import '../earn/presentation/pages/invite_earn.dart' hide MissionTile;
 import '../nav_bar.dart';
 import 'notifications.dart';
 
@@ -64,9 +66,10 @@ class _FlowvaHomePageState extends State<FlowvaHomePage> with UIToolMixin {
               Duration(milliseconds: 500),
               () => showGeneralDialog(
                 context: context,
-                barrierDismissible: true,
+                barrierDismissible: false,
                 barrierLabel: "",
                 barrierColor: Colors.transparent,
+
                 pageBuilder: (_, _, _) => ShowWelcomeMessage(),
               ),
             )
@@ -299,12 +302,12 @@ class _FlowvaHomePageState extends State<FlowvaHomePage> with UIToolMixin {
                             physics: const BouncingScrollPhysics(),
 
                             children: [
-                              const SizedBox(height: 10),
-                              if (SessionManager().firstTimeUserVal == "YES")
+                              SizedBox(height: 18.h),
+                              if (SessionManager().firstTimeUserVal ==
+                                  "YES") ...[
                                 Container(
                                   margin: EdgeInsets.symmetric(
                                     horizontal: 16.w,
-                                    vertical: 16.h,
                                   ),
                                   padding: EdgeInsets.symmetric(
                                     vertical: 16.h,
@@ -336,18 +339,20 @@ class _FlowvaHomePageState extends State<FlowvaHomePage> with UIToolMixin {
                                               ),
                                             ),
                                           ),
-                                          //TODO: Work on the Icon
                                           GestureDetector(
                                             onTap: () {
-                                              SessionManager()
-                                                      .firstTimeUserVal =
-                                                  "NO";
+                                              setState(() {
+                                                SessionManager()
+                                                        .firstTimeUserVal =
+                                                    "NO";
+                                              });
                                             },
                                             behavior: HitTestBehavior.opaque,
-                                            child: Icon(
-                                              Icons.cancel_rounded,
-                                              size: 14.sp,
-                                              color: AppColors.grey550,
+                                            child: SvgPicture.asset(
+                                              AssetsSvgImages.close,
+                                              width: 14.r,
+                                              height: 14.r,
+                                              fit: BoxFit.contain,
                                             ),
                                           ),
                                         ],
@@ -366,6 +371,8 @@ class _FlowvaHomePageState extends State<FlowvaHomePage> with UIToolMixin {
                                     ],
                                   ),
                                 ),
+                                SizedBox(height: 16.h),
+                              ],
                               campaign.isNotEmpty
                                   ? ToolCardCarousel(campaign: campaign)
                                   : Container(),
@@ -714,104 +721,9 @@ class _FlowvaHomePageState extends State<FlowvaHomePage> with UIToolMixin {
 
                                       // Missions list
                                       ...missions.map((mission) {
-                                        return Padding(
-                                          padding: const EdgeInsets.only(
-                                            bottom: 12,
-                                          ),
-                                          child: MissionTile(
-                                            mission: mission,
-                                            onClaim: () async {
-                                              if (!mission.completed! &&
-                                                  mission.subject!
-                                                          .toLowerCase() ==
-                                                      "watch") {
-                                                final Uri _url = Uri.parse(
-                                                  'https://www.youtube.com/watch?v=s7NG1PZaRCE',
-                                                );
-                                                if (!await launchUrl(
-                                                  _url,
-                                                  mode: LaunchMode
-                                                      .externalApplication,
-                                                )) {
-                                                  throw Exception(
-                                                    'Could not launch $_url',
-                                                  );
-                                                }
-                                                setState(() {
-                                                  mission.completed = true;
-                                                });
-                                                missionCubit.updateReward({
-                                                  "mission_id": mission.id,
-                                                  "name": mission.subject,
-                                                  "reward_title": mission.title,
-                                                  "points": mission.points,
-                                                  "user_id":
-                                                      sessionManager.userIdVal,
-                                                  "email": sessionManager
-                                                      .userEmailval,
-                                                });
-                                                var d = jsonEncode([
-                                                  {
-                                                    "completed":
-                                                        mission.completed,
-                                                    "id": mission.id,
-                                                  },
-                                                ]);
-                                                sessionManager.missionVal = d;
-                                              }
-                                              if (!mission.completed! &&
-                                                  mission.subject!
-                                                          .toLowerCase() ==
-                                                      "rate us") {
-                                                final Uri _url = Uri.parse(
-                                                  'https://play.google.com/store/apps/details?id=com.softAlliance.softsuite.org&pli=1',
-                                                );
-                                                if (!await launchUrl(
-                                                  _url,
-                                                  mode: LaunchMode
-                                                      .externalApplication,
-                                                )) {
-                                                  throw Exception(
-                                                    'Could not launch $_url',
-                                                  );
-                                                }
-                                                setState(() {
-                                                  mission.completed = true;
-                                                });
-
-                                                missionCubit.updateReward({
-                                                  "mission_id": mission.id,
-                                                  "name": mission.subject,
-                                                  "reward_title": mission.title,
-                                                  "points": "0",
-                                                  "number_of_spins": 1,
-                                                  "user_id":
-                                                      sessionManager.userIdVal,
-                                                  "email": sessionManager
-                                                      .userEmailval,
-                                                });
-
-                                                var d =
-                                                    sessionManager
-                                                        .missionVal
-                                                        .isNotEmpty
-                                                    ? jsonDecode(
-                                                        sessionManager
-                                                            .missionVal,
-                                                      )
-                                                    : [];
-                                                var e = jsonEncode([
-                                                  {
-                                                    "completed":
-                                                        mission.completed,
-                                                    "id": mission.id,
-                                                  },
-                                                ]);
-                                                d.add(e);
-                                                sessionManager.missionVal = e;
-                                              }
-                                            },
-                                          ),
+                                        return _buildMissionListTile(
+                                          mission,
+                                          context,
                                         );
                                       }).toList(),
                                     ],
@@ -953,6 +865,76 @@ class _FlowvaHomePageState extends State<FlowvaHomePage> with UIToolMixin {
                   ],
                 ),
               ),
+      ),
+    );
+  }
+
+  Padding _buildMissionListTile(Mission mission, BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: MissionTile(
+        mission: mission,
+        onClaim: () async {
+          if (mission.completed == false) {
+            if (mission.subject!.toLowerCase() == "watch") {
+              final Uri _url = Uri.parse(
+                'https://www.youtube.com/watch?v=s7NG1PZaRCE',
+              );
+              if (!await launchUrl(
+                _url,
+                mode: LaunchMode.externalApplication,
+              )) {
+                throw Exception('Could not launch $_url');
+              }
+              // Mark mission completed for current user
+              missionCubit.updateReward({
+                "id": mission.id,
+                "name": mission.subject,
+                "reward_title": mission.title,
+                "points": mission.points,
+              });
+
+              setState(() {
+                mission.completed = true;
+                mission.progress = 100;
+              });
+            } else if (mission.subject!.toLowerCase() == "rate us") {
+              final success = await requestAppRating();
+
+              if (success) {
+                // Update mission as completed in Supabase
+                missionCubit.updateReward({
+                  "id": mission.id,
+                  "name": mission.subject,
+                  "reward_title": mission.title,
+                  "points": "0",
+                  "number_of_spins": 1,
+                });
+                setState(() {
+                  mission.completed = true;
+                });
+                showMessage(
+                  "Thank you for rating our app! 🎉",
+                  context,
+                  color: Colors.green,
+                  styleColor: Colors.white,
+                );
+              } else {
+                showMessage(
+                  "Could not open review dialog. Please rate us manually from the store.",
+                  context,
+                  color: Colors.orange,
+                  styleColor: Colors.black,
+                );
+              }
+            } else if (mission.subject!.toLowerCase() == "invite") {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => InviteAndEarnPage()),
+              );
+            }
+          }
+        },
       ),
     );
   }

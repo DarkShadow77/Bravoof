@@ -144,22 +144,22 @@ class _OnboardingScreenState extends State<OnboardingScreen> with UIToolMixin {
                       ),
                     );
                     return;
-                  } else if (state.appBaseResponse.message == "LOGIN") {
-                    showMessage(
-                      "Login Successfully",
-                      context,
-                      color: Colors.green,
-                      styleColor: Colors.white,
-                    );
-
-                    SessionManager().firstWelcomeUserVal = "YES";
-                    Future.delayed(Duration(seconds: 3), () {
-                      Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(builder: (ctx) => BottomNavBar()),
-                        (ctx) => false,
-                      );
-                    });
                   }
+                  showMessage(
+                    "Login Successfully",
+                    context,
+                    color: Colors.green,
+                    styleColor: Colors.white,
+                  );
+
+                  SessionManager().firstWelcomeUserVal = "YES";
+                  SessionManager().firstTimeUserVal = "YES";
+                  Future.delayed(Duration(seconds: 3), () {
+                    Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(builder: (ctx) => BottomNavBar()),
+                      (ctx) => false,
+                    );
+                  });
                 }
                 if (state is UserFailure) {
                   setState(() {

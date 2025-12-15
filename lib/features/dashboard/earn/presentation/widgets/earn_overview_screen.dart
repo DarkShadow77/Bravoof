@@ -11,9 +11,14 @@ import 'package:flowva/features/onbaording/data/model/user_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
 
+import '../../../../../app/styles/text_styles.dart';
+import '../../../../../core/constants/app_assets.dart';
+import '../../../../../core/constants/app_colors.dart';
 import 'leaderboard_widget.dart';
 
 class EarnOverviewScreen extends StatefulWidget {
@@ -224,7 +229,6 @@ class _EarnOverviewScreenState extends State<EarnOverviewScreen>
                     children: [
                       Image.asset(
                         "assets/images/reward_scholar.png",
-
                         fit: BoxFit.fitHeight,
                       ),
                       Image.asset(
@@ -280,7 +284,7 @@ class _EarnOverviewScreenState extends State<EarnOverviewScreen>
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            'Your referral link',
+                            'Your referral code',
                             style: GoogleFonts.manrope(
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
@@ -288,7 +292,12 @@ class _EarnOverviewScreenState extends State<EarnOverviewScreen>
                             ),
                           ),
                           SizedBox(width: 8),
-                          Image.asset("assets/images/copy.png"),
+                          SvgPicture.asset(
+                            AssetsSvgImages.copy,
+                            height: 12.r,
+                            width: 12.r,
+                            fit: BoxFit.contain,
+                          ),
                         ],
                       ),
                       SizedBox(height: 8),
@@ -321,12 +330,13 @@ class _EarnOverviewScreenState extends State<EarnOverviewScreen>
                             children: [
                               Icon(Icons.link, size: 18, color: kPurple),
                               SizedBox(width: 8),
-                              Text(
-                                'https://bravoo.com?ref=${userProfile.referralCode}',
-                                style: GoogleFonts.manrope(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                  color: kPurple,
+                              RichText(
+                                text: TextSpan(
+                                  // 'https://app.flowvahub.com?ref=${userProfile!.referralCode}',
+                                  text: '${userProfile!.referralCode}',
+                                  style: TextStyles.bodySemiBold16(
+                                    context,
+                                  ).copyWith(color: AppColors.primary),
                                 ),
                               ),
                             ],
@@ -334,7 +344,6 @@ class _EarnOverviewScreenState extends State<EarnOverviewScreen>
                         ),
                       ),
                       const SizedBox(height: 14),
-
                       Container(
                         width: double.infinity,
                         height: 220,
@@ -356,7 +365,7 @@ class _EarnOverviewScreenState extends State<EarnOverviewScreen>
                         child: Column(
                           children: [
                             FlowvaButton.blueButton(
-                              name: "Share Referral Link",
+                              name: "Share Referral Code",
                               color: Colors.white,
                               icon: Image.asset(
                                 "assets/images/share.png",
@@ -461,15 +470,15 @@ class _EarnOverviewScreenState extends State<EarnOverviewScreen>
                               children: [
                                 Row(
                                   children: [
-                                    Text(
-                                      'You referred',
-                                      style: GoogleFonts.manrope(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w600,
-                                        color: Colors.black,
+                                    RichText(
+                                      text: TextSpan(
+                                        text: 'You referred',
+                                        style: TextStyles.smallMedium12(
+                                          context,
+                                        ),
                                       ),
                                     ),
-                                    SizedBox(width: 8),
+                                    SizedBox(width: 8.w),
                                     Icon(
                                       Icons.info_outline,
                                       size: 18,
@@ -480,13 +489,13 @@ class _EarnOverviewScreenState extends State<EarnOverviewScreen>
                                 Row(
                                   children: [
                                     Image.asset("assets/images/user.png"),
-                                    SizedBox(width: 6),
-                                    Text(
-                                      '0',
-                                      style: GoogleFonts.manrope(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w600,
-                                        color: Color(0xFF191919),
+                                    SizedBox(width: 6.w),
+                                    RichText(
+                                      text: TextSpan(
+                                        text: "${userProfile.referralCount}",
+                                        style: TextStyles.bodySemiBold16(
+                                          context,
+                                        ),
                                       ),
                                     ),
                                   ],
@@ -499,11 +508,11 @@ class _EarnOverviewScreenState extends State<EarnOverviewScreen>
                     ],
                   ),
                 ),
-                const SizedBox(height: 20),
+                SizedBox(height: 20.h),
                 rewardsSummary.isNotEmpty && rewardsSummary.length > 2
                     ? LeaderboardPage(rewardsSummary: rewardsSummary)
                     : Container(),
-                const SizedBox(height: 20),
+                SizedBox(height: 20.h),
               ],
             ),
     );
