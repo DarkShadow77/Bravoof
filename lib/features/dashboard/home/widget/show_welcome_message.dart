@@ -121,7 +121,7 @@ class ShowWelcomeMessage extends StatelessWidget {
                     SizedBox(height: 20.h),
                     FlowvaButton.blueButton(
                       apply: () {
-                        SessionManager().firstWelcomeUserVal = "No";
+                        SessionManager().firstWelcomeUserVal = "NO";
                         Navigator.pop(context);
                         Navigator.push(
                           context,
@@ -129,17 +129,6 @@ class ShowWelcomeMessage extends StatelessWidget {
                             builder: (_) => BottomNavBar(index: 1),
                           ),
                         );
-                        //TODO: Look into this
-                        SessionManager().firstTimeUserVal == "YES"
-                            ? Future.delayed(
-                                Duration(seconds: 1),
-                                () => showDialog(
-                                  context: context,
-                                  barrierColor: Colors.black.withOpacity(0.3),
-                                  builder: (_) => ShowAdMessage(),
-                                ),
-                              )
-                            : null;
                       },
                       name: "Claim your rewards now",
                     ),

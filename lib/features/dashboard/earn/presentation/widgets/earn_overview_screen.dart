@@ -56,7 +56,7 @@ class _EarnOverviewScreenState extends State<EarnOverviewScreen>
   }
 
   bool init = true;
-  StreakResponse streaks = StreakResponse();
+  StreakResponse streaks = StreakResponse(id: 0, userId: '', currentStreak: 0);
 
   @override
   Widget build(BuildContext context) {
@@ -107,7 +107,7 @@ class _EarnOverviewScreenState extends State<EarnOverviewScreen>
                   borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
                 ),
                 builder: (_) => CustomSuccess(
-                  title: "Awesome! ✨",
+                  title: "You earned 5 coins! ✨",
                   bodyText: quotes[streaks.currentStreak ?? 0],
                   b_text1: "Done",
                 ),
@@ -703,10 +703,24 @@ class _EarnOverviewScreenState extends State<EarnOverviewScreen>
     );
   }
 
+  List<String> getCheckedDays(StreakResponse streak) {
+    if (streak.currentStreak == 0 || streak.lastClaimedDate == null) {
+      return [];
+    }
+
+    final today = DateTime.now();
+    final start = today.subtract(Duration(days: streak.currentStreak - 1));
+
+    return List.generate(streak.currentStreak, (i) {
+      final day = start.add(Duration(days: i));
+      return days[day.weekday - 1];
+    });
+  }
+
   // 🔹 Streak Section
   Widget _streakCard({required Function? apply}) {
+    final checkedDays = getCheckedDays(streaks);
     return Container(
-      height: 408,
       decoration: BoxDecoration(
         color: Color(0xFFF6EDFE),
         borderRadius: BorderRadius.circular(18),
@@ -723,57 +737,52 @@ class _EarnOverviewScreenState extends State<EarnOverviewScreen>
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Text("🔥", style: TextStyle(fontSize: 40)),
-          const SizedBox(height: 4),
-          Text(
-            "${streaks.currentStreak ?? "0"}-Days Streak",
-            style: GoogleFonts.manrope(
-              fontSize: 16,
-              fontWeight: FontWeight.w700,
+          SizedBox(height: 14.h),
+          RichText(
+            text: TextSpan(text: "🔥", style: TextStyles.h1Bold38(context)),
+          ),
+          SizedBox(height: 4.h),
+          RichText(
+            text: TextSpan(
+              text: "${streaks.currentStreak ?? "0"}-Days Streak",
+              style: TextStyles.bodySemiBold16(context),
             ),
           ),
-          const SizedBox(height: 10),
-          Text(
-            "You’ve checked in ${streaks.currentStreak ?? "0"} days straight. Keep it going!",
-            style: GoogleFonts.manrope(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              color: Color(0xFF767676),
+          SizedBox(height: 10.h),
+          RichText(
+            text: TextSpan(
+              text:
+                  "You’ve checked in ${streaks.currentStreak ?? "0"} days straight. Keep it going!",
+              style: TextStyles.normalMedium14(context, opacity: .5),
             ),
           ),
 
           // Days row
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+            padding: EdgeInsets.symmetric(horizontal: 16.h, vertical: 20.w),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: days.map((day) {
-                List<String> weekStartingSunday = days.reversed
-                    .take(streaks.currentStreak ?? 0)
-                    .toList();
                 return Column(
                   children: [
-                    Text(
-                      day,
-                      style: GoogleFonts.manrope(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black,
+                    RichText(
+                      text: TextSpan(
+                        text: day,
+                        style: TextStyles.normalMedium14(context),
                       ),
                     ),
-                    const SizedBox(height: 4),
-                    weekStartingSunday.contains(day)
+                    SizedBox(height: 4.h),
+                    checkedDays.contains(day)
                         ? Icon(
                             Icons.check_circle,
-
-                            size: 22,
+                            size: 22.sp,
                             color: Color(0xFFFF8687),
                           )
                         : ["Sun"].contains(day)
                         ? Text("🔥", style: TextStyle(fontSize: 22))
                         : Icon(
                             Icons.circle_outlined,
-                            size: 22,
+                            size: 22.sp,
                             color: Color(0xFFA5A5A5),
                           ),
                   ],
@@ -783,7 +792,6 @@ class _EarnOverviewScreenState extends State<EarnOverviewScreen>
           ),
           Container(
             width: double.infinity,
-            height: 200,
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(18),
@@ -795,20 +803,21 @@ class _EarnOverviewScreenState extends State<EarnOverviewScreen>
                 ),
               ],
             ),
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
             child: Column(
               children: [
                 // ProgressTrack(),
                 FlowvaButton.blueButton(
-                  name: "Check-in today",
+                  name: streaks.hasCheckedInToday
+                      ? "Checked in"
+                      : "Check-in today",
                   color: Colors.white,
                   icon: HugeIcon(
                     icon: HugeIcons.strokeRoundedTickDouble02,
                     color: Colors.white,
                   ),
-                  apply: apply,
+                  apply: streaks.hasCheckedInToday ? null : apply,
                 ),
-                const SizedBox(height: 5),
                 FlowvaButton.whiteButton(
                   name: "Share my streak",
                   color: Colors.black,
@@ -818,9 +827,6 @@ class _EarnOverviewScreenState extends State<EarnOverviewScreen>
                     size: 20,
                   ),
                 ),
-
-                // Divider(height: 30, color: Colors.black.withOpacity(0.07)),
-                // Progress row
               ],
             ),
           ),

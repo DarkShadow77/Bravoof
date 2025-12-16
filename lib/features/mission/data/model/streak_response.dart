@@ -1,25 +1,53 @@
-class StreakResponse{
+class StreakResponse {
+  final int? id;
+  final String userId;
+  final int currentStreak;
+  final DateTime? lastClaimedDate;
+
   StreakResponse({
     this.id,
-    this.userId,
-    this.currentStreak
+    required this.userId,
+    required this.currentStreak,
+    this.lastClaimedDate,
+  });
 
-});
-  int? id;
-  String? userId;
-  int? currentStreak;
-  StreakResponse.fromJson(Map<String,dynamic>json){
+  factory StreakResponse.fromJson(Map<String, dynamic> json) {
+    return StreakResponse(
+      id: json['id'] ?? 0,
+      userId: json['user_id'] ?? '',
+      currentStreak: json['current_streak'] ?? 0,
+      lastClaimedDate: json['last_claimed_date'] != null
+          ? DateTime.parse(json['last_claimed_date'])
+          : null,
+    );
+  }
 
-    print(json['id']);
-    print(id);
-    if(json['id']!=null){
-      id=json['id'];
-    }
-    if(json['user_id']!=null){
-      userId=json['user_id'];
-    }
-    if(json['current_streak']!=null){
-      currentStreak=json['current_streak'];
-    }
+  /// 🔹 Has the user already checked in today (local time)?
+  bool get hasCheckedInToday {
+    if (lastClaimedDate == null) return false;
+
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+
+    final last = DateTime(
+      lastClaimedDate!.year,
+      lastClaimedDate!.month,
+      lastClaimedDate!.day,
+    );
+
+    return last == today;
+  }
+
+  /// 🔹 Next available check-in time (12am local)
+  DateTime? get nextCheckInAt {
+    if (lastClaimedDate == null) return null;
+
+    final last = DateTime(
+      lastClaimedDate!.year,
+      lastClaimedDate!.month,
+      lastClaimedDate!.day,
+    );
+
+    return last.add(const Duration(days: 1));
   }
 }

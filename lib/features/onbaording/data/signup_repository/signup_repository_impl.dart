@@ -44,6 +44,27 @@ class SignupRepositoryImpl extends SignupRepository {
     required String email,
   }) async {
     try {
+      // 1. Check provider collision BEFORE sign-in
+      final existing = await supabase.rpc(
+        'get_user_auth_provider',
+        params: {'user_email': email},
+      );
+
+      log("Existing Login User: $existing ");
+
+      if (existing != null) {
+        final provider = existing['raw_app_meta_data']?['provider'];
+
+        if (provider != null && provider != 'email') {
+          return Left(
+            "This email is registered using $provider login. "
+            "Please sign in using $provider.",
+          );
+        }
+      } else {
+        return Left("This email is not registered");
+      }
+
       await supabase.auth.signInWithOtp(email: email, shouldCreateUser: false);
 
       AppBaseResponse appBaseResponse = AppBaseResponse(status: true);

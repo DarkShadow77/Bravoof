@@ -117,7 +117,7 @@ class _VerifyEmailState extends State<VerifyEmail> with UIToolMixin {
                           isSending.value = false;
                         });
                         showMessage(
-                          "Email Sent Successfully",
+                          "OTP Verified Successfully",
                           context,
                           color: Colors.green,
                           styleColor: Colors.white,

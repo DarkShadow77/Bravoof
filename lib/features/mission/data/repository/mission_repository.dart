@@ -103,12 +103,18 @@ class MissionRepository {
           .eq('user_id', sessionManager.userIdVal)
           .maybeSingle();
 
-      if (streakRes != null) {
-        StreakResponse streakResponse = StreakResponse.fromJson(streakRes);
-        return Right(streakResponse);
-      } else {
-        return Left("Empty");
+      if (streakRes == null) {
+        // Return empty streak instead of error
+        return Right(
+          StreakResponse(
+            id: 0,
+            userId: sessionManager.userIdVal,
+            currentStreak: 0,
+          ),
+        );
       }
+
+      return Right(StreakResponse.fromJson(streakRes));
     } catch (e) {
       return Left(e.toString());
     }
@@ -116,111 +122,100 @@ class MissionRepository {
 
   Future<Either<String, StreakResponse>> claimStreakToday() async {
     try {
-      var streakRes;
-      bool isNew = false;
-      // final user = supabase.auth.currentUser;
-      // if (user == null) return Left("");
+      final userId = sessionManager.userIdVal;
 
-      final todayDate = DateTime.now().toUtc();
-      final todayStr = todayDate.toIso8601String().split("T")[0];
-      final yesterdayStr = todayDate
-          .subtract(const Duration(days: 1))
-          .toIso8601String()
-          .split("T")[0];
+      // 🔹 Local date (NOT UTC)
+      final now = DateTime.now();
+      final today = DateTime(now.year, now.month, now.day);
+      final yesterday = today.subtract(const Duration(days: 1));
 
-      streakRes = await supabase
+      final streakRes = await supabase
           .from('user_streaks')
           .select()
-          .eq('user_id', sessionManager.userIdVal)
+          .eq('user_id', userId)
           .maybeSingle();
 
-      if (streakRes == null) {
-        isNew = true;
-        streakRes = await supabase
-            .from('user_streaks')
-            .insert({
-              'current_streak': 1,
-              'user_id': sessionManager.userIdVal,
-              'last_claimed_date': todayStr,
-            })
-            .select()
-            .single();
-      }
-
-      final data = streakRes;
-      final lastDate = data?['last_claimed_date'];
       int newStreak = 1;
 
-      if (!isNew) {
-        if (lastDate.split("T")[0] == yesterdayStr ||
-            data?['current_streak'] == 0) {
-          newStreak = (data?['current_streak'] ?? 0) + newStreak;
-        } else if (lastDate.split("T")[0] == todayStr) {
-          return Left("You have checked in today");
+      if (streakRes == null) {
+        // 🆕 First ever check-in
+        await supabase.from('user_streaks').insert({
+          'user_id': userId,
+          'current_streak': 1,
+          'last_claimed_date': today.toIso8601String(),
+        });
+      } else {
+        final lastClaimed = DateTime.parse(streakRes['last_claimed_date']);
+
+        final lastDate = DateTime(
+          lastClaimed.year,
+          lastClaimed.month,
+          lastClaimed.day,
+        );
+
+        if (lastDate == today) {
+          return Left("You have already checked in today");
         }
+
+        if (lastDate == yesterday) {
+          newStreak = (streakRes['current_streak'] ?? 0) + 1;
+        } else {
+          // ❌ Missed a day → reset streak
+          newStreak = 1;
+        }
+
+        await supabase
+            .from('user_streaks')
+            .update({
+              'current_streak': newStreak,
+              'last_claimed_date': today.toIso8601String(),
+            })
+            .eq('user_id', userId);
       }
 
-      // else {
-      //   await supabase
-      //       .from('user_streaks')
-      //       .update({'current_streak': 0, 'last_claimed_date': null})
-      //       .eq('user_id', sessionManager.userIdVal);
-      // }
+      // 🔹 Reward logic
+      const int pointsToAdd = 5;
 
-      const int pointsToAdd = 5; // can modify based on streak
-
-      // Update profile total points
-      final profileRes = await supabase
+      final profile = await supabase
           .from('user_profile')
           .select('total_points')
-          .eq('user_id', sessionManager.userIdVal)
-          .maybeSingle();
-      final currentPoints = profileRes?['total_points'] ?? 0;
-      final newUserPoints = currentPoints + pointsToAdd;
+          .eq('user_id', userId)
+          .single();
+
+      final updatedPoints = (profile['total_points'] ?? 0) + pointsToAdd;
 
       await supabase
           .from('user_profile')
-          .update({'total_points': newUserPoints})
-          .eq('user_id', sessionManager.userIdVal);
-      print("============tt${newUserPoints}============");
-      // Log the point event
+          .update({'total_points': updatedPoints})
+          .eq('user_id', userId);
+
+      // 🔹 Logs
       await supabase.from('user_rewards_summary').insert({
-        'user_id': sessionManager.userIdVal,
+        'user_id': userId,
         'email': sessionManager.userEmailval,
         'name': 'streak',
         'total_points': pointsToAdd,
         'total_claim_reward': pointsToAdd,
-        'total_point_redeemed': newUserPoints,
+        'total_point_redeemed': updatedPoints,
       });
 
-      print("========ww================");
-      // Update streak record
-      final streak = await supabase
-          .from('user_streaks')
-          .update({'current_streak': newStreak, 'last_claimed_date': todayStr})
-          .eq('user_id', sessionManager.userIdVal)
-          .select()
-          .single();
-      print('streak');
-      print(streak);
-      print('streak');
       await supabase.from('claim_rewards').insert({
         "name": "Streak",
         "reward_title": "Daily check-in",
         "points": pointsToAdd,
-        "user_id": sessionManager.userIdVal,
+        "user_id": userId,
         "email": sessionManager.userEmailval,
       });
-      if (streak != null) {
-        StreakResponse streakResponse = StreakResponse.fromJson(streak);
-        return Right(streakResponse);
-      } else {
-        return left("");
-      }
+
+      return Right(
+        StreakResponse(
+          id: streakRes?['id'],
+          currentStreak: newStreak,
+          lastClaimedDate: today,
+          userId: userId,
+        ),
+      );
     } catch (e) {
-      print("streak");
-      print(e);
-      print("streak");
       return Left(e.toString());
     }
   }
