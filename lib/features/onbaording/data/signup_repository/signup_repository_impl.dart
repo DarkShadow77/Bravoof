@@ -175,15 +175,17 @@ class SignupRepositoryImpl extends SignupRepository {
   Future<Either<String, AppBaseResponse>> googleAuth() async {
     try {
       const iosClientId =
-          '413861787586-2p9vbmc723dmhnf39v967hjln3cr311m.apps.googleusercontent.com';
+          '413861787586-g0lkbu9m7nll0mrvm077fs15o9r0aq4q.apps.googleusercontent.com';
       const webClientId =
-          '413861787586-j4cmqdvelmdgpkchpg5q6cug6kklbf52.apps.googleusercontent.com';
+          '413861787586-i0po64n1vbfbu1d2apcach4d7uibn4s3.apps.googleusercontent.com';
 
       final GoogleSignIn signIn = GoogleSignIn.instance;
 
       // At the start of your app, initialize the GoogleSignIn instance
-      unawaited(
-        signIn.initialize(clientId: iosClientId, serverClientId: webClientId),
+
+      await signIn.initialize(
+        clientId: iosClientId,
+        serverClientId: webClientId,
       );
 
       // Perform the sign in
