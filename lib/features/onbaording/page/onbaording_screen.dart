@@ -145,12 +145,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> with UIToolMixin {
                     );
                     return;
                   }
-                  showMessage(
-                    "Login Successfully",
-                    context,
-                    color: Colors.green,
-                    styleColor: Colors.white,
-                  );
 
                   SessionManager().firstWelcomeUserVal = "YES";
                   SessionManager().firstTimeUserVal = "YES";
