@@ -1,4 +1,4 @@
-package com.flowva.bravoo
+package com.flowvahub.bravoo
 
 import io.flutter.embedding.android.FlutterActivity
 

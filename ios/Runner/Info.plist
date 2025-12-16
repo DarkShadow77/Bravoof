@@ -83,7 +83,7 @@
       <dict>
         <key>CFBundleURLSchemes</key>
         <array>
-          <string>com.flowva.bravoo</string>
+          <string>com.flowvahub.bravoo</string>
         </array>
       </dict>
     </array>

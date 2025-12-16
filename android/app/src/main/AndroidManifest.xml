@@ -39,7 +39,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:scheme="com.flowva.bravoo"
+                    android:scheme="com.flowvahub.bravoo"
                     android:host="apple-login-callback" />
             </intent-filter>
 

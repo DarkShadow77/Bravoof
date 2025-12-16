@@ -322,7 +322,7 @@ class SignupRepositoryImpl extends SignupRepository {
       } else {
         await supabase.auth.signInWithOAuth(
           OAuthProvider.apple,
-          redirectTo: 'com.flowva.bravoo://apple-login-callback',
+          redirectTo: 'com.flowvahub.bravoo://apple-login-callback',
           authScreenLaunchMode: LaunchMode.externalApplication,
         );
 
