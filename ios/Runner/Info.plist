@@ -59,21 +59,18 @@
     <true/>
     <key>NSUserNotificationUsageDescription</key>
     <string>We use notifications to keep you updated with important alerts.</string>
-    <key>GIDClientID</key>
-    <string>413861787586-g0lkbu9m7nll0mrvm077fs15o9r0aq4q.apps.googleusercontent.com</string>
-    <key>GIDServerClientID</key>
-    <string>413861787586-i0po64n1vbfbu1d2apcach4d7uibn4s3.apps.googleusercontent.com</string>
     <key>CFBundleURLTypes</key>
     <array>
-    	<dict>
-    		<key>CFBundleTypeRole</key>
-    		<string>Editor</string>
-    		<key>CFBundleURLSchemes</key>
-    		<array>
-                <string>com.flowvahub.bravoo</string>
-    			<string>com.googleusercontent.apps.413861787586-g0lkbu9m7nll0mrvm077fs15o9r0aq4q</string>
-    		</array>
-    	</dict>
+      <dict>
+        <key>CFBundleURLName</key>
+        <string>google</string>
+        <key>CFBundleTypeRole</key>
+        <string>Editor</string>
+        <key>CFBundleURLSchemes</key>
+        <array>
+          <string>com.googleusercontent.apps.413861787586-g0lkbu9m7nll0mrvm077fs15o9r0aq4q</string>
+        </array>
+      </dict>
     </array>
 </dict>
 </plist>
