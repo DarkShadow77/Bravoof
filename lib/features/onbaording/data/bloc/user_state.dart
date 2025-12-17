@@ -1,7 +1,7 @@
 part of 'user_cubit.dart';
 
 @immutable
-sealed class UserState extends Equatable{}
+sealed class UserState extends Equatable {}
 
 final class UserInitial extends UserState {
   @override
@@ -9,23 +9,22 @@ final class UserInitial extends UserState {
   List<Object?> get props => [];
 }
 
-class UserLoading extends UserState{
+class UserLoading extends UserState {
   @override
   // TODO: implement props
   List<Object?> get props => [];
-
 }
-class UploadLoading extends UserState{
+
+class UploadLoading extends UserState {
   @override
   // TODO: implement props
   List<Object?> get props => [];
-
 }
-class Updating extends UserState{
+
+class Updating extends UserState {
   @override
   // TODO: implement props
   List<Object?> get props => [];
-
 }
 
 class UserSuccess extends UserState {
@@ -35,8 +34,18 @@ class UserSuccess extends UserState {
 
   @override
   // TODO: implement props
-  List<Object?> get props =>[appBaseResponse];
+  List<Object?> get props => [appBaseResponse];
 }
+
+class ReferralCodeVerified extends UserState {
+  // final AppBaseResponse appBaseResponse;
+
+  ReferralCodeVerified();
+
+  @override
+  List<Object?> get props => [];
+}
+
 class UserProfileSuccess extends UserState {
   final UserProfile userProfile;
 
@@ -44,8 +53,9 @@ class UserProfileSuccess extends UserState {
 
   @override
   // TODO: implement props
-  List<Object?> get props =>[userProfile];
+  List<Object?> get props => [userProfile];
 }
+
 class UploadSuccess extends UserState {
   final String imageUrl;
 
@@ -53,7 +63,7 @@ class UploadSuccess extends UserState {
 
   @override
   // TODO: implement props
-  List<Object?> get props =>[imageUrl];
+  List<Object?> get props => [imageUrl];
 }
 
 class UserFailure extends UserState {
@@ -63,9 +73,8 @@ class UserFailure extends UserState {
 
   @override
   // TODO: implement props
-  List<Object?> get props =>[error];
+  List<Object?> get props => [error];
 }
-
 
 abstract class UserEvent {}
 

@@ -296,6 +296,9 @@ class _OnbaordSecondStageState extends State<OnbaordSecondStage>
                           : AppButtonState.idle,
                       name: "Looks good,next",
                       apply: () async {
+                        log(
+                          "Sign Up Data ${widget.data}, Referral Code ${widget.data!['referral_code']}",
+                        );
                         if (currentPage == 1 && username.text.isEmpty)
                           return showMessage(
                             "Please Choose a user name to continue",
@@ -315,12 +318,11 @@ class _OnbaordSecondStageState extends State<OnbaordSecondStage>
                             status: true,
                           );
                         if (currentPage == 2) {
-                          log("Sign Up Data ${widget.data}");
-
                           userCubit.signup(
                             userProfile: UserProfile(
                               name: username.text,
                               email: widget.data!['email'],
+                              referralCode: widget.data!['referral_code'],
                               pass: widget.data!['pass'],
                               isLogin: widget.data!['isLogin'],
                               goals: goals,

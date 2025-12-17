@@ -5,7 +5,6 @@ import 'package:flowva/features/onbaording/data/model/user_profile.dart';
 import 'package:flowva/features/onbaording/widget/first_screen.dart';
 import 'package:flowva/features/onbaording/widget/second_screen.dart';
 import 'package:flowva/features/onbaording/widget/third_screen.dart';
-import 'package:flowva/features/onboarding2/onbaord_second_stage.dart';
 import 'package:flowva/features/onboarding2/widget/login_bottom_sheet.dart';
 import 'package:flowva/utility/ui_tool_mix.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +12,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../session/session_manager.dart';
 import '../../common/data/constants.dart';
+import 'referral_code.dart';
 
 class OnboardingScreen extends StatefulWidget {
   // OnboardingScreen({super.key})
@@ -111,36 +111,49 @@ class _OnboardingScreenState extends State<OnboardingScreen> with UIToolMixin {
                     var userProfile = await Constants().getUser();
                     final email = userProfile['email'];
                     // Send them to your onboarding stage
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => OnbaordSecondStage(
-                          data: {
-                            'email': email,
-                            'pass': null,
-                            "isLogin": false,
-                            "loginMethod": "Google",
-                          },
+                    showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: true,
+                      barrierColor: Colors.transparent,
+                      backgroundColor: Colors.transparent,
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.vertical(
+                          top: Radius.circular(30),
                         ),
                       ),
+                      builder: (_) => ReferralCode(
+                        data: {
+                          'email': email,
+                          'pass': null,
+                          "isLogin": false,
+                          "loginMethod": "Google",
+                        },
+                      ),
                     );
+
                     return;
                   } else if (state.appBaseResponse.message ==
                       "NEW_APPLE_USER") {
                     var userProfile = await Constants().getUser();
                     final email = userProfile['email'];
                     // Send them to your onboarding stage
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => OnbaordSecondStage(
-                          data: {
-                            'email': email,
-                            'pass': null,
-                            "isLogin": false,
-                            "loginMethod": "Apple",
-                          },
+                    showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: true,
+                      barrierColor: Colors.transparent,
+                      backgroundColor: Colors.transparent,
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.vertical(
+                          top: Radius.circular(30),
                         ),
+                      ),
+                      builder: (_) => ReferralCode(
+                        data: {
+                          'email': email,
+                          'pass': null,
+                          "isLogin": false,
+                          "loginMethod": "Apple",
+                        },
                       ),
                     );
                     return;
@@ -207,18 +220,24 @@ class _OnboardingScreenState extends State<OnboardingScreen> with UIToolMixin {
                                   );
                                   return;
                                 }
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => OnbaordSecondStage(
-                                      data: {
-                                        'email': _email.text,
-                                        'pass': _pass.text,
-                                        "isLogin": val['isLogin'],
-                                      },
+                                showModalBottomSheet(
+                                  context: context,
+                                  isScrollControlled: true,
+                                  barrierColor: Colors.transparent,
+                                  backgroundColor: Colors.transparent,
+                                  shape: const RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.vertical(
+                                      top: Radius.circular(30),
                                     ),
                                   ),
-                                ).then((v) {});
+                                  builder: (_) => ReferralCode(
+                                    data: {
+                                      'email': _email.text,
+                                      'pass': _pass.text,
+                                      "isLogin": val['isLogin'],
+                                    },
+                                  ),
+                                );
                               },
                               formkey: _formkey,
                               email: _email,

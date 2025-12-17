@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:dartz/dartz.dart';
@@ -53,6 +54,8 @@ class VerifyOtpRepository {
 
         final res = await createProfile(userProfile);
 
+        await applyReferralIfAny(response.user!.id);
+
         if (res == res['statusCode']) return Left(res['message']);
         AppBaseResponse appBaseResponse = AppBaseResponse(status: true);
         return Right(appBaseResponse);
@@ -94,10 +97,12 @@ class VerifyOtpRepository {
 
   Future<dynamic> createProfile(Map<String, dynamic> data) async {
     try {
+      log("UserProfile $data");
       final insert = {
         'name': data['name'],
         'email': data['email'],
         'goals': data['goals'],
+        'referral_code': data['referral_code'],
         'profile_image': data['profile_image'],
         'user_id': data['user_id'],
       };
@@ -125,5 +130,17 @@ class VerifyOtpRepository {
       print(e);
       return e.toString();
     }
+  }
+
+  Future<void> applyReferralIfAny(String userId) async {
+    var userProfile = await Constants().getUser();
+    final referralCode = userProfile['referral_code'];
+
+    if (referralCode == null) return;
+
+    await supabase.rpc(
+      'apply_referral',
+      params: {'new_user_id': userId, 'referral_code_input': referralCode},
+    );
   }
 }

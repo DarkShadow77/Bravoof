@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:bloc/bloc.dart';
@@ -23,6 +24,16 @@ class UserCubit extends Cubit<UserState> {
       print("SignUp failure $failure");
       emit(UserFailure(failure.toString()));
     }, (user) => emit(UserSuccess(user)));
+  }
+
+  void verifyReferralCode({required String code}) async {
+    emit(UserLoading());
+
+    final either = await _signupRepository.verifyReferralCode(code: code);
+    log("Verify ReferralCode: $either");
+    either.fold((failure) {
+      emit(UserFailure(failure.toString()));
+    }, (user) => emit(ReferralCodeVerified()));
   }
 
   void signIn({UserProfile? userProfile}) async {

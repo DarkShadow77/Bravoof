@@ -23,6 +23,8 @@ class SignupRepositoryImpl extends SignupRepository {
   }) async {
     try {
       var encode = userProfile!.toJson();
+
+      log("Set User Data $encode");
       final res = await supabase
           .from('user_profile')
           .select()
@@ -37,6 +39,25 @@ class SignupRepositoryImpl extends SignupRepository {
       return Right(appBaseResponse);
     } on AuthException catch (e) {
       return Left(e.message);
+    }
+  }
+
+  Future<Either<String, Map<String, dynamic>>> verifyReferralCode({
+    required String code,
+  }) async {
+    try {
+      final res = await supabase.rpc(
+        'verify_referral_code',
+        params: {'code': code},
+      );
+
+      if (res == null || (res as List).isEmpty) {
+        return Left("Invalid referral code");
+      }
+
+      return Right(res.first);
+    } catch (e) {
+      return Left(e.toString());
     }
   }
 

@@ -6,7 +6,7 @@ class UserProfile {
   String? pass;
   String? fullName;
   String? email;
-   bool? isLogin;
+  bool? isLogin;
   String? referralCode;
   String? referrerEmail;
   String? referrerName;
@@ -124,15 +124,15 @@ class UserProfile {
     if (name != null && name!.isNotEmpty) {
       data["name"] = name;
     }
-    if(isLogin!=null){
+    if (isLogin != null) {
       data["isLogin"] = isLogin;
     }
 
     if (bio != null && bio!.isNotEmpty) {
       data["bio"] = bio;
     }
-    if (pass!= null) {
-      data['pass'] =pass ;
+    if (pass != null) {
+      data['pass'] = pass;
     }
     if (fullName != null && fullName!.isNotEmpty) {
       data["full_name"] = fullName;
@@ -145,6 +145,9 @@ class UserProfile {
     }
     if (referralCount != null) {
       data["referral_count"] = referralCount;
+    }
+    if (referralCode != null) {
+      data["referral_code"] = referralCode;
     }
     if (profilePic != null) {
       data["profile_image"] = profilePic;
