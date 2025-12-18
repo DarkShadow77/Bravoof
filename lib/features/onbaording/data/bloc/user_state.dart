@@ -1,65 +1,77 @@
 part of 'user_cubit.dart';
 
-@immutable
-sealed class UserState extends Equatable {}
+class UserState extends Equatable {
+  final UserProfile userProfile;
+  const UserState({required this.userProfile});
+
+  UserState copyWith({UserProfile? userProfile}) {
+    return UserState(userProfile: userProfile ?? this.userProfile);
+  }
+
+  @override
+  List<Object?> get props => [userProfile];
+}
 
 final class UserInitial extends UserState {
+  UserInitial({required super.userProfile});
+
   @override
   // TODO: implement props
   List<Object?> get props => [];
 }
 
 class UserLoading extends UserState {
+  UserLoading({required super.userProfile});
+
   @override
   // TODO: implement props
   List<Object?> get props => [];
 }
 
 class UploadLoading extends UserState {
+  UploadLoading({required super.userProfile});
+
   @override
   // TODO: implement props
   List<Object?> get props => [];
 }
 
 class Updating extends UserState {
+  Updating({required super.userProfile});
+
   @override
-  // TODO: implement props
   List<Object?> get props => [];
 }
 
 class UserSuccess extends UserState {
   final AppBaseResponse appBaseResponse;
 
-  UserSuccess(this.appBaseResponse);
+  UserSuccess(this.appBaseResponse, {required super.userProfile});
 
   @override
-  // TODO: implement props
   List<Object?> get props => [appBaseResponse];
 }
 
 class ReferralCodeVerified extends UserState {
   // final AppBaseResponse appBaseResponse;
 
-  ReferralCodeVerified();
+  ReferralCodeVerified({required super.userProfile});
 
   @override
   List<Object?> get props => [];
 }
 
 class UserProfileSuccess extends UserState {
-  final UserProfile userProfile;
-
-  UserProfileSuccess(this.userProfile);
+  UserProfileSuccess({required super.userProfile});
 
   @override
-  // TODO: implement props
-  List<Object?> get props => [userProfile];
+  List<Object?> get props => [];
 }
 
 class UploadSuccess extends UserState {
   final String imageUrl;
 
-  UploadSuccess(this.imageUrl);
+  UploadSuccess(this.imageUrl, {required super.userProfile});
 
   @override
   // TODO: implement props
@@ -69,7 +81,7 @@ class UploadSuccess extends UserState {
 class UserFailure extends UserState {
   final String error;
 
-  UserFailure(this.error);
+  UserFailure(this.error, {required super.userProfile});
 
   @override
   // TODO: implement props

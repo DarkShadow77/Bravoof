@@ -13,9 +13,9 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/constants/app_colors.dart';
 
 class ReferralPage extends StatelessWidget {
-  UserProfile? userProfile;
   ReferralPage({super.key, required this.userProfile});
 
+  final UserProfile? userProfile;
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -94,7 +94,7 @@ class ReferralPage extends StatelessWidget {
             borderRadius: BorderRadius.circular(18),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.05),
+                color: Colors.black.withValues(alpha: 0.05),
                 blurRadius: 16,
                 offset: const Offset(0, 8),
               ),
@@ -130,7 +130,7 @@ class ReferralPage extends StatelessWidget {
                     ),
                     SizedBox(width: 8.w),
                     SvgPicture.asset(
-                      AssetsSvgImages.copy,
+                      AssetsSvgIcons.copy,
                       height: 12.r,
                       width: 12.r,
                       fit: BoxFit.contain,
@@ -150,7 +150,7 @@ class ReferralPage extends StatelessWidget {
                     borderRadius: BorderRadius.circular(28),
                     boxShadow: [
                       BoxShadow(
-                        color: kPurple.withOpacity(0.12),
+                        color: kPurple.withValues(alpha: 0.12),
                         blurRadius: 12,
                         offset: const Offset(0, 4),
                       ),
@@ -182,7 +182,7 @@ class ReferralPage extends StatelessWidget {
                     borderRadius: BorderRadius.circular(18),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
+                        color: Colors.black.withValues(alpha: 0.05),
                         blurRadius: 16,
                         offset: const Offset(0, 8),
                       ),
@@ -230,14 +230,6 @@ class ReferralPage extends StatelessWidget {
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
-                                    // Text(
-                                    //   "${userProfile!.referralCount}",
-                                    //   style: GoogleFonts.manrope(
-                                    //     fontSize: 14,
-                                    //     fontWeight: FontWeight.w700,
-                                    //     color: kPurple,
-                                    //   ),
-                                    // ),
                                     RichText(
                                       text: TextSpan(
                                         children: [
@@ -251,7 +243,7 @@ class ReferralPage extends StatelessWidget {
                                             ),
                                           ),
                                           TextSpan(
-                                            text: "/1000",
+                                            text: "/10",
                                             style: GoogleFonts.manrope(
                                               fontSize: 12,
                                               color: Colors.grey,
@@ -282,11 +274,10 @@ class ReferralPage extends StatelessWidget {
                               ],
                             ),
                           ),
-
                           // right fraction
                         ],
                       ),
-                      SizedBox(height: 25),
+                      SizedBox(height: 15),
                       // you referred row
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -336,7 +327,7 @@ class ReferralPage extends StatelessWidget {
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.04),
+                color: Colors.black.withValues(alpha: 0.04),
                 blurRadius: 10,
                 offset: const Offset(0, 6),
               ),
@@ -385,7 +376,7 @@ class ReferralPage extends StatelessWidget {
 // borderRadius: BorderRadius.circular(12),
 // boxShadow: [
 // BoxShadow(
-// color: Colors.black.withOpacity(0.04),
+// color: Colors.black.withValues( alpha:0.04),
 // blurRadius: 10,
 // offset: const Offset(0, 6),
 // )

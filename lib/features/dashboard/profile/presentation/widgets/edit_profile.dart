@@ -46,8 +46,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
         pickedImage = pickedFile.path;
       });
 
-      userCubit.uploadProfileImage(
-          File(await assetToFile(pickedFile.path)));
+      userCubit.uploadProfileImage(File(await assetToFile(pickedFile.path)));
     } catch (e) {
       print(e);
       setState(() {
@@ -58,7 +57,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
 
   @override
   void initState() {
-
     userCubit = UserCubit();
 
     super.initState();
@@ -73,7 +71,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () => Navigator.pop(context,true),
+          onPressed: () => Navigator.pop(context, true),
         ),
         title: Text(
           "Edit Profile",
@@ -252,7 +250,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
                         setState(() {
                           selectedAvatar = val['selectedAvatar'] + 1;
                         });
-                        userCubit.uploadProfileImage(File(await assetToFile(val['avatarString']))
+                        userCubit.uploadProfileImage(
+                          File(await assetToFile(val['avatarString'])),
                         );
                       },
                       selectedAvatar: selectedAvatar,
@@ -280,7 +279,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
               ),
             ),
 
-
             buildDetailTile(
               context,
               apply: () => showModalBottomSheet(
@@ -291,28 +289,32 @@ class _EditProfilePageState extends State<EditProfilePage> {
                 // important for blur
                 builder: (_) => EditNameWidget(
                   apply: (val) async {
-                    userCubit.updateProfile(UserProfile(name: val['name'],bio: val['bio']));
+                    userCubit.updateProfile(
+                      UserProfile(name: val['name'], bio: val['bio']),
+                    );
                   },
 
                   isSending: isSending,
                 ),
               ),
               "Name",
-              widget.userProfile!=null? widget.userProfile!.name! : 'N/A',
+              widget.userProfile != null ? widget.userProfile!.name! : 'N/A',
               true,
             ),
             buildDetailTile(
               context,
-              apply: (){},
+              apply: () {},
               "Bio",
-              widget.userProfile!=null?widget.userProfile!.bio??'Say something about yourself..': "Say something about yourself..",
+              widget.userProfile != null
+                  ? widget.userProfile!.bio ?? 'Say something about yourself..'
+                  : "Say something about yourself..",
               false,
             ),
             buildDetailTile(
               context,
               apply: () {},
               "Email Address",
-              widget.userProfile!=null? widget.userProfile!.email!: 'N/A',
+              widget.userProfile != null ? widget.userProfile!.email! : 'N/A',
               false,
             ),
           ],

@@ -1,18 +1,38 @@
+import 'dart:developer';
+import 'dart:io';
 import 'dart:ui';
 
+import 'package:flowva/app/view/widgets/button/icon_text_button.dart';
 import 'package:flowva/features/common/flowva_button.dart';
-import 'package:flowva/features/dashboard/earn/presentation/widgets/delivery_address.dart';
-import 'package:flowva/features/dashboard/earn/presentation/widgets/pedestal_with_product.dart';
-import 'package:flowva/features/dashboard/earn/presentation/widgets/social_media_cards.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:inner_shadow_container/inner_shadow_container.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:timer_count_down/timer_controller.dart';
+import 'package:timer_count_down/timer_count_down.dart';
+import 'package:url_launcher/url_launcher.dart';
 
+import '../../../../../app/styles/text_styles.dart';
+import '../../../../../app/view/widgets/cached_image_widget.dart';
+import '../../../../../core/constants/app_assets.dart';
+import '../../../../../core/constants/app_colors.dart';
+import '../../../../../core/constants/fonts.dart';
+import '../../../../common/routes.dart';
+import '../../../../onbaording/data/bloc/user_cubit.dart';
+import '../../../../onbaording/data/model/user_profile.dart';
+import '../../../home/data/bloc/campaign_cubit.dart';
+import '../widgets/price_details_dialog.dart';
 import 'invite_earn.dart';
 
 class ReferralContestScreen extends StatefulWidget {
-  const ReferralContestScreen({super.key});
+  const ReferralContestScreen({super.key, required this.campaignEndDate});
+
+  final DateTime campaignEndDate;
 
   @override
   State<ReferralContestScreen> createState() => _ReferralContestScreenState();
@@ -23,601 +43,908 @@ class _ReferralContestScreenState extends State<ReferralContestScreen> {
 
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      showDialog(
-        context: context,
-        barrierColor: Colors.black.withOpacity(0.3),
-        builder: (_) => WinnerDailog(),
-      );
-    });
     super.initState();
+
+    log("Date Time ${widget.campaignEndDate}");
+    BlocProvider.of<CampaignCubit>(context).getTotalCampaignParticipants();
+    BlocProvider.of<CampaignCubit>(context).getUserReferralsForCampaign();
+    BlocProvider.of<CampaignCubit>(context).isUserInCampaign();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF2C0066), // deep purple background
-      body: ListView(
-        padding: EdgeInsets.only(bottom: 10),
-        children: [
-          Stack(
-            children: [
-              Positioned.fill(
-                child: Image.asset(
-                  "assets/images/enter_win_bg.png",
-                  fit: BoxFit.cover,
-                ),
-              ),
-
-              Column(
-                // padding: EdgeInsets.only(bottom: 10),
+      backgroundColor: AppColors.purple,
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        leading: Icon(
+          Icons.arrow_back_rounded,
+          size: 16.sp,
+          color: AppColors.white,
+        ),
+      ),
+      body: SingleChildScrollView(
+        physics: BouncingScrollPhysics(),
+        child: Stack(
+          children: [
+            Image.asset(
+              AssetsPngImages.homeBg,
+              fit: BoxFit.cover,
+              height: 440.h + MediaQuery.of(context).padding.top,
+              width: double.infinity,
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  SizedBox(height: 60),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        GestureDetector(
-                          onTap: () => Navigator.pop(context),
-                          child: const Padding(
-                            padding: EdgeInsets.only(top: 4),
-                            // fine-tune so it matches first line
-                            child: Icon(
-                              Icons.arrow_back,
-                              color: Colors.white,
-                              size: 22,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: Text(
-                            "Enter to win the Oraimo \nOpenSnap!",
-                            style: GoogleFonts.baloo2(
-                              color: Colors.white,
-                              fontSize: 24,
-                              fontWeight: FontWeight.w700,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 10),
-                  // Centered Product Image
-                  Container(
-                    decoration: BoxDecoration(
-                      // boxShadow: [
-                      //   BoxShadow(
-                      //     color: Colors.black.withOpacity(0.45),
-                      //     blurRadius: 18,
-                      //     spreadRadius: 2,
-                      //     offset: const Offset(0, 80),
-                      //   ),
-                      // ],
-                    ),
-                    child: Image.asset(
-                      "assets/images/tt.png",
-                      height: 130,
-                      // fit: BoxFit.c,
-                    ),
-                  ),
-
-                  // Center(
-                  //   child: PedestalWithProduct(
-                  //       position: 1,
-                  //       height: 140,
-                  //       color: Color(0xFF7B24E8),
-                  //
-                  //   )
-                  // ),
-                  Container(
-                    // color: Colors.red,
-                    height: 265,
-                    alignment: Alignment.topCenter,
-                    child: Stack(
-                      alignment: Alignment.topCenter,
-                      children: [
-                        // Timer container (3D effect card)
-                        Positioned(
-                          top: -5,
-                          left: 0,
-                          right: 0,
-                          bottom: 135,
-                          child: Container(
-                            child: Image.asset("assets/images/pedestal.png"),
-                          ),
-                        ),
-                        Positioned(
-                          top: 0,
-                          left: 0,
-                          right: 0,
-                          bottom: 0,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                begin: Alignment.topCenter,
-                                end: Alignment.topCenter,
-                                colors: [
-                                  Color(0xFF1E0540).withOpacity(0.05),
-                                  Color(0xFF1E0540),
-                                ],
-                              ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: const Color(
-                                    0xFF1E0540,
-                                  ).withOpacity(0.06),
-                                  blurRadius: 2,
-                                  spreadRadius: 1,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          bottom: 0,
-                          left: 0,
-                          right: 0,
-                          child: Container(
-                            margin: const EdgeInsets.symmetric(horizontal: 24),
-                            padding: const EdgeInsets.symmetric(
-                              vertical: 20,
-                              horizontal: 10,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Color(0xFF2C0066),
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(20),
-                                topRight: Radius.circular(20),
-                              ),
-                              // gradient: const LinearGradient(
-                              //   begin: Alignment.topCenter,
-                              //   end: Alignment.bottomCenter,
-                              //   colors: [Color(0xFF2C0066), Color(0xFF3B0F77)],
-                              // ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Color(0xFFAAA7A7).withOpacity(0.09),
-                                  offset: const Offset(0, 0),
-                                  blurRadius: 2,
-                                  spreadRadius: 1,
-                                ),
-                              ],
-                            ),
-                            child: Column(
-                              children: [
-                                Text(
-                                  "DRAW ENDS IN",
-                                  style: GoogleFonts.manrope(
-                                    color: Colors.white.withOpacity(0.42),
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
-                                const SizedBox(height: 16),
-
-                                // Countdown timer boxes
-                                Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    _timeBox("03", "DAYS"),
-                                    Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: SvgPicture.asset(
-                                        'assets/images/_.svg',
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                    _timeBox("24", "HRS"),
-                                    Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: SvgPicture.asset(
-                                        'assets/images/_.svg',
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                    _timeBox("00", "MIN"),
-                                    Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: SvgPicture.asset(
-                                        'assets/images/_.svg',
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                    _timeBox("00", "SEC"),
-                                  ],
-                                ),
-
-                                const SizedBox(height: 16),
-
-                                // Stats text
-                                Container(
-                                  width: double.infinity,
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 6,
-                                    horizontal: 16,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white.withOpacity(0.1),
-                                    borderRadius: BorderRadius.circular(30),
-                                  ),
-                                  child: ShaderMask(
-                                    shaderCallback: (bounds) =>
-                                        LinearGradient(
-                                          colors: [
-                                            Colors.white,
-                                            Color(0xFF999999),
-                                          ],
-                                        ).createShader(
-                                          Rect.fromLTWH(
-                                            0,
-                                            0,
-                                            bounds.width,
-                                            bounds.height,
-                                          ),
-                                        ),
-                                    blendMode: BlendMode.srcIn,
-                                    child: Center(
-                                      child: Text(
-                                        "4,327 USERS HAVE ENTERED SO FAR",
-                                        style: GoogleFonts.baloo2(
-                                          color: Colors.white,
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-
-                  // Qualification Section
-                  Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 24),
-                    padding: const EdgeInsets.only(
-                      top: 16,
-                      left: 16,
-                      right: 16,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.1),
-                      borderRadius: BorderRadius.only(
-                        bottomLeft: Radius.circular(16),
-                        bottomRight: Radius.circular(16),
+                  SizedBox(height: 12.h + MediaQuery.of(context).padding.top),
+                  RichText(
+                    textAlign: TextAlign.center,
+                    text: TextSpan(
+                      text: "Enter to win the Oraimo\nOpenSnap!",
+                      style: TextStyles.bigTitleRegular24(context).copyWith(
+                        fontFamily: AppFonts.baloo,
+                        color: AppColors.white,
                       ),
-                      border: Border.all(color: Colors.white.withOpacity(0.1)),
-                      boxShadow: [
-                        //#2C0066
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.12),
-                          offset: const Offset(0, 4),
-                          blurRadius: 15,
-                        ),
-                      ],
                     ),
-                    child: Column(
+                  ),
+                  Flexible(
+                    child: Stack(
                       children: [
-                        Image.asset(
-                          "assets/images/mic2.png",
-                          fit: BoxFit.cover,
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          "QUALIFICATION RULE",
-                          style: GoogleFonts.baloo2(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
+                        Positioned(
+                          left: 0,
+                          right: 0,
+                          top: 115.h,
+                          child: Image.asset(
+                            AssetsPngImages.podium,
+                            width: 104.w,
+                            height: 148.h,
+                            fit: BoxFit.contain,
                           ),
                         ),
-                        const SizedBox(height: 8),
-                        Text(
-                          "Invite at least 2 friends who sign up through your link to qualify.",
-                          textAlign: TextAlign.center,
-                          style: GoogleFonts.manrope(
-                            color: Colors.white.withOpacity(0.7),
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-
-                        // Invite button
-                        Container(
-                          padding: EdgeInsets.only(
-                            bottom: 10,
-                            right: 16,
-                            left: 16,
-                          ),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.only(
-                              topRight: Radius.circular(16),
-                              topLeft: Radius.circular(16),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Image.asset(
+                              AssetsPngImages.product,
+                              width: 152.w,
+                              height: 130.h,
+                              fit: BoxFit.contain,
                             ),
-                            color: Colors.white.withOpacity(0.2),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Color(0xFFAAA7A7).withOpacity(0.1),
-                                offset: const Offset(0, 4),
-                                blurRadius: 15,
-                              ),
-                            ],
+                          ],
+                        ),
+                        Container(
+                          clipBehavior: Clip.antiAlias,
+                          margin: EdgeInsets.only(top: 194.h),
+                          decoration: BoxDecoration(
+                            color: AppColors.white.withValues(alpha: .08),
+                            borderRadius: BorderRadius.circular(16.r),
+                            border: Border.all(
+                              width: 1.w,
+                              color: AppColors.white.withValues(alpha: .01),
+                            ),
                           ),
                           child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              // onClick
-                              //     ?
-                              FlowvaButton.whiteButton(
-                                color: Color(0xFF111111),
-                                // buttonColor: Color(0xFF008753),
-                                icon: Icon(
-                                  Icons.person_add_alt_1,
-                                  color: Color(0xFF111111),
-                                ),
-                                name: "Invite Friends Now",
-                                apply: () {
-                                  setState(() {
-                                    onClick = true;
-                                  });
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (ctx) => InviteAndEarnPage(),
-                                    ),
-                                  );
-                                },
+                              TimerWidget(
+                                campaignEndDate: widget.campaignEndDate,
                               ),
-
-                              // :
-                              // FlowvaButton.greenButton(
-                              //         color: Colors.white,
-                              //         // buttonColor: Color(0xFF008753),
-                              //         icon: Icon(
-                              //           Icons.check_circle,
-                              //           color: Colors.white,
-                              //         ),
-                              //         name: "Invite Friends Now",
-                              //         apply: () {
-                              //           setState(() {
-                              //             onClick = false;
-                              //           });
-                              // Navigator.push(
-                              //   context,
-                              //   MaterialPageRoute(
-                              //     builder: (ctx) =>
-                              //         DeliveryAddressScreen(),
-                              //   ),
-                              // );
-                              // },
-                              // ),
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                  vertical: 5,
-                                  horizontal: 8,
-                                ),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(100),
-                                  color: Colors.white.withOpacity(0.1),
-                                ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Container(
-                                      height: 30,
-                                      width: 30,
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: Colors.white.withOpacity(0.2),
-                                      ),
-                                      clipBehavior: Clip.hardEdge,
-                                      child: Image.asset("assets/avatar/2.png"),
-                                    ),
-
-                                    const SizedBox(width: 12),
-                                    HugeIcon(
-                                      icon: HugeIcons.strokeRoundedUser03,
-                                      color: Colors.white.withOpacity(0.2),
-                                      strokeWidth: 0.5,
-                                    ),
-                                  ],
-                                ),
+                              SizedBox(height: 24.h),
+                              Image.asset(
+                                AssetsPngImages.speaker,
+                                width: 36.5.w,
+                                height: 40.h,
+                                fit: BoxFit.contain,
                               ),
-
-                              const SizedBox(height: 10),
-                              Text(
-                                "Once your second friend joins, you're automatically entered.",
+                              SizedBox(height: 14.h),
+                              RichText(
                                 textAlign: TextAlign.center,
-                                style: GoogleFonts.manrope(
-                                  color: Colors.white70,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-
-                              const SizedBox(height: 20),
-                              Divider(color: Colors.white.withOpacity(0.1)),
-
-                              const SizedBox(height: 16),
-
-                              // Referral link
-                              Text(
-                                "Invite your friends quick & easy.",
-                                style: GoogleFonts.manrope(
-                                  color: Colors.white70,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 10,
-                                  horizontal: 16,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.08),
-                                  borderRadius: BorderRadius.circular(30),
-                                ),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(
-                                      "https://flowva.ref.12419",
-                                      style: GoogleFonts.manrope(
-                                        color: Colors.white,
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w600,
+                                text: TextSpan(
+                                  text: "QUALIFICATION RULE",
+                                  style: TextStyles.bodyRegular16(context)
+                                      .copyWith(
+                                        fontFamily: AppFonts.baloo,
+                                        color: AppColors.white,
                                       ),
-                                    ),
-                                    const SizedBox(width: 8),
-                                    const Icon(
-                                      Icons.copy,
-                                      color: Colors.white,
-                                      size: 16,
-                                    ),
-                                  ],
                                 ),
                               ),
-
-                              const SizedBox(height: 20),
-
-                              // Social share buttons
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  SocialMediaCards(
-                                    color: Colors.white.withOpacity(0.24),
-                                    textColor: Colors.white70,
-                                    icon: Image.asset(
-                                      "assets/images/whatsapp.png",
-                                    ),
-                                    label: "Whatsapp",
-                                  ),
-                                  const SizedBox(width: 16),
-                                  SocialMediaCards(
-                                    color: Colors.white.withOpacity(0.24),
-                                    textColor: Colors.white70,
-                                    icon: Image.asset("assets/images/x.png"),
-                                    label: "X (Twitter)",
-                                  ),
-                                  const SizedBox(width: 16),
-                                  SocialMediaCards(
-                                    color: Colors.white.withOpacity(0.24),
-                                    textColor: Colors.white70,
-                                    icon: Image.asset(
-                                      "assets/images/linkedin.png",
-                                    ),
-                                    label: "LinkedIn",
-                                  ),
-                                ],
-                              ),
-
-                              const SizedBox(height: 20),
-
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Row(
-                                    children: [
-                                      Text(
-                                        "You referred ",
-                                        style: GoogleFonts.manrope(
-                                          color: Colors.white,
-                                          fontSize: 12,
+                              SizedBox(height: 4.h),
+                              RichText(
+                                textAlign: TextAlign.center,
+                                text: TextSpan(
+                                  text:
+                                      "Invite at least 2 friends who sign up\nthrough your link to qualify.",
+                                  style: TextStyles.smallSemibold12(context)
+                                      .copyWith(
+                                        color: AppColors.white.withValues(
+                                          alpha: .7,
                                         ),
                                       ),
-                                      Icon(
-                                        Icons.info_outline,
-                                        color: Colors.white,
-                                        size: 18,
-                                      ),
-                                    ],
-                                  ),
-                                  Row(
-                                    children: [
-                                      Icon(
-                                        Icons.person_2_rounded,
-                                        color: Colors.white,
-                                      ),
-                                      Text(
-                                        '1',
-                                        style: GoogleFonts.manrope(
-                                          color: Colors.white,
-                                          fontSize: 12,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
+                                ),
                               ),
+                              ReferralContainer(),
                             ],
                           ),
                         ),
                       ],
                     ),
                   ),
-
-                  const SizedBox(height: 40),
+                  SizedBox(
+                    height: 20.h + MediaQuery.of(context).padding.bottom,
+                  ),
                 ],
               ),
-            ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class TimerWidget extends StatefulWidget {
+  const TimerWidget({super.key, required this.campaignEndDate});
+
+  final DateTime campaignEndDate;
+
+  @override
+  State<TimerWidget> createState() => _TimerWidgetState();
+}
+
+class _TimerWidgetState extends State<TimerWidget> {
+  final CountdownController _timerController = CountdownController(
+    autoStart: true,
+  );
+  int differenceInSeconds = 0;
+
+  @override
+  void initState() {
+    super.initState();
+
+    final now = DateTime.now().toUtc();
+    differenceInSeconds = widget.campaignEndDate
+        .difference(now)
+        .inSeconds
+        .clamp(0, double.infinity)
+        .toInt();
+  }
+
+  List<String> formattedTime2(double time) {
+    final int days = (time / 86400).floor(); // 1 day = 86400 seconds
+    final int hours = ((time % 86400) / 3600).floor();
+    final int minutes = ((time % 3600) / 60).floor();
+    final int seconds = (time % 60).floor();
+
+    return [
+      days.toString().padLeft(2, "0"),
+      hours.toString().padLeft(2, "0"),
+      minutes.toString().padLeft(2, "0"),
+      seconds.toString().padLeft(2, "0"),
+    ];
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 156.h,
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: AppColors.purple,
+        border: Border.all(
+          width: 1.w,
+          color: AppColors.white.withValues(alpha: .04),
+        ),
+        boxShadow: [
+          BoxShadow(
+            offset: Offset(0, 1),
+            blurRadius: 3.r,
+            color: Color(0xffAAA7A7).withValues(alpha: .1),
+          ),
+          BoxShadow(
+            offset: Offset(0, 5),
+            blurRadius: 5.r,
+            color: Color(0xffAAA7A7).withValues(alpha: .09),
+          ),
+          BoxShadow(
+            offset: Offset(0, 12),
+            blurRadius: 7.r,
+            color: Color(0xffAAA7A7).withValues(alpha: .05),
+          ),
+          BoxShadow(
+            offset: Offset(0, 21),
+            blurRadius: 8.r,
+            color: Color(0xffAAA7A7).withValues(alpha: .01),
+          ),
+        ],
+      ),
+      child: Stack(
+        children: [
+          Image.asset(
+            AssetsPngImages.productTimerBg,
+            width: double.infinity,
+            height: double.infinity,
+            fit: BoxFit.cover,
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+            child: Column(
+              spacing: 10.h,
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                RichText(
+                  textAlign: TextAlign.center,
+                  text: TextSpan(
+                    text: "DRAW ENDS IN",
+                    style: TextStyles.smallBold12(
+                      context,
+                    ).copyWith(color: AppColors.white.withValues(alpha: .32)),
+                  ),
+                ),
+                Countdown(
+                  controller: _timerController,
+                  seconds: differenceInSeconds,
+                  build: (BuildContext context, double time) {
+                    List<String> timeList = formattedTime2(time);
+                    return Row(
+                      spacing: 4.w,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          child: CountdownBox(
+                            count: timeList[0],
+                            subTitle: "Days",
+                          ),
+                        ),
+                        RichText(
+                          textAlign: TextAlign.center,
+                          text: TextSpan(
+                            text: ":",
+                            style: TextStyles.bodyBold16(
+                              context,
+                            ).copyWith(color: AppColors.white),
+                          ),
+                        ),
+                        Expanded(
+                          child: CountdownBox(
+                            count: timeList[1],
+                            subTitle: "Hours",
+                          ),
+                        ),
+                        RichText(
+                          textAlign: TextAlign.center,
+                          text: TextSpan(
+                            text: ":",
+                            style: TextStyles.bodyBold16(
+                              context,
+                            ).copyWith(color: AppColors.white),
+                          ),
+                        ),
+                        Expanded(
+                          child: CountdownBox(
+                            count: timeList[2],
+                            subTitle: "Mins",
+                          ),
+                        ),
+                        RichText(
+                          textAlign: TextAlign.center,
+                          text: TextSpan(
+                            text: ":",
+                            style: TextStyles.bodyBold16(
+                              context,
+                            ).copyWith(color: AppColors.white),
+                          ),
+                        ),
+                        Expanded(
+                          child: CountdownBox(
+                            count: timeList[3],
+                            subTitle: "Secs",
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                  onFinished: () {
+                    setState(() {
+                      _timerController.restart();
+                    });
+                  },
+                ),
+                Expanded(
+                  child: InnerShadowContainer(
+                    offset: Offset(0, 4),
+                    blur: 6.r,
+                    borderRadius: 100.r,
+                    backgroundColor: AppColors.white.withValues(alpha: .16),
+                    shadowColor: AppColors.black.withValues(alpha: .04),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(100.r),
+                      ),
+                      child: Center(
+                        child: BlocBuilder<CampaignCubit, CampaignState>(
+                          builder: (context, state) {
+                            return RichText(
+                              text: TextSpan(
+                                text:
+                                    "${state.totalParticipants} users have entered so far",
+                                style: TextStyles.smallRegular12(context)
+                                    .copyWith(
+                                      fontFamily: AppFonts.baloo,
+                                      color: AppColors.white,
+                                    ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),
     );
   }
+}
 
-  // Countdown box widget
-  Widget _timeBox(String value, String label) {
+class CountdownBox extends StatelessWidget {
+  const CountdownBox({super.key, required this.count, required this.subTitle});
+
+  final String count;
+  final String subTitle;
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
-      width: 67,
-      height: 67,
-      padding: EdgeInsets.only(bottom: 5, top: 5),
+      height: 67.h,
+      width: 67.w,
+      padding: EdgeInsets.symmetric(vertical: 8.h),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        color: Colors.white.withOpacity(0.1),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.12),
-            offset: const Offset(0, 4),
-            blurRadius: 15,
+        color: AppColors.white10,
+        borderRadius: BorderRadius.circular(6.r),
+        border: Border.all(
+          width: 1.w,
+          color: AppColors.white.withValues(alpha: .04),
+        ),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          RichText(
+            textAlign: TextAlign.center,
+            text: TextSpan(
+              text: "$count\n",
+              children: [
+                TextSpan(
+                  text: subTitle,
+                  style: TextStyles.smallSemibold12(
+                    context,
+                  ).copyWith(color: AppColors.white.withValues(alpha: .48)),
+                ),
+              ],
+              style: TextStyles.h2Bold32(context).copyWith(
+                height: 1.h,
+                fontFamily: AppFonts.baloo2,
+                color: AppColors.white,
+              ),
+            ),
           ),
         ],
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
+    );
+  }
+}
 
-        mainAxisAlignment: MainAxisAlignment.center,
-        // crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Text(
-            value,
-            style: GoogleFonts.baloo2(
-              color: Colors.white,
-              fontSize: 36,
-              fontWeight: FontWeight.w700,
-              height: 1.0,
+class ReferralContainer extends StatefulWidget {
+  const ReferralContainer({super.key});
+
+  @override
+  State<ReferralContainer> createState() => _ReferralContainerState();
+}
+
+class _ReferralContainerState extends State<ReferralContainer> {
+  List<UserProfile> referredUsers = [];
+
+  UserProfile userProfile = UserProfile();
+  late UserCubit userCubit;
+
+  @override
+  void initState() {
+    super.initState();
+
+    userCubit = UserCubit();
+    userCubit.fetchUserProfile();
+  }
+
+  String referralMessage(String code) {
+    return Uri.encodeComponent(
+      'Join me on Bravoo 🚀\n'
+      'Use my referral link:\n'
+      'https://app.flowvahub.com?ref=$code',
+    );
+  }
+
+  Future<void> shareToWhatsApp(String code) async {
+    final text = referralMessage(code);
+
+    final whatsappUrl = Platform.isIOS
+        ? 'whatsapp://send?text=$text'
+        : 'https://wa.me/?text=$text';
+
+    final uri = Uri.parse(whatsappUrl);
+
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } else {
+      SharePlus.instance.share(ShareParams(text: text));
+    }
+  }
+
+  Future<void> shareToX(String code) async {
+    final text = referralMessage(code);
+
+    final xUrl = Platform.isIOS
+        ? 'twitter://post?message=$text'
+        : 'https://twitter.com/intent/tweet?text=$text';
+
+    final uri = Uri.parse(xUrl);
+
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } else {
+      SharePlus.instance.share(ShareParams(text: text));
+    }
+  }
+
+  Future<void> shareToLinkedIn(String code) async {
+    final link = Uri.encodeComponent('https://app.flowvahub.com?ref=$code');
+
+    final linkedInUrl =
+        'https://www.linkedin.com/sharing/share-offsite/?url=$link';
+
+    await launchUrl(
+      Uri.parse(linkedInUrl),
+      mode: LaunchMode.externalApplication,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final displayCount = referredUsers.length > 5 ? 5 : referredUsers.length;
+    return BlocBuilder<CampaignCubit, CampaignState>(
+      builder: (context, state) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          setState(() => referredUsers = state.referrals);
+        });
+
+        return MultiBlocProvider(
+          providers: [
+            BlocProvider.value(value: FlowvaRoute.userCubit),
+            BlocListener<UserCubit, UserState>(
+              bloc: userCubit,
+              listener: (context, state) {
+                setState(() {
+                  userProfile = state.userProfile;
+                });
+              },
+            ),
+          ],
+          child: Container(
+            width: double.infinity,
+            margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 20.h),
+            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+            decoration: BoxDecoration(
+              color: AppColors.white.withValues(alpha: .2),
+              borderRadius: BorderRadius.circular(16.r),
+              border: Border.all(
+                width: 1.5.w,
+                color: AppColors.black.withValues(alpha: .04),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  offset: Offset(0, 2),
+                  blurRadius: 4.r,
+                  color: Color(0xffAAA7A7).withValues(alpha: .1),
+                ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                if (state.isUserInCampaign)
+                  IconTextButton(
+                    onPressed: () {},
+                    text: "You've Entered",
+                    icon: AssetsSvgIcons.checkmark,
+                    color: AppColors.green500,
+                    textColor: AppColors.white,
+                  )
+                else ...[
+                  IconTextButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (ctx) => InviteAndEarnPage(),
+                        ),
+                      );
+                    },
+                    text: "Invite Friends Now",
+                    icon: AssetsSvgIcons.userAdd,
+                  ),
+                  IconTextButton(
+                    onPressed: () => priceDetailsDialog(),
+
+                    text: "See Prize Details",
+                    color: AppColors.white.withValues(alpha: .16),
+                    textColor: AppColors.white,
+                  ),
+                ],
+
+                // FlowvaButton.greenButton(
+                //         color: Colors.white,
+                //         // buttonColor: Color(0xFF008753),
+                //         icon: Icon(
+                //           Icons.check_circle,
+                //           color: Colors.white,
+                //         ),
+                //         name: "Invite Friends Now",
+                //         apply: () {
+                //           setState(() {
+                //             onClick = false;
+                //           });
+                // Navigator.push(
+                //   context,
+                //   MaterialPageRoute(
+                //     builder: (ctx) =>
+                //         DeliveryAddressScreen(),
+                //   ),
+                // );
+                // },
+                // ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                        vertical: 8.h,
+                        horizontal: 12.w,
+                      ),
+                      margin: EdgeInsets.symmetric(
+                        vertical: 12.h,
+                        horizontal: 12.w,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.white.withValues(alpha: .05),
+                        borderRadius: BorderRadius.circular(100.r),
+                      ),
+                      child: Row(
+                        spacing: 8.w,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          ...List.generate(displayCount, (index) {
+                            final user = referredUsers[index];
+                            return Row(
+                              spacing: 8.w,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                CachedImageRadius(
+                                  imageUrl: user.profilePic ?? "",
+                                  size: 24.r,
+                                  circle: true,
+                                  color: AppColors.white10,
+                                ),
+                                if (index != displayCount - 1)
+                                  Container(
+                                    width: 1.w,
+                                    height: 18.h,
+                                    color: AppColors.white.withValues(
+                                      alpha: .05,
+                                    ),
+                                  ),
+                              ],
+                            );
+                          }),
+                          if (referredUsers.length < 2) ...[
+                            if (referredUsers.length > 0)
+                              Container(
+                                width: 1.w,
+                                height: 18.h,
+                                color: AppColors.white.withValues(alpha: .05),
+                              ),
+                            SvgPicture.asset(
+                              AssetsSvgIcons.user,
+                              width: 20.w,
+                              height: 20.h,
+                              fit: BoxFit.contain,
+                            ),
+                          ],
+                          if (referredUsers.length > 5) ...[
+                            Container(
+                              width: 1.w,
+                              height: 18.h,
+                              color: AppColors.white.withValues(alpha: .05),
+                            ),
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 6.w,
+                                vertical: 6.h,
+                              ),
+                              decoration: BoxDecoration(
+                                color: AppColors.white.withValues(alpha: .08),
+                                borderRadius: BorderRadius.circular(100.r),
+                              ),
+                              child: Row(
+                                spacing: 4.w,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  SvgPicture.asset(
+                                    AssetsSvgIcons.userMultiple,
+                                    width: 14.w,
+                                    height: 14.h,
+                                    fit: BoxFit.contain,
+                                  ),
+                                  RichText(
+                                    text: TextSpan(
+                                      text: "${referredUsers.length - 5}",
+                                      style: TextStyles.smallSemibold12(
+                                        context,
+                                      ).copyWith(color: AppColors.white),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                RichText(
+                  textAlign: TextAlign.center,
+                  text: TextSpan(
+                    text: referredUsers.isEmpty
+                        ? "Invite Friends to participate in this campaign."
+                        : referredUsers.length == 1
+                        ? "Once your second friend joins, you’re\nautomatically entered."
+                        : "Your entry is confirmed for this draw.",
+                    style: TextStyles.smallSemibold12(
+                      context,
+                    ).copyWith(color: AppColors.white29),
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(vertical: 24.h),
+                  child: Divider(
+                    height: 1.h,
+                    color: AppColors.white.withValues(alpha: .08),
+                  ),
+                ),
+                RichText(
+                  textAlign: TextAlign.center,
+                  text: TextSpan(
+                    text: "Invite your friends quick & easy.",
+                    style: TextStyles.normalSemibold14(
+                      context,
+                    ).copyWith(color: AppColors.white.withValues(alpha: .64)),
+                  ),
+                ),
+                SizedBox(height: 10.h),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Flexible(
+                      child: GestureDetector(
+                        onTap: () {
+                          Clipboard.setData(
+                            ClipboardData(text: '${userProfile.referralCode}'),
+                          );
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                'Referral code copied to clipboard!',
+                              ),
+                              behavior: SnackBarBehavior.floating,
+                              duration: const Duration(seconds: 2),
+                            ),
+                          );
+                        },
+                        behavior: HitTestBehavior.opaque,
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            vertical: 8.h,
+                            horizontal: 12.w,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.white.withValues(alpha: .08),
+                            borderRadius: BorderRadius.circular(12.r),
+                            boxShadow: [
+                              BoxShadow(
+                                offset: Offset(0, 0),
+                                blurRadius: 8.r,
+                                color: Color(0xffA259FF).withValues(alpha: .1),
+                              ),
+                            ],
+                          ),
+                          child: Row(
+                            spacing: 10.w,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Flexible(
+                                child: RichText(
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  textAlign: TextAlign.center,
+                                  text: TextSpan(
+                                    text:
+                                        'https://app.flowvahub.com?ref=${userProfile.referralCode}',
+                                    style: TextStyles.smallSemibold12(
+                                      context,
+                                    ).copyWith(color: AppColors.white),
+                                  ),
+                                ),
+                              ),
+                              SvgPicture.asset(
+                                AssetsSvgIcons.copy,
+                                width: 16.w,
+                                height: 16.h,
+                                fit: BoxFit.contain,
+                                colorFilter: ColorFilter.mode(
+                                  AppColors.white,
+                                  BlendMode.srcIn,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 20.h),
+                Row(
+                  spacing: 10.w,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: SocialBox(
+                        icon: AssetsPngImages.whatsapp,
+                        subTitle: "Whatsapp",
+                        onTap: () => shareToWhatsApp(userProfile.referralCode!),
+                      ),
+                    ),
+                    Expanded(
+                      child: SocialBox(
+                        icon: AssetsPngImages.x,
+                        subTitle: "X(Twitter)",
+                        onTap: () => shareToX(userProfile.referralCode!),
+                      ),
+                    ),
+                    Expanded(
+                      child: SocialBox(
+                        icon: AssetsPngImages.linkedIn,
+                        subTitle: "LinkedIn",
+                        onTap: () => shareToLinkedIn(userProfile.referralCode!),
+                      ),
+                    ),
+                  ],
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(vertical: 20.h),
+                  child: Divider(
+                    height: 1.h,
+                    color: AppColors.white.withValues(alpha: .08),
+                  ),
+                ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: Row(
+                        spacing: 4.w,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          RichText(
+                            text: TextSpan(
+                              text: "You referred",
+                              style: TextStyles.smallSemibold12(
+                                context,
+                              ).copyWith(color: AppColors.white),
+                            ),
+                          ),
+                          Icon(
+                            Icons.info_outline_rounded,
+                            size: 16.sp,
+                            color: AppColors.white,
+                          ),
+                        ],
+                      ),
+                    ),
+                    Row(
+                      spacing: 4.w,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        SvgPicture.asset(
+                          AssetsSvgIcons.userMultiple,
+                          width: 16.w,
+                          height: 16.h,
+                          fit: BoxFit.contain,
+                        ),
+                        RichText(
+                          text: TextSpan(
+                            text: "${referredUsers.length}",
+                            style: TextStyles.bodySemiBold16(
+                              context,
+                            ).copyWith(color: AppColors.white),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
-          Text(
-            label,
-            style: GoogleFonts.manrope(
-              color: Colors.white70,
-              fontSize: 10,
-              height: 1.0,
+        );
+      },
+    );
+  }
+}
+
+class SocialBox extends StatelessWidget {
+  const SocialBox({
+    super.key,
+    required this.icon,
+    required this.subTitle,
+    required this.onTap,
+  });
+
+  final String icon;
+  final String subTitle;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      behavior: HitTestBehavior.opaque,
+      child: Container(
+        height: 86.3.h,
+        width: 86.3.w,
+        padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 12.w),
+        decoration: BoxDecoration(
+          color: AppColors.white.withValues(alpha: .24),
+          borderRadius: BorderRadius.circular(8.r),
+        ),
+        child: Column(
+          spacing: 10.h,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Image.asset(icon, height: 32.h, width: 32.w, fit: BoxFit.contain),
+            RichText(
+              textAlign: TextAlign.center,
+              text: TextSpan(
+                text: subTitle,
+                style: TextStyles.cardSemibold10(
+                  context,
+                ).copyWith(color: AppColors.white.withValues(alpha: .64)),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -722,6 +1049,88 @@ class WinnerDailog extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class PriceDetailsDialog extends StatelessWidget {
+  const PriceDetailsDialog({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+          child: Container(color: AppColors.black15),
+        ),
+        Center(
+          child: Material(
+            color: Colors.transparent,
+            child: Container(
+              width: MediaQuery.of(context).size.width * 0.85,
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(24),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Image.asset(
+                    AssetsPngImages.welcome,
+                    height: 92.h,
+                    fit: BoxFit.contain,
+                  ),
+                  SizedBox(height: 20.h),
+                  RichText(
+                    text: TextSpan(
+                      text: "We’ve missed you! 🥺",
+                      style: TextStyles.bodyBold16(context),
+                    ),
+                  ),
+                  SizedBox(height: 16.h),
+                  RichText(
+                    textAlign: TextAlign.center,
+                    text: TextSpan(
+                      text:
+                          "Others earned rewards while you were away, but guess what? We saved yours. 😉 🎁",
+                      style: TextStyles.normalMedium14(
+                        context,
+                      ).copyWith(color: AppColors.grey550),
+                    ),
+                  ),
+                  SizedBox(height: 20.h),
+                  Row(
+                    spacing: 16.w,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      _rewardBox("assets/images/ear_pod.png"),
+                      _rewardBox("assets/images/blue_cards.png"),
+                      _rewardBox("assets/images/one_50.png"),
+                    ],
+                  ),
+                  SizedBox(height: 20.h),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _rewardBox(String path) {
+    return Container(
+      height: 60,
+      width: 60,
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: Color(0xFFF1F1F1),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(width: 2, color: Colors.white),
+      ),
+      child: Image.asset(path),
     );
   }
 }

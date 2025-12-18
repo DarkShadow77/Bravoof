@@ -293,7 +293,7 @@ class _EarnOverviewScreenState extends State<EarnOverviewScreen>
                           ),
                           SizedBox(width: 8),
                           SvgPicture.asset(
-                            AssetsSvgImages.copy,
+                            AssetsSvgIcons.copy,
                             height: 12.r,
                             width: 12.r,
                             fit: BoxFit.contain,

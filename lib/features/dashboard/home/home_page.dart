@@ -349,7 +349,7 @@ class _FlowvaHomePageState extends State<FlowvaHomePage> with UIToolMixin {
                                             },
                                             behavior: HitTestBehavior.opaque,
                                             child: SvgPicture.asset(
-                                              AssetsSvgImages.close,
+                                              AssetsSvgIcons.close,
                                               width: 14.r,
                                               height: 14.r,
                                               fit: BoxFit.contain,

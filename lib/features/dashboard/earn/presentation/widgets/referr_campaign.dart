@@ -3,13 +3,16 @@ import 'dart:async';
 import 'package:flowva/features/common/model/campaign_response.dart';
 import 'package:flowva/features/dashboard/earn/presentation/pages/referral_contest_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../../../core/di/service_locator.dart';
+import '../../../home/data/bloc/campaign_cubit.dart';
 import 'draw_end_page.dart';
 
 class ReferCampaign extends StatefulWidget {
-  List<Campaign>campaign=[];
-   ReferCampaign({super.key, required this.campaign});
+  List<Campaign> campaign = [];
+  ReferCampaign({super.key, required this.campaign});
 
   @override
   State<ReferCampaign> createState() => _ReferCampaignState();
@@ -20,13 +23,12 @@ class _ReferCampaignState extends State<ReferCampaign> {
   Duration? _remainingTime;
   bool _isExpired = false;
 
-
   @override
   void initState() {
     super.initState();
-    if(widget.campaign.isNotEmpty){
-      _remainingTime=Duration(
-        days:widget.campaign.first.campaignEndDate!.day,
+    if (widget.campaign.isNotEmpty) {
+      _remainingTime = Duration(
+        days: widget.campaign.first.campaignEndDate!.day,
         hours: widget.campaign.first.campaignEndDate!.hour,
         minutes: widget.campaign.first.campaignEndDate!.minute,
         seconds: widget.campaign.first.campaignEndDate!.second,
@@ -47,7 +49,9 @@ class _ReferCampaignState extends State<ReferCampaign> {
 
   void _updateRemainingTime() {
     final now = DateTime.now();
-    final difference =widget.campaign!.isNotEmpty? widget.campaign!.first.campaignEndDate!.difference(now):null;
+    final difference = widget.campaign!.isNotEmpty
+        ? widget.campaign!.first.campaignEndDate!.difference(now)
+        : null;
 
     if (difference!.isNegative) {
       setState(() {
@@ -62,13 +66,14 @@ class _ReferCampaignState extends State<ReferCampaign> {
       });
     }
   }
+
   @override
   Widget build(BuildContext context) {
     final days = _remainingTime!.inDays;
     final hours = _remainingTime!.inHours.remainder(24);
     final minutes = _remainingTime!.inMinutes.remainder(60);
     final seconds = _remainingTime!.inSeconds.remainder(60);
-    return  Container(
+    return Container(
       child: Stack(
         // crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -125,7 +130,8 @@ class _ReferCampaignState extends State<ReferCampaign> {
                         child: CircleAvatar(
                           radius: 35,
                           backgroundColor: Color(0xFFDEC4FF),
-                          child: Image.network(widget.campaign!.first.url.toString(),
+                          child: Image.network(
+                            widget.campaign!.first.url.toString(),
                             fit: BoxFit.cover,
                           ),
                         ),
@@ -203,26 +209,40 @@ class _ReferCampaignState extends State<ReferCampaign> {
                       // Button overlapping the white box bottom
                       Positioned(
                         bottom: 0,
-                        child: GestureDetector(//ReferralContestScreen() //DrawEndPage()
+                        child: GestureDetector(
+                          //ReferralContestScreen() //DrawEndPage()
                           onTap: () {
                             final now = DateTime.now();
 
-                            if(now.isAfter(widget.campaign.first.campaignEndDate!)){
+                            if (now.isAfter(
+                              widget.campaign.first.campaignEndDate!,
+                            )) {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (ctx) => DrawEndPage(),
                                 ),
                               );
-                            }else{
+                            } else {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (ctx) => ReferralContestScreen(),
+                                  builder: (_) => BlocProvider<CampaignCubit>(
+                                    create: (_) => sl<CampaignCubit>(
+                                      param1: widget.campaign.first.id ?? 0,
+                                    ),
+                                    child: ReferralContestScreen(
+                                      campaignEndDate:
+                                          widget
+                                              .campaign
+                                              .first
+                                              .campaignEndDate ??
+                                          DateTime.now(),
+                                    ),
+                                  ),
                                 ),
                               );
                             }
-
                           },
                           child: Container(
                             padding: EdgeInsets.all(12),
@@ -256,6 +276,7 @@ class _ReferCampaignState extends State<ReferCampaign> {
       ),
     );
   }
+
   Widget _timerBox(String text) {
     return Container(
       // margin: const EdgeInsets.only(left: 4),

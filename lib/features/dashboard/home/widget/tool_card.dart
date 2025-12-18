@@ -4,7 +4,11 @@ import 'package:flowva/features/common/model/campaign_response.dart';
 import 'package:flowva/features/dashboard/earn/presentation/pages/referral_contest_screen.dart';
 import 'package:flowva/features/dashboard/earn/presentation/widgets/draw_end_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+
+import '../../../../core/di/service_locator.dart';
+import '../data/bloc/campaign_cubit.dart';
 
 class ToolCardCarousel extends StatefulWidget {
   List<Campaign>? campaign;
@@ -355,8 +359,26 @@ class _ToolCardCarouselState extends State<ToolCardCarousel> {
                                           Navigator.push(
                                             context,
                                             MaterialPageRoute(
-                                              builder: (ctx) =>
-                                                  ReferralContestScreen(),
+                                              builder: (_) =>
+                                                  BlocProvider<CampaignCubit>(
+                                                    create: (_) =>
+                                                        sl<CampaignCubit>(
+                                                          param1:
+                                                              widget
+                                                                  .campaign
+                                                                  ?.first
+                                                                  .id ??
+                                                              0,
+                                                        ),
+                                                    child: ReferralContestScreen(
+                                                      campaignEndDate:
+                                                          widget
+                                                              .campaign
+                                                              ?.first
+                                                              .campaignEndDate ??
+                                                          DateTime.now(),
+                                                    ),
+                                                  ),
                                             ),
                                           );
                                         }
