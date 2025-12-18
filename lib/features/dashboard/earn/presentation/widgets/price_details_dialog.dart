@@ -7,26 +7,35 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:flutter_svg_provider/flutter_svg_provider.dart' as ss;
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../../app/styles/text_styles.dart';
 import '../../../../../core/constants/app_colors.dart';
 
-Future<dynamic> priceDetailsDialog() async {
+Future<dynamic> priceDetailsDialog({required DateTime campaignEndDate}) async {
   return Get.dialog(
     name: "price_details_dialog",
     barrierDismissible: true,
-    PriceDetailsDialog(),
+    PriceDetailsDialog(campaignEndDate: campaignEndDate),
   );
 }
 
 class PriceDetailsDialog extends StatefulWidget {
-  const PriceDetailsDialog({super.key});
+  const PriceDetailsDialog({super.key, required this.campaignEndDate});
+
+  final DateTime campaignEndDate;
 
   @override
   State<PriceDetailsDialog> createState() => _PriceDetailsDialogState();
 }
 
 class _PriceDetailsDialogState extends State<PriceDetailsDialog> {
+  String formatDate(String isoString) {
+    final dateTime = DateTime.parse(isoString);
+
+    return DateFormat('MMMM dd, yyyy').format(dateTime);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -134,7 +143,8 @@ class _PriceDetailsDialogState extends State<PriceDetailsDialog> {
                     RichText(
                       textAlign: TextAlign.center,
                       text: TextSpan(
-                        text: "Draw Date: February 15, 2026",
+                        text:
+                            "Draw Date: ${formatDate(widget.campaignEndDate.toString())}",
                         style: TextStyles.normalBold14(
                           context,
                         ).copyWith(color: AppColors.white85),

@@ -167,7 +167,9 @@ class _ReferralContestScreenState extends State<ReferralContestScreen> {
                                       ),
                                 ),
                               ),
-                              ReferralContainer(),
+                              ReferralContainer(
+                                campaignEndDate: widget.campaignEndDate,
+                              ),
                             ],
                           ),
                         ),
@@ -445,7 +447,9 @@ class CountdownBox extends StatelessWidget {
 }
 
 class ReferralContainer extends StatefulWidget {
-  const ReferralContainer({super.key});
+  const ReferralContainer({super.key, required this.campaignEndDate});
+
+  final DateTime campaignEndDate;
 
   @override
   State<ReferralContainer> createState() => _ReferralContainerState();
@@ -582,7 +586,9 @@ class _ReferralContainerState extends State<ReferralContainer> {
                     icon: AssetsSvgIcons.userAdd,
                   ),
                   IconTextButton(
-                    onPressed: () => priceDetailsDialog(),
+                    onPressed: () => priceDetailsDialog(
+                      campaignEndDate: widget.campaignEndDate,
+                    ),
 
                     text: "See Prize Details",
                     color: AppColors.white.withValues(alpha: .16),
