@@ -58,10 +58,15 @@ class _ReferralContestScreenState extends State<ReferralContestScreen> {
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
-        leading: Icon(
-          Icons.arrow_back_rounded,
-          size: 16.sp,
-          color: AppColors.white,
+        leading: IconButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: Icon(
+            Icons.arrow_back_rounded,
+            size: 16.sp,
+            color: AppColors.white,
+          ),
         ),
       ),
       body: SingleChildScrollView(

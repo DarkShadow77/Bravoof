@@ -112,6 +112,7 @@ flutter:
       - assets/images/png/
       - assets/images/svg/
       - assets/images/svg/icons/
+      - assets/images/svg/navbar/
       - assets/avatar/
       - assets/logo/
 

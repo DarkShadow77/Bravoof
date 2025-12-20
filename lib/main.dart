@@ -1,11 +1,13 @@
 import 'dart:async';
 
 import 'package:app_links/app_links.dart';
+import 'package:flowva/features/dashboard/home/data/bloc/home_cubit.dart';
 import 'package:flowva/session/session_manager.dart';
 import 'package:flowva/utility/auth_listener.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
@@ -20,6 +22,10 @@ import 'utility/navigation.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  FlutterNativeSplash.preserve(
+    widgetsBinding: WidgetsFlutterBinding.ensureInitialized(),
+  );
 
   // try {
   //   await dotenv.load(fileName: ".env"); // Load environment variables
@@ -59,6 +65,9 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
+    Future.delayed(const Duration(seconds: 3), () {
+      FlutterNativeSplash.remove();
+    });
     initDeepLinks();
   }
 
@@ -84,32 +93,35 @@ class _MyAppState extends State<MyApp> {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return ScreenUtilInit(
-      designSize: const Size(375, 815),
-      minTextAdapt: true,
-      splitScreenMode: true,
-      builder: (BuildContext context, Widget? child) {
-        return GetMaterialApp(
-          // routerConfig: _router,
-          navigatorKey: navigatorKey,
-          title: Strings.appName,
-          theme: lightTheme,
-          initialRoute: "/",
-          onGenerateRoute: (RouteSettings settings) {
-            Widget routeWidget = App();
+    return MultiBlocProvider(
+      providers: [BlocProvider<HomeCubit>(create: (_) => sl<HomeCubit>())],
+      child: ScreenUtilInit(
+        designSize: const Size(375, 815),
+        minTextAdapt: true,
+        splitScreenMode: true,
+        builder: (BuildContext context, Widget? child) {
+          return GetMaterialApp(
+            // routerConfig: _router,
+            navigatorKey: navigatorKey,
+            title: Strings.appName,
+            theme: lightTheme,
+            initialRoute: "/",
+            onGenerateRoute: (RouteSettings settings) {
+              Widget routeWidget = App();
 
-            // Mimic web routing
-            final routeName = settings.name;
+              // Mimic web routing
+              final routeName = settings.name;
 
-            return MaterialPageRoute(
-              builder: (context) => routeWidget,
-              settings: settings,
-              fullscreenDialog: true,
-            );
-          },
-          debugShowCheckedModeBanner: false,
-        );
-      },
+              return MaterialPageRoute(
+                builder: (context) => routeWidget,
+                settings: settings,
+                fullscreenDialog: true,
+              );
+            },
+            debugShowCheckedModeBanner: false,
+          );
+        },
+      ),
     );
   }
 

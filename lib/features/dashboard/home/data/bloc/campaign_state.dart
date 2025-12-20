@@ -1,6 +1,6 @@
 part of 'campaign_cubit.dart';
 
-enum CampaignType { getCampaign, updateCampaign, logout }
+enum CampaignType { getCampaign, updateCampaign }
 
 class CampaignState extends Equatable {
   final int totalParticipants;

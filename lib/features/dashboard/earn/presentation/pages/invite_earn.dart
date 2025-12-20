@@ -1,8 +1,11 @@
+import 'package:flowva/app/styles/text_styles.dart';
+import 'package:flowva/core/constants/app_colors.dart';
 import 'package:flowva/features/common/flowva_button.dart';
 import 'package:flowva/features/dashboard/earn/presentation/pages/referral_history_page.dart';
 import 'package:flowva/features/onbaording/data/bloc/user_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
@@ -10,7 +13,22 @@ import 'package:share_plus/share_plus.dart';
 
 import '../../../../common/routes.dart';
 import '../../../../onbaording/data/model/user_profile.dart';
+import '../../../home/data/bloc/home_cubit.dart';
 import 'jackpot_page.dart';
+
+String referralMessage(String code, [bool encode = false]) {
+  if (encode) {
+    return Uri.encodeComponent(
+      'Join me on Bravoo 🚀\n'
+      'Use my referral link:\n'
+      'https://app.flowvahub.com?ref=$code',
+    );
+  } else {
+    return 'Join me on Bravoo 🚀\n'
+        'Use my referral link:\n'
+        'https://app.flowvahub.com?ref=$code';
+  }
+}
 
 class InviteAndEarnPage extends StatefulWidget {
   InviteAndEarnPage({super.key});
@@ -23,6 +41,8 @@ class _InviteAndEarnPageState extends State<InviteAndEarnPage> {
   Duration timeLeft = Duration(days: 00, hours: 24, minutes: 13, seconds: 13);
 
   UserProfile userProfile = UserProfile();
+
+  List<UserProfile> referrals = [];
 
   final List<_Mission> mission = [
     _Mission(
@@ -65,6 +85,7 @@ class _InviteAndEarnPageState extends State<InviteAndEarnPage> {
     super.initState();
     userCubit = UserCubit();
     userCubit.fetchUserProfile();
+    BlocProvider.of<HomeCubit>(context).getUserReferrals();
   }
 
   @override
@@ -79,6 +100,13 @@ class _InviteAndEarnPageState extends State<InviteAndEarnPage> {
             listener: (context, state) {
               setState(() {
                 userProfile = state.userProfile;
+              });
+            },
+          ),
+          BlocListener<HomeCubit, HomeState>(
+            listener: (context, state) {
+              setState(() {
+                referrals = state.referrals;
               });
             },
           ),
@@ -138,7 +166,7 @@ class _InviteAndEarnPageState extends State<InviteAndEarnPage> {
                       children: [
                         _buildStatCard(
                           "Invites",
-                          "12",
+                          "${userProfile.referralCount}",
                           Icon(Icons.group, size: 18, color: Colors.black87),
                           Colors.black87,
                         ),
@@ -150,20 +178,18 @@ class _InviteAndEarnPageState extends State<InviteAndEarnPage> {
                         ),
                       ],
                     ),
-
                     const SizedBox(height: 16),
 
                     /// --- Invite Button
                     FlowvaButton.blueButton(
-                      name: "Share with Friends ${userProfile.name}",
-                      fontSize: 14,
+                      name: "Share with Friends",
                       icon: Icon(Icons.person_add_alt_1, color: Colors.white),
                       apply: () {
                         SharePlus.instance.share(
                           ShareParams(
-                            text:
-                                "https://app.bravoo.com?ref=${userProfile.referralCode}"
-                                "${userProfile.name} is inviting you to Join Bravoo🔥🐦‍🔥",
+                            text: referralMessage(
+                              userProfile.referralCode ?? "",
+                            ),
                           ),
                         );
                       },
@@ -179,7 +205,6 @@ class _InviteAndEarnPageState extends State<InviteAndEarnPage> {
                             size: 18,
                           ),
                         ),
-
                         const SizedBox(width: 8),
                         Text(
                           "Active Referral Missions",
@@ -191,12 +216,10 @@ class _InviteAndEarnPageState extends State<InviteAndEarnPage> {
                         ),
                       ],
                     ),
-
                     const SizedBox(height: 16),
 
                     /// --- Mission Card
                     _buildMissionCard(),
-
                     const SizedBox(height: 20),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -252,38 +275,26 @@ class _InviteAndEarnPageState extends State<InviteAndEarnPage> {
                         const SizedBox(height: 18),
 
                         // Referral list
-                        _buildReferralCard(
-                          avatar: "assets/avatar/1.png",
-                          name: "Oladipupo Paul",
-                          statusLabel: "Pending",
-                          statusColor: Color(0xFFE9E9E9),
-                          time: "2:14 PM",
-                        ),
-                        const SizedBox(height: 12),
-                        _buildReferralCard(
-                          avatar: "assets/avatar/2.png",
-                          name: "Oladipupo Paul",
-                          statusLabel: "Joined",
-                          statusColor: const Color(0xFFE3FAE1),
-                          textColor: const Color(0xFF008753),
-                          time: "2:14 PM",
-                        ),
-                        const SizedBox(height: 12),
-                        _buildReferralCard(
-                          avatar: "assets/avatar/3.png",
-                          name: "Oladipupo Paul",
-                          statusLabel: "Declined",
-                          statusColor: Color(0xFFFFEBEB),
-                          textColor: const Color(0xFFCC0000),
-                          time: "2:14 PM",
-                        ),
-                        const SizedBox(height: 12),
-                        _buildReferralCard(
-                          avatar: "assets/avatar/4.png",
-                          name: "Oladipupo Paul",
-                          statusLabel: "Pending",
-                          statusColor: Color(0xFFE9E9E9),
-                          time: "2:14 PM",
+                        ListView.separated(
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          itemCount: referrals.length <= 5
+                              ? referrals.length
+                              : 5,
+                          itemBuilder: (context, index) {
+                            final user = referrals[index];
+                            return _buildReferralCard(
+                              avatar: user.profilePic ?? "",
+                              name: user.name ?? "",
+                              statusLabel: "Joined",
+                              statusColor: const Color(0xFFE3FAE1),
+                              textColor: const Color(0xFF008753),
+                              time: user.createdAt?.toIso8601String() ?? "",
+                            );
+                          },
+                          separatorBuilder: (_, _) {
+                            return SizedBox(height: 12.h);
+                          },
                         ),
 
                         const SizedBox(height: 26),
@@ -743,10 +754,14 @@ class _InviteAndEarnPageState extends State<InviteAndEarnPage> {
           ),
         ],
       ),
-      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 14),
+      padding: EdgeInsets.symmetric(vertical: 14.h, horizontal: 14.w),
       child: Row(
         children: [
-          CircleAvatar(radius: 22, backgroundImage: AssetImage(avatar)),
+          CircleAvatar(
+            radius: 22.r,
+            backgroundImage: NetworkImage(avatar),
+            backgroundColor: AppColors.grey300.withValues(alpha: .5),
+          ),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -786,6 +801,7 @@ class _InviteAndEarnPageState extends State<InviteAndEarnPage> {
 
           // right side small circle icon and time
           Column(
+            spacing: 8.h,
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Container(
@@ -797,13 +813,11 @@ class _InviteAndEarnPageState extends State<InviteAndEarnPage> {
                 ),
                 child: const Icon(Icons.person, size: 16, color: Colors.purple),
               ),
-              const SizedBox(height: 8),
-              Text(
-                time,
-                style: GoogleFonts.manrope(
-                  color: Color(0xFF767676),
-                  fontSize: 10,
-                  fontWeight: FontWeight.w600,
+              RichText(
+                textAlign: TextAlign.end,
+                text: TextSpan(
+                  text: formatSmartDate(time),
+                  style: TextStyles.cardSemibold10(context, opacity: .65),
                 ),
               ),
             ],

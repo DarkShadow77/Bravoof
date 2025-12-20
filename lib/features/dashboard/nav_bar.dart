@@ -1,11 +1,15 @@
+import 'package:flowva/core/constants/app_assets.dart';
 import 'package:flowva/features/dashboard/earn/presentation/pages/earn_screen.dart';
 import 'package:flowva/features/dashboard/home/home_page.dart';
 import 'package:flowva/features/mission/presentation/page/mission_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hugeicons/hugeicons.dart';
 
+import '../../session/session_manager.dart';
 import '../../utility/permission_handler.dart';
+import 'home/widget/show_welcome_message.dart';
 
 class BottomNavBar extends StatefulWidget {
   int index;
@@ -26,7 +30,19 @@ class _BottomNavBarState extends State<BottomNavBar> {
     // currentI=widget.i;
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      requestNotificationPermission(context);
+      SessionManager().firstWelcomeUserVal == "YES"
+          ? Future.delayed(
+              Duration(milliseconds: 500),
+              () => showGeneralDialog(
+                context: context,
+                barrierDismissible: false,
+                barrierLabel: "",
+                barrierColor: Colors.transparent,
+
+                pageBuilder: (_, _, _) => ShowWelcomeMessage(),
+              ),
+            )
+          : requestNotificationPermission(context);
     });
   }
 
@@ -78,29 +94,50 @@ class _BottomNavBarState extends State<BottomNavBar> {
             items: [
               BottomNavigationBarItem(
                 icon: currentIndex == 0
-                    ? Image.asset("assets/images/home.png")
-                    : Image.asset("assets/images/Home_light.png"),
+                    ? SvgPicture.asset(
+                        AssetsNavbar.homeActive,
+                        width: 24.w,
+                        height: 24.h,
+                        fit: BoxFit.contain,
+                      )
+                    : SvgPicture.asset(
+                        AssetsNavbar.home,
+                        width: 24.w,
+                        height: 24.h,
+                        fit: BoxFit.contain,
+                      ),
                 label: "Home",
               ),
               BottomNavigationBarItem(
                 icon: currentIndex == 1
-                    ? Image.asset(
-                        "assets/images/mission_solid.png",
-                        color: Colors.black,
+                    ? SvgPicture.asset(
+                        AssetsNavbar.missionActive,
+                        width: 24.w,
+                        height: 24.h,
+                        fit: BoxFit.contain,
                       )
-                    : Image.asset(
-                        "assets/images/mission_light.png",
-                        color: Colors.grey,
+                    : SvgPicture.asset(
+                        AssetsNavbar.mission,
+                        width: 24.w,
+                        height: 24.h,
+                        fit: BoxFit.contain,
                       ),
                 label: "Mission",
               ),
               BottomNavigationBarItem(
-                icon: HugeIcon(
-                  icon: HugeIcons.strokeRoundedCoins01,
-                  color: currentIndex == 2 ? Colors.black : Colors.grey,
-                  size: 24.0,
-                  strokeWidth: 2.5, // Custom stroke width
-                ),
+                icon: currentIndex == 2
+                    ? SvgPicture.asset(
+                        AssetsNavbar.redeemActive,
+                        width: 24.w,
+                        height: 24.h,
+                        fit: BoxFit.contain,
+                      )
+                    : SvgPicture.asset(
+                        AssetsNavbar.redeem,
+                        width: 24.w,
+                        height: 24.h,
+                        fit: BoxFit.contain,
+                      ),
                 label: "Redeem",
               ),
             ],

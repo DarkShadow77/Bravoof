@@ -73,9 +73,9 @@
 			</dict>
 		</array>
 		<key>LSApplicationQueriesSchemes</key>
-        <array>
-          <string>whatsapp</string>
-          <string>twitter</string>
-        </array>
+		<array>
+			<string>whatsapp</string>
+			<string>twitter</string>
+		</array>
 	</dict>
 </plist>

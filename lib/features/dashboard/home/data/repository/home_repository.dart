@@ -1,24 +1,12 @@
 import 'package:dartz/dartz.dart';
 import 'package:flowva/features/common/model/campaign_response.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
-class HomeRepository {
-  final SupabaseClient supabase = Supabase.instance.client;
+import '../../../../onbaording/data/model/user_profile.dart';
 
-  Future<Either<String, CampaignResponse>> fetchCampaigns() async {
-    try {
-      var res = await supabase.from('campaigns').select();
+abstract class HomeRepository {
+  Future<Either<String, CampaignResponse>> fetchCampaigns();
 
-      if (res != null) {
-        CampaignResponse campaignResponse = CampaignResponse.fromJson({
-          "campaign": res,
-        });
-        return Right(campaignResponse);
-      } else {
-        return Left("Invalid credentials");
-      }
-    } on AuthException catch (e) {
-      return Left(e.message);
-    }
-  }
+  Future<Either<String, List<UserProfile>>> getAllUserReferrals({
+    required String userId,
+  });
 }

@@ -1,6 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:intl/intl.dart';
+
+import '../../../../../app/styles/text_styles.dart';
+import '../../../../../core/constants/app_colors.dart';
+import '../../../../onbaording/data/model/user_profile.dart';
+import '../../../home/data/bloc/home_cubit.dart';
 
 class ReferralHistory {
   final String name;
@@ -15,9 +23,34 @@ class ReferralHistory {
     required this.statusLabel,
     required this.status,
     required this.avatar,
-     this.coins,
+    this.coins,
     required this.date,
   });
+}
+
+String formatSmartDate(String isoDate) {
+  final dateTime = DateTime.parse(isoDate).toLocal();
+  final now = DateTime.now();
+
+  final isSameDay =
+      dateTime.year == now.year &&
+      dateTime.month == now.month &&
+      dateTime.day == now.day;
+
+  final isSameYear = dateTime.year == now.year;
+
+  if (isSameDay) {
+    // 🟢 Same day → time only
+    return DateFormat('hh:mm a').format(dateTime);
+  }
+
+  if (isSameYear) {
+    // 🟡 Same year → date + time
+    return DateFormat('dd MMM\nhh:mm a').format(dateTime);
+  }
+
+  // 🔴 Different year → full date + time
+  return DateFormat('dd MMM yyyy\nhh:mm a').format(dateTime);
 }
 
 class ReferralHistoryPage extends StatefulWidget {
@@ -28,130 +61,135 @@ class ReferralHistoryPage extends StatefulWidget {
 }
 
 class _ReferralHistoryPageState extends State<ReferralHistoryPage> {
+  String searchText = "";
+  List<UserProfile> referrals = [];
+  List<UserProfile> searchedReferrals = [];
+  @override
+  void initState() {
+    super.initState();
 
+    BlocProvider.of<HomeCubit>(context).getUserReferrals();
+  }
 
+  search() {
+    searchedReferrals.clear();
 
-  final referrals = [
-    // October 2025
-    ReferralHistory(
-      avatar: "assets/avatar/1.png",
-      coins: "assets/images/one_50.png",
-      name: "Oladipupo Paul",
-      statusLabel: "Joined",
-      status: 'Pending',
-      date: DateTime(2025, 10, 16),
-    ),
-    ReferralHistory(
-      avatar: "assets/avatar/2.png",
-      name: "Oladipupo Paul",
-      statusLabel: "Joined",
-      status: 'Joined',
-      date: DateTime(2025, 10, 16),
-    ),
-    ReferralHistory(
-      avatar: "assets/avatar/3.png",
-      name: "Oladipupo Paul",
-      statusLabel: "Joined",
-      status: 'Declined',
-      date: DateTime(2025, 10, 16),
-    ),
-
-    // August 2025
-    ReferralHistory(
-      avatar: "assets/avatar/4.png",
-      name: "Oladipupo Paul",
-      statusLabel: "Joined",
-      status: 'Joined',
-      date: DateTime(2025, 8, 16),
-    ),
-    ReferralHistory(
-      avatar: "assets/avatar/5.png",
-      name: "Oladipupo Paul",
-      statusLabel: "Joined",
-      status: 'Pending',
-      date: DateTime(2025, 8, 16),
-    ),
-  ];
+    if (searchText.isEmpty) {
+      searchedReferrals.addAll(referrals);
+    } else {
+      searchedReferrals.addAll(
+        referrals
+            .where(
+              (element) => (element.name ?? "").toLowerCase().contains(
+                searchText.toLowerCase(),
+              ),
+            )
+            .toList(),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    final grouped = <String, List<ReferralHistory>>{};
-    for (final tx in referrals) {
+    final grouped = <String, List<UserProfile>>{};
+    for (final tx in searchedReferrals) {
       final key =
-          '${_monthName(tx.date.month)} ${tx.date.year}'; // e.g. October 2025
+          '${_monthName((tx.createdAt ?? DateTime.now()).month)} ${(tx.createdAt ?? DateTime.now()).year}'; // e.g. October 2025
       grouped.putIfAbsent(key, () => []).add(tx);
     }
-    return Scaffold(
-      backgroundColor: Colors.white,
+    return BlocListener<HomeCubit, HomeState>(
+      listener: (context, state) {
+        setState(() {
+          referrals = state.referrals;
+        });
+        search();
+      },
+      child: Scaffold(
+        backgroundColor: Colors.white,
 
-      body: SafeArea(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            child: Row(
-              children: [
-                GestureDetector(
-                  child: const Icon(Icons.arrow_back, color: Colors.black87),
-                  onTap: () => Navigator.pop(context),
+        body: SafeArea(
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
                 ),
-                SizedBox(width: 10,),
-                Text(
-                  "Referral History",
-                  style: GoogleFonts.manrope(
-                    fontWeight: FontWeight.w700,
-                    color: const Color(0xFF191919),
-                    fontSize: 18,
-                  ),
-                ),
-              ],
-            ),),
-            ListView(
-              shrinkWrap: true,
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        
-              children: [
-                TextField(
-                  onChanged: (val) {},
-                  decoration: InputDecoration(
-                    prefixIcon: Padding(
-                      padding: const EdgeInsets.all(12.0),
-                      child: HugeIcon(
-                        icon: HugeIcons.strokeRoundedSearch01,
-                        color: Colors.grey,
-                        size: 15.0,
-                        strokeWidth: 2.5, // Custom stroke width
+                child: Row(
+                  children: [
+                    GestureDetector(
+                      child: const Icon(
+                        Icons.arrow_back,
+                        color: Colors.black87,
+                      ),
+                      onTap: () => Navigator.pop(context),
+                    ),
+                    SizedBox(width: 10),
+                    Text(
+                      "Referral History",
+                      style: GoogleFonts.manrope(
+                        fontWeight: FontWeight.w700,
+                        color: const Color(0xFF191919),
+                        fontSize: 18,
                       ),
                     ),
-        
-        
-                    hintText: "Search",
-                    hintStyle: GoogleFonts.manrope(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black,
-                    ),
-                    filled: true,
-                    fillColor: Colors.grey[100],
-                    contentPadding: const EdgeInsets.symmetric(
-                      vertical: 0,
-                      horizontal: 20,
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30),
-                      borderSide: BorderSide.none,
+                  ],
+                ),
+              ),
+              ListView(
+                shrinkWrap: true,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
+
+                children: [
+                  TextField(
+                    onChanged: (val) {
+                      setState(() {
+                        searchText = val;
+                      });
+                      search();
+                    },
+                    decoration: InputDecoration(
+                      prefixIcon: Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: HugeIcon(
+                          icon: HugeIcons.strokeRoundedSearch01,
+                          color: Colors.grey,
+                          size: 15.0,
+                          strokeWidth: 2.5, // Custom stroke width
+                        ),
+                      ),
+
+                      hintText: "Search",
+                      hintStyle: GoogleFonts.manrope(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.black,
+                      ),
+                      filled: true,
+                      fillColor: Colors.grey[100],
+                      contentPadding: const EdgeInsets.symmetric(
+                        vertical: 0,
+                        horizontal: 20,
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30),
+                        borderSide: BorderSide.none,
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(height: 16),
-        
+                  const SizedBox(height: 16),
 
-                ...grouped.entries.map(
-                  (entry) => _buildReferralCard(entry.key, entry.value),
-                ),
-              ],
-            ),
-          ],
+                  ...grouped.entries.map(
+                    (entry) =>
+                        _buildReferralCard(context, entry.key, entry.value),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -177,7 +215,11 @@ class _ReferralHistoryPageState extends State<ReferralHistoryPage> {
   }
 }
 
-Widget _buildReferralCard(String month, List<ReferralHistory> items) {
+Widget _buildReferralCard(
+  BuildContext context,
+  String month,
+  List<UserProfile> items,
+) {
   return Padding(
     padding: const EdgeInsets.only(bottom: 16),
     child: Column(
@@ -191,7 +233,7 @@ Widget _buildReferralCard(String month, List<ReferralHistory> items) {
             color: Color(0xFF5F5F5F),
           ),
         ),
-        SizedBox(height: 10,),
+        SizedBox(height: 10),
         ...items.map((e) {
           return Container(
             margin: const EdgeInsets.only(bottom: 15),
@@ -208,15 +250,20 @@ Widget _buildReferralCard(String month, List<ReferralHistory> items) {
             ),
             padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 14),
             child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                CircleAvatar(radius: 22, backgroundImage: AssetImage(e.avatar)),
+                CircleAvatar(
+                  radius: 22.r,
+                  backgroundImage: NetworkImage(e.profilePic ?? ""),
+                  backgroundColor: AppColors.grey300.withValues(alpha: .5),
+                ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        e.name,
+                        e.name ?? "",
                         style: GoogleFonts.manrope(
                           fontWeight: FontWeight.w600,
                           fontSize: 12,
@@ -231,21 +278,13 @@ Widget _buildReferralCard(String month, List<ReferralHistory> items) {
                           vertical: 6,
                         ),
                         decoration: BoxDecoration(
-                          color: e.status.toLowerCase() == "pending"
-                              ? Color(0xFFE9E9E9)
-                              : e.status.toLowerCase() == "joined"
-                              ? Color(0xFFE3FAE1)
-                              : Color(0xFFFFEBEB),
+                          color: Color(0xFFE3FAE1),
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: Text(
-                          e.statusLabel,
+                          "Joined",
                           style: GoogleFonts.manrope(
-                            color: e.status.toLowerCase() == "pending"
-                                ? Colors.black
-                                : e.status.toLowerCase() == "joined"
-                                ? Color(0xFF008753)
-                                : Color(0xFFCC0000),
+                            color: Color(0xFF008753),
                             fontSize: 10,
                             fontWeight: FontWeight.w600,
                           ),
@@ -254,22 +293,12 @@ Widget _buildReferralCard(String month, List<ReferralHistory> items) {
                     ],
                   ),
                 ),
-
-                // right side small circle icon and time
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                  e.coins!=null? Image.asset(e.coins!,height: 22,):Container(),
-                    const SizedBox(height: 8),
-                    Text(
-                      "2:14 PM",
-                      style: GoogleFonts.manrope(
-                        color: Color(0xFF767676),
-                        fontSize: 10,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
+                RichText(
+                  textAlign: TextAlign.end,
+                  text: TextSpan(
+                    text: formatSmartDate(e.createdAt?.toIso8601String() ?? ""),
+                    style: TextStyles.cardSemibold10(context, opacity: .65),
+                  ),
                 ),
               ],
             ),

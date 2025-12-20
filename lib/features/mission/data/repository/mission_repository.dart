@@ -302,10 +302,12 @@ class MissionRepository {
           .maybeSingle();
 
       int currentPoints = profileRes!['total_points'] ?? 0;
+      int currentSpins = profileRes!['spins'] ?? 0;
       final newPoints = currentPoints + int.parse(mission['points']);
+      final newSpins = currentSpins + int.parse(mission['number_of_spins']);
       await supabase
           .from('user_profile')
-          .update({'total_points': newPoints})
+          .update({'total_points': newPoints, "spins": newSpins})
           .eq('user_id', userId);
 
       return Right(AppBaseResponse(status: true));

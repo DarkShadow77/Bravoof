@@ -36,7 +36,6 @@ class _AdventureScreenState extends State<AdventureScreen> with UIToolMixin {
   final sessionManager = SessionManager();
   Duration timeLeft = Duration(days: 00, hours: 24, minutes: 13, seconds: 13);
   late Timer _timer;
-  late HomeCubit homeCubit;
   int usersJoined = 2500;
   int userGoal = 5000;
   bool init = true;
@@ -78,9 +77,8 @@ class _AdventureScreenState extends State<AdventureScreen> with UIToolMixin {
     super.initState();
     _startTimer();
     missionCubit = MissionCubit();
-    homeCubit = HomeCubit();
 
-    homeCubit.fetchCampaigns();
+    BlocProvider.of<HomeCubit>(context).fetchCampaigns();
     missionCubit.fetchMission();
     missionCubit.fetchSkillUpChallenge();
 
@@ -194,12 +192,11 @@ class _AdventureScreenState extends State<AdventureScreen> with UIToolMixin {
             },
           ),
           BlocListener<HomeCubit, HomeState>(
-            bloc: homeCubit,
             listener: (context, state) {
               print(state);
-              if (state is CampaignLoaded) {
+              setState(() {
                 campaign = state.campaignResponse.campaign!;
-              }
+              });
             },
           ),
         ],

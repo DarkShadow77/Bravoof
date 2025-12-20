@@ -8,7 +8,6 @@ import 'package:flowva/features/dashboard/earn/data/models/mission_res.dart';
 import 'package:flowva/features/dashboard/earn/presentation/widgets/mission_tile_widget.dart';
 import 'package:flowva/features/dashboard/home/data/bloc/home_cubit.dart';
 import 'package:flowva/features/dashboard/home/widget/referral_widget.dart';
-import 'package:flowva/features/dashboard/home/widget/show_welcome_message.dart';
 import 'package:flowva/features/dashboard/home/widget/tool_card.dart';
 import 'package:flowva/features/dashboard/home/widget/top_leader_board.dart';
 import 'package:flowva/features/dashboard/profile/presentation/pages/profile_page.dart';
@@ -45,7 +44,6 @@ class _FlowvaHomePageState extends State<FlowvaHomePage> with UIToolMixin {
   final _scrollController = PageController(viewportFraction: 1);
   late UserCubit userCubit;
   late MissionCubit missionCubit;
-  late HomeCubit homeCubit;
   final sessionManager = SessionManager();
   UserProfile userProfile = UserProfile();
   List<Mission> missions = [];
@@ -60,25 +58,9 @@ class _FlowvaHomePageState extends State<FlowvaHomePage> with UIToolMixin {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      sessionManager.firstWelcomeUserVal == "YES"
-          ? Future.delayed(
-              Duration(milliseconds: 500),
-              () => showGeneralDialog(
-                context: context,
-                barrierDismissible: false,
-                barrierLabel: "",
-                barrierColor: Colors.transparent,
-
-                pageBuilder: (_, _, _) => ShowWelcomeMessage(),
-              ),
-            )
-          : null;
-    });
     missionCubit = MissionCubit();
-    homeCubit = HomeCubit();
     userCubit = UserCubit();
-    homeCubit.fetchCampaigns();
+    BlocProvider.of<HomeCubit>(context).fetchCampaigns();
     missionCubit.fetchMission();
     missionCubit.fetchAllUsersReward();
     userCubit.fetchUserProfile();
@@ -111,14 +93,12 @@ class _FlowvaHomePageState extends State<FlowvaHomePage> with UIToolMixin {
             },
           ),
           BlocListener<HomeCubit, HomeState>(
-            bloc: homeCubit,
             listener: (context, state) {
               print(state);
-              if (state is CampaignLoaded) {
+              setState(() {
                 campaign = state.campaignResponse.campaign!;
-                setState(() {});
-                print(campaign);
-              }
+              });
+              print(campaign);
             },
           ),
           BlocListener<MissionCubit, MissionState>(

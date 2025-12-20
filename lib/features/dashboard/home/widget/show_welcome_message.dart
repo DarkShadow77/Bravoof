@@ -10,6 +10,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hugeicons/hugeicons.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../utility/permission_handler.dart';
 
 class ShowAdMessage extends StatelessWidget {
   const ShowAdMessage({super.key});
@@ -65,12 +66,13 @@ class ShowWelcomeMessage extends StatelessWidget {
     return PopScope(
       onPopInvokedWithResult: (canPop, result) {
         SessionManager().firstWelcomeUserVal = "NO";
+        requestNotificationPermission(context);
       },
       child: Stack(
         children: [
           BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
-            child: Container(color: Colors.black.withOpacity(0.6)),
+            child: Container(color: Colors.black.withValues(alpha: 0.6)),
           ),
           Center(
             child: Material(
@@ -123,6 +125,7 @@ class ShowWelcomeMessage extends StatelessWidget {
                       apply: () {
                         SessionManager().firstWelcomeUserVal = "NO";
                         Navigator.pop(context);
+                        requestNotificationPermission(context);
                         Navigator.push(
                           context,
                           MaterialPageRoute(

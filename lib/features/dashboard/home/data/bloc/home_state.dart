@@ -1,28 +1,71 @@
 part of 'home_cubit.dart';
 
+enum HomeType { getCampaign, getReferrals }
+
 @immutable
-sealed class HomeState {}
-
-final class HomeInitial extends HomeState {}
-class CampaignLoading extends HomeState {
-  @override
-  // TODO: implement props
-  List<Object?> get props => [];
-}
-
-class CampaignLoaded extends HomeState {
+class HomeState extends Equatable {
   final CampaignResponse campaignResponse;
+  final List<UserProfile> referrals;
 
-  CampaignLoaded(this.campaignResponse);
+  HomeState({required this.campaignResponse, required this.referrals});
+
+  HomeState copyWith({
+    CampaignResponse? campaignResponse,
+    List<UserProfile>? referrals,
+  }) {
+    return HomeState(
+      campaignResponse: campaignResponse ?? this.campaignResponse,
+      referrals: referrals ?? this.referrals,
+    );
+  }
 
   @override
-  // TODO: implement props
-  List<Object?> get props => [campaignResponse];
+  List<Object?> get props => [campaignResponse, referrals];
 }
-class CampaignFailure extends HomeState {
-  final String err;
 
-  CampaignFailure(this.err);
+final class HomeInitialState extends HomeState {
+  HomeInitialState({required super.campaignResponse, required super.referrals});
 
-  List<Object?> get props => [err];
+  @override
+  List<Object> get props => [];
+}
+
+final class HomeLoadingState extends HomeState {
+  final HomeType type;
+  HomeLoadingState({
+    required this.type,
+    required super.campaignResponse,
+    required super.referrals,
+  });
+
+  @override
+  List<Object> get props => [type];
+}
+
+final class HomeSuccessState extends HomeState {
+  final HomeType type;
+  final String message;
+  HomeSuccessState({
+    required this.type,
+    required this.message,
+    required super.campaignResponse,
+    required super.referrals,
+  });
+
+  @override
+  List<Object> get props => [type, message];
+}
+
+final class HomeFailureState extends HomeState {
+  final HomeType type;
+  final String message;
+  HomeFailureState({
+    required this.type,
+    required this.message,
+    required super.campaignResponse,
+    required super.referrals,
+  });
+
+  @override
+  List<Object> get props => [type, message];
 }

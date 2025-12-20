@@ -14,6 +14,7 @@ class UserProfile {
   int? totalPoints;
   int? basePoints;
   int? referralCount;
+  int? spins;
   int? currentStreak;
   bool? isBanned;
   bool? isAuthenticated;
@@ -34,6 +35,7 @@ class UserProfile {
     this.referrerEmail,
     this.referralCode,
     this.referralCount,
+    this.spins,
     this.profilePic,
     this.stack,
     this.interest,
@@ -106,6 +108,9 @@ class UserProfile {
     }
     if (json['referrer_name'] != null) {
       referrerName = json['referrer_name'];
+    }
+    if (json['spins'] != null) {
+      spins = json['spins'];
     }
     if (json['is_banned'] != null) {
       isBanned = json['is_banned'];

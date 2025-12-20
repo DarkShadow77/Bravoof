@@ -23,6 +23,7 @@ class SessionManager {
   final String hasAccount = 'hasAccount';
   final String mission = 'mission';
   final String points = 'points';
+  final String spins = 'spins';
   final String isLastMission = 'isLastMission';
   final String isFunTimeCompleted = 'isFunTimeCompleted';
   final String isCompleted1 = 'isCompleted1';
@@ -70,6 +71,8 @@ class SessionManager {
 
   set missionVal(String val) => sharedPreferences.setString(mission, val);
   String get missionVal => sharedPreferences.getString(mission) ?? "";
+  set jackpotVal(int val) => sharedPreferences.setInt(spins, val);
+  int get jackpotVal => sharedPreferences.getInt(spins) ?? 0;
   set pointsVal(int val) => sharedPreferences.setInt(points, val);
   int get pointsVal => sharedPreferences.getInt(points) ?? 0;
 }

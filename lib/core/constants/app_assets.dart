@@ -3,11 +3,22 @@ const baseImagePngPath = "assets/images/png";
 
 const baseImageSvgPath = "assets/images/svg";
 const baseSvgIconsPath = "$baseImageSvgPath/icons";
+const baseSvgNavbarPath = "$baseImageSvgPath/navbar";
 
 class AssetsLogo {
   //Logo Images
   static String logo = "$baseLogoPath/logo.svg";
   static String fullLogo = "$baseLogoPath/full_logo.svg";
+}
+
+class AssetsNavbar {
+  //Logo Images
+  static String home = "$baseSvgNavbarPath/home.svg";
+  static String homeActive = "$baseSvgNavbarPath/home_active.svg";
+  static String mission = "$baseSvgNavbarPath/mission.svg";
+  static String missionActive = "$baseSvgNavbarPath/mission_active.svg";
+  static String redeem = "$baseSvgNavbarPath/redeem.svg";
+  static String redeemActive = "$baseSvgNavbarPath/redeem_active.svg";
 }
 
 class AssetsPngImages {
@@ -25,6 +36,7 @@ class AssetsPngImages {
   static String doubleStar = "$baseImagePngPath/double_star.png";
   static String prizeDetailTitle = "$baseImagePngPath/prize_detail_title.png";
   static String sparklingStar = "$baseImagePngPath/sparkling_star.png";
+  static String jackpot = "$baseImagePngPath/jackpot.png";
 }
 
 class AssetsSvgImages {

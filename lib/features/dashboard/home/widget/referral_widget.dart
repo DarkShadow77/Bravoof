@@ -16,6 +16,7 @@ class ReferralPage extends StatelessWidget {
   ReferralPage({super.key, required this.userProfile});
 
   final UserProfile? userProfile;
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -88,10 +89,9 @@ class ReferralPage extends StatelessWidget {
         // Referral card
         Container(
           width: double.infinity,
-          height: 330,
           decoration: BoxDecoration(
             color: kBackground,
-            borderRadius: BorderRadius.circular(18),
+            borderRadius: BorderRadius.circular(18.r),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withValues(alpha: 0.05),
@@ -104,7 +104,9 @@ class ReferralPage extends StatelessWidget {
           child: GestureDetector(
             onTap: () {
               Clipboard.setData(
-                ClipboardData(text: '${userProfile!.referralCode}'),
+                ClipboardData(
+                  text: referralMessage(userProfile?.referralCode ?? ""),
+                ),
               );
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
@@ -115,20 +117,18 @@ class ReferralPage extends StatelessWidget {
               );
             },
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Row(
+                  spacing: 8.w,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
-                      'Your Referral Code',
-                      style: GoogleFonts.manrope(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.black,
+                    RichText(
+                      text: TextSpan(
+                        text: 'Your Referral Code',
+                        style: TextStyles.bodyMedium16(context),
                       ),
                     ),
-                    SizedBox(width: 8.w),
                     SvgPicture.asset(
                       AssetsSvgIcons.copy,
                       height: 12.r,
@@ -139,39 +139,51 @@ class ReferralPage extends StatelessWidget {
                 ),
                 SizedBox(height: 8.h),
                 // Referral link pill
-                Container(
-                  width: 270,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 12,
-                  ),
-                  decoration: BoxDecoration(
-                    color: kBackground,
-                    borderRadius: BorderRadius.circular(28),
-                    boxShadow: [
-                      BoxShadow(
-                        color: kPurple.withValues(alpha: 0.12),
-                        blurRadius: 12,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.link, size: 18.sp, color: kPurple),
-                      SizedBox(width: 8.w),
-                      RichText(
-                        text: TextSpan(
-                          // 'https://app.flowvahub.com?ref=${userProfile!.referralCode}',
-                          text: '${userProfile!.referralCode}',
-                          style: TextStyles.bodySemiBold16(
-                            context,
-                          ).copyWith(color: AppColors.primary),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Flexible(
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 10.w,
+                          vertical: 12.h,
+                        ),
+                        margin: EdgeInsets.symmetric(horizontal: 10.w),
+                        decoration: BoxDecoration(
+                          color: kBackground,
+                          borderRadius: BorderRadius.circular(28.r),
+                          boxShadow: [
+                            BoxShadow(
+                              color: kPurple.withValues(alpha: 0.12),
+                              blurRadius: 12,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: Row(
+                          spacing: 8.w,
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.link, size: 18.sp, color: kPurple),
+                            Flexible(
+                              child: RichText(
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                text: TextSpan(
+                                  text:
+                                      'https://app.flowvahub.com?ref=${userProfile!.referralCode}',
+                                  style: TextStyles.normalSemibold14(
+                                    context,
+                                  ).copyWith(color: AppColors.primary),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
                 SizedBox(height: 14.h),
                 Container(
@@ -277,7 +289,7 @@ class ReferralPage extends StatelessWidget {
                           // right fraction
                         ],
                       ),
-                      SizedBox(height: 15),
+                      SizedBox(height: 20),
                       // you referred row
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,

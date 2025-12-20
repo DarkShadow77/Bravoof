@@ -29,6 +29,7 @@ class MissionCubit extends Cubit<MissionState> {
   }
 
   void updateReward(Map<String, dynamic> mission) async {
+    emit(MissionUpdateLoading());
     final either = await missionRepository.updateMission(mission);
     print(either);
     either.fold(

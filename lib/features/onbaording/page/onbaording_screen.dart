@@ -172,13 +172,18 @@ class _OnboardingScreenState extends State<OnboardingScreen> with UIToolMixin {
                   setState(() {
                     isSending.value = false;
                   });
-                  showMessage(
-                    state.error,
-                    context,
-                    color: Colors.white,
-                    styleColor: Colors.black,
-                    status: true,
-                  );
+                  if (state.error.contains(
+                    "activity is cancelled by the user",
+                  )) {
+                  } else {
+                    showMessage(
+                      state.error,
+                      context,
+                      color: Colors.white,
+                      styleColor: Colors.black,
+                      status: true,
+                    );
+                  }
                 }
               },
               child: Padding(

@@ -162,6 +162,7 @@ class SignupRepositoryImpl extends SignupRepository {
       if (response != null) {
         UserProfile userProfile = UserProfile.fromJson(response);
 
+        SessionManager().jackpotVal = userProfile.spins!;
         SessionManager().pointsVal = userProfile.totalPoints!;
         return Right(userProfile);
       }
