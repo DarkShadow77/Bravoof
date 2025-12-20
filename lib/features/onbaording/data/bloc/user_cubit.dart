@@ -6,6 +6,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flowva/features/common/model/app_base_response.dart';
 import 'package:flowva/features/onbaording/data/model/user_profile.dart';
 import 'package:flowva/features/onbaording/data/signup_repository/signup_repository.dart';
+import 'package:flowva/session/session_manager.dart';
 
 import '../../../../core/di/service_locator.dart';
 
@@ -104,6 +105,8 @@ class UserCubit extends Cubit<UserState> {
       (failure) =>
           emit(UserFailure(failure.toString(), userProfile: state.userProfile)),
       (user) {
+        SessionManager().pointsVal = user.totalPoints ?? 0;
+        SessionManager().jackpotVal = user.spins ?? 0;
         emit(state.copyWith(userProfile: user));
         emit(UserProfileSuccess(userProfile: user));
       },
@@ -119,6 +122,8 @@ class UserCubit extends Cubit<UserState> {
       (failure) =>
           emit(UserFailure(failure.toString(), userProfile: state.userProfile)),
       (user) {
+        SessionManager().pointsVal = user.totalPoints ?? 0;
+        SessionManager().jackpotVal = user.spins ?? 0;
         emit(state.copyWith(userProfile: user));
         emit(UserProfileSuccess(userProfile: user));
       },

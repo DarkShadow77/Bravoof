@@ -275,7 +275,13 @@ class MissionRepository {
       final userId = sessionManager.userIdVal;
       final email = sessionManager.userEmailval;
 
-      // Upsert: insert if not exists, else update
+      final int pointsToAdd =
+          int.tryParse(mission['points']?.toString() ?? '0') ?? 0;
+
+      final int spinsToAdd =
+          int.tryParse(mission['number_of_spins']?.toString() ?? '0') ?? 0;
+
+      // 🔹 Upsert mission completion
       await supabase
           .from('mission_completed')
           .upsert(
@@ -283,10 +289,10 @@ class MissionRepository {
               "user_id": userId,
               "mission_id": mission['id'],
               "completed": true,
-              "points": mission['points'] ?? 0,
+              "points": pointsToAdd,
               "name": mission['name'],
               "reward_title": mission['reward_title'],
-              "number_of_spins": mission['number_of_spins'] ?? 0,
+              "number_of_spins": spinsToAdd,
               "updated_at": DateTime.now().toIso8601String(),
               "email": email,
             },
@@ -294,25 +300,30 @@ class MissionRepository {
             ignoreDuplicates: false,
           );
 
-      // Update total points
+      // 🔹 Fetch current totals
       final profileRes = await supabase
           .from('user_profile')
-          .select('total_points')
+          .select('total_points, spins')
           .eq('user_id', userId)
           .maybeSingle();
 
-      int currentPoints = profileRes!['total_points'] ?? 0;
-      int currentSpins = profileRes!['spins'] ?? 0;
-      final newPoints = currentPoints + int.parse(mission['points']);
-      final newSpins = currentSpins + int.parse(mission['number_of_spins']);
+      final int currentPoints = profileRes?['total_points'] ?? 0;
+      final int currentSpins = profileRes?['spins'] ?? 0;
+
+      final int newPoints = currentPoints + pointsToAdd;
+      final int newSpins = currentSpins + spinsToAdd;
+
+      // 🔹 Update BOTH points & spins
       await supabase
           .from('user_profile')
-          .update({'total_points': newPoints, "spins": newSpins})
+          .update({'total_points': newPoints, 'spins': newSpins})
           .eq('user_id', userId);
 
       return Right(AppBaseResponse(status: true));
     } on AuthException catch (e) {
       return Left(e.message);
+    } catch (e) {
+      return Left(e.toString());
     }
   }
 
