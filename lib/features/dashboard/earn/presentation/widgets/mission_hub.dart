@@ -4,6 +4,7 @@ import 'package:flowva/features/common/custom_success.dart';
 import 'package:flowva/features/common/flowva_button.dart';
 import 'package:flowva/features/common/model/campaign_response.dart';
 import 'package:flowva/features/common/ui_tool_mixin/ui_tool_mixin.dart';
+import 'package:flowva/features/dashboard/earn/data/models/community_mission_status_enum.dart';
 import 'package:flowva/features/dashboard/earn/data/models/mission_res.dart';
 import 'package:flowva/features/dashboard/earn/presentation/pages/invite_earn.dart';
 import 'package:flowva/features/dashboard/earn/presentation/widgets/perk_mission.dart';
@@ -11,13 +12,17 @@ import 'package:flowva/features/dashboard/earn/presentation/widgets/referr_campa
 import 'package:flowva/features/dashboard/home/data/bloc/home_cubit.dart';
 import 'package:flowva/features/mission/data/bloc/mission_cubit.dart';
 import 'package:flowva/features/mission/data/model/social_trivia_response.dart';
-import 'package:flowva/features/mission/presentation/widget/mission_intructions.dart';
 import 'package:flowva/session/session_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:timer_count_down/timer_controller.dart';
+import 'package:timer_count_down/timer_count_down.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../bloc/community_mission_bloc.dart';
+import '../../data/models/community_mission_model.dart';
 import '../pages/jackpot_page.dart';
 import 'claim_widget.dart';
 import 'follow_us_card.dart';
@@ -72,6 +77,11 @@ class _AdventureScreenState extends State<AdventureScreen> with UIToolMixin {
   Timer? _nextRoundTimer;
   Duration nextRoundRemaining = Duration.zero;
 
+  final CountdownController _timerController = CountdownController(
+    autoStart: true,
+  );
+  int differenceInSeconds = 0;
+
   @override
   void initState() {
     super.initState();
@@ -82,8 +92,12 @@ class _AdventureScreenState extends State<AdventureScreen> with UIToolMixin {
     missionCubit.fetchMission();
     missionCubit.fetchSkillUpChallenge();
 
+    BlocProvider.of<CommunityMissionBloc>(context).add(LoadCommunityMission());
+
     // set mission end to 2 days in future for demo
     missionEndTime = DateTime.now().add(const Duration(days: 2));
+
+    final now = DateTime.now().toUtc();
   }
 
   @override
@@ -219,285 +233,156 @@ class _AdventureScreenState extends State<AdventureScreen> with UIToolMixin {
                 padding: EdgeInsets.only(top: 16),
                 children: [
                   // COMMUNITY MISSIONS CARD
-                  Stack(
-                    clipBehavior: Clip.none,
-                    children: [
-                      Column(
-                        children: [
-                          // Card top section
-                          Container(
-                            decoration: BoxDecoration(
-                              color: Color(0xFFFFEFEF),
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            padding: EdgeInsets.only(
-                              top: 16,
-                              left: 16,
-                              right: 16,
-                              bottom: 22,
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "Community Missions",
-                                  style: GoogleFonts.baloo2(
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 24,
-                                    color: Color(0xFF70403E),
-                                  ),
-                                ),
-                                SizedBox(height: 16),
-                                Container(
-                                  padding: EdgeInsets.symmetric(
-                                    vertical: 5,
-                                    horizontal: 5,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: Color(0xFF9013FE).withOpacity(0.08),
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Container(
-                                        padding: EdgeInsets.symmetric(
-                                          vertical: 20,
-                                          horizontal: 12,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius: BorderRadius.circular(
-                                            8,
-                                          ),
-                                        ),
-                                        child: Image.asset(
-                                          'assets/images/reclaim_rec.png',
-                                          height: 60,
-                                        ),
-                                      ),
+                  BlocBuilder<CommunityMissionBloc, CommunityMissionState>(
+                    builder: (context, state) {
+                      CommunityMission? communityMission = state.mission;
 
-                                      Container(
-                                        padding: EdgeInsets.all(10),
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius: BorderRadius.circular(
-                                            8,
+                      final now = DateTime.now().toUtc();
+                      differenceInSeconds =
+                          (communityMission?.endDate ?? DateTime.now())
+                              .toUtc()
+                              .difference(now)
+                              .inSeconds
+                              .clamp(0, double.infinity)
+                              .toInt();
+
+                      return Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          Column(
+                            children: [
+                              // Card top section
+                              Container(
+                                decoration: BoxDecoration(
+                                  color: Color(0xFFFFEFEF),
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                padding: EdgeInsets.only(
+                                  top: 16,
+                                  left: 16,
+                                  right: 16,
+                                  bottom: 22,
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Community Missions",
+                                      style: GoogleFonts.baloo2(
+                                        fontWeight: FontWeight.w700,
+                                        fontSize: 24,
+                                        color: Color(0xFF70403E),
+                                      ),
+                                    ),
+                                    SizedBox(height: 16),
+                                    Container(
+                                      padding: EdgeInsets.symmetric(
+                                        vertical: 5,
+                                        horizontal: 5,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: Color(
+                                          0xFF9013FE,
+                                        ).withOpacity(0.08),
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Container(
+                                            padding: EdgeInsets.symmetric(
+                                              vertical: 20,
+                                              horizontal: 12,
+                                            ),
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                            ),
+                                            child: Image.asset(
+                                              'assets/images/reclaim_rec.png',
+                                              height: 60,
+                                            ),
                                           ),
-                                        ),
-                                        child: Row(
-                                          children: [
-                                            Image.asset(
-                                              'assets/images/mission_10.png',
-                                              height: 80,
+
+                                          Container(
+                                            padding: EdgeInsets.all(10),
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
                                             ),
-                                            SizedBox(width: 8),
-                                            Image.asset(
-                                              'assets/images/mission_pro.png',
-                                              height: 80,
-                                            ),
-                                            SizedBox(width: 10),
-                                            Column(
+                                            child: Row(
                                               children: [
                                                 Image.asset(
-                                                  'assets/images/one_50.png',
-                                                  width: 50,
+                                                  'assets/images/mission_10.png',
+                                                  height: 80,
                                                 ),
-                                                Text(
-                                                  "250,000",
-                                                  style: GoogleFonts.baloo2(
-                                                    fontWeight: FontWeight.w700,
-                                                    fontSize: 12,
-                                                    color: Color(0xFFA259FF),
-                                                  ),
+                                                SizedBox(width: 8),
+                                                Image.asset(
+                                                  'assets/images/mission_pro.png',
+                                                  height: 80,
+                                                ),
+                                                SizedBox(width: 10),
+                                                Column(
+                                                  children: [
+                                                    Image.asset(
+                                                      'assets/images/one_50.png',
+                                                      width: 50,
+                                                    ),
+                                                    Text(
+                                                      "250,000",
+                                                      style: GoogleFonts.baloo2(
+                                                        fontWeight:
+                                                            FontWeight.w700,
+                                                        fontSize: 12,
+                                                        color: Color(
+                                                          0xFFA259FF,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
                                                 ),
                                               ],
                                             ),
-                                          ],
-                                        ),
+                                          ),
+                                        ],
                                       ),
-                                    ],
-                                  ),
-                                ),
-                                SizedBox(height: 15),
-                                Text(
-                                  "Explore the AI calendar that plans your day",
-                                  style: GoogleFonts.baloo2(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 16,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-
-                          SizedBox(height: 20),
-
-                          // Card bottom section
-                          Container(
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(24),
-                            ),
-                            padding: EdgeInsets.only(
-                              top: 24,
-                              left: 16,
-                              bottom: 0,
-                              right: 16,
-                            ),
-                            child: Column(
-                              children: [
-                                Text(
-                                  "TIME LEFT",
-                                  style: GoogleFonts.manrope(
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 12,
-                                    color: Colors.black.withOpacity(0.54),
-                                  ),
-                                ),
-                                SizedBox(height: 12),
-
-                                // Timer
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    timeBox(formatTimeUnit(timeLeft.inDays)),
-                                    timeColon(),
-                                    timeBox(formatTimeUnit(timeLeft.inHours)),
-                                    timeColon(),
-                                    timeBox(
-                                      formatTimeUnit(timeLeft.inMinutes % 60),
                                     ),
-                                    timeColon(),
-                                    timeBox(
-                                      formatTimeUnit(timeLeft.inSeconds % 60),
+                                    SizedBox(height: 15),
+                                    Text(
+                                      communityMission?.title ?? "",
+                                      style: GoogleFonts.baloo2(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 16,
+                                      ),
                                     ),
                                   ],
                                 ),
+                              ),
 
-                                SizedBox(height: 20),
+                              SizedBox(height: 20.h),
 
-                                // Progress bar
-                                SizedBox(
-                                  width: 260,
-                                  child: Stack(
-                                    children: [
-                                      Container(
-                                        height: 20,
-                                        decoration: BoxDecoration(
-                                          color: Colors.grey[300],
-                                          borderRadius: BorderRadius.circular(
-                                            10,
-                                          ),
-                                        ),
-                                      ),
-                                      Container(
-                                        height: 20,
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                            0.85 *
-                                            progress,
-                                        decoration: BoxDecoration(
-                                          gradient: LinearGradient(
-                                            colors: [
-                                              Color(0xFFA259FF),
-                                              Color(0xFFDEC4FF),
-                                            ],
-                                          ),
-                                          borderRadius: BorderRadius.circular(
-                                            10,
-                                          ),
-                                        ),
-                                        alignment: Alignment.center,
-                                        padding: EdgeInsets.only(left: 8),
-                                      ),
-                                      Positioned(
-                                        left: 50,
-                                        right: 50,
-                                        child: RichText(
-                                          textAlign: TextAlign.center,
-                                          text: TextSpan(
-                                            children: [
-                                              TextSpan(
-                                                text:
-                                                    "$usersJoined / $userGoal",
-                                                style: GoogleFonts.baloo2(
-                                                  fontWeight: FontWeight.w600,
-                                                  fontSize: 11,
-                                                  color: Colors.black,
-                                                ),
-                                              ),
-                                              TextSpan(
-                                                text: " users joined",
-                                                style: GoogleFonts.baloo2(
-                                                  fontWeight: FontWeight.w600,
-                                                  fontSize: 11,
-                                                  color: Colors.black,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                SizedBox(height: 20),
-                                // Join button
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 8.0,
-                                    vertical: 10,
-                                  ),
-                                  child: isCommunityCompleted
-                                      ? SizedBox(
-                                          height: 60,
-                                          child: FlowvaButton.inactiveButton(
-                                            name: "Join this mission",
-                                            fontSize: 16,
-                                            apply: () => showModalBottomSheet(
-                                              context: context,
-                                              isScrollControlled: true,
-                                              barrierColor: Colors.transparent,
-                                              backgroundColor:
-                                                  Colors.transparent,
-                                              // important for blur
-                                              builder: (_) =>
-                                                  MissionIntructions(),
-                                            ),
-                                          ),
-                                        )
-                                      : FlowvaButton.blueButton(
-                                          name: "Join this mission",
-                                          fontSize: 16,
-                                          apply: () => showDialog(
-                                            context: context,
-                                            barrierDismissible: true,
-                                            barrierColor: Colors.transparent,
-                                            builder: (context) =>
-                                                ReclaimMissionPopup(),
-                                          ),
-                                        ),
-                                ),
-                              ],
-                            ),
+                              // Card bottom section
+                              _buildTimeLeftContainer(context),
+                            ],
+                          ),
+                          Positioned(
+                            top: 225,
+                            // Adjust this to position correctly between the cards
+                            left: 100,
+                            // Horizontal position of left stroke
+                            child: strokeConnector(),
+                          ),
+                          Positioned(
+                            top: 225,
+                            right: 100, // Horizontal position of right stroke
+                            child: strokeConnector(),
                           ),
                         ],
-                      ),
-                      Positioned(
-                        top: 225,
-                        // Adjust this to position correctly between the cards
-                        left: 100,
-                        // Horizontal position of left stroke
-                        child: strokeConnector(),
-                      ),
-                      Positioned(
-                        top: 225,
-                        right: 100, // Horizontal position of right stroke
-                        child: strokeConnector(),
-                      ),
-                    ],
+                      );
+                    },
                   ),
 
                   const SizedBox(height: 20),
@@ -1041,6 +926,152 @@ class _AdventureScreenState extends State<AdventureScreen> with UIToolMixin {
                 ],
               ),
       ),
+    );
+  }
+
+  List<String> formattedTime2(double time) {
+    final int days = (time / 86400).floor(); // 1 day = 86400 seconds
+    final int hours = ((time % 86400) / 3600).floor();
+    final int minutes = ((time % 3600) / 60).floor();
+    final int seconds = (time % 60).floor();
+
+    return [
+      days.toString().padLeft(2, "0"),
+      hours.toString().padLeft(2, "0"),
+      minutes.toString().padLeft(2, "0"),
+      seconds.toString().padLeft(2, "0"),
+    ];
+  }
+
+  Widget _buildTimeLeftContainer(BuildContext context) {
+    return BlocBuilder<CommunityMissionBloc, CommunityMissionState>(
+      builder: (context, state) {
+        CommunityMission? communityMission = state.mission;
+        return Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(24),
+          ),
+          padding: EdgeInsets.only(top: 24, left: 16, bottom: 0, right: 16),
+          child: Column(
+            children: [
+              Text(
+                "TIME LEFT",
+                style: GoogleFonts.manrope(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 12,
+                  color: Colors.black.withOpacity(0.54),
+                ),
+              ),
+              SizedBox(height: 12),
+
+              // Timer
+              Countdown(
+                controller: _timerController,
+                seconds: differenceInSeconds,
+                build: (BuildContext context, double time) {
+                  List<String> timeList = formattedTime2(time);
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      timeBox(timeList[0]),
+                      timeColon(),
+                      timeBox(timeList[1]),
+                      timeColon(),
+                      timeBox(timeList[2]),
+                      timeColon(),
+                      timeBox(timeList[3]),
+                    ],
+                  );
+                },
+              ),
+              SizedBox(height: 20.h),
+
+              // Progress bar
+              SizedBox(
+                width: 260.w,
+                child: Stack(
+                  alignment: Alignment.center,
+
+                  children: [
+                    LinearProgressIndicator(
+                      minHeight: 20,
+                      value: (communityMission?.usersJoined ?? 0) / 5000,
+                      borderRadius: BorderRadius.circular(10),
+                      backgroundColor: Colors.grey[300],
+                      valueColor: AlwaysStoppedAnimation(Color(0xFFDEC4FF)),
+                    ),
+                    Positioned(
+                      left: 50,
+                      right: 50,
+                      child: RichText(
+                        textAlign: TextAlign.center,
+                        text: TextSpan(
+                          children: [
+                            TextSpan(
+                              text:
+                                  "${communityMission?.usersJoined ?? 0} / $userGoal",
+                              style: GoogleFonts.baloo2(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 11,
+                                color: Colors.black,
+                              ),
+                            ),
+                            TextSpan(
+                              text: " users joined",
+                              style: GoogleFonts.baloo2(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 11,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 20),
+              // Join button
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 8.0,
+                  vertical: 10,
+                ),
+                child: state.hasJoined == CommunityMissionStatus.pending
+                    ? SizedBox(
+                        height: 60,
+                        child: FlowvaButton.inactiveButton(
+                          name: "Join this mission",
+                          fontSize: 16,
+                          /*apply: () => showModalBottomSheet(
+                            context: context,
+                            isScrollControlled: true,
+                            barrierColor: Colors.transparent,
+                            backgroundColor: Colors.transparent,
+                            // important for blur
+                            builder: (_) => MissionInstructions(),
+                          ),*/
+                        ),
+                      )
+                    : state.hasJoined == CommunityMissionStatus.completed
+                    ? Image.asset("assets/images/mark.png")
+                    : FlowvaButton.blueButton(
+                        name: "Join this mission",
+                        fontSize: 16,
+                        apply: () => showDialog(
+                          context: context,
+                          barrierDismissible: true,
+                          barrierColor: Colors.transparent,
+                          builder: (context) => ReclaimMissionPopup(),
+                        ),
+                      ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 

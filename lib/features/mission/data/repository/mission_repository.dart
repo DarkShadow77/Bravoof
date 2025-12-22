@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:dartz/dartz.dart';
@@ -97,24 +98,49 @@ class MissionRepository {
 
   Future<Either<String, StreakResponse>> fetchStreak() async {
     try {
-      final streakRes = await supabase
-          .from('user_streaks')
-          .select()
-          .eq('user_id', sessionManager.userIdVal)
-          .maybeSingle();
+      final userId = sessionManager.userIdVal;
 
-      if (streakRes == null) {
+      final res = await supabase
+          .from('user_streaks')
+          .select('id, current_streak, last_claimed_date, created_at')
+          .eq('user_id', userId)
+          .order('created_at', ascending: true);
+
+      if (res.isEmpty) {
         // Return empty streak instead of error
         return Right(
           StreakResponse(
             id: 0,
-            userId: sessionManager.userIdVal,
+            userId: userId,
             currentStreak: 0,
+            history: const [],
           ),
         );
       }
 
-      return Right(StreakResponse.fromJson(streakRes));
+      // 🔹 History (every real check-in)
+      final history = res
+          .where((e) => e['last_claimed_date'] != null)
+          .map<DateTime>((e) {
+            final d = DateTime.parse(e['last_claimed_date']);
+            return DateTime(d.year, d.month, d.day); // normalize
+          })
+          .toList();
+
+      // 🔹 Latest row = current streak state
+      final latest = res.last;
+
+      final summary = StreakResponse(
+        id: latest['id'],
+        userId: userId,
+        currentStreak: latest['current_streak'] ?? 0,
+        lastClaimedDate: latest['last_claimed_date'] != null
+            ? DateTime.parse(latest['last_claimed_date'])
+            : null,
+        history: history,
+      );
+
+      return Right(summary);
     } catch (e) {
       return Left(e.toString());
     }
@@ -129,24 +155,32 @@ class MissionRepository {
       final today = DateTime(now.year, now.month, now.day);
       final yesterday = today.subtract(const Duration(days: 1));
 
+      // Fetch latest streak for today logic
       final streakRes = await supabase
           .from('user_streaks')
           .select()
           .eq('user_id', userId)
-          .maybeSingle();
+          .order('created_at', ascending: true);
 
       int newStreak = 1;
+      int streakId;
 
-      if (streakRes == null) {
-        // 🆕 First ever check-in
-        await supabase.from('user_streaks').insert({
-          'user_id': userId,
-          'current_streak': 1,
-          'last_claimed_date': today.toIso8601String(),
-        });
+      if (streakRes.isEmpty) {
+        // First-ever check-in
+        // First-ever check-in
+        final insertedStreak = await supabase
+            .from('user_streaks')
+            .insert({
+              'user_id': userId,
+              'current_streak': 1,
+              'last_claimed_date': today.toIso8601String(),
+            })
+            .select()
+            .single();
+        streakId = insertedStreak['id'];
+        newStreak = 1;
       } else {
-        final lastClaimed = DateTime.parse(streakRes['last_claimed_date']);
-
+        final lastClaimed = DateTime.parse(streakRes.last['last_claimed_date']);
         final lastDate = DateTime(
           lastClaimed.year,
           lastClaimed.month,
@@ -158,19 +192,22 @@ class MissionRepository {
         }
 
         if (lastDate == yesterday) {
-          newStreak = (streakRes['current_streak'] ?? 0) + 1;
+          newStreak = (streakRes.last['current_streak'] ?? 0) + 1;
         } else {
           // ❌ Missed a day → reset streak
           newStreak = 1;
         }
 
-        await supabase
+        final insertedStreak = await supabase
             .from('user_streaks')
-            .update({
+            .insert({
+              'user_id': userId,
               'current_streak': newStreak,
               'last_claimed_date': today.toIso8601String(),
             })
-            .eq('user_id', userId);
+            .select()
+            .single();
+        streakId = insertedStreak['id'];
       }
 
       // 🔹 Reward logic
@@ -207,15 +244,23 @@ class MissionRepository {
         "email": sessionManager.userEmailval,
       });
 
+      // 🔹 Build history from all streak rows
+      final history = streakRes.map<DateTime>((e) {
+        final d = DateTime.parse(e['last_claimed_date']);
+        return DateTime(d.year, d.month, d.day); // normalize
+      }).toList()..add(today);
+
       return Right(
         StreakResponse(
-          id: streakRes?['id'],
+          id: streakId,
+          userId: userId,
           currentStreak: newStreak,
           lastClaimedDate: today,
-          userId: userId,
+          history: history,
         ),
       );
     } catch (e) {
+      log("Check In Error: ${e.toString()}");
       return Left(e.toString());
     }
   }

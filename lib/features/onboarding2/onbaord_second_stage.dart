@@ -5,7 +5,6 @@ import 'package:flowva/features/common/flowva_button.dart';
 import 'package:flowva/features/common/ui_tool_mixin/ui_tool_mixin.dart';
 import 'package:flowva/features/onbaording/data/bloc/user_cubit.dart';
 import 'package:flowva/features/onbaording/data/model/user_profile.dart';
-import 'package:flowva/features/onboarding2/widget/reward.dart';
 import 'package:flowva/session/session_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -15,6 +14,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../otp/presentation/verify_otp_page.dart';
 import 'data/convert_asset_file.dart';
 import 'data/data.dart';
 
@@ -262,14 +262,10 @@ class _OnbaordSecondStageState extends State<OnbaordSecondStage>
                     color: Colors.green,
                     styleColor: Colors.white,
                   );
-                  Future.delayed(Duration(seconds: 3), () {
-                    showDialog(
-                      context: context,
-                      barrierDismissible: true,
-                      barrierColor: Colors.transparent,
-                      builder: (context) => const RewardWidget(),
-                    );
-                  });
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => VerifyOtpPage()),
+                  );
                   SessionManager().firstTimeUserVal = "YES";
                 } else if (state is UserFailure) {
                   setState(() {

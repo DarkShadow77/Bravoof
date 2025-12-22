@@ -114,23 +114,21 @@
 // }
 
 import 'package:flowva/features/common/data/constants.dart';
-import 'package:flowva/features/dashboard/home/home_page.dart';
 import 'package:flowva/features/dashboard/nav_bar.dart';
-import 'package:flowva/features/login/presentation/login_page.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:collection/collection.dart';
 import 'package:page_transition/page_transition.dart';
+
+import '../../session/session_manager.dart';
 
 class StepProgressPage extends StatefulWidget {
   @override
   _StepProgressPageState createState() => _StepProgressPageState();
 }
 
-class _StepProgressPageState extends State<StepProgressPage>  with TickerProviderStateMixin{
-
+class _StepProgressPageState extends State<StepProgressPage>
+    with TickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _scale1;
   late Animation<double> _scale2;
@@ -149,71 +147,69 @@ class _StepProgressPageState extends State<StepProgressPage>  with TickerProvide
   void initState() {
     super.initState();
 
-    _controller = AnimationController(
-      duration: const Duration(seconds: 15),
-      vsync: this,
-    )..addListener(() {
-      final t = _controller.value;
-      int newStep;
-      if (t < 0.33) {
-        newStep = 0;
-      } else if (t < 0.66) {
-        newStep = 1;
-      } else {
-        newStep = 2;
-      }
+    _controller =
+        AnimationController(duration: const Duration(seconds: 15), vsync: this)
+          ..addListener(() {
+            final t = _controller.value;
+            int newStep;
+            if (t < 0.33) {
+              newStep = 0;
+            } else if (t < 0.66) {
+              newStep = 1;
+            } else {
+              newStep = 2;
+            }
 
-      if (newStep != activeStep) {
-        completedSteps.add(activeStep); // mark previous step as completed
-        activeStep = newStep;
-      }
-      // ✅ When animation finishes, mark last step completed
-      if (_controller.isCompleted) {
-        completedSteps.add(2);
-      }
+            if (newStep != activeStep) {
+              completedSteps.add(activeStep); // mark previous step as completed
+              activeStep = newStep;
+            }
+            // ✅ When animation finishes, mark last step completed
+            if (_controller.isCompleted) {
+              completedSteps.add(2);
+            }
 
-      setState(() {});
-    });
+            setState(() {});
+          });
 
     // Step 1
     _scale1 = TweenSequence([
-      TweenSequenceItem(tween: Tween(begin: 0.8, end: 1.0), weight: 3), // zoom in
-      TweenSequenceItem(tween: Tween(begin: 1.0, end: 0.9), weight: 3), // zoom out
+      TweenSequenceItem(
+        tween: Tween(begin: 0.8, end: 1.0),
+        weight: 3,
+      ), // zoom in
+      TweenSequenceItem(
+        tween: Tween(begin: 1.0, end: 0.9),
+        weight: 3,
+      ), // zoom out
       TweenSequenceItem(tween: ConstantTween(0.9), weight: 3),
     ]).animate(_controller);
 
     // Step 2
     _scale2 = TweenSequence([
       TweenSequenceItem(tween: ConstantTween(0.8), weight: 3), // wait
-      TweenSequenceItem(tween: Tween(begin: 0.8, end: 1.0), weight: 3), // zoom in
-      TweenSequenceItem(tween: Tween(begin: 1.0, end: 0.9), weight: 3), // zoom out
+      TweenSequenceItem(
+        tween: Tween(begin: 0.8, end: 1.0),
+        weight: 3,
+      ), // zoom in
+      TweenSequenceItem(
+        tween: Tween(begin: 1.0, end: 0.9),
+        weight: 3,
+      ), // zoom out
     ]).animate(_controller);
-
 
     // Step 3 (final focus)
     _scale3 = TweenSequence([
       TweenSequenceItem(tween: ConstantTween(0.8), weight: 6), // wait
-      TweenSequenceItem(tween: Tween(begin: 0.8, end: 1.0), weight: 3), // zoom in
+      TweenSequenceItem(
+        tween: Tween(begin: 0.8, end: 1.0),
+        weight: 3,
+      ), // zoom in
     ]).animate(_controller);
 
     _controller.forward();
     // Add navigation after 7 seconds
-
-    Future.delayed(const Duration(seconds: 16), () async{
-      if (mounted) {
-        Navigator.of(context).pushAndRemoveUntil(
-            PageTransition(
-                type: PageTransitionType.fade,
-                duration : Duration(milliseconds: 1500),
-                child: BottomNavBar()
-            )
-            ,
-                (ctx) => false);
-
-        await Constants.setConfigure(true);
-      }
-    });
-
+    handleRewardFlow(context);
   }
 
   @override
@@ -221,6 +217,25 @@ class _StepProgressPageState extends State<StepProgressPage>  with TickerProvide
     _controller.dispose();
     super.dispose();
   }
+
+  Future<void> handleRewardFlow(BuildContext context) async {
+    await Future.delayed(const Duration(seconds: 16));
+
+    if (!mounted) return;
+
+    SessionManager().isNewUserVal = "YES";
+    Navigator.of(context).pushAndRemoveUntil(
+      PageTransition(
+        type: PageTransitionType.fade,
+        duration: const Duration(milliseconds: 1500),
+        child: BottomNavBar(),
+      ),
+      (_) => false,
+    );
+
+    await Constants.setConfigure(true);
+  }
+
   Widget _buildStep({
     required String title,
     required bool isActive,
@@ -238,7 +253,7 @@ class _StepProgressPageState extends State<StepProgressPage>  with TickerProvide
       icon = SizedBox(
         width: 14,
         height: 14,
-        child: SvgPicture.asset("assets/images/loading.svg")
+        child: SvgPicture.asset("assets/images/loading.svg"),
       );
     }
 
@@ -246,11 +261,13 @@ class _StepProgressPageState extends State<StepProgressPage>  with TickerProvide
       scale: scale,
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8),
-        child:Center(
-          child: IntrinsicWidth( // 👈 makes sure the row takes just enough space
+        child: Center(
+          child: IntrinsicWidth(
+            // 👈 makes sure the row takes just enough space
             child: Row(
               mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start, // 👈 keeps icon aligned with first line
+              crossAxisAlignment: CrossAxisAlignment
+                  .start, // 👈 keeps icon aligned with first line
               children: [
                 Padding(
                   padding: const EdgeInsets.only(top: 2.0), // optional tweak
@@ -274,13 +291,10 @@ class _StepProgressPageState extends State<StepProgressPage>  with TickerProvide
               ],
             ),
           ),
-        )
-
-        ,
+        ),
       ),
     );
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -290,7 +304,7 @@ class _StepProgressPageState extends State<StepProgressPage>  with TickerProvide
         // mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          SizedBox(height: 160,),
+          SizedBox(height: 160),
           Text(
             "Almost there",
             style: GoogleFonts.manrope(
@@ -299,7 +313,7 @@ class _StepProgressPageState extends State<StepProgressPage>  with TickerProvide
               color: Color(0xFF2B2B2B),
             ),
           ),
-          SizedBox(height: 50,),
+          SizedBox(height: 50),
           Text(
             "Getting Bravoo ready for you",
             style: GoogleFonts.manrope(
@@ -332,57 +346,56 @@ class _StepProgressPageState extends State<StepProgressPage>  with TickerProvide
                             strokeWidth: 7,
                           ),
                           child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            // Step count at top
-                            SizedBox(height: 50),
-                            RichText(
-                              text: TextSpan(
-                                children: [
-                                  TextSpan(
-                                    text: "${activeStep + 1}",
-                                    style: GoogleFonts.manrope(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w700,
-                                      color: Color(0xFF400387),
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              // Step count at top
+                              SizedBox(height: 50),
+                              RichText(
+                                text: TextSpan(
+                                  children: [
+                                    TextSpan(
+                                      text: "${activeStep + 1}",
+                                      style: GoogleFonts.manrope(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w700,
+                                        color: Color(0xFF400387),
+                                      ),
                                     ),
-                                  ),
-                                  TextSpan(
-                                    text: "/${steps.length}",
-                                    style: GoogleFonts.manrope(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.grey,
+                                    TextSpan(
+                                      text: "/${steps.length}",
+                                      style: GoogleFonts.manrope(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w500,
+                                        color: Colors.grey,
+                                      ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
-                            ),
-                            const SizedBox(height: 10),
+                              const SizedBox(height: 10),
 
-                            // Show all steps
-                            _buildStep(
-                              title: steps[0]['title']!,
-                              isActive: activeStep == 0,
-                              isCompleted: completedSteps.contains(0),
-                              scale: _scale1,
-                            ),
-                            _buildStep(
-                              title: steps[1]['title']!,
-                              isActive: activeStep == 1,
-                              isCompleted: completedSteps.contains(1),
-                              scale: _scale2,
-                            ),
-                            _buildStep(
-                              title: steps[2]['title']!,
-                              isActive: activeStep == 2,
-                              isCompleted: completedSteps.contains(2),
-                              scale: _scale3,
-                            ),
-                          ],
+                              // Show all steps
+                              _buildStep(
+                                title: steps[0]['title']!,
+                                isActive: activeStep == 0,
+                                isCompleted: completedSteps.contains(0),
+                                scale: _scale1,
+                              ),
+                              _buildStep(
+                                title: steps[1]['title']!,
+                                isActive: activeStep == 1,
+                                isCompleted: completedSteps.contains(1),
+                                scale: _scale2,
+                              ),
+                              _buildStep(
+                                title: steps[2]['title']!,
+                                isActive: activeStep == 2,
+                                isCompleted: completedSteps.contains(2),
+                                scale: _scale3,
+                              ),
+                            ],
+                          ),
                         ),
-
-                  ),
                       ),
                     ],
                   );
@@ -390,7 +403,7 @@ class _StepProgressPageState extends State<StepProgressPage>  with TickerProvide
               ),
             ),
           ),
-          SizedBox(height: 30,),
+          SizedBox(height: 30),
           Text(
             "Setting the stage for your next big win...",
             style: GoogleFonts.manrope(
@@ -401,7 +414,6 @@ class _StepProgressPageState extends State<StepProgressPage>  with TickerProvide
           ),
         ],
       ),
-
     );
   }
 }
@@ -425,13 +437,12 @@ class CircleProgressPainter extends CustomPainter {
     final radius1 = (size.shortestSide / 2) - (strokeWidth / 2);
     // Define the paint for the background circle
     final innerPaint = Paint()
-      ..color = Color(0xFFFDE2E4).withOpacity(0.1) // 👈 your inner circle color
+      ..color = Color(0xFFFDE2E4)
+          .withOpacity(0.1) // 👈 your inner circle color
       ..style = PaintingStyle.fill;
 
     canvas.drawCircle(center1, radius1, innerPaint);
     final backgroundPaint = Paint()
-
-
       // ..style = PaintingStyle.
       ..color = backgroundColor
       ..strokeWidth = strokeWidth
@@ -452,7 +463,8 @@ class CircleProgressPainter extends CustomPainter {
     canvas.drawCircle(center, radius, backgroundPaint);
 
     // Draw the progress arc
-    final double sweepAngle = 2 * 3.1415926535 * progress; // Convert progress to radians
+    final double sweepAngle =
+        2 * 3.1415926535 * progress; // Convert progress to radians
     canvas.drawArc(
       Rect.fromCircle(center: center, radius: radius),
       -3.1415926535 / 2, // Start from the top (12 o'clock)

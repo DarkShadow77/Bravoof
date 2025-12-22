@@ -1,15 +1,10 @@
 import 'dart:ui';
+
 import 'package:flowva/features/common/flowva_button.dart';
-import 'package:flowva/features/mission/data/model/trivia_response.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hugeicons/hugeicons.dart';
 
-class MissionIntructions extends StatelessWidget {
-
-
-
+class MissionInstructions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -80,8 +75,8 @@ class MissionIntructions extends StatelessWidget {
                     const SizedBox(height: 30),
                     FlowvaButton.blueButton(
                       name: "Let’s do this!",
-                      apply: ()=>Navigator.pop(context)
-                    )
+                      apply: () => Navigator.pop(context),
+                    ),
                   ],
                 ),
               ),

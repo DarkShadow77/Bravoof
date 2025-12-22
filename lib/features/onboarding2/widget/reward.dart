@@ -1,13 +1,11 @@
-import 'dart:math';
 import 'dart:ui';
 
-import 'package:confetti/confetti.dart';
 import 'package:flowva/features/common/flowva_button.dart';
-import 'package:flowva/features/onboarding2/progress_step.dart';
-import 'package:flowva/features/otp/presentation/verify_otp_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_confetti/flutter_confetti.dart';
 import 'package:google_fonts/google_fonts.dart';
+
+import '../../dashboard/nav_bar.dart';
 
 class RewardWidget extends StatefulWidget {
   const RewardWidget({super.key});
@@ -17,26 +15,20 @@ class RewardWidget extends StatefulWidget {
 }
 
 class _RewardWidgetState extends State<RewardWidget> {
-
-
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_){
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       Confetti.launch(
-          context,
-          options: const ConfettiOptions(
-              particleCount: 100, spread: 70, y: 0.6)
+        context,
+        options: const ConfettiOptions(particleCount: 100, spread: 70, y: 0.6),
       );
     });
 
     super.initState();
-
-
   }
 
   @override
   void dispose() {
-
     super.dispose();
   }
 
@@ -84,7 +76,7 @@ class _RewardWidgetState extends State<RewardWidget> {
                       ),
                     ),
                     const SizedBox(height: 20),
-                    Image.asset("assets/images/one_50.png",height: 100,),
+                    Image.asset("assets/images/one_50.png", height: 100),
                     const SizedBox(height: 24),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 30),
@@ -114,31 +106,25 @@ class _RewardWidgetState extends State<RewardWidget> {
                     const SizedBox(height: 20),
                     FlowvaButton.whiteButton(
                       name: "Take me home",
-                      apply: () => Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => VerifyOtpPage(),
-                        ),
-                      ),
-                      color: Colors.black
+                      apply: () => Navigator.pop(context),
+                      color: Colors.black,
                     ),
                     FlowvaButton.blueButton(
                       name: "Go to mission",
-                      apply: ()=>Navigator.pop(context)
+                      apply: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => BottomNavBar(index: 1),
+                        ),
+                      ),
                     ),
                   ],
                 ),
               ),
-
-
             ],
           ),
         ),
-
-
-    ],
+      ],
     );
   }
-
 }
-

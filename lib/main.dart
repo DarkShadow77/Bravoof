@@ -17,6 +17,7 @@ import 'app/theme/app_themes.dart';
 import 'core/constants/strings.dart';
 import 'core/di/service_locator.dart';
 import 'features/app.dart';
+import 'features/dashboard/earn/bloc/community_mission_bloc.dart';
 import 'features/onbaording/data/bloc/user_cubit.dart';
 import 'utility/navigation.dart';
 
@@ -94,7 +95,12 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MultiBlocProvider(
-      providers: [BlocProvider<HomeCubit>(create: (_) => sl<HomeCubit>())],
+      providers: [
+        BlocProvider<HomeCubit>(create: (_) => sl<HomeCubit>()),
+        BlocProvider<CommunityMissionBloc>(
+          create: (_) => sl<CommunityMissionBloc>(),
+        ),
+      ],
       child: ScreenUtilInit(
         designSize: const Size(375, 815),
         minTextAdapt: true,

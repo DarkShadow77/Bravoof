@@ -1,8 +1,10 @@
 import 'package:flowva/features/common/flowva_app_bar.dart';
+import 'package:flowva/features/dashboard/earn/bloc/community_mission_bloc.dart';
 import 'package:flowva/features/dashboard/earn/presentation/widgets/earn_overview_screen.dart';
 import 'package:flowva/features/dashboard/earn/presentation/widgets/mission_hub.dart';
 import 'package:flowva/features/mission/presentation/page/skill_up_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class MissionPage extends StatefulWidget {
@@ -27,6 +29,9 @@ class _MissionPageState extends State<MissionPage> {
         selectedIndex = widget.index!;
         _pageController.jumpToPage(widget.index!);
       }
+      BlocProvider.of<CommunityMissionBloc>(
+        context,
+      ).add(LoadCommunityMission());
     });
   }
 

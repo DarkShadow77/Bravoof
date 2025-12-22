@@ -1,7 +1,10 @@
+import 'package:flowva/features/dashboard/earn/bloc/community_mission_bloc.dart';
 import 'package:flowva/features/dashboard/home/data/bloc/campaign_cubit.dart';
 import 'package:flowva/features/onbaording/data/bloc/user_cubit.dart';
 import 'package:get_it/get_it.dart';
 
+import '../../features/dashboard/earn/data/repositories/community_mission_repository.dart';
+import '../../features/dashboard/earn/data/repositories/community_mission_repository_impl.dart';
 import '../../features/dashboard/home/data/bloc/home_cubit.dart';
 import '../../features/dashboard/home/data/repository/campaign_repository.dart';
 import '../../features/dashboard/home/data/repository/campaign_repository_impl.dart';
@@ -16,6 +19,9 @@ Future<void> initDI() async {
   sl.registerLazySingleton<SignupRepository>(() => SignupRepositoryImpl());
   sl.registerLazySingleton<CampaignRepository>(() => CampaignRepositoryImpl());
   sl.registerLazySingleton<HomeRepository>(() => HomeRepositoryImpl());
+  sl.registerLazySingleton<CommunityMissionRepository>(
+    () => CommunityMissionRepositoryImpl(),
+  );
 
   sl.registerSingleton<UserCubit>(UserCubit());
   sl.registerFactoryParam<CampaignCubit, int, void>(
@@ -26,5 +32,8 @@ Future<void> initDI() async {
   );
   sl.registerSingleton<HomeCubit>(
     HomeCubit(homeRepository: sl<HomeRepository>()),
+  );
+  sl.registerSingleton<CommunityMissionBloc>(
+    CommunityMissionBloc(repo: sl<CommunityMissionRepository>()),
   );
 }

@@ -58,7 +58,12 @@ class _EarnOverviewScreenState extends State<EarnOverviewScreen>
   }
 
   bool init = true;
-  StreakResponse streaks = StreakResponse(id: 0, userId: '', currentStreak: 0);
+  StreakResponse streaks = StreakResponse(
+    id: 0,
+    userId: '',
+    currentStreak: 0,
+    history: [],
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -745,17 +750,10 @@ class _EarnOverviewScreenState extends State<EarnOverviewScreen>
   }
 
   List<String> getCheckedDays(StreakResponse streak) {
-    if (streak.currentStreak == 0 || streak.lastClaimedDate == null) {
-      return [];
-    }
+    if (streak.history.isEmpty) return [];
 
-    final today = DateTime.now();
-    final start = today.subtract(Duration(days: streak.currentStreak - 1));
-
-    return List.generate(streak.currentStreak, (i) {
-      final day = start.add(Duration(days: i));
-      return days[day.weekday - 1];
-    });
+    // Map history to weekday abbreviations
+    return streak.history.map((d) => days[d.weekday - 1]).toList();
   }
 
   // 🔹 Streak Section
@@ -804,6 +802,7 @@ class _EarnOverviewScreenState extends State<EarnOverviewScreen>
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: days.map((day) {
+                final isChecked = checkedDays.contains(day);
                 return Column(
                   children: [
                     RichText(
@@ -813,7 +812,7 @@ class _EarnOverviewScreenState extends State<EarnOverviewScreen>
                       ),
                     ),
                     SizedBox(height: 4.h),
-                    checkedDays.contains(day)
+                    isChecked
                         ? Icon(
                             Icons.check_circle,
                             size: 22.sp,

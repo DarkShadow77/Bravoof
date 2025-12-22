@@ -3,12 +3,14 @@ class StreakResponse {
   final String userId;
   final int currentStreak;
   final DateTime? lastClaimedDate;
+  final List<DateTime> history;
 
   StreakResponse({
     this.id,
     required this.userId,
     required this.currentStreak,
     this.lastClaimedDate,
+    required this.history,
   });
 
   factory StreakResponse.fromJson(Map<String, dynamic> json) {
@@ -19,6 +21,8 @@ class StreakResponse {
       lastClaimedDate: json['last_claimed_date'] != null
           ? DateTime.parse(json['last_claimed_date'])
           : null,
+
+      history: json['history'] ?? [],
     );
   }
 

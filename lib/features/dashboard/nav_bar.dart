@@ -3,12 +3,15 @@ import 'package:flowva/features/dashboard/earn/presentation/pages/earn_screen.da
 import 'package:flowva/features/dashboard/home/home_page.dart';
 import 'package:flowva/features/mission/presentation/page/mission_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../session/session_manager.dart';
 import '../../utility/permission_handler.dart';
+import '../onboarding2/widget/reward.dart';
+import 'earn/bloc/community_mission_bloc.dart';
 import 'home/widget/show_welcome_message.dart';
 
 class BottomNavBar extends StatefulWidget {
@@ -43,6 +46,21 @@ class _BottomNavBarState extends State<BottomNavBar> {
               ),
             )
           : requestNotificationPermission(context);
+
+      SessionManager().isNewUserVal == "YES"
+          ? showDialog(
+              context: context,
+              barrierDismissible: true,
+              barrierColor: Colors.transparent,
+              builder: (_) => const RewardWidget(),
+            )
+          : null;
+
+      SessionManager().isNewUserVal = "NO";
+
+      BlocProvider.of<CommunityMissionBloc>(
+        context,
+      ).add(LoadCommunityMission());
     });
   }
 
