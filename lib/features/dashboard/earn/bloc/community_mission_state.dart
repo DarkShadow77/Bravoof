@@ -5,13 +5,13 @@ enum CommunityMissionType { fetchMission, checkJoinStatus, joinMission }
 @immutable
 class CommunityMissionState {
   final CommunityMission? mission;
-  final CommunityMissionStatus hasJoined;
+  final MissionStatus hasJoined;
 
   CommunityMissionState({required this.mission, required this.hasJoined});
 
   CommunityMissionState copWith({
     CommunityMission? mission,
-    CommunityMissionStatus? hasJoined,
+    MissionStatus? hasJoined,
   }) {
     return CommunityMissionState(
       mission: mission ?? this.mission,

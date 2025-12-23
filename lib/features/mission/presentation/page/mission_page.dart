@@ -7,6 +7,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../dashboard/earn/bloc/featured_mission_bloc.dart';
+import '../../../dashboard/earn/bloc/social_mission_bloc.dart';
+import '../../../onbaording/data/bloc/user_cubit.dart';
+
 class MissionPage extends StatefulWidget {
   MissionPage({super.key, this.index});
   final int? index;
@@ -29,9 +33,13 @@ class _MissionPageState extends State<MissionPage> {
         selectedIndex = widget.index!;
         _pageController.jumpToPage(widget.index!);
       }
+      final userCubit = UserCubit();
+      userCubit.updateUserProfile();
       BlocProvider.of<CommunityMissionBloc>(
         context,
       ).add(LoadCommunityMission());
+      BlocProvider.of<SocialMissionBloc>(context).add(LoadSocialMission());
+      BlocProvider.of<FeaturedMissionBloc>(context).add(LoadFeaturedMission());
     });
   }
 

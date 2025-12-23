@@ -54,20 +54,20 @@ class CommunityMission {
 
 class MissionInstruction {
   final String text;
-  final String? rightImage;
+  final String? sideImage;
   final String? bottomImage;
 
-  MissionInstruction({required this.text, this.rightImage, this.bottomImage});
+  MissionInstruction({required this.text, this.sideImage, this.bottomImage});
 
   factory MissionInstruction.fromJson(Map<String, dynamic> json) {
     return MissionInstruction(
       text: json['text'] ?? '',
-      rightImage: json['rightImage'],
+      sideImage: json['sideImage'],
       bottomImage: json['bottomImage'],
     );
   }
 
   Map<String, dynamic> toJson() {
-    return {'text': text, 'rightImage': rightImage, 'bottomImage': bottomImage};
+    return {'text': text, 'sideImage': sideImage, 'bottomImage': bottomImage};
   }
 }

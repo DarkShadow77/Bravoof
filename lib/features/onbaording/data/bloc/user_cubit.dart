@@ -130,6 +130,17 @@ class UserCubit extends Cubit<UserState> {
     );
   }
 
+  void updateUserProfile() async {
+    final either = await _signupRepository.fetchUserProfile();
+    print(either);
+    either.fold((failure) => log(failure.toString()), (user) {
+      SessionManager().pointsVal = user.totalPoints ?? 0;
+      SessionManager().jackpotVal = user.spins ?? 0;
+      emit(state.copyWith(userProfile: user));
+      emit(UserProfileSuccess(userProfile: user));
+    });
+  }
+
   void uploadProfileImage(File? imageFile) async {
     emit(UploadLoading(userProfile: state.userProfile));
 

@@ -37,6 +37,7 @@ class AssetsPngImages {
   static String prizeDetailTitle = "$baseImagePngPath/prize_detail_title.png";
   static String sparklingStar = "$baseImagePngPath/sparkling_star.png";
   static String jackpot = "$baseImagePngPath/jackpot.png";
+  static String check = "$baseImagePngPath/check.png";
 }
 
 class AssetsSvgImages {
@@ -54,4 +55,5 @@ class AssetsSvgIcons {
   static String userAdd = "$baseSvgIconsPath/user_add.svg";
   static String userMultiple = "$baseSvgIconsPath/user_multiple.svg";
   static String checkmark = "$baseSvgIconsPath/checkmark.svg";
+  static String circleLock = "$baseSvgIconsPath/circle_lock.svg";
 }

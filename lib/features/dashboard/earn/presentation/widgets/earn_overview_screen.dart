@@ -20,6 +20,8 @@ import 'package:share_plus/share_plus.dart';
 import '../../../../../app/styles/text_styles.dart';
 import '../../../../../core/constants/app_assets.dart';
 import '../../../../../core/constants/app_colors.dart';
+import '../../bloc/featured_mission_bloc.dart';
+import '../../bloc/social_mission_bloc.dart';
 import '../pages/invite_earn.dart';
 import 'leaderboard_widget.dart';
 
@@ -48,13 +50,15 @@ class _EarnOverviewScreenState extends State<EarnOverviewScreen>
 
   @override
   void initState() {
-    // TODO: implement initState
+    super.initState();
     userCubit = UserCubit();
+    userProfile = userCubit.state.userProfile;
+    userCubit.updateUserProfile();
     missionCubit = MissionCubit();
-    userCubit.fetchUserProfile();
     missionCubit.fetchStreak();
     missionCubit.fetchAllUsersReward();
-    super.initState();
+    BlocProvider.of<SocialMissionBloc>(context).add(LoadSocialMission());
+    BlocProvider.of<FeaturedMissionBloc>(context).add(LoadFeaturedMission());
   }
 
   bool init = true;

@@ -1,3 +1,4 @@
+import 'package:flowva/app/view/widgets/cached_image_widget.dart';
 import 'package:flowva/features/common/flowva_button.dart';
 import 'package:flowva/features/dashboard/earn/data/models/mission_res.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +12,6 @@ class MissionTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(mission.rightIcon!);
     return Container(
       padding: const EdgeInsets.only(left: 10, top: 2, right: 2, bottom: 2),
       decoration: BoxDecoration(
@@ -144,7 +144,12 @@ class MissionTile extends StatelessWidget {
                   children: [
                     mission.id == null
                         ? Image.asset(mission.rightIcon!, height: 22)
-                        : Image.network(mission.rightIcon!, height: 22),
+                        : CachedImageSize(
+                            imageUrl: mission.rightIcon ?? "",
+                            height: 22,
+                            width: 22,
+                            fit: BoxFit.contain,
+                          ),
                     SizedBox(width: 5),
                     Text(
                       "${mission.points}",

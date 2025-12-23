@@ -1,18 +1,18 @@
 import 'package:dartz/dartz.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../models/community_mission_model.dart';
 import '../models/mission_status_enum.dart';
+import '../models/social_mission_model.dart';
 
-abstract class CommunityMissionRepository {
+abstract class SocialMissionRepository {
   final supabase = Supabase.instance.client;
 
-  Future<Either<String, CommunityMission>> fetchActiveMission();
+  Future<Either<String, List<SocialMission>>> fetchSocialMission();
 
-  Future<Either<String, void>> joinMission({
+  Future<Either<String, void>> completeMission({
     required int missionId,
     required String userId,
-    required String email,
+    required String? text,
     required String? imageUrl,
   });
 

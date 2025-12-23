@@ -79,6 +79,7 @@ dependencies:
   inner_shadow_container: ^1.0.4
   cached_network_image: ^3.4.1
   flutter_svg_provider: ^1.0.7
+  timelines_plus: ^1.0.8
 
 
 dev_dependencies:

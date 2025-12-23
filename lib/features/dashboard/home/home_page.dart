@@ -134,6 +134,7 @@ class _FlowvaHomePageState extends State<FlowvaHomePage> with UIToolMixin {
                 });
               } else if (state is MissionUpdated) {
                 Navigator.pop(context);
+                userCubit.updateUserProfile();
                 showModalBottomSheet(
                   context: context,
                   isScrollControlled: true,

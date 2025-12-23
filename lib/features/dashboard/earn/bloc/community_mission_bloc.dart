@@ -3,7 +3,7 @@ import 'package:meta/meta.dart';
 
 import '../../../../session/session_manager.dart';
 import '../data/models/community_mission_model.dart';
-import '../data/models/community_mission_status_enum.dart';
+import '../data/models/mission_status_enum.dart';
 import '../data/repositories/community_mission_repository.dart';
 
 part 'community_mission_event.dart';
@@ -17,7 +17,7 @@ class CommunityMissionBloc
   CommunityMissionBloc({required this.repo})
     : super(
         CommunityMissionInitial(
-          hasJoined: CommunityMissionStatus.notJoined,
+          hasJoined: MissionStatus.notJoined,
           mission: null,
         ),
       ) {
@@ -70,7 +70,7 @@ class CommunityMissionBloc
 
       emit(state.copWith(hasJoined: joined));
     } else {
-      emit(state.copWith(hasJoined: CommunityMissionStatus.notJoined));
+      emit(state.copWith(hasJoined: MissionStatus.notJoined));
     }
   }
 

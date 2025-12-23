@@ -45,6 +45,7 @@ class AppColors {
   static const Color black = Color(0xFF000000);
   static Color get black85 => black.withValues(alpha: .85);
   static Color get black75 => black.withValues(alpha: .75);
+  static Color get black60 => black.withValues(alpha: .60);
   static Color get black50 => black.withValues(alpha: .50);
   static Color get black25 => black.withValues(alpha: .25);
   static Color get black29 => black.withValues(alpha: .29);
@@ -55,6 +56,7 @@ class AppColors {
   //State-Colors ---White
   static const Color white = Color(0xFFFFFFFF);
   static Color get white85 => white.withValues(alpha: .85);
+  static Color get white80 => white.withValues(alpha: .80);
   static Color get white75 => white.withValues(alpha: .75);
   static Color get white50 => white.withValues(alpha: .50);
   static Color get white25 => white.withValues(alpha: .25);

@@ -44,40 +44,6 @@ class _InviteAndEarnPageState extends State<InviteAndEarnPage> {
 
   List<UserProfile> referrals = [];
 
-  final List<_Mission> mission = [
-    _Mission(
-      id: 'watch',
-      title: 'Invite 10 users',
-      rightIcon: "assets/images/one_50.png",
-      points: '50',
-      subject: 'Claim',
-      progress: 0,
-      completed: true,
-    ),
-    _Mission(
-      id: 'download',
-      title: 'Invite 20 users total',
-      rightIcon: "assets/images/one_50.png",
-      points: '100',
-      subject: 'Claim',
-      progress: 1,
-      completed: false,
-    ),
-    _Mission(
-      id: 'stars',
-      title: 'Invite 30 users total',
-      rightIcon: "assets/images/one_50.png",
-      points: '100',
-      progress: 1,
-      subject: 'Claim',
-      completed: false,
-    ),
-  ];
-  final tabs = ["Casual", "Professional", "Pitch"];
-
-  bool isSelected2 = true;
-
-  int? selectedIndex2;
   late UserCubit userCubit;
 
   @override
@@ -85,6 +51,7 @@ class _InviteAndEarnPageState extends State<InviteAndEarnPage> {
     super.initState();
     userCubit = UserCubit();
     userCubit.fetchUserProfile();
+    userProfile = userCubit.state.userProfile;
     BlocProvider.of<HomeCubit>(context).getUserReferrals();
   }
 
@@ -162,19 +129,15 @@ class _InviteAndEarnPageState extends State<InviteAndEarnPage> {
 
                     /// --- Invite Stats
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        _buildStatCard(
-                          "Invites",
-                          "${userProfile.referralCount}",
-                          Icon(Icons.group, size: 18, color: Colors.black87),
-                          Colors.black87,
-                        ),
-                        _buildStatCard(
-                          "Qualified",
-                          "8",
-                          HugeIcon(icon: HugeIcons.strokeRoundedUserCheck02),
-                          Colors.black,
+                        Expanded(
+                          child: _buildStatCard(
+                            "Invites",
+                            "${userProfile.referralCount}",
+                            Icon(Icons.group, size: 18, color: Colors.black87),
+                            Colors.black87,
+                          ),
                         ),
                       ],
                     ),
@@ -405,7 +368,6 @@ class _InviteAndEarnPageState extends State<InviteAndEarnPage> {
   /// --- Stat Card
   Widget _buildStatCard(String title, String value, Widget icon, Color color) {
     return Container(
-      width: 160,
       padding: const EdgeInsets.symmetric(vertical: 16),
       decoration: BoxDecoration(
         color: Colors.white,
