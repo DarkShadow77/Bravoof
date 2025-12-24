@@ -36,6 +36,7 @@ class _FollowUsCardState extends State<FollowUsCard> {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
+      margin: EdgeInsets.symmetric(horizontal: 16.w),
       padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 16.w),
       decoration: BoxDecoration(
         color: AppColors.white80,

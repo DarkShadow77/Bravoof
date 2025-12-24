@@ -14,6 +14,19 @@ class AppColors {
   static Color get primary10 => primary.withValues(alpha: .10);
   static Color get primary05 => primary.withValues(alpha: .05);
 
+  //State-Colors ---Dark Primary
+  static const Color darkPrimary = Color(0xFF400387);
+  static Color get darkPrimary75 => darkPrimary.withValues(alpha: .75);
+  static Color get darkPrimary60 => darkPrimary.withValues(alpha: .60);
+  static Color get darkPrimary50 => darkPrimary.withValues(alpha: .50);
+  static Color get darkPrimary40 => darkPrimary.withValues(alpha: .40);
+  static Color get darkPrimary30 => darkPrimary.withValues(alpha: .30);
+  static Color get darkPrimary25 => darkPrimary.withValues(alpha: .25);
+  static Color get darkPrimary20 => darkPrimary.withValues(alpha: .20);
+  static Color get darkPrimary15 => darkPrimary.withValues(alpha: .15);
+  static Color get darkPrimary10 => darkPrimary.withValues(alpha: .10);
+  static Color get darkPrimary05 => darkPrimary.withValues(alpha: .05);
+
   //State-Colors ---Purple
   static const Color purple = Color(0xFF2C0066);
 

@@ -1,5 +1,4 @@
 import 'package:flowva/app/styles/text_styles.dart';
-import 'package:flowva/app/view/widgets/cached_image_widget.dart';
 import 'package:flowva/core/constants/fonts.dart';
 import 'package:flowva/features/common/custom_success.dart';
 import 'package:flowva/features/common/flowva_button.dart';
@@ -26,12 +25,13 @@ import '../../../../onbaording/data/bloc/user_cubit.dart';
 import '../../bloc/community_mission_bloc.dart';
 import '../../bloc/featured_mission_bloc.dart';
 import '../../bloc/social_mission_bloc.dart';
+import '../../bloc/sponsored_mission_bloc.dart';
 import '../../data/models/community_mission_model.dart';
-import '../../data/models/featured_mission_model.dart';
 import '../pages/jackpot_page.dart';
 import 'claim_widget.dart';
-import 'featured_event_dialog.dart';
+import 'featured_card.dart';
 import 'follow_us_card.dart';
+import 'sponsored_card.dart';
 
 class AdventureScreen extends StatefulWidget {
   const AdventureScreen({super.key});
@@ -77,6 +77,7 @@ class _AdventureScreenState extends State<AdventureScreen> with UIToolMixin {
     BlocProvider.of<CommunityMissionBloc>(context).add(LoadCommunityMission());
     BlocProvider.of<SocialMissionBloc>(context).add(LoadSocialMission());
     BlocProvider.of<FeaturedMissionBloc>(context).add(LoadFeaturedMission());
+    BlocProvider.of<SponsoredMissionBloc>(context).add(LoadSponsoredMission());
   }
 
   @override
@@ -216,158 +217,166 @@ class _AdventureScreenState extends State<AdventureScreen> with UIToolMixin {
                                 .clamp(0, double.infinity)
                                 .toInt();
 
-                        return Stack(
-                          clipBehavior: Clip.none,
-                          children: [
-                            Column(
-                              children: [
-                                // Card top section
-                                Container(
-                                  decoration: BoxDecoration(
-                                    color: Color(0xFFFFEFEF),
-                                    borderRadius: BorderRadius.circular(16),
-                                  ),
-                                  padding: EdgeInsets.only(
-                                    top: 16,
-                                    left: 16,
-                                    right: 16,
-                                    bottom: 22,
-                                  ),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        "Community Missions",
-                                        style: GoogleFonts.baloo2(
-                                          fontWeight: FontWeight.w700,
-                                          fontSize: 24,
-                                          color: Color(0xFF70403E),
-                                        ),
-                                      ),
-                                      SizedBox(height: 16),
-                                      Container(
-                                        padding: EdgeInsets.symmetric(
-                                          vertical: 5,
-                                          horizontal: 5,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: Color(
-                                            0xFF9013FE,
-                                          ).withValues(alpha: 0.08),
-                                          borderRadius: BorderRadius.circular(
-                                            8,
+                        return Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 16.w),
+                          child: Stack(
+                            clipBehavior: Clip.none,
+                            children: [
+                              Column(
+                                children: [
+                                  // Card top section
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      color: Color(0xFFFFEFEF),
+                                      borderRadius: BorderRadius.circular(16),
+                                    ),
+                                    padding: EdgeInsets.only(
+                                      top: 16,
+                                      left: 16,
+                                      right: 16,
+                                      bottom: 22,
+                                    ),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          "Community Missions",
+                                          style: GoogleFonts.baloo2(
+                                            fontWeight: FontWeight.w700,
+                                            fontSize: 24,
+                                            color: Color(0xFF70403E),
                                           ),
                                         ),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Container(
-                                              padding: EdgeInsets.symmetric(
-                                                vertical: 20,
-                                                horizontal: 12,
-                                              ),
-                                              decoration: BoxDecoration(
-                                                color: Colors.white,
-                                                borderRadius:
-                                                    BorderRadius.circular(8),
-                                              ),
-                                              child: Image.asset(
-                                                'assets/images/reclaim_rec.png',
-                                                height: 60,
-                                              ),
+                                        SizedBox(height: 16),
+                                        Container(
+                                          padding: EdgeInsets.symmetric(
+                                            vertical: 5,
+                                            horizontal: 5,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: Color(
+                                              0xFF9013FE,
+                                            ).withValues(alpha: 0.08),
+                                            borderRadius: BorderRadius.circular(
+                                              8,
                                             ),
-
-                                            Container(
-                                              padding: EdgeInsets.all(10),
-                                              decoration: BoxDecoration(
-                                                color: Colors.white,
-                                                borderRadius:
-                                                    BorderRadius.circular(8),
+                                          ),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Container(
+                                                padding: EdgeInsets.symmetric(
+                                                  vertical: 20,
+                                                  horizontal: 12,
+                                                ),
+                                                decoration: BoxDecoration(
+                                                  color: Colors.white,
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                ),
+                                                child: Image.asset(
+                                                  'assets/images/reclaim_rec.png',
+                                                  height: 60,
+                                                ),
                                               ),
-                                              child: Row(
-                                                children: [
-                                                  Image.asset(
-                                                    'assets/images/mission_10.png',
-                                                    height: 80,
-                                                  ),
-                                                  SizedBox(width: 8),
-                                                  Image.asset(
-                                                    'assets/images/mission_pro.png',
-                                                    height: 80,
-                                                  ),
-                                                  SizedBox(width: 10),
-                                                  Column(
-                                                    children: [
-                                                      Image.asset(
-                                                        'assets/images/one_50.png',
-                                                        width: 50,
-                                                      ),
-                                                      Text(
-                                                        "250,000",
-                                                        style:
-                                                            GoogleFonts.baloo2(
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w700,
-                                                              fontSize: 12,
-                                                              color: Color(
-                                                                0xFFA259FF,
+
+                                              Container(
+                                                padding: EdgeInsets.all(10),
+                                                decoration: BoxDecoration(
+                                                  color: Colors.white,
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                ),
+                                                child: Row(
+                                                  children: [
+                                                    Image.asset(
+                                                      'assets/images/mission_10.png',
+                                                      height: 80,
+                                                    ),
+                                                    SizedBox(width: 8),
+                                                    Image.asset(
+                                                      'assets/images/mission_pro.png',
+                                                      height: 80,
+                                                    ),
+                                                    SizedBox(width: 10),
+                                                    Column(
+                                                      children: [
+                                                        Image.asset(
+                                                          'assets/images/one_50.png',
+                                                          width: 50,
+                                                        ),
+                                                        Text(
+                                                          "250,000",
+                                                          style:
+                                                              GoogleFonts.baloo2(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w700,
+                                                                fontSize: 12,
+                                                                color: Color(
+                                                                  0xFFA259FF,
+                                                                ),
                                                               ),
-                                                            ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ],
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ],
+                                                ),
                                               ),
-                                            ),
-                                          ],
+                                            ],
+                                          ),
                                         ),
-                                      ),
-                                      SizedBox(height: 15),
-                                      Text(
-                                        communityMission?.title ?? "",
-                                        style: GoogleFonts.baloo2(
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 16,
+                                        SizedBox(height: 15),
+                                        Text(
+                                          communityMission?.title ?? "",
+                                          style: GoogleFonts.baloo2(
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 16,
+                                          ),
                                         ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
-                                ),
 
-                                SizedBox(height: 20.h),
+                                  SizedBox(height: 20.h),
 
-                                // Card bottom section
-                                _buildTimeLeftContainer(context),
-                              ],
-                            ),
-                            Positioned(
-                              top: 225,
-                              // Adjust this to position correctly between the cards
-                              left: 100,
-                              // Horizontal position of left stroke
-                              child: strokeConnector(),
-                            ),
-                            Positioned(
-                              top: 225,
-                              right: 100, // Horizontal position of right stroke
-                              child: strokeConnector(),
-                            ),
-                          ],
+                                  // Card bottom section
+                                  _buildTimeLeftContainer(context),
+                                ],
+                              ),
+                              Positioned(
+                                top: 225,
+                                // Adjust this to position correctly between the cards
+                                left: 100,
+                                // Horizontal position of left stroke
+                                child: strokeConnector(),
+                              ),
+                              Positioned(
+                                top: 225,
+                                right:
+                                    100, // Horizontal position of right stroke
+                                child: strokeConnector(),
+                              ),
+                            ],
+                          ),
                         );
                       },
                     ),
 
                     const SizedBox(height: 20),
                     campaign.isNotEmpty
-                        ? ReferCampaign(campaign: campaign)
+                        ? Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 16.w),
+                            child: ReferCampaign(campaign: campaign),
+                          )
                         : Container(),
                     const SizedBox(height: 20),
 
                     // Growth Missions header
                     Container(
+                      margin: EdgeInsets.symmetric(horizontal: 16.w),
                       padding: EdgeInsets.only(left: 16, right: 16, top: 16),
                       decoration: BoxDecoration(
                         color: Colors.white.withValues(alpha: 0.6),
@@ -776,25 +785,15 @@ class _AdventureScreenState extends State<AdventureScreen> with UIToolMixin {
                         ],
                       ),
                     ),
-
                     SizedBox(height: 20.h),
-
-                    Image.asset(
-                      "assets/images/fest.png",
-                      fit: BoxFit.cover,
-                      width: double.infinity,
-                    ),
+                    SponsoredCard(),
                     SizedBox(height: 20.h),
                     FollowUsCard(),
-
                     SizedBox(height: 20.h),
-                    FeaturedCard(
-                      isPerkCompleted: isPerkCompleted,
-                      missionCubit: missionCubit,
-                    ),
-                    SizedBox(height: 20),
+                    FeaturedCard(),
+                    SizedBox(height: 40.h),
                     DiscoverPerks(),
-                    SizedBox(height: 20),
+                    SizedBox(height: 20.h),
                   ],
                 ),
               ),
@@ -912,7 +911,9 @@ class _AdventureScreenState extends State<AdventureScreen> with UIToolMixin {
                   horizontal: 8.0,
                   vertical: 10,
                 ),
-                child: state.hasJoined == MissionStatus.pending
+                child:
+                    (state.hasJoined == MissionStatus.pending ||
+                        ((communityMission?.usersJoined ?? 0) >= userGoal))
                     ? SizedBox(
                         height: 60,
                         child: FlowvaButton.inactiveButton(
@@ -1002,295 +1003,6 @@ class _AdventureScreenState extends State<AdventureScreen> with UIToolMixin {
   }
 }
 
-class FeaturedCard extends StatefulWidget {
-  const FeaturedCard({
-    super.key,
-    required this.isPerkCompleted,
-    required this.missionCubit,
-  });
-
-  final bool isPerkCompleted;
-  final MissionCubit missionCubit;
-
-  @override
-  State<FeaturedCard> createState() => _FeaturedCardState();
-}
-
-class _FeaturedCardState extends State<FeaturedCard> {
-  final _pageController = PageController(viewportFraction: 1);
-
-  List<FeaturedMission> featuredMissions = [];
-  List<MissionStatus> featuredMissionStatus = [];
-
-  int currentPage = 0;
-
-  @override
-  void initState() {
-    super.initState();
-    final featuredBloc = BlocProvider.of<FeaturedMissionBloc>(context);
-    featuredMissions = featuredBloc.state.missions;
-    featuredMissionStatus = featuredBloc.state.hasJoined;
-  }
-
-  @override
-  void dispose() {
-    _pageController.dispose();
-    super.dispose();
-  }
-
-  Color hexToColor(String hex) {
-    return Color(int.parse(hex.replaceFirst('#', '0xff')));
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<FeaturedMissionBloc, FeaturedMissionState>(
-      builder: (context, state) {
-        featuredMissions = state.missions;
-        featuredMissionStatus = state.hasJoined;
-        return Column(
-          children: [
-            Container(
-              height: 444.h,
-              child: PageView.builder(
-                controller: _pageController,
-                itemCount: featuredMissions.length,
-                onPageChanged: (index) {
-                  setState(() {
-                    currentPage = index;
-                  });
-                },
-                itemBuilder: (context, index) {
-                  final featuredMission = featuredMissions[index];
-                  final missionStatus = featuredMissionStatus[index];
-                  return Container(
-                    height: 444.h,
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 14.w,
-                      vertical: 16.h,
-                    ),
-                    decoration: BoxDecoration(
-                      color: hexToColor(featuredMission.color),
-                      borderRadius: BorderRadius.circular(16.r),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Expanded(
-                              child: RichText(
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                text: TextSpan(
-                                  text: 'Powered by ${featuredMission.by}',
-                                  style: TextStyles.normalBold14(context)
-                                      .copyWith(
-                                        color: hexToColor(
-                                          featuredMission.textColor,
-                                        ).withValues(alpha: .6),
-                                      ),
-                                ),
-                              ),
-                            ),
-                            Flexible(
-                              child: Container(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 10.w,
-                                  vertical: 6.h,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: hexToColor(
-                                    featuredMission.textColor,
-                                  ).withValues(alpha: .2),
-                                  borderRadius: BorderRadius.circular(100.r),
-                                ),
-                                child: Row(
-                                  spacing: 4.w,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Image.asset(
-                                      "assets/images/one_50.png",
-                                      height: 16.r,
-                                      width: 16.r,
-                                    ),
-                                    RichText(
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      text: TextSpan(
-                                        text: "${featuredMission.points}",
-                                        style:
-                                            TextStyles.smallSemibold12(
-                                              context,
-                                            ).copyWith(
-                                              color: hexToColor(
-                                                featuredMission.textColor,
-                                              ),
-                                            ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 16.h),
-                        RichText(
-                          maxLines: 2,
-                          textAlign: TextAlign.center,
-                          overflow: TextOverflow.ellipsis,
-                          text: TextSpan(
-                            text: featuredMission.title,
-                            style: TextStyles.titleRegular20(context).copyWith(
-                              color: hexToColor(featuredMission.textColor),
-                              fontFamily: AppFonts.baloo,
-                              height: 1.1.sp,
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: 15.h),
-                        CachedImageSize(
-                          imageUrl: featuredMission.image,
-                          width: double.infinity,
-                          height: 172.h,
-                          borderRadius: 14.r,
-                          fit: BoxFit.cover,
-                          color: AppColors.grey300.withValues(alpha: .5),
-                        ),
-                        SizedBox(height: 17.h),
-                        RichText(
-                          maxLines: 3,
-                          textAlign: TextAlign.start,
-                          overflow: TextOverflow.ellipsis,
-                          text: TextSpan(
-                            text: featuredMission.subtitle,
-                            style: TextStyles.normalSemibold14(context)
-                                .copyWith(
-                                  color: hexToColor(featuredMission.textColor),
-                                ),
-                          ),
-                        ),
-                        SizedBox(height: 17.h),
-                        (missionStatus == MissionStatus.pending ||
-                                missionStatus == MissionStatus.completed)
-                            ? Container(
-                                height: 50,
-
-                                decoration: BoxDecoration(
-                                  color: Colors.grey,
-                                  borderRadius: BorderRadius.circular(40),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.black.withValues(
-                                        alpha: 0.25,
-                                      ),
-                                      blurRadius: 8,
-                                      offset: const Offset(0, 3),
-                                    ),
-                                  ],
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    "Start mission",
-                                    style: GoogleFonts.manrope(
-                                      color: Colors.black,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w800,
-                                    ),
-                                  ),
-                                ),
-                              )
-                            : GestureDetector(
-                                onTap: () => featuredEventDialog(
-                                  featuredMission: featuredMission,
-                                ),
-                                /*showDialog(
-                                      context: context,
-                                      barrierDismissible: true,
-                                      barrierColor: Colors.transparent,
-                                      builder: (context) =>
-                                          PerkMission(apply: (val) {}),
-                                    ).then((v) {
-                                      widget.missionCubit
-                                          .fetchSkillUpChallenge();
-                                    })*/
-                                child: Container(
-                                  height: 50,
-
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(40),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black.withValues(
-                                          alpha: 0.25,
-                                        ),
-                                        blurRadius: 8,
-                                        offset: const Offset(0, 3),
-                                      ),
-                                    ],
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      "Start mission",
-                                      style: GoogleFonts.manrope(
-                                        color: Colors.black,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w800,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                      ],
-                    ),
-                  );
-                },
-              ),
-            ),
-            SizedBox(height: 12.h),
-
-            // Page Indicator
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: List.generate(
-                featuredMissions.length,
-                (index) => GestureDetector(
-                  onTap: () {
-                    _pageController.animateToPage(
-                      index,
-                      duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeInOut,
-                    );
-                  },
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 300),
-                    margin: EdgeInsets.symmetric(horizontal: 2.w),
-                    width: index == currentPage ? 18.w : 6.w,
-                    height: 6.h,
-                    decoration: BoxDecoration(
-                      color: index == currentPage
-                          ? Color(0xFF400387)
-                          : Color(0xFF400387).withValues(alpha: 0.2),
-                      borderRadius: BorderRadius.circular(3),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
-}
-
 class DiscoverPerks extends StatefulWidget {
   DiscoverPerks({super.key});
 
@@ -1299,384 +1011,245 @@ class DiscoverPerks extends StatefulWidget {
 }
 
 class _DiscoverPerksState extends State<DiscoverPerks> {
-  final PageController _pageController = PageController(viewportFraction: 1);
+  final _pageController = PageController(viewportFraction: 1, initialPage: 0);
+
+  double _currentPage = 0;
   int currentPage = 0;
+
+  List perks = [
+    {
+      "discount": 20,
+      "title": "Enjoy Pro Access to Jotform",
+      "valid": "Valid for 1 Year",
+      "image": "assets/images/jotform.png",
+    },
+    {
+      "discount": 20,
+      "title": "Enjoy Pro Access to Reclaim",
+      "valid": "Valid for 3 Year",
+      "image": "assets/images/reclaim_trans.png",
+    },
+    {
+      "discount": 10,
+      "title": "Enjoy Pro Access to Ad Creative AI",
+      "valid": "Valid forever",
+      "image": "assets/images/perk_stack.png",
+    },
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+
+    _pageController.addListener(() {
+      setState(() {
+        _currentPage = _pageController.page!;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         SizedBox(
-          height: 200,
-          child: PageView(
+          height: 160.h,
+          child: PageView.builder(
+            padEnds: true,
             controller: _pageController,
-            onPageChanged: (int val) {
+            physics: BouncingScrollPhysics(),
+
+            allowImplicitScrolling: true,
+            scrollDirection: Axis.horizontal,
+            itemCount: perks.length,
+            onPageChanged: (index) {
               setState(() {
-                currentPage = val;
+                currentPage = index;
               });
             },
+            itemBuilder: (context, index) {
+              double scaleFactor = .8;
+              double height = 130.h;
+              Matrix4 matrix = Matrix4.identity();
 
-            children: [
-              Container(
-                height: 190,
+              if (index == _currentPage.floor()) {
+                var currScale = 1 - (_currentPage - index) * (1 - scaleFactor);
+                var currTrans = height * (1 - currScale) / 2;
+                matrix = Matrix4.diagonal3Values(1.0, currScale, 1.0)
+                  ..setTranslationRaw(0, currTrans, 0);
+              } else if (index == _currentPage.floor() + 1) {
+                var currScale =
+                    scaleFactor +
+                    (_currentPage - index + 1) * (1 - scaleFactor);
 
-                child: Stack(
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Container(
-                            height: 170,
+                var currTrans = height * (1 - currScale) / 2;
+                matrix = Matrix4.diagonal3Values(1.0, currScale, 1.0)
+                  ..setTranslationRaw(0, currTrans, 0);
+              } else if (index == _currentPage.floor() - 1) {
+                var currScale = 1 - (_currentPage - index) * (1 - scaleFactor);
+                var currTrans = height * (1 - currScale) / 2;
+                matrix = Matrix4.diagonal3Values(1.0, currScale, 1.0)
+                  ..setTranslationRaw(0, currTrans, 0);
+              } else {
+                var currScale = .8;
+                matrix = Matrix4.diagonal3Values(1.0, currScale, 1.0)
+                  ..setTranslationRaw(0, height * (1 - scaleFactor) / 2, 0);
+              }
 
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 10,
-                              vertical: 10,
-                            ),
+              final perk = perks[index];
+              return Transform(
+                transform: matrix,
+                child: Container(
+                  height: 160.h,
+                  margin: EdgeInsets.symmetric(horizontal: 16.w),
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Container(
+                            width: 20.w,
+                            height: 40.h,
                             decoration: BoxDecoration(
                               color: Colors.white,
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "Discover Perks Made for You",
-                                  style: GoogleFonts.manrope(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 10,
-                                    color: Color(0xFFA5A5A5),
-                                  ),
-                                ),
-                                SizedBox(height: 6),
-                                Text(
-                                  "Claim 50% OFF",
-                                  style: GoogleFonts.baloo2(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 16,
-                                    color: Colors.black,
-                                  ),
-                                ),
-                                // SizedBox(height: 10),
-                                Text(
-                                  "Enjoy  Pro Access to Jotform",
-                                  style: GoogleFonts.manrope(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 12,
-                                    color: Color(0xFF5F5F5F),
-                                  ),
-                                ),
-                                SizedBox(height: 6),
-                                Text(
-                                  "Valid 1 year",
-                                  style: GoogleFonts.manrope(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 12,
-                                    color: Color(0xFF9013FE),
-                                  ),
-                                ),
-                                SizedBox(height: 10),
-                                FlowvaButton.subButton(name: "Redeem offer"),
-                              ],
+                              borderRadius: BorderRadius.circular(50.r),
                             ),
                           ),
-                        ),
-                        SizedBox(width: 5),
-                        Expanded(
-                          child: Container(
-                            height: 170,
-                            padding: EdgeInsets.all(8),
+                          Container(
+                            width: 20.w,
+                            height: 40.h,
                             decoration: BoxDecoration(
                               color: Colors.white,
-                              borderRadius: BorderRadius.circular(16),
+                              borderRadius: BorderRadius.circular(50.r),
                             ),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        spacing: 4.w,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Expanded(
                             child: Container(
-                              height: 170,
+                              height: 160.h,
+                              width: double.infinity,
                               padding: EdgeInsets.symmetric(
-                                horizontal: 10,
-                                vertical: 20,
+                                horizontal: 16.w,
+                                vertical: 16.h,
                               ),
                               decoration: BoxDecoration(
-                                color: Color(
-                                  0xFFFF6100,
-                                ).withValues(alpha: 0.48),
-                                borderRadius: BorderRadius.circular(16),
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(16.r),
                               ),
+                              child: Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Column(
+                                    spacing: 8.w,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      RichText(
+                                        text: TextSpan(
+                                          text: "Discover Perks Made for You",
+                                          style: TextStyles.smallCardSemibold8(
+                                            context,
+                                          ).copyWith(color: AppColors.grey300),
+                                        ),
+                                      ),
+                                      Column(
+                                        spacing: 4.h,
+                                        mainAxisSize: MainAxisSize.min,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          RichText(
+                                            text: TextSpan(
+                                              text:
+                                                  "Claim ${perk["discount"]}% OFF",
+                                              style:
+                                                  TextStyles.bodyRegular16(
+                                                    context,
+                                                  ).copyWith(
+                                                    height: 1.h,
+                                                    fontFamily: AppFonts.baloo,
+                                                  ),
+                                            ),
+                                          ),
+                                          RichText(
+                                            text: TextSpan(
+                                              text: "${perk["title"]}",
+                                              style:
+                                                  TextStyles.cardSemibold10(
+                                                    context,
+                                                  ).copyWith(
+                                                    color: AppColors.grey550,
+                                                  ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      RichText(
+                                        text: TextSpan(
+                                          text: "${perk["valid"]}",
+                                          style: TextStyles.smallCardSemibold8(
+                                            context,
+                                          ).copyWith(color: AppColors.primary),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
 
-                              child: Image.asset("assets/images/jotform.png"),
+                                  FlowvaButton.subButton(name: "Redeem offer"),
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                    Align(
-                      alignment: Alignment(0, -0.75),
-                      child: Container(
-                        width: 20,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(50),
-                        ),
-                      ),
-                    ),
-                    Align(
-                      alignment: Alignment(0, 0.35),
-                      child: Container(
-                        width: 20,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(50),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Container(
-                height: 190,
-
-                child: Stack(
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Container(
-                            height: 170,
-
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 10,
-                              vertical: 10,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "Discover Perks Made for You",
-                                  style: GoogleFonts.manrope(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 10,
-                                    color: Color(0xFFA5A5A5),
-                                  ),
-                                ),
-                                SizedBox(height: 6),
-                                Text(
-                                  "Claim 20% OFF",
-                                  style: GoogleFonts.baloo2(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 16,
-                                    color: Colors.black,
-                                  ),
-                                ),
-                                // SizedBox(height: 10),
-                                Text(
-                                  "Enjoy  Pro Access to Jotform",
-                                  style: GoogleFonts.manrope(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 12,
-                                    color: Color(0xFF5F5F5F),
-                                  ),
-                                ),
-                                SizedBox(height: 6),
-                                Text(
-                                  "Valid 3 year",
-                                  style: GoogleFonts.manrope(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 12,
-                                    color: Color(0xFF9013FE),
-                                  ),
-                                ),
-                                SizedBox(height: 10),
-                                FlowvaButton.subButton(name: "Redeem offer"),
-                              ],
-                            ),
-                          ),
-                        ),
-                        SizedBox(width: 5),
-                        Expanded(
-                          child: Container(
-                            height: 170,
-                            padding: EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(16),
-                            ),
+                          Expanded(
                             child: Container(
-                              height: 170,
+                              height: 160.h,
+                              width: double.infinity,
                               padding: EdgeInsets.symmetric(
-                                horizontal: 10,
-                                vertical: 20,
+                                horizontal: 16.w,
+                                vertical: 16.h,
                               ),
                               decoration: BoxDecoration(
-                                color: Color(
-                                  0xFF5263F3,
-                                ).withValues(alpha: 0.48),
-                                borderRadius: BorderRadius.circular(16),
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(16.r),
                               ),
-
-                              child: Image.asset(
-                                "assets/images/reclaim_trans.png",
+                              child: Center(
+                                child: Image.asset(
+                                  perk["image"],
+                                  fit: BoxFit.cover,
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                    Align(
-                      alignment: Alignment(0, -0.75),
-                      child: Container(
-                        width: 20,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(50),
-                        ),
+                        ],
                       ),
-                    ),
-                    Align(
-                      alignment: Alignment(0, 0.35),
-                      child: Container(
-                        width: 20,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(50),
-                        ),
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              Container(
-                height: 190,
-
-                child: Stack(
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Container(
-                            height: 170,
-
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 10,
-                              vertical: 10,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "Discover Perks Made for You",
-                                  style: GoogleFonts.manrope(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 10,
-                                    color: Color(0xFFA5A5A5),
-                                  ),
-                                ),
-                                SizedBox(height: 6),
-                                Text(
-                                  "Claim 10% OFF",
-                                  style: GoogleFonts.baloo2(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 16,
-                                    color: Colors.black,
-                                  ),
-                                ),
-                                // SizedBox(height: 10),
-                                Text(
-                                  "Enjoy  Pro Access to Jotform",
-                                  style: GoogleFonts.manrope(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 12,
-                                    color: Color(0xFF5F5F5F),
-                                  ),
-                                ),
-                                SizedBox(height: 6),
-                                Text(
-                                  "Valid forever",
-                                  style: GoogleFonts.manrope(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 12,
-                                    color: Color(0xFF9013FE),
-                                  ),
-                                ),
-                                SizedBox(height: 10),
-                                FlowvaButton.subButton(name: "Redeem offer"),
-                              ],
-                            ),
-                          ),
-                        ),
-                        SizedBox(width: 5),
-                        Expanded(
-                          child: Container(
-                            height: 170,
-                            padding: EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            child: Container(
-                              height: 170,
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 10,
-                                vertical: 20,
-                              ),
-                              decoration: BoxDecoration(
-                                color: Color(
-                                  0xFF000A3A,
-                                ).withValues(alpha: 0.48),
-                                borderRadius: BorderRadius.circular(16),
-                              ),
-
-                              child: Image.asset(
-                                "assets/images/perk_stack.png",
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Align(
-                      alignment: Alignment(0, -0.75),
-                      child: Container(
-                        width: 20,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(50),
-                        ),
-                      ),
-                    ),
-                    Align(
-                      alignment: Alignment(0, 0.35),
-                      child: Container(
-                        width: 20,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(50),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
+              );
+            },
           ),
         ),
+
+        SizedBox(height: 12.h),
+        // Page Indicator
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: List.generate(
-            3, // number of indicators
+            3,
             (index) => GestureDetector(
               onTap: () {
                 _pageController.animateToPage(
@@ -1687,14 +1260,14 @@ class _DiscoverPerksState extends State<DiscoverPerks> {
               },
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 300),
-                margin: const EdgeInsets.symmetric(horizontal: 5),
-                width: 16,
-                height: 4,
+                margin: EdgeInsets.symmetric(horizontal: 2.w),
+                width: index == currentPage ? 18.w : 6.w,
+                height: 6.h,
                 decoration: BoxDecoration(
                   color: index == currentPage
-                      ? Color(0xFF400387)
-                      : Color(0xFF400387).withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(3),
+                      ? AppColors.darkPrimary
+                      : AppColors.darkPrimary20,
+                  borderRadius: BorderRadius.circular(6.r),
                 ),
               ),
             ),

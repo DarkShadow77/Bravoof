@@ -1,11 +1,12 @@
 import 'community_mission_model.dart';
+import 'featured_mission_model.dart';
 
-class FeaturedMission {
+class SponsoredMission {
   final int id;
   final String by;
   final String title;
   final String subtitle;
-  final MissionGradient color; // HEX string
+  final MissionGradient color;
   final String textColor; // HEX string
   final String image;
   final int points;
@@ -13,7 +14,7 @@ class FeaturedMission {
   final DateTime createdAt;
   final List<MissionInstruction> instructions;
 
-  FeaturedMission({
+  SponsoredMission({
     required this.id,
     required this.by,
     required this.title,
@@ -27,8 +28,8 @@ class FeaturedMission {
     required this.instructions,
   });
 
-  factory FeaturedMission.fromJson(Map<String, dynamic> json) {
-    return FeaturedMission(
+  factory SponsoredMission.fromJson(Map<String, dynamic> json) {
+    return SponsoredMission(
       id: json['id'],
       by: json['by'] ?? '',
       title: json['title'] ?? '',
@@ -42,28 +43,6 @@ class FeaturedMission {
       instructions: (json['instructions'] as List<dynamic>? ?? [])
           .map((e) => MissionInstruction.fromJson(e))
           .toList(),
-    );
-  }
-}
-
-class MissionGradient {
-  final String start;
-  final String end;
-
-  const MissionGradient({required this.start, required this.end});
-
-  factory MissionGradient.fallback() {
-    return const MissionGradient(start: '#000000', end: '#000000');
-  }
-
-  factory MissionGradient.fromJson(dynamic json) {
-    if (json == null || json is! Map<String, dynamic>) {
-      return MissionGradient.fallback();
-    }
-
-    return MissionGradient(
-      start: json['start'] ?? '#000000',
-      end: json['end'] ?? '#000000',
     );
   }
 }

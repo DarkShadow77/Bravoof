@@ -5,10 +5,12 @@ import 'package:flowva/features/dashboard/earn/presentation/widgets/mission_hub.
 import 'package:flowva/features/mission/presentation/page/skill_up_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../dashboard/earn/bloc/featured_mission_bloc.dart';
 import '../../../dashboard/earn/bloc/social_mission_bloc.dart';
+import '../../../dashboard/earn/bloc/sponsored_mission_bloc.dart';
 import '../../../onbaording/data/bloc/user_cubit.dart';
 
 class MissionPage extends StatefulWidget {
@@ -24,6 +26,11 @@ class _MissionPageState extends State<MissionPage> {
   final _pageController = PageController(initialPage: 0);
   int currentPage = 0;
   int selectedIndex = 0;
+
+  late CommunityMissionBloc communityMissionBloc;
+  late SocialMissionBloc socialMissionBloc;
+  late FeaturedMissionBloc featuredMissionBloc;
+  late SponsoredMissionBloc sponsoredMissionBloc;
   @override
   void initState() {
     super.initState();
@@ -35,11 +42,15 @@ class _MissionPageState extends State<MissionPage> {
       }
       final userCubit = UserCubit();
       userCubit.updateUserProfile();
-      BlocProvider.of<CommunityMissionBloc>(
-        context,
-      ).add(LoadCommunityMission());
-      BlocProvider.of<SocialMissionBloc>(context).add(LoadSocialMission());
-      BlocProvider.of<FeaturedMissionBloc>(context).add(LoadFeaturedMission());
+      communityMissionBloc = BlocProvider.of<CommunityMissionBloc>(context);
+      socialMissionBloc = BlocProvider.of<SocialMissionBloc>(context);
+      featuredMissionBloc = BlocProvider.of<FeaturedMissionBloc>(context);
+      sponsoredMissionBloc = BlocProvider.of<SponsoredMissionBloc>(context);
+
+      communityMissionBloc.add(LoadCommunityMission());
+      socialMissionBloc.add(LoadSocialMission());
+      featuredMissionBloc.add(LoadFeaturedMission());
+      sponsoredMissionBloc.add(LoadSponsoredMission());
     });
   }
 
@@ -56,7 +67,6 @@ class _MissionPageState extends State<MissionPage> {
           // 🔥 Gradient + soft blobs background
           // Container(child: Image.asset("assets/images/stacks.png")),
           Container(
-            padding: EdgeInsets.symmetric(horizontal: 16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -121,11 +131,22 @@ class _MissionPageState extends State<MissionPage> {
                       setState(() {
                         selectedIndex = index;
                       });
+
+                      communityMissionBloc.add(LoadCommunityMission());
+                      socialMissionBloc.add(LoadSocialMission());
+                      featuredMissionBloc.add(LoadFeaturedMission());
+                      sponsoredMissionBloc.add(LoadSponsoredMission());
                     },
                     children: [
-                      EarnOverviewScreen(),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16.w),
+                        child: EarnOverviewScreen(),
+                      ),
                       AdventureScreen(),
-                      SkillUpPage(),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 16.w),
+                        child: SkillUpPage(),
+                      ),
                       // TriviaPage(),
                     ],
                   ),

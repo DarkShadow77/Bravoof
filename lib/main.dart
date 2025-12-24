@@ -20,6 +20,7 @@ import 'features/app.dart';
 import 'features/dashboard/earn/bloc/community_mission_bloc.dart';
 import 'features/dashboard/earn/bloc/featured_mission_bloc.dart';
 import 'features/dashboard/earn/bloc/social_mission_bloc.dart';
+import 'features/dashboard/earn/bloc/sponsored_mission_bloc.dart';
 import 'features/onbaording/data/bloc/user_cubit.dart';
 import 'utility/navigation.dart';
 
@@ -102,6 +103,7 @@ class _MyAppState extends State<MyApp> {
         BlocProvider(create: (_) => sl<CommunityMissionBloc>()),
         BlocProvider(create: (_) => sl<SocialMissionBloc>()),
         BlocProvider(create: (_) => sl<FeaturedMissionBloc>()),
+        BlocProvider(create: (_) => sl<SponsoredMissionBloc>()),
       ],
       child: ScreenUtilInit(
         designSize: const Size(375, 815),
