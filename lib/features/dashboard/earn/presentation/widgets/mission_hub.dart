@@ -1059,7 +1059,7 @@ class _DiscoverPerksState extends State<DiscoverPerks> {
     return Column(
       children: [
         SizedBox(
-          height: 160.h,
+          height: 170.h,
           child: PageView.builder(
             padEnds: true,
             controller: _pageController,
@@ -1106,7 +1106,7 @@ class _DiscoverPerksState extends State<DiscoverPerks> {
               return Transform(
                 transform: matrix,
                 child: Container(
-                  height: 160.h,
+                  height: 170.h,
                   margin: EdgeInsets.symmetric(horizontal: 16.w),
                   child: Stack(
                     alignment: Alignment.center,
@@ -1133,12 +1133,12 @@ class _DiscoverPerksState extends State<DiscoverPerks> {
                         ],
                       ),
                       Row(
-                        spacing: 4.w,
+                        spacing: 6.w,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Expanded(
                             child: Container(
-                              height: 160.h,
+                              height: 170.h,
                               width: double.infinity,
                               padding: EdgeInsets.symmetric(
                                 horizontal: 16.w,
@@ -1215,7 +1215,7 @@ class _DiscoverPerksState extends State<DiscoverPerks> {
                           ),
                           Expanded(
                             child: Container(
-                              height: 160.h,
+                              height: 170.h,
                               width: double.infinity,
                               padding: EdgeInsets.symmetric(
                                 horizontal: 16.w,
@@ -1276,14 +1276,6 @@ class _DiscoverPerksState extends State<DiscoverPerks> {
       ],
     );
   }
-}
-
-String _progressTextFromValue(double progress) {
-  // simple mapping for demo: 0 -> 0/1, 1/3 -> 1/3, etc.
-  if (progress == 0.0) return '0/1';
-  if ((progress - 1 / 3).abs() < 0.01) return '1/3';
-  // fallback
-  return '${(progress * 1).round()}/${1}';
 }
 
 class MissionTile extends StatelessWidget {
