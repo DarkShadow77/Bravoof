@@ -1,5 +1,6 @@
 import 'package:flowva/features/common/flowva_button.dart';
 import 'package:flowva/features/dashboard/nav_bar.dart';
+import 'package:flowva/features/dashboard/profile/presentation/bloc/profile_bloc.dart';
 import 'package:flowva/features/onbaording/data/bloc/user_cubit.dart';
 import 'package:flowva/features/onbaording/data/model/user_profile.dart';
 import 'package:flowva/features/onbaording/widget/first_screen.dart';
@@ -158,7 +159,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with UIToolMixin {
                     );
                     return;
                   }
-
+                  context.read<ProfileBloc>().add(GetProfileEvent());
                   SessionManager().firstWelcomeUserVal = "YES";
                   SessionManager().firstTimeUserVal = "YES";
                   Future.delayed(Duration(seconds: 3), () {

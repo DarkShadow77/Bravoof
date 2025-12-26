@@ -39,7 +39,8 @@ dependencies:
   percent_indicator: ^4.2.5
   collection: ^1.19.1
   supabase_flutter: ^2.12.0
-  flutter_bloc: ^9.1.1
+  flutter_bloc: ^8.1.6
+  hydrated_bloc:
   dartz: ^0.10.1
   equatable: ^2.0.7
   flutter_native_splash: ^2.4.6
@@ -81,6 +82,7 @@ dependencies:
   flutter_svg_provider: ^1.0.7
   timelines_plus: ^1.0.8
   fade_shimmer: ^2.4.0
+  logger: ^2.6.2
 
 
 dev_dependencies:

@@ -19,6 +19,9 @@ import '../../features/dashboard/home/data/repository/campaign_repository.dart';
 import '../../features/dashboard/home/data/repository/campaign_repository_impl.dart';
 import '../../features/dashboard/home/data/repository/home_repository.dart';
 import '../../features/dashboard/home/data/repository/home_repository_impl.dart';
+import '../../features/dashboard/profile/data/repository/profile_repository.dart';
+import '../../features/dashboard/profile/data/repository/profile_repository_impl.dart';
+import '../../features/dashboard/profile/presentation/bloc/profile_bloc.dart';
 import '../../features/onbaording/data/signup_repository/signup_repository.dart';
 import '../../features/onbaording/data/signup_repository/signup_repository_impl.dart';
 
@@ -40,7 +43,9 @@ Future<void> initDI() async {
   sl.registerLazySingleton<SponsoredMissionRepository>(
     () => SponsoredMissionRepositoryImpl(),
   );
+  sl.registerLazySingleton<ProfileRepository>(() => ProfileRepositoryImpl());
 
+  //Blocs
   sl.registerSingleton<UserCubit>(UserCubit());
   sl.registerFactoryParam<CampaignCubit, int, void>(
     (campaignId, _) => CampaignCubit(
@@ -63,4 +68,5 @@ Future<void> initDI() async {
   sl.registerSingleton<SponsoredMissionBloc>(
     SponsoredMissionBloc(repo: sl<SponsoredMissionRepository>()),
   );
+  sl.registerSingleton<ProfileBloc>(ProfileBloc(repo: sl<ProfileRepository>()));
 }

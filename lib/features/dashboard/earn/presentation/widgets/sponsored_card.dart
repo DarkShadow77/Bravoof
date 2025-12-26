@@ -149,7 +149,7 @@ class _SponsoredCardState extends State<SponsoredCard> {
                             begin: Alignment.bottomLeft,
                             end: Alignment.topRight,
                           ),
-                          borderRadius: BorderRadius.circular(16.r),
+                          borderRadius: BorderRadius.circular(32.r),
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -276,7 +276,7 @@ class _SponsoredCardState extends State<SponsoredCard> {
                                     ),
                                     child: Center(
                                       child: Text(
-                                        "Start mission",
+                                        "Mission Completed",
                                         style: GoogleFonts.manrope(
                                           color: Colors.black,
                                           fontSize: 16,
@@ -317,7 +317,7 @@ class _SponsoredCardState extends State<SponsoredCard> {
                                       ),
                                       child: Center(
                                         child: Text(
-                                          "Start mission",
+                                          "Start Mission",
                                           style: GoogleFonts.manrope(
                                             color: Colors.black,
                                             fontSize: 16,

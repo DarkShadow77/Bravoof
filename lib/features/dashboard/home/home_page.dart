@@ -40,7 +40,7 @@ class FlowvaHomePage extends StatefulWidget {
 class _FlowvaHomePageState extends State<FlowvaHomePage> with UIToolMixin {
   List<Map<String, dynamic>> data = [];
 
-  final refLink = "https://app.flowvahub.com?ref=";
+  final refLink = "https://app.joinbravoo.com?ref=";
   final _scrollController = PageController(viewportFraction: 1);
   late UserCubit userCubit;
   late MissionCubit missionCubit;

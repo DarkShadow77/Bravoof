@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:flowva/features/common/flowva_button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
 
@@ -13,8 +14,6 @@ class ConnectedDeviceWidget extends StatefulWidget {
 }
 
 class _ConnectedDeviceWidgetState extends State<ConnectedDeviceWidget> {
-
-
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -93,42 +92,6 @@ class _ConnectedDeviceWidgetState extends State<ConnectedDeviceWidget> {
                       ],
                     ),
                     SizedBox(height: 16),
-                  Container(
-                    margin: const EdgeInsets.only(bottom: 10),
-                    decoration: BoxDecoration(
-                      color: Colors.grey.shade100,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: ListTile(
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-
-                      title: Text(
-                        "Google",
-                        style: GoogleFonts.manrope(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                          color: Color(0xFF191919),
-                        ),
-                      ),
-                      subtitle: Text(
-                        "Connected",
-                        style: GoogleFonts.manrope(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                          color: Color(0xFF5F5F5F),
-                        ),
-                      ),
-                      trailing: Text(
-                        "Disconnect",
-                        style: GoogleFonts.manrope(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                          color: Color(0xFF2B2B2B),
-                        ),
-                      ),
-                      onTap: (){},
-                    ),
-                  ),
                     Container(
                       margin: const EdgeInsets.only(bottom: 10),
                       decoration: BoxDecoration(
@@ -136,7 +99,49 @@ class _ConnectedDeviceWidgetState extends State<ConnectedDeviceWidget> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: ListTile(
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 4,
+                        ),
+
+                        title: Text(
+                          "Google",
+                          style: GoogleFonts.manrope(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w700,
+                            color: Color(0xFF191919),
+                          ),
+                        ),
+                        subtitle: Text(
+                          "Connected",
+                          style: GoogleFonts.manrope(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                            color: Color(0xFF5F5F5F),
+                          ),
+                        ),
+                        trailing: Text(
+                          "Disconnect",
+                          style: GoogleFonts.manrope(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                            color: Color(0xFF2B2B2B),
+                          ),
+                        ),
+                        onTap: () {},
+                      ),
+                    ),
+                    Container(
+                      margin: const EdgeInsets.only(bottom: 10),
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade100,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: ListTile(
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 4,
+                        ),
 
                         title: Text(
                           "Apple",
@@ -159,43 +164,10 @@ class _ConnectedDeviceWidgetState extends State<ConnectedDeviceWidget> {
                           size: 18,
                           color: Colors.black54,
                         ),
-                        onTap: (){},
+                        onTap: () {},
                       ),
                     ),
-                    Container(
-                      margin: const EdgeInsets.only(bottom: 10),
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade100,
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: ListTile(
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-
-                        title: Text(
-                          "LinkedIn",
-                          style: GoogleFonts.manrope(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w700,
-                            color: Color(0xFF191919),
-                          ),
-                        ),
-                        subtitle: Text(
-                          "Not Connected",
-                          style: GoogleFonts.manrope(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                            color: Color(0xFF5F5F5F),
-                          ),
-                        ),
-                        trailing: HugeIcon(
-                          icon: HugeIcons.strokeRoundedArrowRight01,
-                          size: 18,
-                          color: Colors.black54,
-                        ),
-                        onTap: (){},
-                      ),
-                    ),
-                    SizedBox(height: 20),
+                    Spacer(),
                     SizedBox(
                       width: double.infinity,
                       child: FlowvaButton.blueButton(
@@ -203,7 +175,7 @@ class _ConnectedDeviceWidgetState extends State<ConnectedDeviceWidget> {
                         apply: () {},
                       ),
                     ),
-                    const SizedBox(height: 16),
+                     SizedBox(height: 12.h + MediaQuery.of(context).padding.bottom),
                   ],
                 ),
               ),

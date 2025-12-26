@@ -172,7 +172,7 @@ class ReferralPage extends StatelessWidget {
                                 overflow: TextOverflow.ellipsis,
                                 text: TextSpan(
                                   text:
-                                      'https://app.flowvahub.com?ref=${userProfile!.referralCode}',
+                                      'https://app.joinbravoo.com?ref=${userProfile!.referralCode}',
                                   style: TextStyles.normalSemibold14(
                                     context,
                                   ).copyWith(color: AppColors.primary),

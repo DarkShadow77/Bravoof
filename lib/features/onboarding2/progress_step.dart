@@ -116,11 +116,13 @@
 import 'package:flowva/features/common/data/constants.dart';
 import 'package:flowva/features/dashboard/nav_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:page_transition/page_transition.dart';
 
 import '../../session/session_manager.dart';
+import '../dashboard/profile/presentation/bloc/profile_bloc.dart';
 
 class StepProgressPage extends StatefulWidget {
   @override
@@ -224,6 +226,8 @@ class _StepProgressPageState extends State<StepProgressPage>
     if (!mounted) return;
 
     SessionManager().isNewUserVal = "YES";
+
+    context.read<ProfileBloc>().add(GetProfileEvent());
     Navigator.of(context).pushAndRemoveUntil(
       PageTransition(
         type: PageTransitionType.fade,

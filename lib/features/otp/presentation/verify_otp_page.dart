@@ -27,7 +27,6 @@ class _VerifyOtpPageState extends State<VerifyOtpPage> with UIToolMixin {
 
   @override
   void initState() {
-    // TODO: implement initState
     verifyOtpCubit = VerifyOtpCubit();
 
     super.initState();

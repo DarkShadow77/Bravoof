@@ -1,11 +1,10 @@
+import 'dart:io';
 import 'dart:ui';
 
-import 'package:flowva/features/common/flowva_button.dart';
-import 'package:flowva/features/dashboard/settings/presentation/pages/login_and_security_page.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'bravoo_ration_page.dart';
 import 'feed_back.dart';
@@ -13,12 +12,28 @@ import 'feed_back.dart';
 class HelpPage extends StatelessWidget {
   const HelpPage({super.key});
 
+  Future<void> openWhatsApp() async {
+    final phoneNumber = '15872872064';
+    final message = 'Hello 👋';
+    final encodedMessage = Uri.encodeComponent(message);
+
+    final url = Platform.isIOS
+        ? Uri.parse('https://wa.me/$phoneNumber?text=$encodedMessage')
+        : Uri.parse('whatsapp://send?phone=$phoneNumber&text=$encodedMessage');
+
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url, mode: LaunchMode.externalApplication);
+    } else {
+      throw 'Could not open WhatsApp';
+    }
+  }
+
   Widget buildTile(
-      Widget icon,
-      String title, {
-        Color? iconColor,
-        required Future Function() apply,
-      }) {
+    Widget icon,
+    String title, {
+    Color? iconColor,
+    required Future Function() apply,
+  }) {
     return ListTile(
       leading: icon,
       title: Text(
@@ -45,27 +60,25 @@ class HelpPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-appBar: AppBar(
-
-  title:Text(
-      "Get Help",
-      style: GoogleFonts.manrope(
-        fontSize: 20,
-        fontWeight: FontWeight.w700,
-        color: Colors.black,
-      ) ,
-  ),
-  backgroundColor: Colors.white,
-  centerTitle: true,
-  leading:  GestureDetector(
-    onTap:()=>Navigator.pop(context),
-    child: Icon(Icons.arrow_back, color: Color(0xFF1E1E1E)),
-  ),
-),
+      appBar: AppBar(
+        title: Text(
+          "Get Help",
+          style: GoogleFonts.manrope(
+            fontSize: 20,
+            fontWeight: FontWeight.w700,
+            color: Colors.black,
+          ),
+        ),
+        backgroundColor: Colors.white,
+        centerTitle: true,
+        leading: GestureDetector(
+          onTap: () => Navigator.pop(context),
+          child: Icon(Icons.arrow_back, color: Color(0xFF1E1E1E)),
+        ),
+      ),
       body: SafeArea(
         child: Column(
           children: [
-
             ListView(
               shrinkWrap: true,
               children: [
@@ -78,47 +91,49 @@ appBar: AppBar(
                   ),
                   "Visit the Help Center",
                   apply: () {
-                  return  showModalBottomSheet(
-                        context: context,
-                        isScrollControlled: true,
-                        barrierColor: Colors.transparent,
-                        backgroundColor: Colors.transparent,
-                        // important for blur
-                        builder: (_) =>HelpWidget()
+                    return showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: true,
+                      barrierColor: Colors.transparent,
+                      backgroundColor: Colors.transparent,
+                      // important for blur
+                      builder: (_) => HelpWidget(),
                     );
-                  }
+                  },
                 ),
                 const Divider(height: 1, color: Color(0xFFF1F1F1)),
                 buildTile(
                   HugeIcon(
-                    icon:HugeIcons.strokeRoundedCustomerSupport,
+                    icon: HugeIcons.strokeRoundedCustomerSupport,
                     color: Color(0xFF191919),
                     strokeWidth: 2,
                     size: 20,
                   ),
                   "Customer Support",
-                  apply: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (ctx) => LoginAndSecurityScreen()),
-                  ),
+                  apply: () => openWhatsApp(),
                 ),
                 const Divider(height: 1, color: Color(0xFFF1F1F1)),
                 buildTile(
-                  HugeIcon(icon: HugeIcons.strokeRoundedMegaphone02,strokeWidth: 2,color: Color(0xFF191919), size: 20),
+                  HugeIcon(
+                    icon: HugeIcons.strokeRoundedMegaphone02,
+                    strokeWidth: 2,
+                    color: Color(0xFF191919),
+                    size: 20,
+                  ),
                   "Leave a Review",
-                  apply: ()=>Navigator.push(context,
-                      MaterialPageRoute(builder: (ctx)=>BravooRatingPage()))
+                  apply: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (ctx) => BravooRatingPage()),
+                  ),
                 ),
+              ],
+            ),
           ],
         ),
-    ]
       ),
-      )
     );
   }
 }
-
-
 
 class HelpWidget extends StatefulWidget {
   HelpWidget({super.key});
@@ -128,19 +143,11 @@ class HelpWidget extends StatefulWidget {
 }
 
 class _HelpWidgetState extends State<HelpWidget> {
-  final items=[
-    {
-      "label":"Problem with Rewards"
-    },
-    {
-      "label":"Customer Support"
-    },
-    {
-      "label":"Issue with tools and Stack"
-    },
-    {
-      "label":"Other"
-    }
+  final items = [
+    {"label": "Problem with Rewards"},
+    {"label": "Customer Support"},
+    {"label": "Issue with tools and Stack"},
+    {"label": "Other"},
   ];
   String? selectedOption;
   @override
@@ -223,54 +230,58 @@ class _HelpWidgetState extends State<HelpWidget> {
                     SizedBox(height: 16),
                     Flexible(
                       child: ListView.builder(
-                          shrinkWrap: true,
-                          itemCount: items.length,
-                          itemBuilder: (context,i){
-                            return GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  selectedOption = items[i]["label"];
-                                });
-                                   Navigator.push(
-                                  context,
-                                  MaterialPageRoute(builder: (ctx) => FeedbackPage()),
-                                );
-                              },
-                              child: Container(
-                                margin: const EdgeInsets.only(bottom: 16),
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 16,
-                                  horizontal: 16,
+                        shrinkWrap: true,
+                        itemCount: items.length,
+                        itemBuilder: (context, i) {
+                          return GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                selectedOption = items[i]["label"];
+                              });
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (ctx) => FeedbackPage(),
                                 ),
-                                decoration: BoxDecoration(
-
-                                  color: Color(0xFFF9F9F9),
-                                  borderRadius: BorderRadius.circular(16),
-                                  border: Border.all(width: 0.5, color: Colors.black.withOpacity(0.08))
-
-                                ),
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                      child: Text(
-                                        items[i]["label"]!,
-                                        style: GoogleFonts.manrope(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w500,
-                                          color: Color(0xFF191919),
-                                        ),
-                                      ),
-                                    ),
-                                    HugeIcon(
-                                      icon: HugeIcons.strokeRoundedArrowRight01,
-                                      size: 18,
-                                      color: Colors.black54,
-                                    ),
-                                  ],
+                              );
+                            },
+                            child: Container(
+                              margin: const EdgeInsets.only(bottom: 16),
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 16,
+                                horizontal: 16,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Color(0xFFF9F9F9),
+                                borderRadius: BorderRadius.circular(16),
+                                border: Border.all(
+                                  width: 0.5,
+                                  color: Colors.black.withOpacity(0.08),
                                 ),
                               ),
-                            );
-                          }),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      items[i]["label"]!,
+                                      style: GoogleFonts.manrope(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500,
+                                        color: Color(0xFF191919),
+                                      ),
+                                    ),
+                                  ),
+                                  HugeIcon(
+                                    icon: HugeIcons.strokeRoundedArrowRight01,
+                                    size: 18,
+                                    color: Colors.black54,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
                     ),
 
                     const SizedBox(height: 16),

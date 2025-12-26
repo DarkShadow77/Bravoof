@@ -366,7 +366,7 @@ class _EarnOverviewScreenState extends State<EarnOverviewScreen>
                                         overflow: TextOverflow.ellipsis,
                                         text: TextSpan(
                                           text:
-                                              'https://app.flowvahub.com?ref=${userProfile.referralCode}',
+                                              'https://app.joinbravoo.com?ref=${userProfile.referralCode}',
                                           style: TextStyles.normalSemibold14(
                                             context,
                                           ).copyWith(color: AppColors.primary),
@@ -860,7 +860,17 @@ class _EarnOverviewScreenState extends State<EarnOverviewScreen>
                     icon: HugeIcons.strokeRoundedTickDouble02,
                     color: Colors.white,
                   ),
-                  apply: streaks.hasCheckedInToday ? null : apply,
+                  apply: streaks.hasCheckedInToday
+                      ? () {
+                          showMessage(
+                            "You've already Checked In",
+                            context,
+                            color: Colors.white,
+                            styleColor: Colors.black,
+                            status: true,
+                          );
+                        }
+                      : apply,
                 ),
                 FlowvaButton.whiteButton(
                   name: "Share my streak",

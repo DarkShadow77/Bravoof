@@ -11,6 +11,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../dashboard/earn/bloc/featured_mission_bloc.dart';
 import '../../../dashboard/earn/bloc/social_mission_bloc.dart';
 import '../../../dashboard/earn/bloc/sponsored_mission_bloc.dart';
+import '../../../dashboard/profile/presentation/bloc/profile_bloc.dart';
 import '../../../onbaording/data/bloc/user_cubit.dart';
 
 class MissionPage extends StatefulWidget {
@@ -42,6 +43,8 @@ class _MissionPageState extends State<MissionPage> {
       }
       final userCubit = UserCubit();
       userCubit.updateUserProfile();
+
+      context.read<ProfileBloc>().add(GetProfileEvent());
       communityMissionBloc = BlocProvider.of<CommunityMissionBloc>(context);
       socialMissionBloc = BlocProvider.of<SocialMissionBloc>(context);
       featuredMissionBloc = BlocProvider.of<FeaturedMissionBloc>(context);
@@ -70,12 +73,16 @@ class _MissionPageState extends State<MissionPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: 70),
-                FlowvaAppBar(title: "Missions"),
+                SizedBox(height: 20.h + MediaQuery.of(context).padding.top),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16.w),
+                  child: FlowvaAppBar(title: "Missions"),
+                ),
                 const SizedBox(height: 12),
                 // Tabs
                 Container(
                   height: 45,
+                  padding: EdgeInsets.symmetric(horizontal: 16.w),
                   width: double.infinity,
                   child: ListView.separated(
                     scrollDirection: Axis.horizontal,
@@ -131,7 +138,6 @@ class _MissionPageState extends State<MissionPage> {
                       setState(() {
                         selectedIndex = index;
                       });
-
                       communityMissionBloc.add(LoadCommunityMission());
                       socialMissionBloc.add(LoadSocialMission());
                       featuredMissionBloc.add(LoadFeaturedMission());

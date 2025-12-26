@@ -14,6 +14,7 @@ import 'package:share_plus/share_plus.dart';
 import '../../../../common/routes.dart';
 import '../../../../onbaording/data/model/user_profile.dart';
 import '../../../home/data/bloc/home_cubit.dart';
+import '../../../profile/presentation/bloc/profile_bloc.dart';
 import 'jackpot_page.dart';
 
 String referralMessage(String code, [bool encode = false]) {
@@ -21,12 +22,12 @@ String referralMessage(String code, [bool encode = false]) {
     return Uri.encodeComponent(
       'Join me on Bravoo 🚀\n'
       'Use my referral link:\n'
-      'https://app.flowvahub.com?ref=$code',
+      'https://app.joinbravoo.com?ref=$code',
     );
   } else {
     return 'Join me on Bravoo 🚀\n'
         'Use my referral link:\n'
-        'https://app.flowvahub.com?ref=$code';
+        'https://app.joinbravoo.com?ref=$code';
   }
 }
 
@@ -45,13 +46,16 @@ class _InviteAndEarnPageState extends State<InviteAndEarnPage> {
   List<UserProfile> referrals = [];
 
   late UserCubit userCubit;
+  late ProfileBloc profileBloc;
 
   @override
   void initState() {
     super.initState();
     userCubit = UserCubit();
     userCubit.fetchUserProfile();
-    userProfile = userCubit.state.userProfile;
+    profileBloc = context.read<ProfileBloc>();
+    userProfile = profileBloc.state.profile;
+    profileBloc.add(GetProfileEvent());
     BlocProvider.of<HomeCubit>(context).getUserReferrals();
   }
 

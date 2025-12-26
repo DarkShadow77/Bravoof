@@ -1,52 +1,64 @@
 import 'dart:io';
 
+import 'package:flowva/app/view/widgets/cached_image_widget.dart';
 import 'package:flowva/features/dashboard/profile/presentation/widgets/edit_avatar.dart';
-import 'package:flowva/features/onbaording/data/bloc/user_cubit.dart';
 import 'package:flowva/features/onbaording/data/model/user_profile.dart';
 import 'package:flowva/features/onboarding2/data/convert_asset_file.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../../../../core/constants/app_colors.dart';
+import '../../../../../utility/ui_tool_mix.dart';
+import '../bloc/profile_bloc.dart';
 import 'edit_name.dart';
 
 class EditProfilePage extends StatefulWidget {
-  EditProfilePage({super.key, this.userProfile});
-
-  UserProfile? userProfile;
+  EditProfilePage({super.key});
 
   @override
   State<EditProfilePage> createState() => _EditProfilePageState();
 }
 
-class _EditProfilePageState extends State<EditProfilePage> {
-  ValueNotifier<bool> isSending = ValueNotifier(false);
-  int? selectedAvatar;
-  late UserCubit userCubit;
+class _EditProfilePageState extends State<EditProfilePage> with UIToolMixin {
+  UserProfile userProfile = UserProfile();
+  late ProfileBloc profileBloc;
 
-  final supabase = Supabase.instance.client;
+  int? selectedAvatar;
+
+  String? pickedImage;
 
   final ImagePicker _picker = ImagePicker();
-  String? pickedImage;
+  ValueNotifier<bool> isSending = ValueNotifier(false);
+
+  @override
+  void initState() {
+    super.initState();
+
+    profileBloc = context.read<ProfileBloc>();
+    userProfile = profileBloc.state.profile;
+    profileBloc.add(GetProfileEvent());
+  }
 
   pickImage(ImageSource imageSource) async {
     try {
       final XFile? pickedFile = await _picker.pickImage(source: imageSource);
-      final imageBytes = await pickedFile!.readAsBytes();
-      // final userid = supabase.auth.currentUser!.id;
-      // supabase.storage
-      //     .from('profile')
-      //     .updateBinary('$userid/profile', imageBytes);
+      if (pickedFile != null) {
+        setState(() {
+          pickedImage = pickedFile.path;
+        });
 
-      setState(() {
-        pickedImage = pickedFile.path;
-      });
-
-      userCubit.uploadProfileImage(File(await assetToFile(pickedFile.path)));
+        context.read<ProfileBloc>().add(
+          UpdateProfileEvent(
+            profile: userProfile,
+            imageFile: File(await assetToFile(pickedFile.path)),
+          ),
+        );
+      }
     } catch (e) {
       print(e);
       setState(() {
@@ -55,271 +67,266 @@ class _EditProfilePageState extends State<EditProfilePage> {
     }
   }
 
-  @override
-  void initState() {
-    userCubit = UserCubit();
+  void _loadingProfileState(BuildContext context, ProfileLoadingState state) {
+    if (state.type == ProfileType.updateProfile) {
+      isSending.value = true;
+    }
+  }
 
-    super.initState();
+  void _successProfileState(BuildContext context, ProfileSuccessState state) {
+    if (state.type == ProfileType.updateProfile) {
+      isSending.value = false;
+      showMessage(
+        "Profile Updated Successfully",
+        context,
+        color: Colors.green,
+        styleColor: Colors.white,
+      );
+    }
+  }
+
+  void _failedProfileState(BuildContext context, ProfileFailureState state) {
+    if (state.type == ProfileType.updateProfile) {
+      isSending.value = false;
+      showMessage(
+        state.message,
+        context,
+        color: Colors.white,
+        styleColor: Colors.black,
+        status: true,
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () => Navigator.pop(context, true),
-        ),
-        title: Text(
-          "Edit Profile",
-          style: GoogleFonts.manrope(
-            fontSize: 20,
-            fontWeight: FontWeight.w700,
-            color: Colors.black,
+    return BlocConsumer<ProfileBloc, ProfileState>(
+      listener: (context, state) {
+        if (state is ProfileLoadingState) {
+          _loadingProfileState(context, state);
+        } else if (state is ProfileSuccessState) {
+          _successProfileState(context, state);
+        } else if (state is ProfileFailureState) {
+          _failedProfileState(context, state);
+        }
+      },
+      buildWhen: (p, c) => p.profile != c.profile,
+      builder: (context, state) {
+        userProfile = state.profile;
+        return Scaffold(
+          backgroundColor: Colors.white,
+          appBar: AppBar(
+            backgroundColor: Colors.white,
+            elevation: 0,
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back, color: Colors.black),
+              onPressed: () => Navigator.pop(context, true),
+            ),
+            title: Text(
+              "Edit Profile",
+              style: GoogleFonts.manrope(
+                fontSize: 20,
+                fontWeight: FontWeight.w700,
+                color: Colors.black,
+              ),
+            ),
+            centerTitle: true,
           ),
-        ),
-        centerTitle: true,
-      ),
-      body: BlocListener<UserCubit, UserState>(
-        bloc: userCubit,
-        listener: (context, state) {
-          if (state is UploadLoading) {
-            isSending.value = true;
-          }
-          if (state is Updating) {
-            isSending.value = true;
-          }
-          if (state is UploadSuccess) {
-            userCubit.updateProfile(UserProfile(profilePic: state.imageUrl));
-          }
-          if (state is UserProfileSuccess) {
-            isSending.value = false;
-            setState(() {
-              widget.userProfile!.profilePic = state.userProfile.profilePic;
-              widget.userProfile!.name = state.userProfile.name;
-              widget.userProfile!.bio = state.userProfile.bio;
-            });
-            Navigator.pop(context);
-          }
-        },
-        child: ListView(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-          children: [
-            const SizedBox(height: 10),
-
-            // Profile Avatar
-            Center(
-              child: Stack(
-                children: [
-                  widget.userProfile != null
-                      ? Container(
-                          height: 120,
-                          width: 120,
-                          decoration: BoxDecoration(
-                            // shape: BoxShape.circle,
-                            borderRadius: BorderRadius.circular(100),
-                          ),
-                          clipBehavior: Clip.hardEdge,
-                          child: Image.network(
-                            widget.userProfile!.profilePic!,
-                            fit: BoxFit.cover,
-                          ),
-                        )
-                      : selectedAvatar != null
-                      ? Container(
-                          height: 120,
-                          width: 120,
-                          decoration: BoxDecoration(
-                            // shape: BoxShape.circle,
-                            borderRadius: BorderRadius.circular(100),
-                          ),
-                          // clipBehavior: Clip.hardEdge,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(100),
-                            child: Image.asset(
-                              "assets/avatar/${selectedAvatar}.png",
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        )
-                      : pickedImage != null
-                      ? Container(
-                          height: 120,
-                          width: 120,
-                          decoration: BoxDecoration(
-                            // shape: BoxShape.circle,
-                            borderRadius: BorderRadius.circular(100),
-                          ),
-                          clipBehavior: Clip.hardEdge,
-                          child: Image.asset(pickedImage!, fit: BoxFit.cover),
-                        )
-                      : Container(
-                          height: 120,
-                          width: 120,
-                          padding: EdgeInsets.all(30),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            shape: BoxShape.circle,
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.08),
-                                blurRadius: 8,
-                                offset: const Offset(0, 4),
-                              ),
-                            ],
-                          ),
-                          child: HugeIcon(
-                            icon: HugeIcons.strokeRoundedUser03,
-                            strokeWidth: 1.2,
-                            size: 18,
-                          ),
-                        ),
-
-                  Positioned(
-                    right: 0,
-                    top: 0,
-                    child: GestureDetector(
-                      onTap: () => setState(() {
-                        selectedAvatar = null;
-                        pickedImage = null;
-                      }),
-                      child: Container(
-                        width: 28,
-                        height: 28,
-                        decoration: const BoxDecoration(
+          body: SingleChildScrollView(
+            padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
+            child: Column(
+              children: [
+                SizedBox(height: 10.h),
+                // Profile Avatar
+                Center(
+                  child: Stack(
+                    children: [
+                      Container(
+                        height: 120.r,
+                        width: 120.r,
+                        clipBehavior: Clip.antiAlias,
+                        decoration: BoxDecoration(
                           color: Colors.white,
                           shape: BoxShape.circle,
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black12,
-                              blurRadius: 3,
-                              offset: Offset(0, 2),
+                              color: Colors.black.withValues(alpha: 0.08),
+                              blurRadius: 8,
+                              offset: const Offset(0, 4),
                             ),
                           ],
                         ),
-                        child: const Icon(
-                          Icons.close,
-                          size: 18,
-                          color: Colors.black,
+                        child: selectedAvatar != null
+                            ? Image.asset(
+                                "assets/avatar/${selectedAvatar}.png",
+                                fit: BoxFit.cover,
+                              )
+                            : pickedImage != null
+                            ? Image.asset(pickedImage!, fit: BoxFit.cover)
+                            : userProfile.profilePic != null
+                            ? CachedImageRadius(
+                                imageUrl: userProfile.profilePic ?? "",
+                                circle: true,
+                                size: 120,
+                                fit: BoxFit.cover,
+                                color: AppColors.grey.withValues(alpha: .5),
+                              )
+                            : HugeIcon(
+                                icon: HugeIcons.strokeRoundedUser03,
+                                strokeWidth: 1.2,
+                                size: 18,
+                              ),
+                      ),
+
+                      Positioned(
+                        right: 0,
+                        top: 0,
+                        child: Visibility(
+                          visible:
+                              selectedAvatar != null || pickedImage != null,
+                          child: GestureDetector(
+                            onTap: () => setState(() {
+                              selectedAvatar = null;
+                              pickedImage = null;
+                            }),
+                            child: Container(
+                              width: 28.r,
+                              height: 28.r,
+                              decoration: const BoxDecoration(
+                                color: Colors.white,
+                                shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black12,
+                                    blurRadius: 3,
+                                    offset: Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              child: const Icon(
+                                Icons.close,
+                                size: 18,
+                                color: Colors.black,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 25.h),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    buildOption(
+                      context,
+                      SvgPicture.asset("assets/images/camera-01.svg"),
+                      "Camera",
+                      apply: () {
+                        pickImage(ImageSource.camera);
+                      },
+                    ),
+                    buildOption(
+                      context,
+                      SvgPicture.asset("assets/images/gallery.svg"),
+                      "Gallery",
+                      apply: () {
+                        pickImage(ImageSource.gallery);
+                      },
+                    ),
+                    buildOption(
+                      context,
+                      HugeIcon(icon: HugeIcons.strokeRoundedNerd),
+                      "Avatar",
+                      name: 'avatar',
+                      apply: () => showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        barrierColor: Colors.transparent,
+                        backgroundColor: Colors.transparent,
+                        // important for blur
+                        builder: (_) => EditAvatarWidget(
+                          apply: (val) async {
+                            setState(() {
+                              selectedAvatar = val['selectedAvatar'] + 1;
+                            });
+                            context.read<ProfileBloc>().add(
+                              UpdateProfileEvent(
+                                profile: userProfile,
+                                imageFile: File(
+                                  await assetToFile(val['avatarString']),
+                                ),
+                              ),
+                            );
+                          },
+                          selectedAvatar: selectedAvatar,
+                          isSending: isSending,
                         ),
                       ),
                     ),
+                  ],
+                ),
+                SizedBox(height: 30.h),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16.0,
+                    vertical: 10,
                   ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 25),
-
-            // Camera / Gallery / Avatar options
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                buildOption(
-                  context,
-                  SvgPicture.asset("assets/images/camera-01.svg"),
-                  "Camera",
-                  apply: () {
-                    pickImage(ImageSource.camera);
-                  },
+                  child: Text(
+                    "Basic Details",
+                    style: GoogleFonts.manrope(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF767676),
+                    ),
+                  ),
                 ),
-                buildOption(
+                buildDetailTile(
                   context,
-                  SvgPicture.asset("assets/images/gallery.svg"),
-                  "Gallery",
-                  apply: () {
-                    pickImage(ImageSource.gallery);
-                  },
-                ),
-                buildOption(
-                  context,
-                  HugeIcon(icon: HugeIcons.strokeRoundedNerd),
-                  "Avatar",
-                  name: 'avatar',
                   apply: () => showModalBottomSheet(
                     context: context,
                     isScrollControlled: true,
                     barrierColor: Colors.transparent,
                     backgroundColor: Colors.transparent,
                     // important for blur
-                    builder: (_) => EditAvatarWidget(
+                    builder: (_) => EditNameWidget(
                       apply: (val) async {
-                        setState(() {
-                          selectedAvatar = val['selectedAvatar'] + 1;
-                        });
-                        userCubit.uploadProfileImage(
-                          File(await assetToFile(val['avatarString'])),
+                        context.read<ProfileBloc>().add(
+                          UpdateProfileEvent(
+                            profile: UserProfile(
+                              name: val['name'],
+                              bio: val['bio'],
+                            ),
+                          ),
                         );
                       },
-                      selectedAvatar: selectedAvatar,
                       isSending: isSending,
                     ),
                   ),
+                  "Name",
+                  userProfile.name ?? 'N/A',
+                  true,
+                ),
+                buildDetailTile(
+                  context,
+                  apply: () {},
+                  "Bio",
+                  userProfile.bio ?? 'Say something about yourself..',
+                  false,
+                ),
+                buildDetailTile(
+                  context,
+                  apply: () {},
+                  "Email Address",
+                  userProfile.email ?? 'N/A',
+                  false,
                 ),
               ],
             ),
-
-            const SizedBox(height: 30),
-
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 16.0,
-                vertical: 10,
-              ),
-              child: Text(
-                "Basic Details",
-                style: GoogleFonts.manrope(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: Color(0xFF767676),
-                ),
-              ),
-            ),
-
-            buildDetailTile(
-              context,
-              apply: () => showModalBottomSheet(
-                context: context,
-                isScrollControlled: true,
-                barrierColor: Colors.transparent,
-                backgroundColor: Colors.transparent,
-                // important for blur
-                builder: (_) => EditNameWidget(
-                  apply: (val) async {
-                    userCubit.updateProfile(
-                      UserProfile(name: val['name'], bio: val['bio']),
-                    );
-                  },
-
-                  isSending: isSending,
-                ),
-              ),
-              "Name",
-              widget.userProfile != null ? widget.userProfile!.name! : 'N/A',
-              true,
-            ),
-            buildDetailTile(
-              context,
-              apply: () {},
-              "Bio",
-              widget.userProfile != null
-                  ? widget.userProfile!.bio ?? 'Say something about yourself..'
-                  : "Say something about yourself..",
-              false,
-            ),
-            buildDetailTile(
-              context,
-              apply: () {},
-              "Email Address",
-              widget.userProfile != null ? widget.userProfile!.email! : 'N/A',
-              false,
-            ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 

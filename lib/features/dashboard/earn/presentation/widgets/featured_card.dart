@@ -147,11 +147,10 @@ class _FeaturedCardState extends State<FeaturedCard> {
                               hexToColor(featuredMission.color.end),
                               hexToColor(featuredMission.color.start),
                             ],
-
                             begin: Alignment.bottomCenter,
                             end: Alignment.topCenter,
                           ),
-                          borderRadius: BorderRadius.circular(16.r),
+                          borderRadius: BorderRadius.circular(32.r),
                         ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -239,7 +238,7 @@ class _FeaturedCardState extends State<FeaturedCard> {
                               imageUrl: featuredMission.image,
                               width: double.infinity,
                               height: 172.h,
-                              borderRadius: 14.r,
+                              borderRadius: 24.r,
                               fit: BoxFit.cover,
                               color: AppColors.grey300.withValues(alpha: .5),
                             ),
@@ -278,7 +277,7 @@ class _FeaturedCardState extends State<FeaturedCard> {
                                     ),
                                     child: Center(
                                       child: Text(
-                                        "Start mission",
+                                        "Mission Completed",
                                         style: GoogleFonts.manrope(
                                           color: Colors.black,
                                           fontSize: 16,
@@ -319,7 +318,7 @@ class _FeaturedCardState extends State<FeaturedCard> {
                                       ),
                                       child: Center(
                                         child: Text(
-                                          "Start mission",
+                                          "Start Mission",
                                           style: GoogleFonts.manrope(
                                             color: Colors.black,
                                             fontSize: 16,

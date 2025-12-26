@@ -3,21 +3,29 @@ import 'dart:ui';
 import 'package:flowva/features/common/app_enum.dart';
 import 'package:flowva/features/common/flowva_button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
 
+import '../bloc/profile_bloc.dart';
+
 class EditAvatarWidget extends StatefulWidget {
-  EditAvatarWidget({super.key, required  this.apply,required this.selectedAvatar,required this.isSending});
+  EditAvatarWidget({
+    super.key,
+    required this.apply,
+    required this.selectedAvatar,
+    required this.isSending,
+  });
 
   int? selectedAvatar;
-  Function(Map<String,dynamic>data) apply;
-  ValueNotifier<bool> isSending= ValueNotifier(false);
+  final Function(Map<String, dynamic> data) apply;
+  final ValueNotifier<bool> isSending;
   @override
   State<EditAvatarWidget> createState() => _EditAvatarWidgetState();
 }
 
 class _EditAvatarWidgetState extends State<EditAvatarWidget> {
-
   final avatars = [
     "assets/avatar/1.png",
     "assets/avatar/2.png",
@@ -35,6 +43,12 @@ class _EditAvatarWidgetState extends State<EditAvatarWidget> {
     "assets/avatar/14.png",
     "assets/avatar/15.png",
   ];
+  void _successProfileState(BuildContext context, ProfileSuccessState state) {
+    if (state.type == ProfileType.updateProfile) {
+      Navigator.of(context).pop();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -42,7 +56,7 @@ class _EditAvatarWidgetState extends State<EditAvatarWidget> {
         BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
           child: Container(
-            color: Colors.black.withOpacity(0.5), // Optional dark overlay
+            color: Colors.black.withValues(alpha: 0.5), // Optional dark overlay
           ),
         ),
         DraggableScrollableSheet(
@@ -50,7 +64,12 @@ class _EditAvatarWidgetState extends State<EditAvatarWidget> {
           minChildSize: 0.3,
           maxChildSize: 0.9,
           builder: (ctx, scrollController) {
-            return ClipRRect(
+            return BlocListener<ProfileBloc, ProfileState>(
+  listener: (context, state) {if (state is ProfileSuccessState) {
+    _successProfileState(context, state);
+  }
+  },
+  child: ClipRRect(
               borderRadius: const BorderRadius.vertical(
                 top: Radius.circular(24),
               ),
@@ -70,15 +89,14 @@ class _EditAvatarWidgetState extends State<EditAvatarWidget> {
                   children: [
                     // drag handle
                     Container(
-                      width: 60,
-                      height: 6,
+                      width: 60.w,
+                      height: 6.h,
                       margin: const EdgeInsets.only(bottom: 16),
                       decoration: BoxDecoration(
                         color: Colors.grey[400],
-                        borderRadius: BorderRadius.circular(16),
+                        borderRadius: BorderRadius.circular(16.r),
                       ),
                     ),
-
                     // Header with close button
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -92,15 +110,15 @@ class _EditAvatarWidgetState extends State<EditAvatarWidget> {
                           ),
                         ),
                         Container(
-                          height: 36,
-                          width: 36,
+                          height: 36.r,
+                          width: 36.r,
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
                             color: Color(0xFFF1F1F1),
                             borderRadius: BorderRadius.circular(120),
                             border: Border.all(
                               width: 0.2,
-                              color: Colors.black.withOpacity(0.6),
+                              color: Colors.black.withValues(alpha: 0.6),
                             ),
                           ),
                           child: IconButton(
@@ -112,7 +130,7 @@ class _EditAvatarWidgetState extends State<EditAvatarWidget> {
                         ),
                       ],
                     ),
-                    SizedBox(height: 16),
+                    SizedBox(height: 16.h),
                     Container(
                       decoration: BoxDecoration(
                         color: Colors.white,
@@ -122,48 +140,50 @@ class _EditAvatarWidgetState extends State<EditAvatarWidget> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-
                             Container(
-
                               padding: const EdgeInsets.all(12),
                               decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.6),
+                                color: Colors.white.withValues(alpha: 0.6),
                                 borderRadius: BorderRadius.circular(16),
                               ),
                               child: GridView.builder(
                                 shrinkWrap: true,
                                 physics: const NeverScrollableScrollPhysics(),
                                 itemCount: avatars.length,
-                                padding: EdgeInsets.symmetric(horizontal: 0,vertical: 0),
-                                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 5,
-                                  crossAxisSpacing: 12,
-                                  mainAxisSpacing: 20,
-                                  childAspectRatio: 1,
-
-                                ),
+                                padding: EdgeInsets.zero,
+                                gridDelegate:
+                                    const SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: 5,
+                                      crossAxisSpacing: 12,
+                                      mainAxisSpacing: 20,
+                                      childAspectRatio: 1,
+                                    ),
                                 itemBuilder: (context, index) {
-                                  final isSelected =widget.selectedAvatar == index;
+                                  final isSelected =
+                                      widget.selectedAvatar == index;
                                   return GestureDetector(
-                                    onTap: (){
-
-                                      setState(() =>widget. selectedAvatar = index);
+                                    onTap: () {
+                                      setState(
+                                        () => widget.selectedAvatar = index,
+                                      );
                                     },
                                     child: Container(
-                                      width: 52,
-                                      height: 52,
+                                      width: 52.r,
+                                      height: 52.r,
                                       decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(12),
                                         border: isSelected
                                             ? Border.all(
-                                          color: const Color(0xFF7C4DFF),
-                                          width: 2,
-                                        )
+                                                color: const Color(0xFF7C4DFF),
+                                                width: 2,
+                                              )
                                             : null,
                                         boxShadow: [
                                           if (isSelected)
                                             BoxShadow(
-                                              color: const Color(0xFF7C4DFF).withOpacity(0.3),
+                                              color: const Color(
+                                                0xFF7C4DFF,
+                                              ).withValues(alpha: 0.3),
                                               blurRadius: 8,
                                             ),
                                         ],
@@ -173,7 +193,6 @@ class _EditAvatarWidgetState extends State<EditAvatarWidget> {
                                         child: Image.asset(
                                           avatars[index],
                                           fit: BoxFit.cover,
-
                                         ),
                                       ),
                                     ),
@@ -181,16 +200,14 @@ class _EditAvatarWidgetState extends State<EditAvatarWidget> {
                                 },
                               ),
                             ),
-                            SizedBox(height: 20),
                           ],
                         ),
                       ),
                     ),
-
-                    SizedBox(height: 20),
+                    Spacer(),
                     SizedBox(
                       width: double.infinity,
-                      child:ValueListenableBuilder(
+                      child: ValueListenableBuilder(
                         valueListenable: widget.isSending,
 
                         builder: (context, val, _) {
@@ -200,17 +217,25 @@ class _EditAvatarWidgetState extends State<EditAvatarWidget> {
                                 ? AppButtonState.loading
                                 : AppButtonState.idle,
                             name: "Save",
-                            apply: ()=>widget. selectedAvatar!=null?widget.apply({"selectedAvatar":widget. selectedAvatar,"avatarString":avatars[widget.selectedAvatar!]}):null,
+                            apply: () => widget.selectedAvatar != null
+                                ? widget.apply({
+                                    "selectedAvatar": widget.selectedAvatar,
+                                    "avatarString":
+                                        avatars[widget.selectedAvatar!],
+                                  })
+                                : null,
                           );
                         },
                       ),
-
                     ),
-                    const SizedBox(height: 16),
+                    SizedBox(
+                      height: 12.h + MediaQuery.of(context).padding.bottom,
+                    ),
                   ],
                 ),
               ),
-            );
+            ),
+);
           },
         ),
       ],

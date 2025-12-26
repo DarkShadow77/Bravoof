@@ -478,7 +478,7 @@ class _ReferralContainerState extends State<ReferralContainer> {
     return Uri.encodeComponent(
       'Join me on Bravoo 🚀\n'
       'Use my referral link:\n'
-      'https://app.flowvahub.com?ref=$code',
+      'https://app.joinbravoo.com?ref=$code',
     );
   }
 
@@ -515,7 +515,7 @@ class _ReferralContainerState extends State<ReferralContainer> {
   }
 
   Future<void> shareToLinkedIn(String code) async {
-    final link = Uri.encodeComponent('https://app.flowvahub.com?ref=$code');
+    final link = Uri.encodeComponent('https://app.joinbravoo.com?ref=$code');
 
     final linkedInUrl =
         'https://www.linkedin.com/sharing/share-offsite/?url=$link';
@@ -800,7 +800,7 @@ class _ReferralContainerState extends State<ReferralContainer> {
                                   textAlign: TextAlign.center,
                                   text: TextSpan(
                                     text:
-                                        'https://app.flowvahub.com?ref=${userProfile.referralCode}',
+                                        'https://app.joinbravoo.com?ref=${userProfile.referralCode}',
                                     style: TextStyles.smallSemibold12(
                                       context,
                                     ).copyWith(color: AppColors.white),

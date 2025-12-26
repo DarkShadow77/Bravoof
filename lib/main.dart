@@ -4,6 +4,7 @@ import 'package:app_links/app_links.dart';
 import 'package:flowva/features/dashboard/home/data/bloc/home_cubit.dart';
 import 'package:flowva/session/session_manager.dart';
 import 'package:flowva/utility/auth_listener.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -11,6 +12,8 @@ import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hydrated_bloc/hydrated_bloc.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'app/theme/app_themes.dart';
@@ -21,6 +24,7 @@ import 'features/dashboard/earn/bloc/community_mission_bloc.dart';
 import 'features/dashboard/earn/bloc/featured_mission_bloc.dart';
 import 'features/dashboard/earn/bloc/social_mission_bloc.dart';
 import 'features/dashboard/earn/bloc/sponsored_mission_bloc.dart';
+import 'features/dashboard/profile/presentation/bloc/profile_bloc.dart';
 import 'features/onbaording/data/bloc/user_cubit.dart';
 import 'utility/navigation.dart';
 
@@ -51,6 +55,12 @@ void main() async {
     DeviceOrientation.portraitDown,
     DeviceOrientation.portraitUp,
   ]);
+
+  final storageDir = await getApplicationDocumentsDirectory();
+  HydratedBloc.storage = await HydratedStorage.build(
+    storageDirectory: kIsWeb ? HydratedStorage.webStorageDirectory : storageDir,
+  );
+
   await initDI();
   await SessionManager().init();
   runApp(MyApp());
@@ -100,6 +110,7 @@ class _MyAppState extends State<MyApp> {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (_) => sl<HomeCubit>()),
+        BlocProvider(create: (_) => sl<ProfileBloc>()),
         BlocProvider(create: (_) => sl<CommunityMissionBloc>()),
         BlocProvider(create: (_) => sl<SocialMissionBloc>()),
         BlocProvider(create: (_) => sl<FeaturedMissionBloc>()),
