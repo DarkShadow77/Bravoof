@@ -7,15 +7,15 @@ import 'package:hugeicons/hugeicons.dart';
 import '../../../../app/styles/text_styles.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../../utility/ui_tool_mix.dart';
-import '../../../common/flowva_button.dart';
 import '../../../dashboard/profile/presentation/bloc/profile_bloc.dart';
 import '../../../onbaording/data/model/user_profile.dart';
 import '../../data/model/streak_response.dart';
 
 class StreakCard extends StatefulWidget {
-  const StreakCard({super.key, required this.streaks});
+  const StreakCard({super.key, required this.streaks, required this.onPressed});
 
   final StreakResponse streaks;
+  final VoidCallback onPressed;
 
   @override
   State<StreakCard> createState() => _StreakCardState();
@@ -46,6 +46,8 @@ class _StreakCardState extends State<StreakCard> with UIToolMixin {
     userProfile = context.read<ProfileBloc>().state.profile;
   }
 
+  DateTime _dateOnly(DateTime d) => DateTime(d.year, d.month, d.day);
+
   DateTime _startOfWeek(DateTime date) {
     // Monday as start of week
     return date.subtract(Duration(days: date.weekday - 1));
@@ -59,12 +61,12 @@ class _StreakCardState extends State<StreakCard> with UIToolMixin {
     if (streak.history.isEmpty) return [];
 
     final now = DateTime.now();
-    final startOfWeek = _startOfWeek(now);
-    final endOfWeek = _endOfWeek(now);
+    final startOfWeek = _dateOnly(_startOfWeek(now));
+    final endOfWeek = _dateOnly(_endOfWeek(now));
 
     return streak.history
         .where((d) {
-          final date = d; // assuming `d.date` is DateTime
+          final date = _dateOnly(d.toLocal());
           return !date.isBefore(startOfWeek) && !date.isAfter(endOfWeek);
         })
         .map((d) => days[d.weekday - 1])
@@ -179,28 +181,6 @@ class _StreakCardState extends State<StreakCard> with UIToolMixin {
               padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
               child: Column(
                 children: [
-                  // ProgressTrack(),
-                  FlowvaButton.blueButton(
-                    name: streaks.hasCheckedInToday
-                        ? "Checked in"
-                        : "Check-in today",
-                    color: Colors.white,
-                    icon: HugeIcon(
-                      icon: HugeIcons.strokeRoundedTickDouble02,
-                      color: Colors.white,
-                    ),
-                    apply: streaks.hasCheckedInToday
-                        ? () {
-                            showMessage(
-                              "You've already Checked In",
-                              context,
-                              color: Colors.white,
-                              styleColor: Colors.black,
-                              status: true,
-                            );
-                          }
-                        : () {},
-                  ),
                   IconTextButton(
                     onPressed: () {
                       if (streaks.hasCheckedInToday) {
@@ -211,13 +191,16 @@ class _StreakCardState extends State<StreakCard> with UIToolMixin {
                           styleColor: Colors.black,
                           status: true,
                         );
-                      } else {}
+                      } else {
+                        widget.onPressed();
+                      }
                     },
                     text: streaks.hasCheckedInToday
                         ? "Checked in"
                         : "Check-in today",
                     color: AppColors.black,
                     textColor: AppColors.white,
+                    shadowColor: AppColors.error,
                     iconWidget: HugeIcon(
                       icon: HugeIcons.strokeRoundedTickDouble02,
                       color: Colors.white,
@@ -226,23 +209,12 @@ class _StreakCardState extends State<StreakCard> with UIToolMixin {
                   ),
                   SizedBox(height: 12.h),
                   IconTextButton(
-                    onPressed: () {
-                      shareStreak();
-                    },
+                    onPressed: () => shareStreak(),
                     text: "Share my streak",
                     iconWidget: HugeIcon(
                       icon: HugeIcons.strokeRoundedShare08,
                       color: AppColors.black,
                       size: 20.sp,
-                    ),
-                  ),
-                  FlowvaButton.whiteButton(
-                    name: "Share my streak",
-                    color: Colors.black,
-                    icon: HugeIcon(
-                      icon: HugeIcons.strokeRoundedShare08,
-                      color: Colors.black,
-                      size: 20,
                     ),
                   ),
                 ],

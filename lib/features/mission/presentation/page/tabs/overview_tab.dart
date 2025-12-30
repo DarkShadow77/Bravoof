@@ -186,7 +186,12 @@ class _EarnOverviewScreenState extends State<EarnOverviewScreen>
                 const SizedBox(height: 20),
 
                 // Streak Section
-                StreakCard(streaks: streaks),
+                StreakCard(
+                  streaks: streaks,
+                  onPressed: () {
+                    missionCubit.claimStreakToday();
+                  },
+                ),
                 _streakCard(
                   apply: () {
                     missionCubit.claimStreakToday();
