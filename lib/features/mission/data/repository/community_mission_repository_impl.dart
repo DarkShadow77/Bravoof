@@ -1,62 +1,72 @@
-import 'dart:developer';
-
 import 'package:dartz/dartz.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../models/mission_status_enum.dart';
-import '../models/sponsored_mission_model.dart';
-import 'sponsored_mission_repository.dart';
+import '../model/community_mission_model.dart';
+import '../model/mission_status_enum.dart';
+import 'community_mission_repository.dart';
 
-class SponsoredMissionRepositoryImpl extends SponsoredMissionRepository {
+class CommunityMissionRepositoryImpl extends CommunityMissionRepository {
   final supabase = Supabase.instance.client;
 
-  /// Fetch sponsored mission
-  Future<Either<String, List<SponsoredMission>>> fetchSponsoredMission() async {
+  /// Fetch active community mission
+  Future<Either<String, CommunityMission>> fetchActiveMission() async {
     try {
-      final res = await supabase.from('sponsored_missions').select();
+      final res = await supabase
+          .from('community_missions')
+          .select()
+          .eq('status', true)
+          .order('created_at', ascending: true);
 
-      log("Sponsored Missions $res");
       if (res.isEmpty) {
-        return Left('No sponsored mission found');
+        return Left('No active community mission found');
       }
 
-      return Right(res.map((e) => SponsoredMission.fromJson(e)).toList());
+      // 🔹 Pick the last mission after ascending sort
+      final latestMission = res.last;
+
+      return Right(CommunityMission.fromJson(latestMission));
     } catch (e) {
       return Left(e.toString());
     }
   }
 
   /// Join / Update mission
-  Future<Either<String, void>> completeMission({
+  Future<Either<String, void>> joinMission({
     required int missionId,
     required String userId,
-    required String? text,
+    required String email,
     required String? imageUrl,
   }) async {
     try {
       // Check if user already joined
       final existing = await supabase
-          .from('sponsored_mission_completed')
+          .from('community_mission_completed')
           .select('id')
-          .eq('sponsored_mission_id', missionId)
+          .eq('community_mission_id', missionId)
           .eq('user_id', userId)
           .maybeSingle();
 
       if (existing == null) {
         // First join
-        await supabase.from('sponsored_mission_completed').insert({
-          'sponsored_mission_id': missionId,
+        await supabase.from('community_mission_completed').insert({
+          'community_mission_id': missionId,
           'user_id': userId,
-          // 'answer': text,
+          'email': email,
           'evidence_image': imageUrl,
           'status': 'PENDING',
         });
+
+        // Increment joined users
+        await supabase.rpc(
+          'increment_community_users',
+          params: {'mission_id': missionId},
+        );
       } else {
         // Update existing submission
         await supabase
-            .from('sponsored_mission_completed')
+            .from('community_mission_completed')
             .update({
-              // 'answer': text,
+              'email': email,
               'evidence_image': imageUrl,
               'status': 'PENDING',
               'updated_at': DateTime.now().toIso8601String(),
@@ -76,9 +86,9 @@ class SponsoredMissionRepositoryImpl extends SponsoredMissionRepository {
     required String userId,
   }) async {
     final res = await supabase
-        .from('sponsored_mission_completed')
+        .from('community_mission_completed')
         .select('status')
-        .eq('sponsored_mission_id', missionId)
+        .eq('community_mission_id', missionId)
         .eq('user_id', userId)
         .maybeSingle();
 

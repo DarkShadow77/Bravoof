@@ -1,26 +1,23 @@
-import 'dart:developer';
-
 import 'package:dartz/dartz.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../models/featured_mission_model.dart';
-import '../models/mission_status_enum.dart';
-import 'featured_mission_repository.dart';
+import '../model/mission_status_enum.dart';
+import '../model/social_mission_model.dart';
+import 'social_mission_repository.dart';
 
-class FeaturedMissionRepositoryImpl extends FeaturedMissionRepository {
+class SocialMissionRepositoryImpl extends SocialMissionRepository {
   final supabase = Supabase.instance.client;
 
-  /// Fetch featured mission
-  Future<Either<String, List<FeaturedMission>>> fetchFeaturedMission() async {
+  /// Fetch social mission
+  Future<Either<String, List<SocialMission>>> fetchSocialMission() async {
     try {
-      final res = await supabase.from('featured_missions').select();
+      final res = await supabase.from('social_missions').select();
 
-      log("Featured Missions $res");
       if (res.isEmpty) {
-        return Left('No featured mission found');
+        return Left('No social mission found');
       }
 
-      return Right(res.map((e) => FeaturedMission.fromJson(e)).toList());
+      return Right(res.map((e) => SocialMission.fromJson(e)).toList());
     } catch (e) {
       return Left(e.toString());
     }
@@ -36,27 +33,27 @@ class FeaturedMissionRepositoryImpl extends FeaturedMissionRepository {
     try {
       // Check if user already joined
       final existing = await supabase
-          .from('featured_mission_completed')
+          .from('social_mission_completed')
           .select('id')
-          .eq('featured_mission_id', missionId)
+          .eq('social_mission_id', missionId)
           .eq('user_id', userId)
           .maybeSingle();
 
       if (existing == null) {
         // First join
-        await supabase.from('featured_mission_completed').insert({
-          'featured_mission_id': missionId,
+        await supabase.from('social_mission_completed').insert({
+          'social_mission_id': missionId,
           'user_id': userId,
-          // 'answer': text,
+          'answer': text,
           'evidence_image': imageUrl,
           'status': 'PENDING',
         });
       } else {
         // Update existing submission
         await supabase
-            .from('featured_mission_completed')
+            .from('social_mission_completed')
             .update({
-              // 'answer': text,
+              'answer': text,
               'evidence_image': imageUrl,
               'status': 'PENDING',
               'updated_at': DateTime.now().toIso8601String(),
@@ -76,9 +73,9 @@ class FeaturedMissionRepositoryImpl extends FeaturedMissionRepository {
     required String userId,
   }) async {
     final res = await supabase
-        .from('featured_mission_completed')
+        .from('social_mission_completed')
         .select('status')
-        .eq('featured_mission_id', missionId)
+        .eq('social_mission_id', missionId)
         .eq('user_id', userId)
         .maybeSingle();
 

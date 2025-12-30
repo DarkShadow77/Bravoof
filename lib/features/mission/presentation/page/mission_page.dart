@@ -1,18 +1,19 @@
 import 'package:flowva/features/common/flowva_app_bar.dart';
-import 'package:flowva/features/dashboard/earn/bloc/community_mission_bloc.dart';
-import 'package:flowva/features/dashboard/earn/presentation/widgets/earn_overview_screen.dart';
-import 'package:flowva/features/dashboard/earn/presentation/widgets/mission_hub.dart';
-import 'package:flowva/features/mission/presentation/page/skill_up_page.dart';
+import 'package:flowva/features/mission/presentation/page/tabs/adventures_tab.dart';
+import 'package:flowva/features/mission/presentation/page/tabs/overview_tab.dart';
+import 'package:flowva/features/mission/presentation/page/tabs/skill_up_tab.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../../dashboard/earn/bloc/featured_mission_bloc.dart';
-import '../../../dashboard/earn/bloc/social_mission_bloc.dart';
-import '../../../dashboard/earn/bloc/sponsored_mission_bloc.dart';
 import '../../../dashboard/profile/presentation/bloc/profile_bloc.dart';
 import '../../../onbaording/data/bloc/user_cubit.dart';
+import '../bloc/community_mission_bloc.dart';
+import '../bloc/featured_mission_bloc.dart';
+import '../bloc/skill_up_bloc.dart';
+import '../bloc/social_mission_bloc.dart';
+import '../bloc/sponsored_mission_bloc.dart';
 
 class MissionPage extends StatefulWidget {
   MissionPage({super.key, this.index});
@@ -32,6 +33,7 @@ class _MissionPageState extends State<MissionPage> {
   late SocialMissionBloc socialMissionBloc;
   late FeaturedMissionBloc featuredMissionBloc;
   late SponsoredMissionBloc sponsoredMissionBloc;
+  late SkillUpBloc skillUpMissionBloc;
   @override
   void initState() {
     super.initState();
@@ -49,11 +51,13 @@ class _MissionPageState extends State<MissionPage> {
       socialMissionBloc = BlocProvider.of<SocialMissionBloc>(context);
       featuredMissionBloc = BlocProvider.of<FeaturedMissionBloc>(context);
       sponsoredMissionBloc = BlocProvider.of<SponsoredMissionBloc>(context);
+      skillUpMissionBloc = BlocProvider.of<SkillUpBloc>(context);
 
       communityMissionBloc.add(LoadCommunityMission());
       socialMissionBloc.add(LoadSocialMission());
       featuredMissionBloc.add(LoadFeaturedMission());
       sponsoredMissionBloc.add(LoadSponsoredMission());
+      skillUpMissionBloc.add(LoadSkillUpMission());
     });
   }
 
@@ -109,7 +113,7 @@ class _MissionPageState extends State<MissionPage> {
                             border: isSelected2
                                 ? Border.all(
                                     width: 0.2,
-                                    color: Colors.black.withOpacity(0.6),
+                                    color: Colors.black.withValues(alpha: 0.6),
                                   )
                                 : null,
                           ),
@@ -121,7 +125,7 @@ class _MissionPageState extends State<MissionPage> {
                                 fontWeight: FontWeight.w700,
                                 color: isSelected2
                                     ? Colors.black
-                                    : Colors.black.withOpacity(0.6),
+                                    : Colors.black.withValues(alpha: 0.6),
                               ),
                             ),
                           ),
@@ -142,17 +146,15 @@ class _MissionPageState extends State<MissionPage> {
                       socialMissionBloc.add(LoadSocialMission());
                       featuredMissionBloc.add(LoadFeaturedMission());
                       sponsoredMissionBloc.add(LoadSponsoredMission());
+                      skillUpMissionBloc.add(LoadSkillUpMission());
                     },
                     children: [
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: 16.w),
                         child: EarnOverviewScreen(),
                       ),
-                      AdventureScreen(),
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 16.w),
-                        child: SkillUpPage(),
-                      ),
+                      AdventuresTab(),
+                      SkillUpPage(),
                       // TriviaPage(),
                     ],
                   ),

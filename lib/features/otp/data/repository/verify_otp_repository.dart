@@ -102,6 +102,7 @@ class VerifyOtpRepository {
         'name': data['name'],
         'email': data['email'],
         'goals': data['goals'],
+        'bio': "Say Something nice about yourself...",
         'referral_code': data['referral_code'],
         'profile_image': data['profile_image'],
         'user_id': data['user_id'],

@@ -2,40 +2,39 @@ import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 
 import '../../../../session/session_manager.dart';
-import '../data/models/featured_mission_model.dart';
-import '../data/models/mission_status_enum.dart';
-import '../data/repositories/featured_mission_repository.dart';
+import '../../data/model/mission_status_enum.dart';
+import '../../data/model/social_mission_model.dart';
+import '../../data/repository/social_mission_repository.dart';
 
-part 'featured_mission_event.dart';
-part 'featured_mission_state.dart';
+part 'social_mission_event.dart';
+part 'social_mission_state.dart';
 
-class FeaturedMissionBloc
-    extends Bloc<FeaturedMissionEvent, FeaturedMissionState> {
-  final FeaturedMissionRepository repo;
+class SocialMissionBloc extends Bloc<SocialMissionEvent, SocialMissionState> {
+  final SocialMissionRepository repo;
   SessionManager session = SessionManager();
 
-  FeaturedMissionBloc({required this.repo})
-    : super(FeaturedMissionInitial(hasJoined: [], missions: [])) {
-    on<LoadFeaturedMission>(_loadMission);
-    on<CompleteFeaturedMission>(_completeMission);
+  SocialMissionBloc({required this.repo})
+    : super(SocialMissionInitial(hasJoined: [], missions: [])) {
+    on<LoadSocialMission>(_loadMission);
+    on<CompleteSocialMission>(_completeMission);
     on<CheckCompletedStatus>(_checkCompletedStatus);
   }
 
-  Future<void> _loadMission(LoadFeaturedMission event, Emitter emit) async {
+  Future<void> _loadMission(LoadSocialMission event, Emitter emit) async {
     emit(
-      FeaturedMissionLoading(
-        type: FeaturedMissionType.fetchMission,
+      SocialMissionLoading(
+        type: SocialMissionType.fetchMission,
         hasJoined: state.hasJoined,
         missions: state.missions,
       ),
     );
 
-    final missionRes = await repo.fetchFeaturedMission();
+    final missionRes = await repo.fetchSocialMission();
 
     missionRes.fold(
       (err) => emit(
-        FeaturedMissionError(
-          type: FeaturedMissionType.fetchMission,
+        SocialMissionError(
+          type: SocialMissionType.fetchMission,
           message: err,
           hasJoined: state.hasJoined,
           missions: state.missions,
@@ -76,13 +75,13 @@ class FeaturedMissionBloc
   }
 
   Future<void> _completeMission(
-    CompleteFeaturedMission event,
+    CompleteSocialMission event,
     Emitter emit,
   ) async {
     emit(
-      FeaturedMissionLoading(
+      SocialMissionLoading(
         missionId: event.missionId,
-        type: FeaturedMissionType.completeMission,
+        type: SocialMissionType.completeMission,
         hasJoined: state.hasJoined,
         missions: state.missions,
       ),
@@ -97,16 +96,16 @@ class FeaturedMissionBloc
 
     res.fold(
       (err) => emit(
-        FeaturedMissionError(
+        SocialMissionError(
           missionId: event.missionId,
-          type: FeaturedMissionType.completeMission,
+          type: SocialMissionType.completeMission,
           message: err,
           hasJoined: state.hasJoined,
           missions: state.missions,
         ),
       ),
       (_) => emit(
-        FeaturedMissionJoined(
+        SocialMissionJoined(
           missionId: event.missionId,
           hasJoined: state.hasJoined,
           missions: state.missions,

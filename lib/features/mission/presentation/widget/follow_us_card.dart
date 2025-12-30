@@ -2,15 +2,15 @@ import 'package:flowva/app/styles/text_styles.dart';
 import 'package:flowva/app/view/widgets/cached_image_widget.dart';
 import 'package:flowva/core/constants/app_assets.dart';
 import 'package:flowva/core/constants/fonts.dart';
-import 'package:flowva/features/dashboard/earn/data/models/mission_status_enum.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../../core/constants/app_colors.dart';
-import '../../bloc/social_mission_bloc.dart';
-import '../../data/models/social_mission_model.dart';
+import '../../data/model/mission_status_enum.dart';
+import '../../data/model/social_mission_model.dart';
+import '../bloc/social_mission_bloc.dart';
 import 'social_event_dialog.dart';
 
 class FollowUsCard extends StatefulWidget {

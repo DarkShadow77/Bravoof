@@ -2,9 +2,9 @@ import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 
 import '../../../../session/session_manager.dart';
-import '../data/models/mission_status_enum.dart';
-import '../data/models/sponsored_mission_model.dart';
-import '../data/repositories/sponsored_mission_repository.dart';
+import '../../data/model/mission_status_enum.dart';
+import '../../data/model/sponsored_mission_model.dart';
+import '../../data/repository/sponsored_mission_repository.dart';
 
 part 'sponsored_mission_event.dart';
 part 'sponsored_mission_state.dart';

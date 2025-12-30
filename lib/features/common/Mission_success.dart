@@ -4,7 +4,7 @@ import 'package:flowva/features/common/flowva_button.dart';
 import 'package:flowva/features/dashboard/nav_bar.dart';
 import 'package:flowva/features/mission/data/model/skill_up_task_response.dart';
 import 'package:flowva/features/mission/presentation/page/trivia_result_page.dart';
-import 'package:flowva/features/mission/presentation/widget/skill_up_screen.dart';
+import 'package:flowva/features/mission/presentation/page/skillup/skill_up_screen.dart';
 import 'package:flowva/session/session_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_confetti/flutter_confetti.dart';

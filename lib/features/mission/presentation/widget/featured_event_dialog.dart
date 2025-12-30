@@ -1,56 +1,75 @@
 import 'dart:ui';
 
 import 'package:flowva/core/constants/fonts.dart';
-import 'package:flowva/features/dashboard/earn/data/models/community_mission_model.dart';
+import 'package:flowva/features/mission/data/model/community_mission_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:form_field_validator/form_field_validator.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path/path.dart' as p;
 import 'package:timelines_plus/timelines_plus.dart';
 
-import '../../../../../app/styles/text_styles.dart';
-import '../../../../../core/constants/app_colors.dart';
-import '../../../../../utility/ui_tool_mix.dart';
-import '../../../../common/Mission_success.dart';
-import '../../../../common/flowva_button.dart';
-import '../../../../common/flowva_text_field.dart';
-import '../../bloc/social_mission_bloc.dart';
-import '../../data/models/social_mission_model.dart';
+import '../../../../app/styles/text_styles.dart';
+import '../../../../core/constants/app_colors.dart';
+import '../../../../utility/ui_tool_mix.dart';
+import '../../../common/Mission_success.dart';
+import '../../../common/flowva_button.dart';
+import '../../../common/helper.dart';
+import '../../data/model/featured_mission_model.dart';
+import '../bloc/featured_mission_bloc.dart';
 
-Future<dynamic> socialEventDialog({
-  required SocialMission socialMission,
+Future<dynamic> featuredEventDialog({
+  required FeaturedMission featuredMission,
 }) async {
   return Get.dialog(
-    name: "social_event_dialog",
+    name: "featured_event_dialog",
     barrierColor: Colors.transparent,
     barrierDismissible: true,
-    SocialEventDialog(socialMission: socialMission),
+    FeaturedEventDialog(featuredMission: featuredMission),
   );
 }
 
-class SocialEventDialog extends StatefulWidget {
-  const SocialEventDialog({super.key, required this.socialMission});
+class FeaturedEventDialog extends StatefulWidget {
+  const FeaturedEventDialog({super.key, required this.featuredMission});
 
-  final SocialMission socialMission;
+  final FeaturedMission featuredMission;
 
   @override
-  State<SocialEventDialog> createState() => _AskingDialogState();
+  State<FeaturedEventDialog> createState() => _AskingDialogState();
 }
 
-class _AskingDialogState extends State<SocialEventDialog> with UIToolMixin {
-  final TextEditingController answerController = TextEditingController();
+class _AskingDialogState extends State<FeaturedEventDialog> with UIToolMixin {
+  final ImagePicker _picker = ImagePicker();
+
+  String? pickedImage;
+
+  pickImage(ImageSource imageSource) async {
+    try {
+      final XFile? pickedFile = await _picker.pickImage(source: imageSource);
+
+      setState(() {
+        pickedImage = pickedFile!.path;
+      });
+    } catch (e) {
+      print(e);
+      setState(() {
+        // _pickImageError = e;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.transparent,
-      body: BlocListener<SocialMissionBloc, SocialMissionState>(
+      body: BlocListener<FeaturedMissionBloc, FeaturedMissionState>(
         listener: (context, state) {
-          if (state is SocialMissionLoading &&
-              state.type == SocialMissionType.completeMission &&
-              state.missionId == widget.socialMission.id) {
+          if (state is FeaturedMissionLoading &&
+              state.type == FeaturedMissionType.completeMission &&
+              state.missionId == widget.featuredMission.id) {
             showDialog(
               context: context,
               barrierDismissible: false,
@@ -70,9 +89,9 @@ class _AskingDialogState extends State<SocialEventDialog> with UIToolMixin {
               ),
             );
           }
-          if (state is SocialMissionError &&
-              state.type == SocialMissionType.completeMission &&
-              state.missionId == widget.socialMission.id) {
+          if (state is FeaturedMissionError &&
+              state.type == FeaturedMissionType.completeMission &&
+              state.missionId == widget.featuredMission.id) {
             Get.back();
             showMessage(
               state.message,
@@ -83,13 +102,13 @@ class _AskingDialogState extends State<SocialEventDialog> with UIToolMixin {
             );
           }
 
-          if (state is SocialMissionJoined &&
-              state.missionId == widget.socialMission.id) {
+          if (state is FeaturedMissionJoined &&
+              state.missionId == widget.featuredMission.id) {
             Get.back();
             Get.back();
-            BlocProvider.of<SocialMissionBloc>(
+            BlocProvider.of<FeaturedMissionBloc>(
               context,
-            ).add(LoadSocialMission());
+            ).add(LoadFeaturedMission());
             showModalBottomSheet(
               context: context,
               isScrollControlled: true,
@@ -163,7 +182,7 @@ class _AskingDialogState extends State<SocialEventDialog> with UIToolMixin {
                               textAlign: TextAlign.center,
                               overflow: TextOverflow.ellipsis,
                               text: TextSpan(
-                                text: widget.socialMission.instructionTitle,
+                                text: widget.featuredMission.instructionTitle,
                                 style: TextStyles.bigTitleBold24(
                                   context,
                                 ).copyWith(fontFamily: AppFonts.baloo2),
@@ -196,14 +215,14 @@ class _AskingDialogState extends State<SocialEventDialog> with UIToolMixin {
                         shrinkWrap: true,
                         padding: EdgeInsets.zero,
                         physics: NeverScrollableScrollPhysics(),
-                        itemCount: widget.socialMission.instructions.length,
+                        itemCount: widget.featuredMission.instructions.length,
                         itemBuilder: (context, index) {
                           final instruction =
-                              widget.socialMission.instructions[index];
+                              widget.featuredMission.instructions[index];
                           bool isFirst = index == 0;
                           bool isLast =
                               index ==
-                              widget.socialMission.instructions.length - 1;
+                              widget.featuredMission.instructions.length - 1;
                           return TimelineTile(
                             nodePosition: 0,
                             nodeAlign: TimelineNodeAlign.basic,
@@ -250,14 +269,16 @@ class _AskingDialogState extends State<SocialEventDialog> with UIToolMixin {
                         },
                       ),
                       SizedBox(height: 8.h),
-                      answerController.text.trim().isNotEmpty
+                      pickedImage != null
                           ? FlowvaButton.blueButton(
                               name: "Mission complete",
                               apply: () {
-                                BlocProvider.of<SocialMissionBloc>(context).add(
-                                  CompleteSocialMission(
-                                    missionId: widget.socialMission.id,
-                                    text: answerController.text.trim(),
+                                BlocProvider.of<FeaturedMissionBloc>(
+                                  context,
+                                ).add(
+                                  CompleteFeaturedMission(
+                                    missionId: widget.featuredMission.id,
+                                    imageUrl: pickedImage,
                                   ),
                                 );
                               },
@@ -322,15 +343,33 @@ class _AskingDialogState extends State<SocialEventDialog> with UIToolMixin {
                     color: AppColors.grey300.withValues(alpha: .5),
                   ),
                 ),
-                AppTextFeild(
-                  controller: answerController,
-                  hintText: "Type your answer here",
-                  validator: MultiValidator([
-                    RequiredValidator(errorText: "Answer is required"),
-                  ]).call,
-                  onChanged: (value) {
-                    setState(() {});
-                  },
+
+                GestureDetector(
+                  onTap: () => pickImage(ImageSource.gallery),
+                  child: Container(
+                    padding: EdgeInsets.symmetric(vertical: 12, horizontal: 10),
+                    decoration: BoxDecoration(
+                      color: Color(0xFFF9F9F9),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Color(0xFFFE9E9E9)),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          pickedImage != null
+                              ? '${shortenFileName(p.basename(pickedImage!))}'
+                              : "Upload screenshot",
+                          style: GoogleFonts.manrope(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w400,
+                            color: Colors.black,
+                          ),
+                        ),
+                        HugeIcon(icon: HugeIcons.strokeRoundedImageCrop),
+                      ],
+                    ),
+                  ),
                 ),
               ],
             )

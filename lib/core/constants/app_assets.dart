@@ -38,6 +38,7 @@ class AssetsPngImages {
   static String sparklingStar = "$baseImagePngPath/sparkling_star.png";
   static String jackpot = "$baseImagePngPath/jackpot.png";
   static String check = "$baseImagePngPath/check.png";
+  static String roundedCheck = "$baseImagePngPath/rounded_check.png";
 }
 
 class AssetsSvgImages {

@@ -12,15 +12,21 @@ class IconTextButton extends StatelessWidget {
     required this.onPressed,
     required this.text,
     this.icon,
+    this.iconWidget,
     this.color,
     this.textColor,
+    this.borderColor,
+    this.shadowColor = AppColors.black,
   });
 
   final VoidCallback onPressed;
   final String text;
   final String? icon;
+  final Widget? iconWidget;
   final Color? color;
   final Color? textColor;
+  final Color? borderColor;
+  final Color shadowColor;
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +39,7 @@ class IconTextButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(100.r),
           border: Border.all(
             width: 1.w,
-            color: AppColors.white.withValues(alpha: .15),
+            color: borderColor ?? AppColors.primary.withValues(alpha: .15),
           ),
         ),
         child: InnerShadowContainer(
@@ -48,36 +54,41 @@ class IconTextButton extends StatelessWidget {
             height: 45.h,
             padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 16.w),
             decoration: BoxDecoration(
+              color: nullColor,
               borderRadius: BorderRadius.circular(100.r),
-              /*  boxShadow: [
+              boxShadow: [
                 BoxShadow(
-                  color: AppColors.black10,
+                  color: shadowColor.withValues(alpha: .1),
                   blurRadius: 4,
                   offset: Offset(0, 2),
                 ),
                 BoxShadow(
-                  color: AppColors.black.withValues(alpha: .09),
+                  color: shadowColor.withValues(alpha: .09),
                   blurRadius: 6,
                   offset: Offset(0, 6),
                 ),
                 BoxShadow(
-                  color: AppColors.black05,
+                  color: shadowColor.withValues(alpha: .05),
                   blurRadius: 9,
                   offset: Offset(0, 14),
                 ),
-              ],*/
+              ],
             ),
             child: Row(
               spacing: 8.w,
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                ?iconWidget,
                 if (icon != null) ...[
                   SvgPicture.asset(
                     icon!,
                     width: 16.w,
                     height: 16.h,
                     fit: BoxFit.contain,
+                    colorFilter: textColor != null
+                        ? ColorFilter.mode(textColor!, BlendMode.srcIn)
+                        : null,
                   ),
                 ],
                 Flexible(

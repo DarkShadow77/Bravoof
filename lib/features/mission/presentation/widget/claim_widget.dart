@@ -4,7 +4,6 @@ import 'package:flowva/features/common/Mission_success.dart';
 import 'package:flowva/features/common/flowva_button.dart';
 import 'package:flowva/features/common/helper.dart';
 import 'package:flowva/features/common/ui_tool_mixin/ui_tool_mixin.dart';
-import 'package:flowva/features/dashboard/earn/bloc/community_mission_bloc.dart';
 import 'package:flowva/features/mission/data/bloc/mission_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -16,7 +15,8 @@ import 'package:hugeicons/hugeicons.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as p;
 
-import '../../../../common/flowva_text_field.dart';
+import '../../../common/flowva_text_field.dart';
+import '../bloc/community_mission_bloc.dart';
 
 class ReclaimMissionPopup extends StatefulWidget {
   ReclaimMissionPopup({super.key});

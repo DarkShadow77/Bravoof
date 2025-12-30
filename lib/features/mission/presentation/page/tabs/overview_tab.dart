@@ -20,10 +20,11 @@ import 'package:share_plus/share_plus.dart';
 import '../../../../../app/styles/text_styles.dart';
 import '../../../../../core/constants/app_assets.dart';
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../dashboard/earn/presentation/pages/invite_earn.dart';
+import '../../../../dashboard/earn/presentation/widgets/leaderboard_widget.dart';
 import '../../bloc/featured_mission_bloc.dart';
 import '../../bloc/social_mission_bloc.dart';
-import '../pages/invite_earn.dart';
-import 'leaderboard_widget.dart';
+import '../../widget/streak_card.dart';
 
 class EarnOverviewScreen extends StatefulWidget {
   const EarnOverviewScreen({super.key});
@@ -185,14 +186,13 @@ class _EarnOverviewScreenState extends State<EarnOverviewScreen>
                 const SizedBox(height: 20),
 
                 // Streak Section
+                StreakCard(streaks: streaks),
                 _streakCard(
                   apply: () {
                     missionCubit.claimStreakToday();
                   },
                 ),
-
                 const SizedBox(height: 20),
-
                 // Badges Section
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,

@@ -12,6 +12,7 @@ class UserProfile {
   String? referrerName;
   String? profilePic;
   int? totalPoints;
+  int? missionsCompleted;
   int? basePoints;
   int? referralCount;
   int? spins;
@@ -37,6 +38,7 @@ class UserProfile {
     this.referrerName,
     this.profilePic,
     this.totalPoints,
+    this.missionsCompleted,
     this.basePoints,
     this.referralCount,
     this.spins,
@@ -63,6 +65,7 @@ class UserProfile {
     String? referrerName,
     String? profilePic,
     int? totalPoints,
+    int? missions_completed,
     int? basePoints,
     int? referralCount,
     int? spins,
@@ -88,6 +91,7 @@ class UserProfile {
       referrerName: referrerName ?? this.referrerName,
       profilePic: profilePic ?? this.profilePic,
       totalPoints: totalPoints ?? this.totalPoints,
+      missionsCompleted: missionsCompleted ?? this.missionsCompleted,
       basePoints: basePoints ?? this.basePoints,
       referralCount: referralCount ?? this.referralCount,
       spins: spins ?? this.spins,
@@ -144,6 +148,9 @@ class UserProfile {
     }
     if (json['total_points'] != null) {
       totalPoints = json['total_points'];
+    }
+    if (json['missions_completed'] != null) {
+      missionsCompleted = json['missions_completed'];
     }
     if (json['base_point'] != null) {
       basePoints = json['base_point'];

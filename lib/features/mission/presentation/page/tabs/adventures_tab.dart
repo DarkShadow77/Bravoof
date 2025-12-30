@@ -3,7 +3,6 @@ import 'package:flowva/features/common/flowva_button.dart';
 import 'package:flowva/features/common/model/campaign_response.dart';
 import 'package:flowva/features/common/ui_tool_mixin/ui_tool_mixin.dart';
 import 'package:flowva/features/dashboard/earn/data/models/mission_res.dart';
-import 'package:flowva/features/dashboard/earn/data/models/mission_status_enum.dart';
 import 'package:flowva/features/dashboard/earn/presentation/pages/invite_earn.dart';
 import 'package:flowva/features/dashboard/earn/presentation/widgets/referr_campaign.dart';
 import 'package:flowva/features/dashboard/home/data/bloc/home_cubit.dart';
@@ -18,27 +17,28 @@ import 'package:timer_count_down/timer_controller.dart';
 import 'package:timer_count_down/timer_count_down.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../../dashboard/earn/presentation/pages/jackpot_page.dart';
+import '../../../../dashboard/earn/presentation/widgets/discover_perks.dart';
 import '../../../../onbaording/data/bloc/user_cubit.dart';
+import '../../../data/model/community_mission_model.dart';
+import '../../../data/model/mission_status_enum.dart';
 import '../../bloc/community_mission_bloc.dart';
 import '../../bloc/featured_mission_bloc.dart';
 import '../../bloc/social_mission_bloc.dart';
 import '../../bloc/sponsored_mission_bloc.dart';
-import '../../data/models/community_mission_model.dart';
-import '../pages/jackpot_page.dart';
-import 'claim_widget.dart';
-import 'discover_perks.dart';
-import 'featured_card.dart';
-import 'follow_us_card.dart';
-import 'sponsored_card.dart';
+import '../../widget/claim_widget.dart';
+import '../../widget/featured_card.dart';
+import '../../widget/follow_us_card.dart';
+import '../../widget/sponsored_card.dart';
 
-class AdventureScreen extends StatefulWidget {
-  const AdventureScreen({super.key});
+class AdventuresTab extends StatefulWidget {
+  const AdventuresTab({super.key});
 
   @override
-  State<AdventureScreen> createState() => _AdventureScreenState();
+  State<AdventuresTab> createState() => _AdventuresTabState();
 }
 
-class _AdventureScreenState extends State<AdventureScreen> with UIToolMixin {
+class _AdventuresTabState extends State<AdventuresTab> with UIToolMixin {
   int currentPage = 0;
   int selectedIndex = 0;
   final _scrollController = PageController(viewportFraction: 1);
@@ -917,14 +917,6 @@ class _AdventureScreenState extends State<AdventureScreen> with UIToolMixin {
                         child: FlowvaButton.inactiveButton(
                           name: "Join this mission",
                           fontSize: 16,
-                          /*apply: () => showModalBottomSheet(
-                            context: context,
-                            isScrollControlled: true,
-                            barrierColor: Colors.transparent,
-                            backgroundColor: Colors.transparent,
-                            // important for blur
-                            builder: (_) => MissionInstructions(),
-                          ),*/
                         ),
                       )
                     : state.hasJoined == MissionStatus.completed

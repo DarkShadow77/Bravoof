@@ -1,26 +1,23 @@
-import 'dart:developer';
-
 import 'package:dartz/dartz.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../models/mission_status_enum.dart';
-import '../models/social_mission_model.dart';
-import 'social_mission_repository.dart';
+import '../model/mission_status_enum.dart';
+import '../model/sponsored_mission_model.dart';
+import 'sponsored_mission_repository.dart';
 
-class SocialMissionRepositoryImpl extends SocialMissionRepository {
+class SponsoredMissionRepositoryImpl extends SponsoredMissionRepository {
   final supabase = Supabase.instance.client;
 
-  /// Fetch social mission
-  Future<Either<String, List<SocialMission>>> fetchSocialMission() async {
+  /// Fetch sponsored mission
+  Future<Either<String, List<SponsoredMission>>> fetchSponsoredMission() async {
     try {
-      final res = await supabase.from('social_missions').select();
+      final res = await supabase.from('sponsored_missions').select();
 
-      log("Social Missions $res");
       if (res.isEmpty) {
-        return Left('No social mission found');
+        return Left('No sponsored mission found');
       }
 
-      return Right(res.map((e) => SocialMission.fromJson(e)).toList());
+      return Right(res.map((e) => SponsoredMission.fromJson(e)).toList());
     } catch (e) {
       return Left(e.toString());
     }
@@ -36,27 +33,27 @@ class SocialMissionRepositoryImpl extends SocialMissionRepository {
     try {
       // Check if user already joined
       final existing = await supabase
-          .from('social_mission_completed')
+          .from('sponsored_mission_completed')
           .select('id')
-          .eq('social_mission_id', missionId)
+          .eq('sponsored_mission_id', missionId)
           .eq('user_id', userId)
           .maybeSingle();
 
       if (existing == null) {
         // First join
-        await supabase.from('social_mission_completed').insert({
-          'social_mission_id': missionId,
+        await supabase.from('sponsored_mission_completed').insert({
+          'sponsored_mission_id': missionId,
           'user_id': userId,
-          'answer': text,
+          // 'answer': text,
           'evidence_image': imageUrl,
           'status': 'PENDING',
         });
       } else {
         // Update existing submission
         await supabase
-            .from('social_mission_completed')
+            .from('sponsored_mission_completed')
             .update({
-              'answer': text,
+              // 'answer': text,
               'evidence_image': imageUrl,
               'status': 'PENDING',
               'updated_at': DateTime.now().toIso8601String(),
@@ -76,9 +73,9 @@ class SocialMissionRepositoryImpl extends SocialMissionRepository {
     required String userId,
   }) async {
     final res = await supabase
-        .from('social_mission_completed')
+        .from('sponsored_mission_completed')
         .select('status')
-        .eq('social_mission_id', missionId)
+        .eq('sponsored_mission_id', missionId)
         .eq('user_id', userId)
         .maybeSingle();
 

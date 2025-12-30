@@ -20,11 +20,12 @@ import 'app/theme/app_themes.dart';
 import 'core/constants/strings.dart';
 import 'core/di/service_locator.dart';
 import 'features/app.dart';
-import 'features/dashboard/earn/bloc/community_mission_bloc.dart';
-import 'features/dashboard/earn/bloc/featured_mission_bloc.dart';
-import 'features/dashboard/earn/bloc/social_mission_bloc.dart';
-import 'features/dashboard/earn/bloc/sponsored_mission_bloc.dart';
 import 'features/dashboard/profile/presentation/bloc/profile_bloc.dart';
+import 'features/mission/presentation/bloc/community_mission_bloc.dart';
+import 'features/mission/presentation/bloc/featured_mission_bloc.dart';
+import 'features/mission/presentation/bloc/skill_up_bloc.dart';
+import 'features/mission/presentation/bloc/social_mission_bloc.dart';
+import 'features/mission/presentation/bloc/sponsored_mission_bloc.dart';
 import 'features/onbaording/data/bloc/user_cubit.dart';
 import 'utility/navigation.dart';
 
@@ -115,6 +116,7 @@ class _MyAppState extends State<MyApp> {
         BlocProvider(create: (_) => sl<SocialMissionBloc>()),
         BlocProvider(create: (_) => sl<FeaturedMissionBloc>()),
         BlocProvider(create: (_) => sl<SponsoredMissionBloc>()),
+        BlocProvider(create: (_) => sl<SkillUpBloc>()),
       ],
       child: ScreenUtilInit(
         designSize: const Size(375, 815),

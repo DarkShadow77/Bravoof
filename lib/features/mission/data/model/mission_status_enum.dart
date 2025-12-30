@@ -1,4 +1,4 @@
-enum MissionStatus { pending, completed, notJoined }
+enum MissionStatus { pending, completed, rejected, notJoined }
 
 MissionStatus statusFromDb(String value) {
   switch (value) {
@@ -6,6 +6,8 @@ MissionStatus statusFromDb(String value) {
       return MissionStatus.completed;
     case 'PENDING':
       return MissionStatus.pending;
+    case 'FALSE':
+      return MissionStatus.rejected;
     default:
       return MissionStatus.notJoined;
   }

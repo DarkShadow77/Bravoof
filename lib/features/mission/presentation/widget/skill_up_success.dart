@@ -2,18 +2,13 @@ import 'dart:ui';
 
 import 'package:flowva/features/common/flowva_button.dart';
 import 'package:flowva/features/dashboard/nav_bar.dart';
-import 'package:flowva/features/mission/data/model/skill_up_task_response.dart';
-import 'package:flowva/features/mission/presentation/page/trivia_result_page.dart';
-import 'package:flowva/features/mission/presentation/widget/skill_up_screen.dart';
 import 'package:flowva/session/session_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_confetti/flutter_confetti.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class SkillUpSuccess extends StatefulWidget {
-  final SkillUpTask? skillUp;
-
-  SkillUpSuccess({required this.skillUp, super.key});
+  SkillUpSuccess({super.key});
 
   @override
   State<SkillUpSuccess> createState() => _SkillUpSuccessState();
@@ -103,29 +98,28 @@ class _SkillUpSuccessState extends State<SkillUpSuccess> {
                   name: SessionManager().isLastMissionVal
                       ? "Finish"
                       : "Continue to the next mission",
-                  apply: (){
-
-                    if(SessionManager().isLastMissionVal){
+                  apply: () {
+                    if (SessionManager().isLastMissionVal) {
                       Navigator.of(context).pushAndRemoveUntil(
                         MaterialPageRoute(
                           builder: (context) => BottomNavBar(index: 1),
                         ),
 
-                            (ctx) => false,
+                        (ctx) => false,
                       );
-                    }else{
+                    } else {
                       Navigator.pop(context);
                       Navigator.pop(context);
                       Navigator.pop(context);
                     }
 
-                       // Navigator.of(context).push(
-                       //    MaterialPageRoute(
-                       //      builder: (ctx) =>
-                       //          SkillUpScreen(task: widget.skillUp),
-                       //    ),
-                       //  );
-                    },
+                    // Navigator.of(context).push(
+                    //    MaterialPageRoute(
+                    //      builder: (ctx) =>
+                    //          SkillUpScreen(task: widget.skillUp),
+                    //    ),
+                    //  );
+                  },
                   color: Colors.black,
                 ),
                 FlowvaButton.successPurpleButton(

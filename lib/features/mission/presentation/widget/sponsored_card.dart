@@ -8,9 +8,9 @@ import '../../../../../app/styles/text_styles.dart';
 import '../../../../../app/view/widgets/cached_image_widget.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/fonts.dart';
-import '../../bloc/sponsored_mission_bloc.dart';
-import '../../data/models/mission_status_enum.dart';
-import '../../data/models/sponsored_mission_model.dart';
+import '../../data/model/mission_status_enum.dart';
+import '../../data/model/sponsored_mission_model.dart';
+import '../bloc/sponsored_mission_bloc.dart';
 import 'sponsored_event_dialog.dart';
 
 class SponsoredCard extends StatefulWidget {

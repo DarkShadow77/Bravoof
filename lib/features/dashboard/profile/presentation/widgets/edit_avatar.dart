@@ -43,6 +43,7 @@ class _EditAvatarWidgetState extends State<EditAvatarWidget> {
     "assets/avatar/14.png",
     "assets/avatar/15.png",
   ];
+
   void _successProfileState(BuildContext context, ProfileSuccessState state) {
     if (state.type == ProfileType.updateProfile) {
       Navigator.of(context).pop();
@@ -65,177 +66,184 @@ class _EditAvatarWidgetState extends State<EditAvatarWidget> {
           maxChildSize: 0.9,
           builder: (ctx, scrollController) {
             return BlocListener<ProfileBloc, ProfileState>(
-  listener: (context, state) {if (state is ProfileSuccessState) {
-    _successProfileState(context, state);
-  }
-  },
-  child: ClipRRect(
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(24),
-              ),
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 10,
+              listener: (context, state) {
+                if (state is ProfileSuccessState) {
+                  _successProfileState(context, state);
+                }
+              },
+              child: ClipRRect(
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(24),
                 ),
-                decoration: BoxDecoration(
-                  color: Colors.white, // translucent
-                  borderRadius: const BorderRadius.vertical(
-                    top: Radius.circular(24),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 10,
                   ),
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    // drag handle
-                    Container(
-                      width: 60.w,
-                      height: 6.h,
-                      margin: const EdgeInsets.only(bottom: 16),
-                      decoration: BoxDecoration(
-                        color: Colors.grey[400],
-                        borderRadius: BorderRadius.circular(16.r),
-                      ),
+                  decoration: BoxDecoration(
+                    color: Colors.white, // translucent
+                    borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(24),
                     ),
-                    // Header with close button
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          'Select Avatar',
-                          style: GoogleFonts.manrope(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.black,
-                          ),
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // drag handle
+                      Container(
+                        width: 60.w,
+                        height: 6.h,
+                        margin: const EdgeInsets.only(bottom: 16),
+                        decoration: BoxDecoration(
+                          color: Colors.grey[400],
+                          borderRadius: BorderRadius.circular(16.r),
                         ),
-                        Container(
-                          height: 36.r,
-                          width: 36.r,
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            color: Color(0xFFF1F1F1),
-                            borderRadius: BorderRadius.circular(120),
-                            border: Border.all(
-                              width: 0.2,
-                              color: Colors.black.withValues(alpha: 0.6),
+                      ),
+                      // Header with close button
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'Select Avatar',
+                            style: GoogleFonts.manrope(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w500,
+                              color: Colors.black,
                             ),
                           ),
-                          child: IconButton(
-                            onPressed: () => Navigator.pop(context),
-                            icon: HugeIcon(
-                              icon: HugeIcons.strokeRoundedCancel01,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 16.h),
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: SingleChildScrollView(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(12),
-                              decoration: BoxDecoration(
-                                color: Colors.white.withValues(alpha: 0.6),
-                                borderRadius: BorderRadius.circular(16),
+                          Container(
+                            height: 36.r,
+                            width: 36.r,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              color: Color(0xFFF1F1F1),
+                              borderRadius: BorderRadius.circular(120),
+                              border: Border.all(
+                                width: 0.2,
+                                color: Colors.black.withValues(alpha: 0.6),
                               ),
-                              child: GridView.builder(
-                                shrinkWrap: true,
-                                physics: const NeverScrollableScrollPhysics(),
-                                itemCount: avatars.length,
-                                padding: EdgeInsets.zero,
-                                gridDelegate:
-                                    const SliverGridDelegateWithFixedCrossAxisCount(
-                                      crossAxisCount: 5,
-                                      crossAxisSpacing: 12,
-                                      mainAxisSpacing: 20,
-                                      childAspectRatio: 1,
-                                    ),
-                                itemBuilder: (context, index) {
-                                  final isSelected =
-                                      widget.selectedAvatar == index;
-                                  return GestureDetector(
-                                    onTap: () {
-                                      setState(
-                                        () => widget.selectedAvatar = index,
-                                      );
-                                    },
-                                    child: Container(
-                                      width: 52.r,
-                                      height: 52.r,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(12),
-                                        border: isSelected
-                                            ? Border.all(
-                                                color: const Color(0xFF7C4DFF),
-                                                width: 2,
-                                              )
-                                            : null,
-                                        boxShadow: [
-                                          if (isSelected)
-                                            BoxShadow(
-                                              color: const Color(
-                                                0xFF7C4DFF,
-                                              ).withValues(alpha: 0.3),
-                                              blurRadius: 8,
-                                            ),
-                                        ],
+                            ),
+                            child: IconButton(
+                              onPressed: () => Navigator.pop(context),
+                              icon: HugeIcon(
+                                icon: HugeIcons.strokeRoundedCancel01,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 16.h),
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: SingleChildScrollView(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withValues(alpha: 0.6),
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                child: GridView.builder(
+                                  shrinkWrap: true,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  itemCount: avatars.length,
+                                  padding: EdgeInsets.zero,
+                                  gridDelegate:
+                                      const SliverGridDelegateWithFixedCrossAxisCount(
+                                        crossAxisCount: 5,
+                                        crossAxisSpacing: 12,
+                                        mainAxisSpacing: 20,
+                                        childAspectRatio: 1,
                                       ),
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(12),
-                                        child: Image.asset(
-                                          avatars[index],
-                                          fit: BoxFit.cover,
+                                  itemBuilder: (context, index) {
+                                    final isSelected =
+                                        widget.selectedAvatar == index;
+                                    return GestureDetector(
+                                      onTap: () {
+                                        setState(
+                                          () => widget.selectedAvatar = index,
+                                        );
+                                      },
+                                      child: Container(
+                                        width: 52.r,
+                                        height: 52.r,
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
+                                          border: isSelected
+                                              ? Border.all(
+                                                  color: const Color(
+                                                    0xFF7C4DFF,
+                                                  ),
+                                                  width: 2,
+                                                )
+                                              : null,
+                                          boxShadow: [
+                                            if (isSelected)
+                                              BoxShadow(
+                                                color: const Color(
+                                                  0xFF7C4DFF,
+                                                ).withValues(alpha: 0.3),
+                                                blurRadius: 8,
+                                              ),
+                                          ],
+                                        ),
+                                        child: ClipRRect(
+                                          borderRadius: BorderRadius.circular(
+                                            12,
+                                          ),
+                                          child: Image.asset(
+                                            avatars[index],
+                                            fit: BoxFit.cover,
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                  );
-                                },
+                                    );
+                                  },
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                    Spacer(),
-                    SizedBox(
-                      width: double.infinity,
-                      child: ValueListenableBuilder(
-                        valueListenable: widget.isSending,
+                      Spacer(),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ValueListenableBuilder(
+                          valueListenable: widget.isSending,
 
-                        builder: (context, val, _) {
-                          print(val);
-                          return FlowvaButton.blueButton(
-                            buttonState: val
-                                ? AppButtonState.loading
-                                : AppButtonState.idle,
-                            name: "Save",
-                            apply: () => widget.selectedAvatar != null
-                                ? widget.apply({
-                                    "selectedAvatar": widget.selectedAvatar,
-                                    "avatarString":
-                                        avatars[widget.selectedAvatar!],
-                                  })
-                                : null,
-                          );
-                        },
+                          builder: (context, val, _) {
+                            print(val);
+                            return FlowvaButton.blueButton(
+                              buttonState: val
+                                  ? AppButtonState.loading
+                                  : AppButtonState.idle,
+                              name: "Save",
+                              apply: () => widget.selectedAvatar != null
+                                  ? widget.apply({
+                                      "selectedAvatar": widget.selectedAvatar,
+                                      "avatarString":
+                                          avatars[widget.selectedAvatar!],
+                                    })
+                                  : null,
+                            );
+                          },
+                        ),
                       ),
-                    ),
-                    SizedBox(
-                      height: 12.h + MediaQuery.of(context).padding.bottom,
-                    ),
-                  ],
+                      SizedBox(
+                        height: 12.h + MediaQuery.of(context).padding.bottom,
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-);
+            );
           },
         ),
       ],

@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 import 'package:flowva/core/constants/fonts.dart';
-import 'package:flowva/features/dashboard/earn/data/models/community_mission_model.dart';
+import 'package:flowva/features/mission/data/model/community_mission_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -12,14 +12,14 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as p;
 import 'package:timelines_plus/timelines_plus.dart';
 
-import '../../../../../app/styles/text_styles.dart';
-import '../../../../../core/constants/app_colors.dart';
-import '../../../../../utility/ui_tool_mix.dart';
-import '../../../../common/Mission_success.dart';
-import '../../../../common/flowva_button.dart';
-import '../../../../common/helper.dart';
-import '../../bloc/sponsored_mission_bloc.dart';
-import '../../data/models/sponsored_mission_model.dart';
+import '../../../../app/styles/text_styles.dart';
+import '../../../../core/constants/app_colors.dart';
+import '../../../../utility/ui_tool_mix.dart';
+import '../../../common/Mission_success.dart';
+import '../../../common/flowva_button.dart';
+import '../../../common/helper.dart';
+import '../../data/model/sponsored_mission_model.dart';
+import '../bloc/sponsored_mission_bloc.dart';
 
 Future<dynamic> sponsoredEventDialog({
   required SponsoredMission sponsoredMission,

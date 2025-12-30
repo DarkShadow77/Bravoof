@@ -11,7 +11,6 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../session/session_manager.dart';
 import '../../utility/permission_handler.dart';
 import '../onboarding2/widget/reward.dart';
-import 'earn/bloc/community_mission_bloc.dart';
 import 'home/widget/show_welcome_message.dart';
 import 'profile/presentation/bloc/profile_bloc.dart';
 
@@ -58,10 +57,6 @@ class _BottomNavBarState extends State<BottomNavBar> {
           : null;
 
       SessionManager().isNewUserVal = "NO";
-
-      BlocProvider.of<CommunityMissionBloc>(
-        context,
-      ).add(LoadCommunityMission());
 
       context.read<ProfileBloc>().add(GetProfileEvent());
     });

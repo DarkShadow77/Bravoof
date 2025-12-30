@@ -8,9 +8,9 @@ import '../../../../../app/styles/text_styles.dart';
 import '../../../../../app/view/widgets/cached_image_widget.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/fonts.dart';
-import '../../bloc/featured_mission_bloc.dart';
-import '../../data/models/featured_mission_model.dart';
-import '../../data/models/mission_status_enum.dart';
+import '../../data/model/featured_mission_model.dart';
+import '../../data/model/mission_status_enum.dart';
+import '../bloc/featured_mission_bloc.dart';
 import 'featured_event_dialog.dart';
 
 class FeaturedCard extends StatefulWidget {
@@ -290,16 +290,6 @@ class _FeaturedCardState extends State<FeaturedCard> {
                                     onTap: () => featuredEventDialog(
                                       featuredMission: featuredMission,
                                     ),
-                                    /*showDialog(
-                                        context: context,
-                                        barrierDismissible: true,
-                                        barrierColor: Colors.transparent,
-                                        builder: (context) =>
-                                            PerkMission(apply: (val) {}),
-                                      ).then((v) {
-                                        widget.missionCubit
-                                            .fetchSkillUpChallenge();
-                                      })*/
                                     child: Container(
                                       height: 50,
 

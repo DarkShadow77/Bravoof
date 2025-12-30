@@ -1,8 +1,8 @@
 import 'package:dartz/dartz.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../models/featured_mission_model.dart';
-import '../models/mission_status_enum.dart';
+import '../model/featured_mission_model.dart';
+import '../model/mission_status_enum.dart';
 
 abstract class FeaturedMissionRepository {
   final supabase = Supabase.instance.client;
