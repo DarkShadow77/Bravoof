@@ -244,6 +244,14 @@ class SkillMissionCard extends StatelessWidget with UIToolMixin {
   final bool isLast;
   final SkillUpMission skill;
 
+  String formatDuration(Duration d) {
+    final days = d.inDays;
+    final hours = d.inHours % 24;
+
+    if (days > 0) return "$days day${days > 1 ? 's' : ''}";
+    return "$hours hour${hours > 1 ? 's' : ''}";
+  }
+
   @override
   Widget build(BuildContext context) {
     bool notJoined =
@@ -373,7 +381,14 @@ class SkillMissionCard extends StatelessWidget with UIToolMixin {
                     style: TextStyles.normalRegular14(context),
                   ),
                 ),
-                if (!mission.locked) ...[
+                if (mission.locked &&
+                    mission.isUnlocked &&
+                    mission.unlockTimeLeft != null)
+                  Text(
+                    "Unlocked • ${formatDuration(mission.unlockTimeLeft!)} left",
+                    style: TextStyles.smallRegular12(context, opacity: 0.6),
+                  ),
+                if (mission.isUnlocked) ...[
                   if (notJoined)
                     IconTextButton(
                       onPressed: () {

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../../app/styles/text_styles.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/fonts.dart';
+import '../../../../../utility/ui_tool_mix.dart';
 import '../../../../common/flowva_button.dart';
 
 class DiscoverPerks extends StatefulWidget {
@@ -13,7 +15,7 @@ class DiscoverPerks extends StatefulWidget {
   State<DiscoverPerks> createState() => _DiscoverPerksState();
 }
 
-class _DiscoverPerksState extends State<DiscoverPerks> {
+class _DiscoverPerksState extends State<DiscoverPerks> with UIToolMixin {
   final _pageController = PageController(viewportFraction: 1, initialPage: 0);
 
   double _currentPage = 0;
@@ -26,6 +28,7 @@ class _DiscoverPerksState extends State<DiscoverPerks> {
       "valid": "Valid for 1 Year",
       "color": Color(0xffFF6100).withValues(alpha: .48),
       "image": "assets/images/jotform.png",
+      "link": "https://www.jotform.com/ai/agents/?partner=flowvahub-WOAEEuoEob",
     },
     {
       "discount": 20,
@@ -33,6 +36,7 @@ class _DiscoverPerksState extends State<DiscoverPerks> {
       "valid": "Valid for 3 Year",
       "color": Color(0xff5263F3).withValues(alpha: .48),
       "image": "assets/images/reclaim_trans.png",
+      "link": "https://go.reclaim.ai/8dk5zw39uhfg-0titjs",
     },
     {
       "discount": 10,
@@ -40,6 +44,7 @@ class _DiscoverPerksState extends State<DiscoverPerks> {
       "valid": "Valid forever",
       "color": Color(0xff000A3A).withValues(alpha: .48),
       "image": "assets/images/perk_stack.png",
+      "link": "https://go.reclaim.ai/8dk5zw39uhfg-0titjs",
     },
   ];
 
@@ -52,6 +57,28 @@ class _DiscoverPerksState extends State<DiscoverPerks> {
         _currentPage = _pageController.page!;
       });
     });
+  }
+
+  Future<void> openLink(String link) async {
+    if (!link.startsWith('http')) {
+      link = 'https://$link';
+    }
+    final uri = Uri.parse(link);
+
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(
+        uri,
+        mode: LaunchMode.inAppWebView,
+      );
+    } else {
+      showMessage(
+        "Could not launch",
+        context,
+        color: Colors.red,
+        styleColor: Colors.white,
+        status: true,
+      );
+    }
   }
 
   @override
@@ -213,7 +240,10 @@ class _DiscoverPerksState extends State<DiscoverPerks> {
                                       ),
                                     ],
                                   ),
-                                  FlowvaButton.subButton(name: "Redeem offer"),
+                                  FlowvaButton.subButton(
+                                    name: "Redeem offer",
+                                    apply: () => openLink(perk["link"]),
+                                  ),
                                 ],
                               ),
                             ),

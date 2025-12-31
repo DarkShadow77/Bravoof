@@ -108,13 +108,34 @@ class SkillUpStep {
       unlockExpiresAt: unlock != null
           ? DateTime.parse(unlock['expires_at'])
           : null,
+
       /*unlockSource: unlock != null
           ? UnlockSource.fromDb(unlock['unlock_source'])
           : null,*/
-
       status: status,
     );
   }
+}
+
+extension SkillUpStepX on SkillUpStep {
+  /// Is this step currently unlocked for the user?
+  bool get isUnlocked {
+    if (!locked) return true;
+
+    if (unlockExpiresAt == null) return false;
+
+    return unlockExpiresAt!.isAfter(DateTime.now());
+  }
+
+  /// Remaining unlock time (null if not unlocked)
+  Duration? get unlockTimeLeft {
+    if (!isUnlocked || unlockExpiresAt == null) return null;
+
+    return unlockExpiresAt!.difference(DateTime.now());
+  }
+
+  /// Should show "Unlock Mission" button
+  bool get needsUnlock => locked && !isUnlocked;
 }
 
 class SkillUpContentBlock {
