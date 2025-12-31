@@ -100,7 +100,8 @@ class _SkillUpPageState extends State<SkillUpPage> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (ctx) => SkillUpScreen(skill: skill),
+                            builder: (ctx) =>
+                                SkillUpScreen(skill: skill, index: index),
                           ),
                         );
                       },

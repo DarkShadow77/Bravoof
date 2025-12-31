@@ -7,9 +7,6 @@ import 'package:flowva/features/common/ui_tool_mixin/ui_tool_mixin.dart';
 import 'package:flowva/features/dashboard/earn/data/models/mission_res.dart';
 import 'package:flowva/features/dashboard/earn/presentation/widgets/mission_tile_widget.dart';
 import 'package:flowva/features/dashboard/home/data/bloc/home_cubit.dart';
-import 'package:flowva/features/dashboard/home/widget/referral_widget.dart';
-import 'package:flowva/features/dashboard/home/widget/tool_card.dart';
-import 'package:flowva/features/dashboard/home/widget/top_leader_board.dart';
 import 'package:flowva/features/dashboard/profile/presentation/pages/profile_page.dart';
 import 'package:flowva/features/mission/data/bloc/mission_cubit.dart';
 import 'package:flowva/features/mission/data/model/rewards_summary_response.dart';
@@ -24,10 +21,13 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../../core/constants/app_colors.dart';
-import '../../../utility/in_app_review.dart';
-import '../earn/presentation/pages/invite_earn.dart' hide MissionTile;
-import '../nav_bar.dart';
+import '../../../../../core/constants/app_colors.dart';
+import '../../../../../utility/in_app_review.dart';
+import '../../../earn/presentation/pages/invite_earn.dart' hide MissionTile;
+import '../../../nav_bar.dart';
+import '../widget/referral_widget.dart';
+import '../widget/tool_card.dart';
+import '../widget/top_leader_board.dart';
 import 'notifications.dart';
 
 class FlowvaHomePage extends StatefulWidget {
@@ -718,13 +718,12 @@ class _FlowvaHomePageState extends State<FlowvaHomePage> with UIToolMixin {
                                       rewardsSummary: rewardsSummary,
                                     )
                                   : Container(),
-                              const SizedBox(height: 20),
+                              SizedBox(height: 20.h),
                               Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16.0,
-                                ),
-                                child: ReferralPage(userProfile: userProfile),
+                                padding: EdgeInsets.symmetric(horizontal: 16.w),
+                                child: ReferralWidget(),
                               ),
+                              SizedBox(height: 20.h),
                             ],
                           ),
                         ),

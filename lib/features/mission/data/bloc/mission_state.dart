@@ -11,27 +11,12 @@ class MissionUpdateLoading extends MissionState {
   List<Object?> get props => [];
 }
 
-class StreakLoading extends MissionState {
-  @override
-  // TODO: implement props
-  List<Object?> get props => [];
-}
-
 class PageLoading extends MissionState {
   @override
   // TODO: implement props
   List<Object?> get props => [];
 }
 
-class StreakLoaded extends MissionState {
-  final StreakResponse streakResponse;
-
-  StreakLoaded(this.streakResponse);
-
-  @override
-  // TODO: implement props
-  List<Object?> get props => [streakResponse];
-}
 class RewardLoaded extends MissionState {
   final RewardsSummaryResponse rewardsSummaryResponse;
 
@@ -40,16 +25,6 @@ class RewardLoaded extends MissionState {
   @override
   // TODO: implement props
   List<Object?> get props => [rewardsSummaryResponse];
-}
-
-class CheckedIn extends MissionState {
-  final StreakResponse streakResponse;
-
-  CheckedIn(this.streakResponse);
-
-  @override
-  // TODO: implement props
-  List<Object?> get props => [streakResponse];
 }
 
 class MissionLoaded extends MissionState {
@@ -61,6 +36,7 @@ class MissionLoaded extends MissionState {
   // TODO: implement props
   List<Object?> get props => [missionResponse];
 }
+
 class SocialMissionLoaded extends MissionState {
   final SocialTriviaResponse socialTriviaResponse;
 
@@ -70,6 +46,7 @@ class SocialMissionLoaded extends MissionState {
   // TODO: implement props
   List<Object?> get props => [socialTriviaResponse];
 }
+
 class QuizLoaded extends MissionState {
   final QuizResponse quizResponse;
 
@@ -79,6 +56,7 @@ class QuizLoaded extends MissionState {
   // TODO: implement props
   List<Object?> get props => [quizResponse];
 }
+
 class SkillUpTaskLoaded extends MissionState {
   final SkillUpTaskResponse skillUpTaskResponse;
 
@@ -88,6 +66,7 @@ class SkillUpTaskLoaded extends MissionState {
   // TODO: implement props
   List<Object?> get props => [skillUpTaskResponse];
 }
+
 class TriviaLoaded extends MissionState {
   final TriviaResponse triviaResponse;
 
@@ -127,13 +106,3 @@ class MissionFailed extends MissionState {
   // TODO: implement props
   List<Object?> get props => [err];
 }
-class CheckInFailed extends MissionState {
-  final String err;
-
-  CheckInFailed(this.err);
-
-  @override
-  // TODO: implement props
-  List<Object?> get props => [err];
-}
-

@@ -26,6 +26,16 @@ class StreakResponse {
     );
   }
 
+  factory StreakResponse.empty({String userId = ''}) {
+    return StreakResponse(
+      id: null,
+      userId: userId,
+      currentStreak: 0,
+      lastClaimedDate: null,
+      history: const [],
+    );
+  }
+
   /// 🔹 Has the user already checked in today (local time)?
   bool get hasCheckedInToday {
     if (lastClaimedDate == null) return false;

@@ -20,3 +20,10 @@ class CompleteSkillUpMission extends SkillUpEvent {
     this.imageUrl,
   });
 }
+
+class UnlockSkillUpMission extends SkillUpEvent {
+  final int stepId;
+  final UnlockSource source;
+
+  UnlockSkillUpMission({required this.stepId, required this.source});
+}

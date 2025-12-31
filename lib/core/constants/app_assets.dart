@@ -39,6 +39,7 @@ class AssetsPngImages {
   static String jackpot = "$baseImagePngPath/jackpot.png";
   static String check = "$baseImagePngPath/check.png";
   static String roundedCheck = "$baseImagePngPath/rounded_check.png";
+  static String inviteBg = "$baseImagePngPath/invite_bg.png";
 }
 
 class AssetsSvgImages {
@@ -53,8 +54,11 @@ class AssetsSvgIcons {
   static String close = "$baseSvgIconsPath/close.svg";
   static String copy = "$baseSvgIconsPath/copy.svg";
   static String user = "$baseSvgIconsPath/user.svg";
+  static String userFilled = "$baseSvgIconsPath/user_filled.svg";
   static String userAdd = "$baseSvgIconsPath/user_add.svg";
   static String userMultiple = "$baseSvgIconsPath/user_multiple.svg";
   static String checkmark = "$baseSvgIconsPath/checkmark.svg";
   static String circleLock = "$baseSvgIconsPath/circle_lock.svg";
+  static String invite = "$baseSvgIconsPath/invite.svg";
+  static String share = "$baseSvgIconsPath/share.svg";
 }

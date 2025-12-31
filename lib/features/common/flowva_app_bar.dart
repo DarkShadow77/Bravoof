@@ -6,7 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class FlowvaAppBar extends StatefulWidget {
-  String title;
+  final String title;
   FlowvaAppBar({this.title = '', Function? apply, super.key});
 
   @override
@@ -17,7 +17,7 @@ class _FlowvaAppBarState extends State<FlowvaAppBar> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16),
+      padding: EdgeInsets.symmetric(horizontal: 16.w),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [

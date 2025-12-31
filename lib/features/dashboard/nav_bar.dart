@@ -1,6 +1,6 @@
 import 'package:flowva/core/constants/app_assets.dart';
 import 'package:flowva/features/dashboard/earn/presentation/pages/earn_screen.dart';
-import 'package:flowva/features/dashboard/home/home_page.dart';
+import 'package:flowva/features/dashboard/home/presentation/page/home_page.dart';
 import 'package:flowva/features/mission/presentation/page/mission_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -11,7 +11,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../session/session_manager.dart';
 import '../../utility/permission_handler.dart';
 import '../onboarding2/widget/reward.dart';
-import 'home/widget/show_welcome_message.dart';
+import 'home/presentation/widget/show_welcome_message.dart';
 import 'profile/presentation/bloc/profile_bloc.dart';
 
 class BottomNavBar extends StatefulWidget {
@@ -41,7 +41,6 @@ class _BottomNavBarState extends State<BottomNavBar> {
                 barrierDismissible: false,
                 barrierLabel: "",
                 barrierColor: Colors.transparent,
-
                 pageBuilder: (_, _, _) => ShowWelcomeMessage(),
               ),
             )

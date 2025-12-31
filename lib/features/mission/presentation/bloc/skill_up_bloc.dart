@@ -17,6 +17,7 @@ class SkillUpBloc extends Bloc<SkillUpEvent, SkillUpState> {
   SkillUpBloc({required this.repo}) : super(SkillUpInitial(missions: [])) {
     on<LoadSkillUpMission>(_loadMission);
     on<CompleteSkillUpMission>(_completeMission);
+    on<UnlockSkillUpMission>(_unlockSkillUp);
   }
 
   Future<void> _loadMission(LoadSkillUpMission event, Emitter emit) async {
@@ -84,6 +85,35 @@ class SkillUpBloc extends Bloc<SkillUpEvent, SkillUpState> {
           missions: state.missions,
         ),
       ),
+    );
+  }
+
+  Future<void> _unlockSkillUp(UnlockSkillUpMission event, Emitter emit) async {
+    emit(
+      SkillUpLoading(
+        missionId: event.stepId,
+        type: SkillUpType.unlockSkillUp,
+        missions: state.missions,
+      ),
+    );
+
+    final res = await repo.unlockSkillUpStep(
+      userId: session.userIdVal,
+      stepId: event.stepId,
+      source: event.source,
+    );
+
+    res.fold(
+      (err) => emit(
+        SkillUpError(
+          missionId: event.stepId,
+          type: SkillUpType.unlockSkillUp,
+          message: err,
+          missions: state.missions,
+        ),
+      ),
+      (_) =>
+          emit(SkillUpUnlocked(stepId: event.stepId, missions: state.missions)),
     );
   }
 }

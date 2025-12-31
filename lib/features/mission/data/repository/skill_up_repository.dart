@@ -1,11 +1,8 @@
 import 'package:dartz/dartz.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../model/skill_up_mission_model.dart';
 
 abstract class SkillUpRepository {
-  final supabase = Supabase.instance.client;
-
   Future<Either<String, List<SkillUpMission>>> fetchSkillUpMission({
     required String userId,
   });
@@ -16,5 +13,11 @@ abstract class SkillUpRepository {
     required String userId,
     String? submission,
     String? evidenceImage,
+  });
+
+  Future<Either<String, void>> unlockSkillUpStep({
+    required int stepId,
+    required UnlockSource source,
+    required String userId,
   });
 }

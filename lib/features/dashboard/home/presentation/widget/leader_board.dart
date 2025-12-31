@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../mission/data/bloc/mission_cubit.dart';
-import '../../../mission/data/model/rewards_summary_response.dart';
-import '../../earn/presentation/widgets/leaderboard_widget.dart';
+import '../../../../mission/data/bloc/mission_cubit.dart';
+import '../../../../mission/data/model/rewards_summary_response.dart';
+import '../../../earn/presentation/widgets/leaderboard_widget.dart';
 
 class LeaderboardScreen extends StatefulWidget {
   const LeaderboardScreen({super.key, required this.leaderboardList});

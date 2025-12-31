@@ -2,12 +2,13 @@ import 'package:fade_shimmer/fade_shimmer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../../app/styles/text_styles.dart';
 import '../../../../../app/view/widgets/cached_image_widget.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/fonts.dart';
+import '../../../../app/view/widgets/button/icon_text_button.dart';
+import '../../../../utility/ui_tool_mix.dart';
 import '../../data/model/mission_status_enum.dart';
 import '../../data/model/sponsored_mission_model.dart';
 import '../bloc/sponsored_mission_bloc.dart';
@@ -20,7 +21,7 @@ class SponsoredCard extends StatefulWidget {
   State<SponsoredCard> createState() => _SponsoredCardState();
 }
 
-class _SponsoredCardState extends State<SponsoredCard> {
+class _SponsoredCardState extends State<SponsoredCard> with UIToolMixin {
   final _pageController = PageController(viewportFraction: 1, initialPage: 0);
 
   List<SponsoredMission> sponsoredMissions = [];
@@ -258,74 +259,23 @@ class _SponsoredCardState extends State<SponsoredCard> {
                             ),
                             SizedBox(height: 12.h),
                             joined
-                                ? Container(
-                                    height: 50,
-
-                                    decoration: BoxDecoration(
-                                      color: Colors.grey,
-                                      borderRadius: BorderRadius.circular(40),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black.withValues(
-                                            alpha: 0.25,
-                                          ),
-                                          blurRadius: 8,
-                                          offset: const Offset(0, 3),
-                                        ),
-                                      ],
-                                    ),
-                                    child: Center(
-                                      child: Text(
-                                        "Mission Completed",
-                                        style: GoogleFonts.manrope(
-                                          color: Colors.black,
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w800,
-                                        ),
-                                      ),
-                                    ),
+                                ? IconTextButton(
+                                    onPressed: () {
+                                      showMessage(
+                                        "Mission Already Completed",
+                                        context,
+                                        color: Colors.white,
+                                        styleColor: Colors.black,
+                                      );
+                                    },
+                                    text: "Mission Completed",
+                                    color: AppColors.grey300,
                                   )
-                                : GestureDetector(
-                                    onTap: () => sponsoredEventDialog(
+                                : IconTextButton(
+                                    onPressed: () => sponsoredEventDialog(
                                       sponsoredMission: sponsoredMission,
                                     ),
-                                    /*showDialog(
-                                        context: context,
-                                        barrierDismissible: true,
-                                        barrierColor: Colors.transparent,
-                                        builder: (context) =>
-                                            PerkMission(apply: (val) {}),
-                                      ).then((v) {
-                                        widget.missionCubit
-                                            .fetchSkillUpChallenge();
-                                      })*/
-                                    child: Container(
-                                      height: 50,
-
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(40),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Colors.black.withValues(
-                                              alpha: 0.25,
-                                            ),
-                                            blurRadius: 8,
-                                            offset: const Offset(0, 3),
-                                          ),
-                                        ],
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          "Start Mission",
-                                          style: GoogleFonts.manrope(
-                                            color: Colors.black,
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w800,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
+                                    text: "Start Mission",
                                   ),
                           ],
                         ),

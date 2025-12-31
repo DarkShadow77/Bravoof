@@ -9,7 +9,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../../core/constants/app_colors.dart';
-import '../../../home/widget/leader_board.dart';
+import '../../../home/presentation/widget/leader_board.dart';
 
 class LeaderboardPage extends StatelessWidget {
   final Color primaryColor = Color(0xFF9419FD); // Purple gradient base

@@ -1,6 +1,6 @@
 part of 'skill_up_bloc.dart';
 
-enum SkillUpType { fetchMission, completeMission }
+enum SkillUpType { fetchMission, completeMission, unlockSkillUp }
 
 @immutable
 class SkillUpState {
@@ -43,4 +43,9 @@ class SkillUpCompleted extends SkillUpState {
     required this.stepId,
     required super.missions,
   });
+}
+
+class SkillUpUnlocked extends SkillUpState {
+  final int stepId;
+  SkillUpUnlocked({required this.stepId, required super.missions});
 }

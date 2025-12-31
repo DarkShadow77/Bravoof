@@ -14,6 +14,7 @@ import '../bloc/featured_mission_bloc.dart';
 import '../bloc/skill_up_bloc.dart';
 import '../bloc/social_mission_bloc.dart';
 import '../bloc/sponsored_mission_bloc.dart';
+import '../bloc/streak_bloc.dart';
 
 class MissionPage extends StatefulWidget {
   MissionPage({super.key, this.index});
@@ -34,6 +35,8 @@ class _MissionPageState extends State<MissionPage> {
   late FeaturedMissionBloc featuredMissionBloc;
   late SponsoredMissionBloc sponsoredMissionBloc;
   late SkillUpBloc skillUpMissionBloc;
+  late StreakBloc streakBloc;
+
   @override
   void initState() {
     super.initState();
@@ -52,12 +55,14 @@ class _MissionPageState extends State<MissionPage> {
       featuredMissionBloc = BlocProvider.of<FeaturedMissionBloc>(context);
       sponsoredMissionBloc = BlocProvider.of<SponsoredMissionBloc>(context);
       skillUpMissionBloc = BlocProvider.of<SkillUpBloc>(context);
+      streakBloc = BlocProvider.of<StreakBloc>(context);
 
       communityMissionBloc.add(LoadCommunityMission());
       socialMissionBloc.add(LoadSocialMission());
       featuredMissionBloc.add(LoadFeaturedMission());
       sponsoredMissionBloc.add(LoadSponsoredMission());
       skillUpMissionBloc.add(LoadSkillUpMission());
+      streakBloc.add(LoadStreaksEvent());
     });
   }
 
@@ -78,11 +83,8 @@ class _MissionPageState extends State<MissionPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(height: 20.h + MediaQuery.of(context).padding.top),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16.w),
-                  child: FlowvaAppBar(title: "Missions"),
-                ),
-                const SizedBox(height: 12),
+                FlowvaAppBar(title: "Missions"),
+                SizedBox(height: 12.h),
                 // Tabs
                 Container(
                   height: 45,
@@ -147,12 +149,10 @@ class _MissionPageState extends State<MissionPage> {
                       featuredMissionBloc.add(LoadFeaturedMission());
                       sponsoredMissionBloc.add(LoadSponsoredMission());
                       skillUpMissionBloc.add(LoadSkillUpMission());
+                      streakBloc.add(LoadStreaksEvent());
                     },
                     children: [
-                      Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 16.w),
-                        child: EarnOverviewScreen(),
-                      ),
+                      EarnOverviewScreen(),
                       AdventuresTab(),
                       SkillUpPage(),
                       // TriviaPage(),

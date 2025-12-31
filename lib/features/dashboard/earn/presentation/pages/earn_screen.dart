@@ -4,7 +4,10 @@ import 'package:flowva/features/dashboard/earn/presentation/widgets/redeem.dart'
 import 'package:flowva/features/dashboard/home/data/bloc/home_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+
+import '../../../../common/flowva_app_bar.dart';
 
 class RewardScreen extends StatefulWidget {
   RewardScreen({super.key});
@@ -65,42 +68,14 @@ class _RewardScreenState extends State<RewardScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        SizedBox(height: 70),
-                        Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 16),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                "Redeem",
-                                style: GoogleFonts.manrope(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              Row(
-                                children: [
-                                  Image.asset(
-                                    "assets/images/one_50.png",
-                                    height: 18,
-                                  ),
-                                  Text(
-                                    " 2,000",
-                                    style: GoogleFonts.baloo2(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
+                        SizedBox(
+                          height: 20.h + MediaQuery.of(context).padding.top,
                         ),
-                        const SizedBox(height: 12),
-
+                        FlowvaAppBar(title: "Redeem"),
+                        SizedBox(height: 12.h),
                         // Tabs
                         Padding(
-                          padding: EdgeInsets.symmetric(horizontal: 16),
+                          padding: EdgeInsets.symmetric(horizontal: 16.w),
                           child: Container(
                             height: 45,
 

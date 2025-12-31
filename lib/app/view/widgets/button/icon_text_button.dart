@@ -34,7 +34,7 @@ class IconTextButton extends StatelessWidget {
     return GestureDetector(
       onTap: onPressed,
       child: Container(
-        padding: EdgeInsets.symmetric(vertical: 4.h, horizontal: 4.h),
+        padding: EdgeInsets.symmetric(vertical: 2.5.h, horizontal: 2.5.w),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(100.r),
           border: Border.all(

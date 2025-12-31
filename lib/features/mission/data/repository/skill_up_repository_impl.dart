@@ -4,7 +4,6 @@ import 'package:dartz/dartz.dart';
 import 'package:logger/logger.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../model/mission_status_enum.dart';
 import '../model/skill_up_mission_model.dart';
 import 'skill_up_repository.dart';
 
@@ -36,14 +35,19 @@ class SkillUpRepositoryImpl extends SkillUpRepository {
         min_points,
         max_points,
         locked,
-        skill_up_user_progress (
+        skill_up_user_progress!left (
           status,
           submission,
           evidence_image
+        ),
+        skill_up_step_unlocks!left (
+          unlock_source,
+          expires_at
         )
       )
     ''')
-          .eq('skill_up_steps.skill_up_user_progress.user_id', userId);
+          .eq('skill_up_steps.skill_up_user_progress.user_id', userId)
+          .eq('skill_up_steps.skill_up_step_unlocks.user_id', userId);
 
       Logger().t("Skill Up Missions $res");
       log("Skill Up Missions $res");
@@ -94,66 +98,23 @@ class SkillUpRepositoryImpl extends SkillUpRepository {
     }
   }
 
-  /// Join / Update mission
-  Future<Either<String, void>> completeMission({
-    required int missionId,
+  Future<Either<String, void>> unlockSkillUpStep({
+    required int stepId,
+    required UnlockSource source,
     required String userId,
-    required String? text,
-    required String? imageUrl,
   }) async {
     try {
-      // Check if user already joined
-      final existing = await supabase
-          .from('sponsored_mission_completed')
-          .select('id')
-          .eq('sponsored_mission_id', missionId)
-          .eq('user_id', userId)
-          .maybeSingle();
-
-      if (existing == null) {
-        // First join
-        await supabase.from('sponsored_mission_completed').insert({
-          'sponsored_mission_id': missionId,
-          'user_id': userId,
-          // 'answer': text,
-          'evidence_image': imageUrl,
-          'status': 'PENDING',
-        });
-      } else {
-        // Update existing submission
-        await supabase
-            .from('sponsored_mission_completed')
-            .update({
-              // 'answer': text,
-              'evidence_image': imageUrl,
-              'status': 'PENDING',
-              'updated_at': DateTime.now().toIso8601String(),
-            })
-            .eq('id', existing['id']);
-      }
+      await supabase.rpc(
+        'unlock_skill_up_step',
+        params: {
+          'p_user_id': userId,
+          'p_step_id': stepId,
+          'p_source': source.name.toUpperCase(),
+        },
+      );
+      return const Right(null);
     } catch (e) {
       return Left(e.toString());
     }
-
-    return const Right(null);
-  }
-
-  /// Check if user already joined
-  Future<MissionStatus> hasJoined({
-    required int missionId,
-    required String userId,
-  }) async {
-    final res = await supabase
-        .from('sponsored_mission_completed')
-        .select('status')
-        .eq('sponsored_mission_id', missionId)
-        .eq('user_id', userId)
-        .maybeSingle();
-
-    if (res == null) {
-      return MissionStatus.notJoined;
-    }
-
-    return statusFromDb(res['status'] as String);
   }
 }

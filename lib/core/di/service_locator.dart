@@ -20,11 +20,14 @@ import '../../features/mission/data/repository/social_mission_repository.dart';
 import '../../features/mission/data/repository/social_mission_repository_impl.dart';
 import '../../features/mission/data/repository/sponsored_mission_repository.dart';
 import '../../features/mission/data/repository/sponsored_mission_repository_impl.dart';
+import '../../features/mission/data/repository/streak_repository.dart';
+import '../../features/mission/data/repository/streak_repository_impl.dart';
 import '../../features/mission/presentation/bloc/community_mission_bloc.dart';
 import '../../features/mission/presentation/bloc/featured_mission_bloc.dart';
 import '../../features/mission/presentation/bloc/skill_up_bloc.dart';
 import '../../features/mission/presentation/bloc/social_mission_bloc.dart';
 import '../../features/mission/presentation/bloc/sponsored_mission_bloc.dart';
+import '../../features/mission/presentation/bloc/streak_bloc.dart';
 import '../../features/onbaording/data/signup_repository/signup_repository.dart';
 import '../../features/onbaording/data/signup_repository/signup_repository_impl.dart';
 
@@ -48,6 +51,7 @@ Future<void> initDI() async {
   );
   sl.registerLazySingleton<SkillUpRepository>(() => SkillUpRepositoryImpl());
   sl.registerLazySingleton<ProfileRepository>(() => ProfileRepositoryImpl());
+  sl.registerLazySingleton<StreakRepository>(() => StreakRepositoryImpl());
 
   //Blocs
   sl.registerSingleton<UserCubit>(UserCubit());
@@ -74,4 +78,5 @@ Future<void> initDI() async {
   );
   sl.registerSingleton<SkillUpBloc>(SkillUpBloc(repo: sl<SkillUpRepository>()));
   sl.registerSingleton<ProfileBloc>(ProfileBloc(repo: sl<ProfileRepository>()));
+  sl.registerSingleton<StreakBloc>(StreakBloc(repo: sl<StreakRepository>()));
 }

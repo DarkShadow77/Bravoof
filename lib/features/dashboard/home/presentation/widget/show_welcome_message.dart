@@ -9,8 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hugeicons/hugeicons.dart';
 
-import '../../../../core/constants/app_colors.dart';
-import '../../../../utility/permission_handler.dart';
+import '../../../../../core/constants/app_colors.dart';
+import '../../../../../utility/permission_handler.dart';
 
 class ShowAdMessage extends StatelessWidget {
   const ShowAdMessage({super.key});

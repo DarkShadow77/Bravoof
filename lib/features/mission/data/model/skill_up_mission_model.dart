@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'featured_mission_model.dart';
 import 'mission_status_enum.dart';
 
+enum UnlockSource { coins, video }
+
 class SkillUpMission {
   final int id;
   final String title;
@@ -44,6 +46,8 @@ class SkillUpStep {
   final SkillUpContentBlock? contentOne;
   final SkillUpContentBlock? contentTwo;
   final bool locked;
+  final DateTime? unlockExpiresAt;
+  // final UnlockSource? unlockSource;
   final MissionStatus status;
 
   SkillUpStep({
@@ -57,14 +61,17 @@ class SkillUpStep {
     this.contentTwo,
     required this.locked,
     required this.status,
+    this.unlockExpiresAt,
+    // this.unlockSource,
   });
 
   factory SkillUpStep.fromJson(Map<String, dynamic> json) {
-    final progressList = json['skill_up_user_progress'] as List<dynamic>?;
+    final unlock = (json['skill_up_step_unlocks'] as List?)?.firstOrNull;
+    final progress = (json['skill_up_user_progress'] as List?)?.firstOrNull;
 
-    final progress = (progressList != null && progressList.isNotEmpty)
-        ? progressList.first
-        : null;
+    final isUnlocked =
+        unlock != null &&
+        DateTime.parse(unlock['expires_at']).isAfter(DateTime.now());
 
     final status = progress == null
         ? MissionStatus.notJoined
@@ -98,6 +105,13 @@ class SkillUpStep {
       contentOne: parseContent(json['content_one']),
       contentTwo: parseContent(json['content_two']),
       locked: json['locked'] ?? false,
+      unlockExpiresAt: unlock != null
+          ? DateTime.parse(unlock['expires_at'])
+          : null,
+      /*unlockSource: unlock != null
+          ? UnlockSource.fromDb(unlock['unlock_source'])
+          : null,*/
+
       status: status,
     );
   }

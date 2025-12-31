@@ -13,21 +13,33 @@ import '../../../../../utility/ui_tool_mix.dart';
 import '../../../data/model/mission_status_enum.dart';
 import '../../../data/model/skill_up_mission_model.dart';
 import '../../widget/skill_up_success_dialog.dart';
+import '../../widget/unlock_skillup_mission_modal.dart';
 import 'content_screen.dart';
 
 class SkillUpScreen extends StatefulWidget {
   final SkillUpMission skill;
+  final int index;
 
-  SkillUpScreen({required this.skill, super.key});
+  SkillUpScreen({required this.skill, required this.index, super.key});
 
   @override
   State<SkillUpScreen> createState() => _SkillUpScreenState();
 }
 
 class _SkillUpScreenState extends State<SkillUpScreen> with UIToolMixin {
-  _loadingState(BuildContext context, SkillUpLoading state) {
-    if (state.type == SkillUpType.completeMission &&
-        state.missionId == widget.skill.id) {
+  late SkillUpMission skill;
+
+  @override
+  void initState() {
+    super.initState();
+    skill = widget.skill;
+  }
+
+  _loadingState(BuildContext context, SkillUpLoading state, int stepId) {
+    if ((state.type == SkillUpType.completeMission &&
+            state.missionId == skill.id) ||
+        (state.type == SkillUpType.unlockSkillUp &&
+            state.missionId == stepId)) {
       showDialog(
         context: context,
         barrierDismissible: false,
@@ -53,16 +65,78 @@ class _SkillUpScreenState extends State<SkillUpScreen> with UIToolMixin {
     int stepId,
     bool isLast,
   ) {
-    if (state.missionId == widget.skill.id && state.stepId == stepId) {
+    if (state.missionId == skill.id && state.stepId == stepId) {
       Navigator.pop(context);
       context.read<SkillUpBloc>().add(LoadSkillUpMission());
       skillUpSuccessDialog(isLast: isLast);
     }
   }
 
-  _failureState(BuildContext context, SkillUpError state) {
-    if (state.type == SkillUpType.completeMission &&
-        state.missionId == widget.skill.id) {
+  _unlockedState(
+    BuildContext context,
+    SkillUpUnlocked state,
+    SkillUpStep mission,
+  ) {
+    if (state.stepId == mission.id) {
+      Navigator.pop(context);
+      context.read<SkillUpBloc>().add(LoadSkillUpMission());
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (ctx) => ContentScreen(
+            mission: mission,
+            content: mission.contentOne!,
+            mainPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (ctx) => ContentScreen(
+                    mission: mission,
+                    content: mission.contentTwo!,
+                    mainPressed: () {
+                      submitSkillUpModal(
+                        onPressed: (value) {
+                          if (value != null) {
+                            context.read<SkillUpBloc>().add(
+                              CompleteSkillUpMission(
+                                missionId: skill.id,
+                                stepId: mission.id,
+                                imageUrl: value,
+                              ),
+                            );
+                          }
+                        },
+                      );
+                    },
+                    subPressed: () {
+                      Navigator.pop(context);
+                      Navigator.pop(context);
+                    },
+                    mainText: "Share your creation",
+                    subText: "End Mission",
+                    progress: 100 / 100,
+                  ),
+                ),
+              );
+            },
+            subPressed: () {
+              Navigator.pop(context);
+            },
+            mainText: "I'm ready",
+            subText: "End Mission",
+            progress: 50 / 100,
+          ),
+        ),
+      );
+    }
+  }
+
+  _failureState(BuildContext context, SkillUpError state, int stepId) {
+    if ((state.type == SkillUpType.completeMission &&
+            state.missionId == skill.id) ||
+        (state.type == SkillUpType.unlockSkillUp &&
+            state.missionId == stepId)) {
       Navigator.pop(context);
       showMessage(
         state.message,
@@ -110,27 +184,40 @@ class _SkillUpScreenState extends State<SkillUpScreen> with UIToolMixin {
                       horizontal: 16.w,
                       vertical: 12.h,
                     ),
-                    itemCount: widget.skill.steps.length,
+                    itemCount: skill.steps.length,
                     itemBuilder: (context, index) {
-                      final mission = widget.skill.steps[index];
-                      bool isLast = mission == widget.skill.steps.last;
-                      return BlocListener<SkillUpBloc, SkillUpState>(
+                      final mission = skill.steps[index];
+                      bool isLast = mission == skill.steps.last;
+                      return BlocConsumer<SkillUpBloc, SkillUpState>(
                         listener: (context, state) {
                           if (state is SkillUpLoading) {
-                            _loadingState(context, state);
+                            _loadingState(context, state, mission.id);
                           }
                           if (state is SkillUpCompleted) {
                             _successState(context, state, mission.id, isLast);
                           }
+                          if (state is SkillUpUnlocked) {
+                            _unlockedState(context, state, mission);
+                          }
                           if (state is SkillUpError) {
-                            _failureState(context, state);
+                            _failureState(context, state, mission.id);
                           }
                         },
-                        child: SkillMissionCard(
-                          mission: mission,
-                          isLast: isLast,
-                          skill: widget.skill,
-                        ),
+                        builder: (context, state) {
+                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                            setState(() {
+                              skill = state.missions.firstWhere(
+                                (e) => e.id == skill.id,
+                              );
+                            });
+                          });
+
+                          return SkillMissionCard(
+                            mission: mission,
+                            isLast: isLast,
+                            skill: skill,
+                          );
+                        },
                       );
                     },
                     separatorBuilder: (_, _) => SizedBox(height: 16.h),
@@ -145,7 +232,7 @@ class _SkillUpScreenState extends State<SkillUpScreen> with UIToolMixin {
   }
 }
 
-class SkillMissionCard extends StatelessWidget {
+class SkillMissionCard extends StatelessWidget with UIToolMixin {
   const SkillMissionCard({
     super.key,
     required this.mission,
@@ -306,13 +393,15 @@ class SkillMissionCard extends StatelessWidget {
                                       mainPressed: () {
                                         submitSkillUpModal(
                                           onPressed: (value) {
-                                            context.read<SkillUpBloc>().add(
-                                              CompleteSkillUpMission(
-                                                missionId: skill.id,
-                                                stepId: mission.id,
-                                                imageUrl: value,
-                                              ),
-                                            );
+                                            if (value != null) {
+                                              context.read<SkillUpBloc>().add(
+                                                CompleteSkillUpMission(
+                                                  missionId: skill.id,
+                                                  stepId: mission.id,
+                                                  imageUrl: value,
+                                                ),
+                                              );
+                                            }
                                           },
                                         );
                                       },
@@ -343,14 +432,41 @@ class SkillMissionCard extends StatelessWidget {
                     )
                   else
                     IconTextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        showMessage(
+                          "Mission Already Completed",
+                          context,
+                          color: Colors.white,
+                          styleColor: Colors.black,
+                        );
+                      },
                       color: AppColors.grey400.withValues(alpha: .85),
+                      borderColor: AppColors.grey400.withValues(alpha: .15),
                       text: "Mission Completed",
                       textColor: AppColors.white50,
                     ),
                 ] else
                   IconTextButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      unlockSkillUpMissionModal(
+                        onCoin: () {
+                          context.read<SkillUpBloc>().add(
+                            UnlockSkillUpMission(
+                              stepId: mission.id,
+                              source: UnlockSource.coins,
+                            ),
+                          );
+                        },
+                        onVideo: () {
+                          context.read<SkillUpBloc>().add(
+                            UnlockSkillUpMission(
+                              stepId: mission.id,
+                              source: UnlockSource.video,
+                            ),
+                          );
+                        },
+                      );
+                    },
                     color: AppColors.black,
                     text: "Unlock Mission",
                     icon: AssetsSvgIcons.circleLock,
