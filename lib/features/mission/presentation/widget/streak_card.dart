@@ -81,6 +81,18 @@ class _StreakCardState extends State<StreakCard> with UIToolMixin {
         'https://app.joinbravoo.com?ref=${userProfile.referralCode}';
   }
 
+  String getStreakQuote(int streak) {
+    if (streak < quotes.length) {
+      return quotes[streak];
+    } else if (streak < 14) {
+      return "One week strong. Discipline unlocked 🔓";
+    } else if (streak < 30) {
+      return "This is no longer a streak. It’s a lifestyle 🔥";
+    } else {
+      return "Legend behavior. Keep going 👑";
+    }
+  }
+
   _loadingState(BuildContext context, StreakLoadingState state) {
     if (state.type == StreakType.checkIn) {
       showDialog(
@@ -116,7 +128,7 @@ class _StreakCardState extends State<StreakCard> with UIToolMixin {
         ),
         builder: (_) => CustomSuccess(
           title: "You earned 5 coins! ✨",
-          bodyText: quotes[streaks.currentStreak],
+          bodyText: getStreakQuote(streaks.currentStreak),
           b_text1: "Done",
         ),
       );

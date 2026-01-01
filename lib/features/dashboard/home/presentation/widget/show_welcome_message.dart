@@ -10,7 +10,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hugeicons/hugeicons.dart';
 
 import '../../../../../core/constants/app_colors.dart';
-import '../../../../../utility/permission_handler.dart';
 
 class ShowAdMessage extends StatelessWidget {
   const ShowAdMessage({super.key});
@@ -66,7 +65,6 @@ class ShowWelcomeMessage extends StatelessWidget {
     return PopScope(
       onPopInvokedWithResult: (canPop, result) {
         SessionManager().firstWelcomeUserVal = "NO";
-        requestNotificationPermission(context);
       },
       child: Stack(
         children: [
@@ -125,7 +123,6 @@ class ShowWelcomeMessage extends StatelessWidget {
                       apply: () {
                         SessionManager().firstWelcomeUserVal = "NO";
                         Navigator.pop(context);
-                        requestNotificationPermission(context);
                         Navigator.push(
                           context,
                           MaterialPageRoute(

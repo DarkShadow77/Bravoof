@@ -1,12 +1,12 @@
+import 'package:flowva/app/view/widgets/button/icon_text_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../../../../app/styles/text_styles.dart';
-import '../../../../../core/constants/app_colors.dart';
-import '../../../../../core/constants/fonts.dart';
-import '../../../../../utility/ui_tool_mix.dart';
-import '../../../../common/flowva_button.dart';
+import '../../../../app/styles/text_styles.dart';
+import '../../../../core/constants/app_colors.dart';
+import '../../../../core/constants/fonts.dart';
+import '../../../../utility/ui_tool_mix.dart';
 
 class DiscoverPerks extends StatefulWidget {
   DiscoverPerks({super.key});
@@ -38,14 +38,14 @@ class _DiscoverPerksState extends State<DiscoverPerks> with UIToolMixin {
       "image": "assets/images/reclaim_trans.png",
       "link": "https://go.reclaim.ai/8dk5zw39uhfg-0titjs",
     },
-    {
+    /*{
       "discount": 10,
       "title": "Enjoy Pro Access to Ad Creative AI",
       "valid": "Valid forever",
       "color": Color(0xff000A3A).withValues(alpha: .48),
       "image": "assets/images/perk_stack.png",
       "link": "https://go.reclaim.ai/8dk5zw39uhfg-0titjs",
-    },
+    },*/
   ];
 
   @override
@@ -66,10 +66,7 @@ class _DiscoverPerksState extends State<DiscoverPerks> with UIToolMixin {
     final uri = Uri.parse(link);
 
     if (await canLaunchUrl(uri)) {
-      await launchUrl(
-        uri,
-        mode: LaunchMode.inAppWebView,
-      );
+      await launchUrl(uri, mode: LaunchMode.inAppBrowserView);
     } else {
       showMessage(
         "Could not launch",
@@ -240,9 +237,13 @@ class _DiscoverPerksState extends State<DiscoverPerks> with UIToolMixin {
                                       ),
                                     ],
                                   ),
-                                  FlowvaButton.subButton(
-                                    name: "Redeem offer",
-                                    apply: () => openLink(perk["link"]),
+                                  IconTextButton(
+                                    height: 33,
+                                    textSize: 11,
+                                    text: "Redeem offer",
+                                    color: AppColors.black,
+                                    textColor: AppColors.white,
+                                    onPressed: () => openLink(perk["link"]),
                                   ),
                                 ],
                               ),
@@ -288,7 +289,7 @@ class _DiscoverPerksState extends State<DiscoverPerks> with UIToolMixin {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: List.generate(
-            3,
+            perks.length,
             (index) => GestureDetector(
               onTap: () {
                 _pageController.animateToPage(

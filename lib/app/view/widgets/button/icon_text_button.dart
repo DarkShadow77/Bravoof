@@ -17,6 +17,8 @@ class IconTextButton extends StatelessWidget {
     this.textColor,
     this.borderColor,
     this.shadowColor = AppColors.black,
+    this.height,
+    this.textSize,
   });
 
   final VoidCallback onPressed;
@@ -27,10 +29,14 @@ class IconTextButton extends StatelessWidget {
   final Color? textColor;
   final Color? borderColor;
   final Color shadowColor;
+  final double? height;
+  final double? textSize;
 
   @override
   Widget build(BuildContext context) {
     Color nullColor = color ?? AppColors.white;
+
+    final buttonHeight = (height ?? 45).h;
     return GestureDetector(
       onTap: onPressed,
       child: Container(
@@ -51,8 +57,8 @@ class IconTextButton extends StatelessWidget {
           isShadowTopLeft: true,
           isShadowTopRight: true,
           child: Container(
-            height: 45.h,
-            padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 16.w),
+            height: buttonHeight,
+            alignment: Alignment.center,
             decoration: BoxDecoration(
               color: nullColor,
               borderRadius: BorderRadius.circular(100.r),
@@ -100,7 +106,7 @@ class IconTextButton extends StatelessWidget {
                       text: text,
                       style: TextStyles.normalBold14(
                         context,
-                      ).copyWith(color: textColor),
+                      ).copyWith(color: textColor, fontSize: textSize?.sp),
                     ),
                   ),
                 ),

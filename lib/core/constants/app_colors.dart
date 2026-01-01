@@ -47,6 +47,7 @@ class AppColors {
 
   //State-Colors ---Grey
   static const Color grey = Color(0xFFD9D9D9);
+  static const Color grey600 = Color(0xFF4A4A4A);
   static const Color grey550 = Color(0xFF5F5F5F);
   static const Color grey500 = Color(0xFF767676);
   static const Color grey400 = Color(0xFFA5A5A5);

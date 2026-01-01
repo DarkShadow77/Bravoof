@@ -8,6 +8,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
 
+import '../../../../../core/constants/app_assets.dart';
+
 class GridItem {
   final String type;
   final int value;
@@ -37,32 +39,32 @@ class _JackpotScreenState extends State<JackpotScreen> with UIToolMixin {
   final List<GridItem> gridItems = [
     // Section 1 - Row 1 (4 items)
     GridItem(type: 'coins', value: 50, emoji: "assets/images/one_50.png"),
-    GridItem(type: 'gift', value: 1, emoji: "assets/images/??.png"),
-    GridItem(type: 'gift', value: 2, emoji: "assets/images/??.png"),
+    GridItem(type: 'gift', value: 1, emoji: AssetsPngImages.jackpot),
+    GridItem(type: 'gift', value: 2, emoji: AssetsPngImages.jackpot),
     GridItem(type: 'coins', value: 50, emoji: "assets/images/one_50.png"),
 
     // Section 2 - Rows 2-3 (8 items)
     GridItem(type: 'coins', value: 50, emoji: "assets/images/one_50.png"),
-    GridItem(type: 'gift', value: 1, emoji: "assets/images/??.png"),
-    GridItem(type: 'gift', value: 2, emoji: "assets/images/??.png"),
+    GridItem(type: 'gift', value: 1, emoji: AssetsPngImages.jackpot),
+    GridItem(type: 'gift', value: 2, emoji: AssetsPngImages.jackpot),
     GridItem(type: 'coins', value: 50, emoji: "assets/images/one_50.png"),
     GridItem(type: 'coins', value: 50, emoji: "assets/images/one_50.png"),
-    GridItem(type: 'gift', value: 1, emoji: "assets/images/??.png"),
-    GridItem(type: 'gift', value: 2, emoji: "assets/images/??.png"),
+    GridItem(type: 'gift', value: 1, emoji: AssetsPngImages.jackpot),
+    GridItem(type: 'gift', value: 2, emoji: AssetsPngImages.jackpot),
     GridItem(type: 'coins', value: 50, emoji: "assets/images/one_50.png"),
 
     // Section 3 - Rows 4-6 (12 items)
     GridItem(type: 'coins', value: 50, emoji: "assets/images/one_50.png"),
-    GridItem(type: 'gift', value: 1, emoji: "assets/images/??.png"),
-    GridItem(type: 'gift', value: 2, emoji: "assets/images/??.png"),
+    GridItem(type: 'gift', value: 1, emoji: AssetsPngImages.jackpot),
+    GridItem(type: 'gift', value: 2, emoji: AssetsPngImages.jackpot),
     GridItem(type: 'coins', value: 50, emoji: "assets/images/one_50.png"),
     GridItem(type: 'coins', value: 50, emoji: "assets/images/one_50.png"),
-    GridItem(type: 'gift', value: 1, emoji: "assets/images/??.png"),
-    GridItem(type: 'gift', value: 2, emoji: "assets/images/??.png"),
+    GridItem(type: 'gift', value: 1, emoji: AssetsPngImages.jackpot),
+    GridItem(type: 'gift', value: 2, emoji: AssetsPngImages.jackpot),
     GridItem(type: 'coins', value: 50, emoji: "assets/images/one_50.png"),
     GridItem(type: 'coins', value: 50, emoji: "assets/images/one_50.png"),
-    GridItem(type: 'gift', value: 1, emoji: "assets/images/??.png"),
-    GridItem(type: 'gift', value: 2, emoji: "assets/images/??.png"),
+    GridItem(type: 'gift', value: 1, emoji: AssetsPngImages.jackpot),
+    GridItem(type: 'gift', value: 2, emoji: AssetsPngImages.jackpot),
     GridItem(type: 'coins', value: 50, emoji: "assets/images/one_50.png"),
   ];
 
@@ -500,7 +502,8 @@ class _JackpotScreenState extends State<JackpotScreen> with UIToolMixin {
                           //            "50",
                           //          )
                           //              : _buildRewardIcon(
-                          //            "assets/images/??.png",
+                          //
+                          //AssetsPngImages.jackpot,
                           //            "x${index % 3 + 1}",
                           //          ),
                           //        ),
@@ -549,7 +552,8 @@ class _JackpotScreenState extends State<JackpotScreen> with UIToolMixin {
                           //           "50",
                           //         )
                           //             : _buildRewardIcon(
-                          //           "assets/images/??.png",
+                          //
+                          // AssetsPngImages.jackpot,
                           //           "x${index % 3 + 1}",
                           //         ),
                           //       ),
@@ -598,7 +602,8 @@ class _JackpotScreenState extends State<JackpotScreen> with UIToolMixin {
                           //           "50",
                           //         )
                           //             : _buildRewardIcon(
-                          //           "assets/images/??.png",
+                          //
+                          //AssetsPngImages.jackpot,
                           //           "x${index % 3 + 1}",
                           //         ),
                           //       ),

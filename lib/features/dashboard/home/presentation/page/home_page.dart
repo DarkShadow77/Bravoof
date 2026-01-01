@@ -5,12 +5,11 @@ import 'package:flowva/features/common/model/campaign_response.dart';
 import 'package:flowva/features/common/routes.dart';
 import 'package:flowva/features/common/ui_tool_mixin/ui_tool_mixin.dart';
 import 'package:flowva/features/dashboard/earn/data/models/mission_res.dart';
-import 'package:flowva/features/dashboard/earn/presentation/widgets/mission_tile_widget.dart';
 import 'package:flowva/features/dashboard/home/data/bloc/home_cubit.dart';
+import 'package:flowva/features/dashboard/profile/presentation/bloc/profile_bloc.dart';
 import 'package:flowva/features/dashboard/profile/presentation/pages/profile_page.dart';
 import 'package:flowva/features/mission/data/bloc/mission_cubit.dart';
 import 'package:flowva/features/mission/data/model/rewards_summary_response.dart';
-import 'package:flowva/features/onbaording/data/bloc/user_cubit.dart';
 import 'package:flowva/features/onbaording/data/model/user_profile.dart';
 import 'package:flowva/session/session_manager.dart';
 import 'package:flutter/material.dart';
@@ -19,12 +18,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../../core/constants/app_colors.dart';
-import '../../../../../utility/in_app_review.dart';
-import '../../../earn/presentation/pages/invite_earn.dart' hide MissionTile;
 import '../../../nav_bar.dart';
+import '../widget/mission_list_title.dart';
 import '../widget/referral_widget.dart';
 import '../widget/tool_card.dart';
 import '../widget/top_leader_board.dart';
@@ -38,32 +35,25 @@ class FlowvaHomePage extends StatefulWidget {
 }
 
 class _FlowvaHomePageState extends State<FlowvaHomePage> with UIToolMixin {
-  List<Map<String, dynamic>> data = [];
-
-  final refLink = "https://app.joinbravoo.com?ref=";
-  final _scrollController = PageController(viewportFraction: 1);
-  late UserCubit userCubit;
   late MissionCubit missionCubit;
   final sessionManager = SessionManager();
   UserProfile userProfile = UserProfile();
+  late ProfileBloc profileBloc;
   List<Mission> missions = [];
   List<Campaign> campaign = [];
   List<RewardsSummary> rewardsSummary = [];
-  int currentIndex = 0;
-  int currentPage = 0;
-  int? avatarIndex;
-  String username = '';
-  bool init = true;
 
   @override
   void initState() {
     super.initState();
     missionCubit = MissionCubit();
-    userCubit = UserCubit();
     BlocProvider.of<HomeCubit>(context).fetchCampaigns();
     missionCubit.fetchMission();
     missionCubit.fetchAllUsersReward();
-    userCubit.fetchUserProfile();
+
+    profileBloc = context.read<ProfileBloc>();
+    userProfile = profileBloc.state.profile;
+    profileBloc.add(GetProfileEvent());
   }
 
   @override
@@ -74,24 +64,7 @@ class _FlowvaHomePageState extends State<FlowvaHomePage> with UIToolMixin {
       body: MultiBlocProvider(
         providers: [
           BlocProvider.value(value: FlowvaRoute.userCubit),
-          BlocListener<UserCubit, UserState>(
-            bloc: userCubit,
-            listener: (context, state) {
-              print(state);
-              if (state is UserLoading) {
-                print(state);
-                setState(() {
-                  init = true;
-                });
-              } else if (state is UserProfileSuccess) {
-                setState(() {
-                  init = false;
-                });
 
-                userProfile = state.userProfile;
-              }
-            },
-          ),
           BlocListener<HomeCubit, HomeState>(
             listener: (context, state) {
               print(state);
@@ -134,7 +107,7 @@ class _FlowvaHomePageState extends State<FlowvaHomePage> with UIToolMixin {
                 });
               } else if (state is MissionUpdated) {
                 Navigator.pop(context);
-                userCubit.updateUserProfile();
+                context.read<ProfileBloc>().add(GetProfileEvent());
                 showModalBottomSheet(
                   context: context,
                   isScrollControlled: true,
@@ -171,750 +144,595 @@ class _FlowvaHomePageState extends State<FlowvaHomePage> with UIToolMixin {
             },
           ),
         ],
-        child: init
-            ? Center(
-                child: Container(
-                  height: 400,
-                  alignment: Alignment.center,
-                  child: const CircularProgressIndicator(
-                    backgroundColor: Color(0xff828282),
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                      Color(0xFF9013FE),
-                    ),
-                    strokeCap: StrokeCap.round,
-                  ),
-                ),
-              )
-            : Container(
-                decoration: BoxDecoration(
-                  image: DecorationImage(
-                    image: AssetImage("assets/images/home_page_b.png"),
-                    fit: BoxFit.fill,
-                  ),
-                ),
-                child: Stack(
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+        child: Container(
+          decoration: BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage("assets/images/home_page_b.png"),
+              fit: BoxFit.fill,
+            ),
+          ),
+          child: Stack(
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 60),
+                  // Greeting Row
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const SizedBox(height: 60),
-                        // Greeting Row
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                "Hey, ${userProfile.name}!",
-                                style: GoogleFonts.manrope(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.black,
-                                ),
-                              ),
-                              Row(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-
-                                children: [
-                                  GestureDetector(
-                                    onTap: () => Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (ctx) => NotificationsPage(),
-                                      ),
-                                    ),
-                                    child: Container(
-                                      padding: EdgeInsets.only(bottom: 20),
-                                      child: HugeIcon(
-                                        icon: HugeIcons
-                                            .strokeRoundedNotification01,
-                                        size: 28,
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(width: 20),
-                                  GestureDetector(
-                                    onTap: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => ProfilePage(
-                                            avatarIndex: avatarIndex,
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                    child: Column(
-                                      children: [
-                                        Container(
-                                          height: 30,
-                                          width: 30,
-                                          decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                          ),
-                                          clipBehavior: Clip.hardEdge,
-                                          child: userProfile.profilePic != null
-                                              ? Image.network(
-                                                  userProfile.profilePic!,
-                                                  fit: BoxFit.fill,
-                                                )
-                                              : Container(),
-                                        ),
-
-                                        // Text("Profile",style: GoogleFonts.manrope(
-                                        //   fontWeight: FontWeight.w500,
-                                        //   fontSize: 12,
-                                        //   color: Color(0xFF2B2B2B),
-                                        // ),),
-                                        SizedBox(height: 20),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
+                        Text(
+                          "Hey, ${userProfile.name}!",
+                          style: GoogleFonts.manrope(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black,
                           ),
                         ),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
 
-                        Expanded(
-                          child: ListView(
-                            shrinkWrap: true,
-                            padding: EdgeInsets.only(top: 0),
-                            physics: const BouncingScrollPhysics(),
+                          children: [
+                            GestureDetector(
+                              onTap: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (ctx) => NotificationsPage(),
+                                ),
+                              ),
+                              child: Container(
+                                padding: EdgeInsets.only(bottom: 20),
+                                child: HugeIcon(
+                                  icon: HugeIcons.strokeRoundedNotification01,
+                                  size: 28,
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: 20),
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ProfilePage(),
+                                  ),
+                                );
+                              },
+                              child: Column(
+                                children: [
+                                  Container(
+                                    height: 30,
+                                    width: 30,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                    ),
+                                    clipBehavior: Clip.hardEdge,
+                                    child: userProfile.profilePic != null
+                                        ? Image.network(
+                                            userProfile.profilePic!,
+                                            fit: BoxFit.fill,
+                                          )
+                                        : Container(),
+                                  ),
 
-                            children: [
-                              SizedBox(height: 18.h),
-                              if (SessionManager().firstTimeUserVal ==
-                                  "YES") ...[
-                                Container(
-                                  margin: EdgeInsets.symmetric(
-                                    horizontal: 16.w,
-                                  ),
-                                  padding: EdgeInsets.symmetric(
-                                    vertical: 16.h,
-                                    horizontal: 16.w,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(16.r),
-                                  ),
-                                  child: Column(
-                                    spacing: 4.h,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.stretch,
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Expanded(
-                                            child: RichText(
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                              text: TextSpan(
-                                                text:
-                                                    "Invite your friends to play with you",
-                                                style: TextStyles.normalBold14(
-                                                  context,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                          GestureDetector(
-                                            onTap: () {
-                                              setState(() {
-                                                SessionManager()
-                                                        .firstTimeUserVal =
-                                                    "NO";
-                                              });
-                                            },
-                                            behavior: HitTestBehavior.opaque,
-                                            child: SvgPicture.asset(
-                                              AssetsSvgIcons.close,
-                                              width: 14.r,
-                                              height: 14.r,
-                                              fit: BoxFit.contain,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      RichText(
+                                  // Text("Profile",style: GoogleFonts.manrope(
+                                  //   fontWeight: FontWeight.w500,
+                                  //   fontSize: 12,
+                                  //   color: Color(0xFF2B2B2B),
+                                  // ),),
+                                  SizedBox(height: 20),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  Expanded(
+                    child: ListView(
+                      shrinkWrap: true,
+                      padding: EdgeInsets.only(top: 0),
+                      physics: const BouncingScrollPhysics(),
+
+                      children: [
+                        SizedBox(height: 18.h),
+                        if (SessionManager().firstTimeUserVal == "YES") ...[
+                          Container(
+                            margin: EdgeInsets.symmetric(horizontal: 16.w),
+                            padding: EdgeInsets.symmetric(
+                              vertical: 16.h,
+                              horizontal: 16.w,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(16.r),
+                            ),
+                            child: Column(
+                              spacing: 4.h,
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Expanded(
+                                      child: RichText(
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
                                         text: TextSpan(
                                           text:
-                                              "Get 1000 coins when you bring in your first 10 friends.",
-                                          style: TextStyles.smallMedium12(
+                                              "Invite your friends to play with you",
+                                          style: TextStyles.normalBold14(
                                             context,
-                                          ).copyWith(color: AppColors.grey550),
+                                          ),
                                         ),
                                       ),
-                                    ],
+                                    ),
+                                    GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          SessionManager().firstTimeUserVal =
+                                              "NO";
+                                        });
+                                      },
+                                      behavior: HitTestBehavior.opaque,
+                                      child: SvgPicture.asset(
+                                        AssetsSvgIcons.close,
+                                        width: 14.r,
+                                        height: 14.r,
+                                        fit: BoxFit.contain,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                RichText(
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  text: TextSpan(
+                                    text:
+                                        "Get 1000 coins when you bring in your first 10 friends.",
+                                    style: TextStyles.smallMedium12(
+                                      context,
+                                    ).copyWith(color: AppColors.grey550),
                                   ),
                                 ),
-                                SizedBox(height: 16.h),
                               ],
-                              campaign.isNotEmpty
-                                  ? ToolCardCarousel(campaign: campaign)
-                                  : Container(),
-                              const SizedBox(height: 20),
+                            ),
+                          ),
+                          SizedBox(height: 16.h),
+                        ],
+                        campaign.isNotEmpty
+                            ? ToolCardCarousel(campaign: campaign)
+                            : Container(),
+                        const SizedBox(height: 20),
 
-                              // Progress bar
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16.0,
+                        // Progress bar
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          child: GestureDetector(
+                            child: Container(
+                              // padding: const EdgeInsets.all(2),
+                              height: 80,
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(15),
+                                border: Border.all(
+                                  width: 0.2,
+                                  color: Colors.black54,
                                 ),
-                                child: GestureDetector(
-                                  child: Container(
-                                    // padding: const EdgeInsets.all(2),
-                                    height: 80,
-                                    width: double.infinity,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(15),
-                                      border: Border.all(
-                                        width: 0.2,
-                                        color: Colors.black54,
-                                      ),
 
-                                      color: Color(0xFFAD50FE),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black.withOpacity(0.08),
-                                          blurRadius: 12,
-                                          offset: const Offset(0, 6),
-                                        ),
-                                      ],
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        // Left Section
-                                        Expanded(
-                                          child: Padding(
-                                            padding: const EdgeInsets.only(
-                                              left: 12,
+                                color: Color(0xFFAD50FE),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.08),
+                                    blurRadius: 12,
+                                    offset: const Offset(0, 6),
+                                  ),
+                                ],
+                              ),
+                              child: Row(
+                                children: [
+                                  // Left Section
+                                  Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(left: 12),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          const SizedBox(height: 10),
+                                          // Title + Arrow
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(
+                                                "More missions await",
+                                                style: GoogleFonts.manrope(
+                                                  fontWeight: FontWeight.w500,
+                                                  fontSize: 14,
+                                                  color: Color(0xFFE9E9E9),
+                                                ),
+                                              ),
+                                              Row(
+                                                children: [
+                                                  Text(
+                                                    "${userProfile.totalPoints}",
+                                                    style: GoogleFonts.manrope(
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      fontSize: 16,
+                                                      color: Colors.white,
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    " / ${userProfile.basePoints}",
+                                                    style: GoogleFonts.manrope(
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      fontSize: 14,
+                                                      color: Color(0xFFE9E9E9),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                          const SizedBox(height: 5),
+                                          // Progress Bar
+                                          // Wrap this inside your widget tree
+                                          Container(
+                                            height: 8,
+                                            width: double.infinity,
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
+                                              color: Color(0xFFF1F1F1),
                                             ),
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                const SizedBox(height: 10),
-                                                // Title + Arrow
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    Text(
-                                                      "More missions await",
-                                                      style:
-                                                          GoogleFonts.manrope(
-                                                            fontWeight:
-                                                                FontWeight.w500,
-                                                            fontSize: 14,
-                                                            color: Color(
-                                                              0xFFE9E9E9,
-                                                            ),
-                                                          ),
-                                                    ),
-                                                    Row(
-                                                      children: [
-                                                        Text(
-                                                          "${userProfile.totalPoints}",
-                                                          style:
-                                                              GoogleFonts.manrope(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w600,
-                                                                fontSize: 16,
-                                                                color: Colors
-                                                                    .white,
-                                                              ),
-                                                        ),
-                                                        Text(
-                                                          " / ${userProfile.basePoints}",
-                                                          style:
-                                                              GoogleFonts.manrope(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w500,
-                                                                fontSize: 14,
-                                                                color: Color(
-                                                                  0xFFE9E9E9,
-                                                                ),
-                                                              ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ],
-                                                ),
-                                                const SizedBox(height: 5),
-                                                // Progress Bar
-                                                // Wrap this inside your widget tree
-                                                Container(
-                                                  height: 8,
-                                                  width: double.infinity,
-                                                  decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                          20,
-                                                        ),
-                                                    color: Color(0xFFF1F1F1),
-                                                  ),
 
-                                                  child: Stack(
-                                                    children: [
-                                                      FractionallySizedBox(
-                                                        widthFactor:
-                                                            userProfile
-                                                                .totalPoints! /
-                                                            userProfile
-                                                                .basePoints!,
-                                                        // progress percentage
-                                                        child: Container(
-                                                          decoration: BoxDecoration(
-                                                            borderRadius:
-                                                                BorderRadius.circular(
-                                                                  10,
-                                                                ),
-                                                            gradient: const LinearGradient(
-                                                              colors: [
-                                                                Color(
-                                                                  0xFFA259FF,
-                                                                ),
-                                                                Color(
-                                                                  0xFFDEC4FF,
-                                                                ),
-                                                              ],
-                                                              begin: Alignment
-                                                                  .topCenter,
-                                                              end: Alignment
-                                                                  .bottomCenter,
-                                                            ),
+                                            child: Stack(
+                                              children: [
+                                                FractionallySizedBox(
+                                                  widthFactor:
+                                                      userProfile.totalPoints! /
+                                                      userProfile.basePoints!,
+                                                  // progress percentage
+                                                  child: Container(
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                            10,
                                                           ),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                                const SizedBox(height: 8),
-                                                // Bottom text
-                                                RichText(
-                                                  text: TextSpan(
-                                                    children: [
-                                                      TextSpan(
-                                                        text:
-                                                            "Just ${(userProfile.basePoints)! - (userProfile.totalPoints!)} ",
-                                                        style:
-                                                            GoogleFonts.manrope(
-                                                              fontSize: 12,
-                                                              color: Color(
-                                                                0xFFE9E9E9,
-                                                              ),
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w500,
-                                                            ),
-                                                      ),
-                                                      TextSpan(
-                                                        text: "Coins",
-                                                        style:
-                                                            GoogleFonts.manrope(
-                                                              fontSize: 14,
-                                                              color: Color(
-                                                                0xFFE9E9E9,
-                                                              ),
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w600,
-                                                            ),
-                                                      ),
-                                                      TextSpan(
-                                                        text:
-                                                            " until your next win ✨",
-                                                        style:
-                                                            GoogleFonts.manrope(
-                                                              fontSize: 12,
-                                                              color: Color(
-                                                                0xFFE9E9E9,
-                                                              ),
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w500,
-                                                            ),
-                                                      ),
-                                                    ],
+                                                      gradient:
+                                                          const LinearGradient(
+                                                            colors: [
+                                                              Color(0xFFA259FF),
+                                                              Color(0xFFDEC4FF),
+                                                            ],
+                                                            begin: Alignment
+                                                                .topCenter,
+                                                            end: Alignment
+                                                                .bottomCenter,
+                                                          ),
+                                                    ),
                                                   ),
                                                 ),
                                               ],
                                             ),
                                           ),
-                                        ),
-                                        const SizedBox(width: 15),
-                                        // Right Section - Circular Rewards
-                                        Stack(
-                                          children: [
-                                            Positioned.fill(
-                                              child: ClipRRect(
-                                                borderRadius: BorderRadius.only(
-                                                  bottomRight: Radius.circular(
-                                                    15,
-                                                  ),
-                                                  topRight: Radius.circular(15),
-                                                ),
-                                                child: Image.asset(
-                                                  'assets/images/dd.png',
-                                                  fit: BoxFit.cover,
-                                                  height: 85,
-                                                ),
-                                              ),
-                                            ),
-                                            // Your foreground content here
-                                            Padding(
-                                              padding: const EdgeInsets.all(
-                                                12.0,
-                                              ),
-                                              child: Column(
-                                                children: [
-                                                  Image.asset(
-                                                    "assets/images/one_50.png",
-                                                    height: 30,
-                                                  ),
-                                                  // const SizedBox(height: 2),
-                                                  Text(
-                                                    "Redeem",
-                                                    style: GoogleFonts.manrope(
-                                                      fontSize: 14,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                      color: Colors.black87,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              SizedBox(height: 20),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16.0,
-                                ),
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(horizontal: 15),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white54,
-                                    borderRadius: BorderRadius.circular(16),
-                                  ),
-                                  child: Column(
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            "Growth Missions",
-                                            style: GoogleFonts.baloo2(
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.w700,
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            height: 70,
-                                            child: Stack(
+                                          const SizedBox(height: 8),
+                                          // Bottom text
+                                          RichText(
+                                            text: TextSpan(
                                               children: [
-                                                GestureDetector(
-                                                  onTap: () => Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                      builder: (_) =>
-                                                          BottomNavBar(
-                                                            index: 1,
-                                                            missionIndex: 1,
-                                                          ),
-                                                    ),
-                                                  ),
-                                                  child: Container(
-                                                    margin: EdgeInsets.only(
-                                                      top: 20,
-                                                    ),
-                                                    padding:
-                                                        EdgeInsets.symmetric(
-                                                          horizontal: 12,
-                                                          vertical: 9,
-                                                        ),
-                                                    decoration: BoxDecoration(
-                                                      color: Color(0xFFF6E4E6),
-                                                      border: Border.all(
-                                                        color: Color(
-                                                          0xFFE9E9E9,
-                                                        ),
-                                                      ),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                            28,
-                                                          ),
-                                                    ),
-                                                    child: Text(
-                                                      "See more",
-                                                      style:
-                                                          GoogleFonts.manrope(
-                                                            fontWeight:
-                                                                FontWeight.w600,
-                                                            color: Color(
-                                                              0xFF020617,
-                                                            ),
-                                                            fontSize: 14,
-                                                          ),
-                                                    ),
+                                                TextSpan(
+                                                  text:
+                                                      "Just ${(userProfile.basePoints)! - (userProfile.totalPoints!)} ",
+                                                  style: GoogleFonts.manrope(
+                                                    fontSize: 12,
+                                                    color: Color(0xFFE9E9E9),
+                                                    fontWeight: FontWeight.w500,
                                                   ),
                                                 ),
-                                                // Positioned(
-                                                //   top: 15,
-                                                //   right: 0,
-                                                //
-                                                //   child: CircleAvatar(
-                                                //     radius: 10,
-                                                //     backgroundColor: Color(
-                                                //       0xFFB60000,
-                                                //     ),
-                                                //     child: Text(
-                                                //       missions.skip(3).toList().length.toString(),
-                                                //       style: GoogleFonts.baloo2(
-                                                //         fontSize: 14,
-                                                //         fontWeight:
-                                                //             FontWeight.w700,
-                                                //         color: Colors.white,
-                                                //       ),
-                                                //     ),
-                                                //   ),
-                                                // ),
+                                                TextSpan(
+                                                  text: "Coins",
+                                                  style: GoogleFonts.manrope(
+                                                    fontSize: 14,
+                                                    color: Color(0xFFE9E9E9),
+                                                    fontWeight: FontWeight.w600,
+                                                  ),
+                                                ),
+                                                TextSpan(
+                                                  text:
+                                                      " until your next win ✨",
+                                                  style: GoogleFonts.manrope(
+                                                    fontSize: 12,
+                                                    color: Color(0xFFE9E9E9),
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                ),
                                               ],
                                             ),
                                           ),
                                         ],
                                       ),
-                                      const SizedBox(height: 16),
-
-                                      // Missions list
-                                      ...missions.map((mission) {
-                                        return _buildMissionListTile(
-                                          mission,
-                                          context,
-                                        );
-                                      }).toList(),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 15),
+                                  // Right Section - Circular Rewards
+                                  Stack(
+                                    children: [
+                                      Positioned.fill(
+                                        child: ClipRRect(
+                                          borderRadius: BorderRadius.only(
+                                            bottomRight: Radius.circular(15),
+                                            topRight: Radius.circular(15),
+                                          ),
+                                          child: Image.asset(
+                                            'assets/images/dd.png',
+                                            fit: BoxFit.cover,
+                                            height: 85,
+                                          ),
+                                        ),
+                                      ),
+                                      // Your foreground content here
+                                      Padding(
+                                        padding: const EdgeInsets.all(12.0),
+                                        child: Column(
+                                          children: [
+                                            Image.asset(
+                                              "assets/images/one_50.png",
+                                              height: 30,
+                                            ),
+                                            // const SizedBox(height: 2),
+                                            Text(
+                                              "Redeem",
+                                              style: GoogleFonts.manrope(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w500,
+                                                color: Colors.black87,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
                                     ],
                                   ),
-                                ),
+                                ],
                               ),
-                              const SizedBox(height: 20),
-                              rewardsSummary.isNotEmpty &&
-                                      rewardsSummary.length > 2
-                                  ? TopLeaderBoard(
-                                      rewardsSummary: rewardsSummary,
-                                    )
-                                  : Container(),
-                              SizedBox(height: 20.h),
-                              Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 16.w),
-                                child: ReferralWidget(),
-                              ),
-                              SizedBox(height: 20.h),
-                            ],
+                            ),
                           ),
                         ),
+                        SizedBox(height: 20),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          child: Container(
+                            padding: EdgeInsets.symmetric(horizontal: 15),
+                            decoration: BoxDecoration(
+                              color: Colors.white54,
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: Column(
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      "Growth Missions",
+                                      style: GoogleFonts.baloo2(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 70,
+                                      child: Stack(
+                                        children: [
+                                          GestureDetector(
+                                            onTap: () => Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (_) => BottomNavBar(
+                                                  index: 1,
+                                                  missionIndex: 1,
+                                                ),
+                                              ),
+                                            ),
+                                            child: Container(
+                                              margin: EdgeInsets.only(top: 20),
+                                              padding: EdgeInsets.symmetric(
+                                                horizontal: 12,
+                                                vertical: 9,
+                                              ),
+                                              decoration: BoxDecoration(
+                                                color: Color(0xFFF6E4E6),
+                                                border: Border.all(
+                                                  color: Color(0xFFE9E9E9),
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(28),
+                                              ),
+                                              child: Text(
+                                                "See more",
+                                                style: GoogleFonts.manrope(
+                                                  fontWeight: FontWeight.w600,
+                                                  color: Color(0xFF020617),
+                                                  fontSize: 14,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          // Positioned(
+                                          //   top: 15,
+                                          //   right: 0,
+                                          //
+                                          //   child: CircleAvatar(
+                                          //     radius: 10,
+                                          //     backgroundColor: Color(
+                                          //       0xFFB60000,
+                                          //     ),
+                                          //     child: Text(
+                                          //       missions.skip(3).toList().length.toString(),
+                                          //       style: GoogleFonts.baloo2(
+                                          //         fontSize: 14,
+                                          //         fontWeight:
+                                          //             FontWeight.w700,
+                                          //         color: Colors.white,
+                                          //       ),
+                                          //     ),
+                                          //   ),
+                                          // ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 16),
+
+                                // Missions list
+                                ...missions.map((mission) {
+                                  return MissionListTitle(mission: mission);
+                                }).toList(),
+                              ],
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        rewardsSummary.isNotEmpty && rewardsSummary.length > 2
+                            ? TopLeaderBoard(rewardsSummary: rewardsSummary)
+                            : Container(),
+                        SizedBox(height: 20.h),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 16.w),
+                          child: ReferralWidget(),
+                        ),
+                        SizedBox(height: 20.h),
                       ],
                     ),
-                    // Positioned(
-                    //   left: 20,
-                    //   right: 0,
-                    //   bottom:
-                    //       0, // same base as the button so glow sits behind it
-                    //   child: Center(
-                    //     child: SizedBox(
-                    //       width: 100,
-                    //       height: 60,
-                    //       child: Stack(
-                    //         alignment: Alignment.center,
-                    //         children: [
-                    //           // Purple soft central glow
-                    //           Container(
-                    //             width: 100,
-                    //             height: 40,
-                    //             decoration: BoxDecoration(
-                    //               color: Colors.transparent,
-                    //               borderRadius: BorderRadius.circular(60),
-                    //               boxShadow: [
-                    //                 BoxShadow(
-                    //                   color: const Color(
-                    //                     0xFF7367F0,
-                    //                   ).withOpacity(0.5),
-                    //                   blurRadius: 20,
-                    //                   spreadRadius: 6,
-                    //                 ),
-                    //               ],
-                    //             ),
-                    //           ),
-                    //
-                    //           // Red/pink subtle offset glow (left side)
-                    //           Positioned(
-                    //             left: 0,
-                    //             right: 20,
-                    //             child: Container(
-                    //               width: 120,
-                    //               height: 60,
-                    //               decoration: BoxDecoration(
-                    //                 color: Colors.transparent,
-                    //                 borderRadius: BorderRadius.circular(60),
-                    //                 boxShadow: [
-                    //                   BoxShadow(
-                    //                     color: const Color(
-                    //                       0xFFFF8A80,
-                    //                     ).withOpacity(0.5),
-                    //                     blurRadius: 60,
-                    //                     spreadRadius: 10,
-                    //                   ),
-                    //                 ],
-                    //               ),
-                    //             ),
-                    //           ),
-                    //         ],
-                    //       ),
-                    //     ),
-                    //   ),
-                    // ),
-                    //
-                    // // The floating Focus button (on top of the glow)
-                    // Positioned(
-                    //   left: 0,
-                    //   right: 0,
-                    //   bottom: 10,
-                    //   child: GestureDetector(
-                    //     onTap: () {
-                    //       Navigator.push(
-                    //         context,
-                    //         MaterialPageRoute(
-                    //           builder: (ctx) => FocusTimerPage(),
-                    //         ),
-                    //       );
-                    //     },
-                    //     child: Center(
-                    //       child: Container(
-                    //         width: 104,
-                    //         height: 41,
-                    //         padding: const EdgeInsets.symmetric(
-                    //           horizontal: 12,
-                    //           vertical: 12,
-                    //         ),
-                    //         decoration: BoxDecoration(
-                    //           color: Colors.white,
-                    //           borderRadius: BorderRadius.circular(16),
-                    //           boxShadow: [
-                    //             BoxShadow(
-                    //               color: Colors.black.withOpacity(0.12),
-                    //               blurRadius: 10,
-                    //               offset: const Offset(0, 4),
-                    //             ),
-                    //           ],
-                    //         ),
-                    //         child: Row(
-                    //           mainAxisSize: MainAxisSize.min,
-                    //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    //           children: [
-                    //             Text(
-                    //               "Focus",
-                    //               style: GoogleFonts.manrope(
-                    //                 fontSize: 14,
-                    //                 fontWeight: FontWeight.w500,
-                    //                 color: Color(0xFF191919),
-                    //               ),
-                    //             ),
-                    //             SizedBox(width: 8),
-                    //             // Icon(Icons.graphic_eq, size: 18),
-                    //             Icon(Icons.graphic_eq, size: 18),
-                    //           ],
-                    //         ),
-                    //       ),
-                    //     ),
-                    //   ),
-                    // ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-      ),
-    );
-  }
-
-  Padding _buildMissionListTile(Mission mission, BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: MissionTile(
-        mission: mission,
-        onClaim: () async {
-          if (mission.completed == false) {
-            if (mission.subject!.toLowerCase() == "watch") {
-              final Uri _url = Uri.parse(
-                'https://www.youtube.com/watch?v=s7NG1PZaRCE',
-              );
-              if (!await launchUrl(
-                _url,
-                mode: LaunchMode.externalApplication,
-              )) {
-                throw Exception('Could not launch $_url');
-              }
-              // Mark mission completed for current user
-              missionCubit.updateReward({
-                "id": mission.id,
-                "name": mission.subject,
-                "reward_title": mission.title,
-                "points": mission.points,
-              });
-
-              setState(() {
-                mission.completed = true;
-                mission.progress = 100;
-              });
-            } else if (mission.subject!.toLowerCase() == "rate us") {
-              final success = await requestAppRating();
-
-              if (success) {
-                // Update mission as completed in Supabase
-                missionCubit.updateReward({
-                  "id": mission.id,
-                  "name": mission.subject,
-                  "reward_title": mission.title,
-                  "points": "0",
-                  "number_of_spins": 1,
-                });
-                setState(() {
-                  mission.completed = true;
-                });
-                showMessage(
-                  "Thank you for rating our app! 🎉",
-                  context,
-                  color: Colors.green,
-                  styleColor: Colors.white,
-                );
-              } else {
-                showMessage(
-                  "Could not open review dialog. Please rate us manually from the store.",
-                  context,
-                  color: Colors.orange,
-                  styleColor: Colors.black,
-                );
-              }
-            } else if (mission.subject!.toLowerCase() == "invite") {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => InviteAndEarnPage()),
-              );
-            }
-          }
-        },
+              // Positioned(
+              //   left: 20,
+              //   right: 0,
+              //   bottom:
+              //       0, // same base as the button so glow sits behind it
+              //   child: Center(
+              //     child: SizedBox(
+              //       width: 100,
+              //       height: 60,
+              //       child: Stack(
+              //         alignment: Alignment.center,
+              //         children: [
+              //           // Purple soft central glow
+              //           Container(
+              //             width: 100,
+              //             height: 40,
+              //             decoration: BoxDecoration(
+              //               color: Colors.transparent,
+              //               borderRadius: BorderRadius.circular(60),
+              //               boxShadow: [
+              //                 BoxShadow(
+              //                   color: const Color(
+              //                     0xFF7367F0,
+              //                   ).withOpacity(0.5),
+              //                   blurRadius: 20,
+              //                   spreadRadius: 6,
+              //                 ),
+              //               ],
+              //             ),
+              //           ),
+              //
+              //           // Red/pink subtle offset glow (left side)
+              //           Positioned(
+              //             left: 0,
+              //             right: 20,
+              //             child: Container(
+              //               width: 120,
+              //               height: 60,
+              //               decoration: BoxDecoration(
+              //                 color: Colors.transparent,
+              //                 borderRadius: BorderRadius.circular(60),
+              //                 boxShadow: [
+              //                   BoxShadow(
+              //                     color: const Color(
+              //                       0xFFFF8A80,
+              //                     ).withOpacity(0.5),
+              //                     blurRadius: 60,
+              //                     spreadRadius: 10,
+              //                   ),
+              //                 ],
+              //               ),
+              //             ),
+              //           ),
+              //         ],
+              //       ),
+              //     ),
+              //   ),
+              // ),
+              //
+              // // The floating Focus button (on top of the glow)
+              // Positioned(
+              //   left: 0,
+              //   right: 0,
+              //   bottom: 10,
+              //   child: GestureDetector(
+              //     onTap: () {
+              //       Navigator.push(
+              //         context,
+              //         MaterialPageRoute(
+              //           builder: (ctx) => FocusTimerPage(),
+              //         ),
+              //       );
+              //     },
+              //     child: Center(
+              //       child: Container(
+              //         width: 104,
+              //         height: 41,
+              //         padding: const EdgeInsets.symmetric(
+              //           horizontal: 12,
+              //           vertical: 12,
+              //         ),
+              //         decoration: BoxDecoration(
+              //           color: Colors.white,
+              //           borderRadius: BorderRadius.circular(16),
+              //           boxShadow: [
+              //             BoxShadow(
+              //               color: Colors.black.withOpacity(0.12),
+              //               blurRadius: 10,
+              //               offset: const Offset(0, 4),
+              //             ),
+              //           ],
+              //         ),
+              //         child: Row(
+              //           mainAxisSize: MainAxisSize.min,
+              //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //           children: [
+              //             Text(
+              //               "Focus",
+              //               style: GoogleFonts.manrope(
+              //                 fontSize: 14,
+              //                 fontWeight: FontWeight.w500,
+              //                 color: Color(0xFF191919),
+              //               ),
+              //             ),
+              //             SizedBox(width: 8),
+              //             // Icon(Icons.graphic_eq, size: 18),
+              //             Icon(Icons.graphic_eq, size: 18),
+              //           ],
+              //         ),
+              //       ),
+              //     ),
+              //   ),
+              // ),
+            ],
+          ),
+        ),
       ),
     );
   }

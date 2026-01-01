@@ -7,14 +7,30 @@ import '../core/constants/app_colors.dart';
 Future<void> requestNotificationPermission(BuildContext context) async {
   final status = await Permission.notification.status;
 
+  // Already allowed, nothing to do
   if (status.isGranted) return;
 
+  // iOS first-time request
   if (status.isDenied) {
     _showRequestDialog(context);
+    return;
   }
 
-  if (status.isPermanentlyDenied) {
+  // User has permanently denied
+  if (status.isPermanentlyDenied || status.isRestricted) {
     _showSettingsDialog(context);
+  }
+}
+
+Future<void> requestIOSNotificationPermission() async {
+  final status = await Permission.notification.request();
+
+  if (status.isGranted) {
+    debugPrint("✅ Notifications granted");
+  } else if (status.isDenied) {
+    debugPrint("❌ Notifications denied");
+  } else if (status.isPermanentlyDenied) {
+    openAppSettings();
   }
 }
 
@@ -57,7 +73,7 @@ void _showRequestDialog(BuildContext context) {
           style: ElevatedButton.styleFrom(backgroundColor: AppColors.white),
           onPressed: () async {
             Navigator.of(dialogContext).pop();
-            await Permission.notification.request();
+            await requestIOSNotificationPermission();
           },
           child: RichText(
             text: TextSpan(

@@ -9,7 +9,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../session/session_manager.dart';
-import '../../utility/permission_handler.dart';
 import '../onboarding2/widget/reward.dart';
 import 'home/presentation/widget/show_welcome_message.dart';
 import 'profile/presentation/bloc/profile_bloc.dart';
@@ -29,10 +28,10 @@ class _BottomNavBarState extends State<BottomNavBar> {
   int currentI = 0;
   @override
   void initState() {
-    currentIndex = widget.index;
     // currentI=widget.i;
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      currentIndex = widget.index;
       SessionManager().firstWelcomeUserVal == "YES"
           ? Future.delayed(
               Duration(milliseconds: 500),
@@ -44,7 +43,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
                 pageBuilder: (_, _, _) => ShowWelcomeMessage(),
               ),
             )
-          : requestNotificationPermission(context);
+          : null;
 
       SessionManager().isNewUserVal == "YES"
           ? showDialog(

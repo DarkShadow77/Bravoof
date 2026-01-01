@@ -81,7 +81,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(const Duration(seconds: 3), () {
+    Future.delayed(const Duration(seconds: 1, milliseconds: 500), () {
       FlutterNativeSplash.remove();
     });
     initDeepLinks();

@@ -1,14 +1,17 @@
 import 'dart:async';
+
+import 'package:flowva/app/view/widgets/button/icon_text_button.dart';
+import 'package:flowva/core/constants/app_colors.dart';
 import 'package:flowva/features/common/flowva_button.dart';
 import 'package:flowva/features/common/model/campaign_response.dart';
 import 'package:flowva/features/dashboard/earn/presentation/pages/invite_earn.dart';
 import 'package:flowva/features/dashboard/earn/presentation/pages/jackpot_page.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class RedeemOverviewPage extends StatefulWidget {
-   RedeemOverviewPage({this.campaign,super.key});
+  RedeemOverviewPage({this.campaign, super.key});
   Campaign? campaign;
   @override
   State<RedeemOverviewPage> createState() => _RedeemOverviewPageState();
@@ -24,12 +27,11 @@ class _RedeemOverviewPageState extends State<RedeemOverviewPage>
   Duration? _remainingTime;
   bool _isExpired = false;
 
-
   @override
   void initState() {
     super.initState();
-    _remainingTime=Duration(
-      days:widget.campaign!.campaignEndDate!.day,
+    _remainingTime = Duration(
+      days: widget.campaign!.campaignEndDate!.day,
       hours: widget.campaign!.campaignEndDate!.hour,
       minutes: widget.campaign!.campaignEndDate!.minute,
       seconds: widget.campaign!.campaignEndDate!.second,
@@ -79,7 +81,6 @@ class _RedeemOverviewPageState extends State<RedeemOverviewPage>
     final minutes = _remainingTime!.inMinutes.remainder(60);
     final seconds = _remainingTime!.inSeconds.remainder(60);
 
-
     return SingleChildScrollView(
       child: Column(
         // shrinkWrap: true,
@@ -92,10 +93,7 @@ class _RedeemOverviewPageState extends State<RedeemOverviewPage>
             padding: EdgeInsets.symmetric(horizontal: 16),
             child: Container(
               width: double.infinity,
-              padding: const EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 12,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
                 color: Colors.white.withOpacity(0.5),
                 borderRadius: BorderRadius.circular(24),
@@ -139,9 +137,7 @@ class _RedeemOverviewPageState extends State<RedeemOverviewPage>
                         backgroundColor: Colors.white,
                         child: CircleAvatar(
                           radius: 30,
-                          backgroundColor: Color(
-                            0xFFFF8687,
-                          ).withOpacity(0.19),
+                          backgroundColor: Color(0xFFFF8687).withOpacity(0.19),
                           child: Image.asset(
                             "assets/images/ear_pod.png",
                             fit: BoxFit.cover,
@@ -230,13 +226,12 @@ class _RedeemOverviewPageState extends State<RedeemOverviewPage>
                             child: FlowvaButton.noneOutlineBlackButton(
                               name: "Refer your friends",
                               fontSize: 16,
-                              apply: () =>
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (ctx) => InviteAndEarnPage(),
-                                    ),
-                                  ),
+                              apply: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (ctx) => InviteAndEarnPage(),
+                                ),
+                              ),
                             ),
                           ),
                         ),
@@ -307,7 +302,6 @@ class _RedeemOverviewPageState extends State<RedeemOverviewPage>
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Column(
-
                 children: [
                   Container(
                     alignment: Alignment.bottomRight,
@@ -328,11 +322,13 @@ class _RedeemOverviewPageState extends State<RedeemOverviewPage>
                       ),
                     ),
                   ),
-                  _currentPage == 0 ? Container(
-                    height: 2,
-                    width: 165,
-                    color: Color(0xFF9013FE),
-                  ) : Container()
+                  _currentPage == 0
+                      ? Container(
+                          height: 2,
+                          width: 165,
+                          color: Color(0xFF9013FE),
+                        )
+                      : Container(),
                 ],
               ),
               Column(
@@ -355,11 +351,13 @@ class _RedeemOverviewPageState extends State<RedeemOverviewPage>
                       ),
                     ),
                   ),
-                  _currentPage == 1 ? Container(
-                    height: 2,
-                    width: 165,
-                    color: Color(0xFF9013FE),
-                  ) : Container()
+                  _currentPage == 1
+                      ? Container(
+                          height: 2,
+                          width: 165,
+                          color: Color(0xFF9013FE),
+                        )
+                      : Container(),
                 ],
               ),
             ],
@@ -369,115 +367,110 @@ class _RedeemOverviewPageState extends State<RedeemOverviewPage>
 
           // 💰 Jackpot Cards
           AnimatedContainer(
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeInOut,
-              height: _pageHeight,
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              child: PageView(
-                controller: _pageController,
-                // physics: ClampingScrollPhysics(),
-                onPageChanged: (index) {
-                  print(index);
-                  setState(() {
-                    _currentPage = index;
-                    // 👇 set different heights for different pages
-                    _pageHeight = index == 0 ? 300 : MediaQuery
-                        .of(context)
-                        .size
-                        .height * 0.85;
-                  });
-                },
-                children: [
-                  // First tab placeholder
-                  _rewardCard(
-                    icon: Icons.savings,
-                    title: 'Bravoo Jackpot 🏆',
-                    subtitle: SizedBox(
-                      width: 255,
-                      child: RichText(
-                        // textAlign: TextAlign.center,
-                        text: TextSpan(
-                          children: [
-                            TextSpan(
-                              text: 'Your chance to win',
-                              style: GoogleFonts.manrope(
-                                fontSize: 11,
-                                fontWeight: FontWeight.w800,
-                                color: Color(0xFF2B2B2B),
-                              ),
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+            height: _pageHeight,
+            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            child: PageView(
+              controller: _pageController,
+              // physics: ClampingScrollPhysics(),
+              onPageChanged: (index) {
+                print(index);
+                setState(() {
+                  _currentPage = index;
+                  // 👇 set different heights for different pages
+                  _pageHeight = index == 0
+                      ? 300
+                      : MediaQuery.of(context).size.height * 0.5;
+                });
+              },
+              children: [
+                // First tab placeholder
+                _rewardCard(
+                  icon: Icons.savings,
+                  title: 'Bravoo Jackpot 🏆',
+                  subtitle: SizedBox(
+                    width: 255,
+                    child: RichText(
+                      // textAlign: TextAlign.center,
+                      text: TextSpan(
+                        children: [
+                          TextSpan(
+                            text: 'Your chance to win',
+                            style: GoogleFonts.manrope(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w800,
+                              color: Color(0xFF2B2B2B),
                             ),
-                            TextSpan(
-                              text: ' 20,000 coins',
-                              style: GoogleFonts.manrope(
-                                fontSize: 11,
-                                fontWeight: FontWeight.w800,
-                                color: Color(0xFF9013FE),
-                              ),
+                          ),
+                          TextSpan(
+                            text: ' 20,000 coins',
+                            style: GoogleFonts.manrope(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w800,
+                              color: Color(0xFF9013FE),
                             ),
-                            TextSpan(
-                              text:
-                              '  is here. Invite your friends and let the adventure begin!',
-                              style: GoogleFonts.manrope(
-                                fontSize: 11,
-                                fontWeight: FontWeight.w800,
-                                color: Color(0xFF2B2B2B),
-                              ),
+                          ),
+                          TextSpan(
+                            text:
+                                '  is here. Invite your friends and let the adventure begin!',
+                            style: GoogleFonts.manrope(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w800,
+                              color: Color(0xFF2B2B2B),
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
-                    cost: '100 Coins',
-                    tag: 'Hot',
-                    tagColor: Color(0xFFFE5613),
-                    buttonText: 'Enter Jackpot',
-                    active: false,
                   ),
+                  cost: '100 Coins',
+                  tag: 'Hot',
+                  tagColor: Color(0xFFFE5613),
+                  buttonText: 'Enter Jackpot',
+                  active: false,
+                ),
 
-                  // Second tab: Gifts & Virtual Cards
-                  GridView.count(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 14,
-                    mainAxisSpacing: 14,
-                    childAspectRatio: 0.70,
-                    padding: EdgeInsets.symmetric(horizontal: 16),
-                    physics: NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    children: [
-
-                      buildRewardCard(
-                        title: "Paypal",
-                        imagePath: "assets/images/slant_visa.png",
-                        coins: "20,000 Coins",
-                        isActive: true,
-                      ),
-                      buildRewardCard(
-                        title: "Airtime",
-                        imagePath: "assets/images/dollar.png",
-                        coins: "10,000 Coins",
-                        isActive: false,
-                      ),
-                      buildRewardCard(
-                        title: "Data",
-                        imagePath: "assets/images/slant_visa.png",
-                        coins: "5,000 Coins",
-                        isActive: true,
-                        isHot: true,
-                      ),
-                      buildRewardCard(
-                        title: "Giftcard",
-                        imagePath: "assets/images/giftCard.png",
-                        coins: "5,000 Coins",
-                        isActive: true,
-                        isHot: true,
-                      ),
-
-                    ],
-                  ),
-                ],
-              )
+                // Second tab: Gifts & Virtual Cards
+                GridView.count(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 16.w,
+                  mainAxisSpacing: 16.h,
+                  physics: NeverScrollableScrollPhysics(),
+                  shrinkWrap: true,
+                  children: [
+                    buildRewardCard(
+                      title: "Paypal",
+                      imagePath: "assets/images/slant_visa.png",
+                      coins: "20,000 Coins",
+                      isActive: true,
+                    ),
+                    buildRewardCard(
+                      title: "Airtime",
+                      imagePath: "assets/images/dollar.png",
+                      coins: "10,000 Coins",
+                      isActive: false,
+                    ),
+                    buildRewardCard(
+                      title: "Data",
+                      imagePath: "assets/images/slant_visa.png",
+                      coins: "5,000 Coins",
+                      isActive: true,
+                      isHot: true,
+                    ),
+                    buildRewardCard(
+                      title: "Giftcard",
+                      imagePath: "assets/images/giftCard.png",
+                      coins: "5,000 Coins",
+                      isActive: true,
+                      isHot: true,
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
-          SizedBox(height: 10,)
+          SizedBox(height: 10),
         ],
       ),
     );
@@ -493,7 +486,7 @@ class _RedeemOverviewPageState extends State<RedeemOverviewPage>
     return Container(
       decoration: BoxDecoration(
         color: Color(0xFFF8F7FF).withOpacity(0.7),
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(16.r),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
@@ -502,7 +495,7 @@ class _RedeemOverviewPageState extends State<RedeemOverviewPage>
           ),
         ],
       ),
-      padding: const EdgeInsets.symmetric(vertical: 12),
+      padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 10.w),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -535,7 +528,6 @@ class _RedeemOverviewPageState extends State<RedeemOverviewPage>
                 ),
             ],
           ),
-          const SizedBox(height: 4),
           Text(
             title,
             style: GoogleFonts.manrope(
@@ -544,7 +536,6 @@ class _RedeemOverviewPageState extends State<RedeemOverviewPage>
               color: Colors.black,
             ),
           ),
-          const SizedBox(height: 10),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
             decoration: BoxDecoration(
@@ -573,18 +564,16 @@ class _RedeemOverviewPageState extends State<RedeemOverviewPage>
               ],
             ),
           ),
-          const SizedBox(height: 10),
           // Claim Button
-          ClipRRect(
-            borderRadius: BorderRadius.circular(50),
-            child: FlowvaButton.shortBlackButtonNoOutline(
-                name: "Claim now",
-                buttonColor: isActive ? Colors.black : Colors.grey,
-                isActive:isActive
-            ),
+          IconTextButton(
+            onPressed: () {},
+            height: 30,
+            color: isActive ? AppColors.black : AppColors.grey400,
+            textSize: 10,
+            textColor: AppColors.white,
+            text: "Claim now",
           ),
-          Divider(color: Color(0xFF767676), thickness: 0.1),
-
+          Divider(color: AppColors.grey200, height: 1.h),
         ],
       ),
     );
@@ -618,7 +607,6 @@ class _RedeemOverviewPageState extends State<RedeemOverviewPage>
       ),
       child: SingleChildScrollView(
         child: Column(
-
           // mainAxisSize: MainAxisSize.min,
           children: [
             Row(
@@ -669,28 +657,27 @@ class _RedeemOverviewPageState extends State<RedeemOverviewPage>
             subtitle,
             active
                 ? FlowvaButton.jackpotButton(
-              name: "Play the Jackot",
-              color: Colors.white,
-              apply: () =>
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (ctx) => JackpotScreen()),
-                  ),
-            )
-                : ClipRRect(
-              borderRadius: BorderRadius.circular(100),
-              child: FlowvaButton.noneOutlineBlackButton(
-                name: "Invite your friends",
-                apply: () =>
-                    Navigator.push(
+                    name: "Play the Jackot",
+                    color: Colors.white,
+                    apply: () => Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (ctx) => InviteAndEarnPage()),
+                      MaterialPageRoute(builder: (ctx) => JackpotScreen()),
                     ),
-              ),
-            ),
-
+                  )
+                : ClipRRect(
+                    borderRadius: BorderRadius.circular(100),
+                    child: FlowvaButton.noneOutlineBlackButton(
+                      name: "Invite your friends",
+                      apply: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (ctx) => InviteAndEarnPage(),
+                        ),
+                      ),
+                    ),
+                  ),
             Text(
-              "Invite 5+ friends every month to unluck the jackpot",
+              "Invite 10+ friends every month to unluck the jackpot",
               style: GoogleFonts.manrope(
                 fontSize: 12,
                 fontWeight: FontWeight.w700,

@@ -15,10 +15,9 @@ import '../../../home/presentation/widget/referral_widget.dart';
 import '../bloc/profile_bloc.dart';
 
 class ProfilePage extends StatefulWidget {
-  ProfilePage({super.key, this.avatarIndex});
+  ProfilePage({super.key});
 
   static const String routeName = "/profilePage";
-  int? avatarIndex;
 
   @override
   State<ProfilePage> createState() => _ProfilePageState();

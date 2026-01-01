@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../dashboard/earn/presentation/pages/jackpot_page.dart';
+
 class FlowvaAppBar extends StatefulWidget {
   final String title;
   FlowvaAppBar({this.title = '', Function? apply, super.key});
@@ -32,23 +34,31 @@ class _FlowvaAppBarState extends State<FlowvaAppBar> {
             spacing: 8.w,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Row(
-                spacing: 4.w,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Image.asset(
-                    AssetsPngImages.jackpot,
-                    height: 18.h,
-                    width: 18.w,
-                    fit: BoxFit.contain,
-                  ),
-                  RichText(
-                    text: TextSpan(
-                      text: "x${SessionManager().jackpotVal.toString()}",
-                      style: TextStyles.normalSemibold14(context),
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => JackpotScreen()),
+                  );
+                },
+                child: Row(
+                  spacing: 4.w,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Image.asset(
+                      AssetsPngImages.jackpot,
+                      height: 18.h,
+                      width: 18.w,
+                      fit: BoxFit.contain,
                     ),
-                  ),
-                ],
+                    RichText(
+                      text: TextSpan(
+                        text: "x${SessionManager().jackpotVal.toString()}",
+                        style: TextStyles.normalSemibold14(context),
+                      ),
+                    ),
+                  ],
+                ),
               ),
               Row(
                 spacing: 4.w,
