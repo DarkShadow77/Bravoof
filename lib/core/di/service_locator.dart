@@ -14,6 +14,8 @@ import '../../features/mission/data/repository/community_mission_repository.dart
 import '../../features/mission/data/repository/community_mission_repository_impl.dart';
 import '../../features/mission/data/repository/featured_mission_repository.dart';
 import '../../features/mission/data/repository/featured_mission_repository_impl.dart';
+import '../../features/mission/data/repository/growth_mission_repository.dart';
+import '../../features/mission/data/repository/growth_mission_repository_impl.dart';
 import '../../features/mission/data/repository/skill_up_repository.dart';
 import '../../features/mission/data/repository/skill_up_repository_impl.dart';
 import '../../features/mission/data/repository/social_mission_repository.dart';
@@ -24,6 +26,7 @@ import '../../features/mission/data/repository/streak_repository.dart';
 import '../../features/mission/data/repository/streak_repository_impl.dart';
 import '../../features/mission/presentation/bloc/community_mission_bloc.dart';
 import '../../features/mission/presentation/bloc/featured_mission_bloc.dart';
+import '../../features/mission/presentation/bloc/growth_mission_bloc.dart';
 import '../../features/mission/presentation/bloc/skill_up_bloc.dart';
 import '../../features/mission/presentation/bloc/social_mission_bloc.dart';
 import '../../features/mission/presentation/bloc/sponsored_mission_bloc.dart';
@@ -48,6 +51,9 @@ Future<void> initDI() async {
   );
   sl.registerLazySingleton<SponsoredMissionRepository>(
     () => SponsoredMissionRepositoryImpl(),
+  );
+  sl.registerLazySingleton<GrowthMissionRepository>(
+    () => GrowthMissionRepositoryImpl(),
   );
   sl.registerLazySingleton<SkillUpRepository>(() => SkillUpRepositoryImpl());
   sl.registerLazySingleton<ProfileRepository>(() => ProfileRepositoryImpl());
@@ -75,6 +81,9 @@ Future<void> initDI() async {
   );
   sl.registerSingleton<SponsoredMissionBloc>(
     SponsoredMissionBloc(repo: sl<SponsoredMissionRepository>()),
+  );
+  sl.registerSingleton<GrowthMissionBloc>(
+    GrowthMissionBloc(repo: sl<GrowthMissionRepository>()),
   );
   sl.registerSingleton<SkillUpBloc>(SkillUpBloc(repo: sl<SkillUpRepository>()));
   sl.registerSingleton<ProfileBloc>(ProfileBloc(repo: sl<ProfileRepository>()));

@@ -23,6 +23,7 @@ import 'features/app.dart';
 import 'features/dashboard/profile/presentation/bloc/profile_bloc.dart';
 import 'features/mission/presentation/bloc/community_mission_bloc.dart';
 import 'features/mission/presentation/bloc/featured_mission_bloc.dart';
+import 'features/mission/presentation/bloc/growth_mission_bloc.dart';
 import 'features/mission/presentation/bloc/skill_up_bloc.dart';
 import 'features/mission/presentation/bloc/social_mission_bloc.dart';
 import 'features/mission/presentation/bloc/sponsored_mission_bloc.dart';
@@ -119,6 +120,7 @@ class _MyAppState extends State<MyApp> {
         BlocProvider(create: (_) => sl<SponsoredMissionBloc>()),
         BlocProvider(create: (_) => sl<SkillUpBloc>()),
         BlocProvider(create: (_) => sl<StreakBloc>()),
+        BlocProvider(create: (_) => sl<GrowthMissionBloc>()),
       ],
       child: ScreenUtilInit(
         designSize: const Size(375, 815),

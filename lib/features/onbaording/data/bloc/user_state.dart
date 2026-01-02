@@ -28,21 +28,6 @@ class UserLoading extends UserState {
   List<Object?> get props => [];
 }
 
-class UploadLoading extends UserState {
-  UploadLoading({required super.userProfile});
-
-  @override
-  // TODO: implement props
-  List<Object?> get props => [];
-}
-
-class Updating extends UserState {
-  Updating({required super.userProfile});
-
-  @override
-  List<Object?> get props => [];
-}
-
 class UserSuccess extends UserState {
   final AppBaseResponse appBaseResponse;
 
@@ -59,23 +44,6 @@ class ReferralCodeVerified extends UserState {
 
   @override
   List<Object?> get props => [];
-}
-
-class UserProfileSuccess extends UserState {
-  UserProfileSuccess({required super.userProfile});
-
-  @override
-  List<Object?> get props => [];
-}
-
-class UploadSuccess extends UserState {
-  final String imageUrl;
-
-  UploadSuccess(this.imageUrl, {required super.userProfile});
-
-  @override
-  // TODO: implement props
-  List<Object?> get props => [imageUrl];
 }
 
 class UserFailure extends UserState {

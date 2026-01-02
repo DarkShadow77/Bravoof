@@ -7,8 +7,12 @@ import 'package:flowva/features/common/model/campaign_response.dart';
 import 'package:flowva/features/dashboard/earn/presentation/pages/invite_earn.dart';
 import 'package:flowva/features/dashboard/earn/presentation/pages/jackpot_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+
+import '../../../../onbaording/data/model/user_profile.dart';
+import '../../../profile/presentation/bloc/profile_bloc.dart';
 
 class RedeemOverviewPage extends StatefulWidget {
   RedeemOverviewPage({this.campaign, super.key});
@@ -380,92 +384,102 @@ class _RedeemOverviewPageState extends State<RedeemOverviewPage>
                   _currentPage = index;
                   // 👇 set different heights for different pages
                   _pageHeight = index == 0
-                      ? 300
+                      ? 300.h
                       : MediaQuery.of(context).size.height * 0.5;
                 });
               },
               children: [
                 // First tab placeholder
-                _rewardCard(
-                  icon: Icons.savings,
-                  title: 'Bravoo Jackpot 🏆',
-                  subtitle: SizedBox(
-                    width: 255,
-                    child: RichText(
-                      // textAlign: TextAlign.center,
-                      text: TextSpan(
-                        children: [
-                          TextSpan(
-                            text: 'Your chance to win',
-                            style: GoogleFonts.manrope(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w800,
-                              color: Color(0xFF2B2B2B),
-                            ),
+                BlocBuilder<ProfileBloc, ProfileState>(
+                  builder: (context, state) {
+                    UserProfile profile = state.profile;
+                    return _rewardCard(
+                      icon: Icons.savings,
+                      title: 'Bravoo Jackpot 🏆',
+                      subtitle: SizedBox(
+                        width: 255,
+                        child: RichText(
+                          // textAlign: TextAlign.center,
+                          text: TextSpan(
+                            children: [
+                              TextSpan(
+                                text: 'Your chance to win',
+                                style: GoogleFonts.manrope(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w800,
+                                  color: Color(0xFF2B2B2B),
+                                ),
+                              ),
+                              TextSpan(
+                                text: ' 20,000 coins',
+                                style: GoogleFonts.manrope(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w800,
+                                  color: Color(0xFF9013FE),
+                                ),
+                              ),
+                              TextSpan(
+                                text:
+                                    '  is here. Invite your friends and let the adventure begin!',
+                                style: GoogleFonts.manrope(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w800,
+                                  color: Color(0xFF2B2B2B),
+                                ),
+                              ),
+                            ],
                           ),
-                          TextSpan(
-                            text: ' 20,000 coins',
-                            style: GoogleFonts.manrope(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w800,
-                              color: Color(0xFF9013FE),
-                            ),
-                          ),
-                          TextSpan(
-                            text:
-                                '  is here. Invite your friends and let the adventure begin!',
-                            style: GoogleFonts.manrope(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w800,
-                              color: Color(0xFF2B2B2B),
-                            ),
-                          ),
-                        ],
+                        ),
                       ),
-                    ),
-                  ),
-                  cost: '100 Coins',
-                  tag: 'Hot',
-                  tagColor: Color(0xFFFE5613),
-                  buttonText: 'Enter Jackpot',
-                  active: false,
+                      cost: '100 Coins',
+                      tag: 'Hot',
+                      tagColor: Color(0xFFFE5613),
+                      buttonText: 'Enter Jackpot',
+                      active: (profile.spins ?? 0) > 0,
+                    );
+                  },
                 ),
 
                 // Second tab: Gifts & Virtual Cards
-                GridView.count(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 16.w,
-                  mainAxisSpacing: 16.h,
-                  physics: NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  children: [
-                    buildRewardCard(
+                BlocBuilder<ProfileBloc, ProfileState>(
+                  builder: (context, state) {
+                    UserProfile profile = state.profile;
+                    return GridView.count(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 16.w,
+                      mainAxisSpacing: 16.h,
+                      physics: NeverScrollableScrollPhysics(),
+                      padding: EdgeInsets.zero,
+                      children: [
+                        /*buildRewardCard(
                       title: "Paypal",
                       imagePath: "assets/images/slant_visa.png",
                       coins: "20,000 Coins",
                       isActive: true,
-                    ),
-                    buildRewardCard(
-                      title: "Airtime",
-                      imagePath: "assets/images/dollar.png",
-                      coins: "10,000 Coins",
-                      isActive: false,
-                    ),
-                    buildRewardCard(
-                      title: "Data",
-                      imagePath: "assets/images/slant_visa.png",
-                      coins: "5,000 Coins",
-                      isActive: true,
-                      isHot: true,
-                    ),
-                    buildRewardCard(
-                      title: "Giftcard",
-                      imagePath: "assets/images/giftCard.png",
-                      coins: "5,000 Coins",
-                      isActive: true,
-                      isHot: true,
-                    ),
-                  ],
+                    ),*/
+                        buildRewardCard(
+                          title: "Airtime",
+                          imagePath: "assets/images/dollar.png",
+                          coins: "10,000 Coins",
+                          isActive: (profile.totalPoints ?? 0) >= 10000,
+                        ),
+                        buildRewardCard(
+                          title: "Data",
+                          imagePath: "assets/images/slant_visa.png",
+                          coins: "5,000 Coins",
+                          isActive: (profile.totalPoints ?? 0) >= 10000,
+                          isHot: true,
+                        ),
+                        buildRewardCard(
+                          title: "Giftcard",
+                          imagePath: "assets/images/giftCard.png",
+                          coins: "5,000 Coins",
+                          isActive: (profile.totalPoints ?? 0) >= 10000,
+                          isHot: true,
+                        ),
+                      ],
+                    );
+                  },
                 ),
               ],
             ),
@@ -554,7 +568,7 @@ class _RedeemOverviewPageState extends State<RedeemOverviewPage>
                 Image.asset("assets/images/one_50.png", height: 12),
                 const SizedBox(width: 6),
                 Text(
-                  ' 10,000 coins',
+                  '${coins}',
                   style: GoogleFonts.manrope(
                     fontWeight: FontWeight.w700,
                     fontSize: 11,

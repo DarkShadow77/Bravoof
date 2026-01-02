@@ -2,7 +2,10 @@ import 'package:flowva/app/view/widgets/cached_image_widget.dart';
 import 'package:flowva/features/common/flowva_button.dart';
 import 'package:flowva/features/dashboard/earn/data/models/mission_res.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+
+import '../../../../../core/constants/app_colors.dart';
 
 class MissionTile extends StatelessWidget {
   final Mission mission;
@@ -30,7 +33,12 @@ class MissionTile extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          mission.icon,
+          CachedImageSize(
+            imageUrl: mission.icon ?? "",
+            width: 28.w,
+            height: 28.h,
+            color: AppColors.grey200,
+          ),
           const SizedBox(width: 5),
           Expanded(
             child: Column(

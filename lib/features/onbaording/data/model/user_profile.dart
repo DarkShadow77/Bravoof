@@ -51,6 +51,35 @@ class UserProfile {
     this.goals,
   });
 
+  factory UserProfile.empty() {
+    return UserProfile(
+      id: '',
+      userId: '',
+      name: '',
+      bio: '',
+      pass: '',
+      fullName: '',
+      email: '',
+      isLogin: false,
+      referralCode: '',
+      referrerEmail: '',
+      referrerName: '',
+      profilePic: '',
+      totalPoints: 0,
+      missionsCompleted: 0,
+      basePoints: 0,
+      referralCount: 0,
+      spins: 0,
+      currentStreak: 0,
+      isBanned: false,
+      isAuthenticated: false,
+      createdAt: DateTime.fromMillisecondsSinceEpoch(0),
+      stack: const [],
+      interest: '',
+      goals: const [],
+    );
+  }
+
   UserProfile copyWith({
     String? id,
     String? userId,

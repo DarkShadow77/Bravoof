@@ -117,7 +117,6 @@ class _StreakCardState extends State<StreakCard> with UIToolMixin {
   _successState(BuildContext context, StreakSuccessState state) {
     if (state.type == StreakType.checkIn) {
       Navigator.pop(context);
-      context.read<ProfileBloc>().add(GetProfileEvent());
       showModalBottomSheet(
         context: context,
         isScrollControlled: true,
@@ -132,6 +131,7 @@ class _StreakCardState extends State<StreakCard> with UIToolMixin {
           b_text1: "Done",
         ),
       );
+      context.read<ProfileBloc>().add(GetProfileEvent());
     }
   }
 

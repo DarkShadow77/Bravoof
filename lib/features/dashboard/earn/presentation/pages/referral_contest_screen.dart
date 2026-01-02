@@ -22,10 +22,9 @@ import '../../../../../app/view/widgets/cached_image_widget.dart';
 import '../../../../../core/constants/app_assets.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/fonts.dart';
-import '../../../../common/routes.dart';
-import '../../../../onbaording/data/bloc/user_cubit.dart';
 import '../../../../onbaording/data/model/user_profile.dart';
 import '../../../home/data/bloc/campaign_cubit.dart';
+import '../../../profile/presentation/bloc/profile_bloc.dart';
 import '../widgets/price_details_dialog.dart';
 import 'invite_earn.dart';
 
@@ -464,14 +463,17 @@ class _ReferralContainerState extends State<ReferralContainer> {
   List<UserProfile> referredUsers = [];
 
   UserProfile userProfile = UserProfile();
-  late UserCubit userCubit;
+
+  List<UserProfile> referrals = [];
+  late ProfileBloc profileBloc;
 
   @override
   void initState() {
     super.initState();
 
-    userCubit = UserCubit();
-    userCubit.fetchUserProfile();
+    profileBloc = context.read<ProfileBloc>();
+    profileBloc.add(GetProfileEvent());
+    userProfile = profileBloc.state.profile;
   }
 
   String referralMessage(String code) {
@@ -537,12 +539,10 @@ class _ReferralContainerState extends State<ReferralContainer> {
 
         return MultiBlocProvider(
           providers: [
-            BlocProvider.value(value: FlowvaRoute.userCubit),
-            BlocListener<UserCubit, UserState>(
-              bloc: userCubit,
+            BlocListener<ProfileBloc, ProfileState>(
               listener: (context, state) {
                 setState(() {
-                  userProfile = state.userProfile;
+                  userProfile = state.profile;
                 });
               },
             ),

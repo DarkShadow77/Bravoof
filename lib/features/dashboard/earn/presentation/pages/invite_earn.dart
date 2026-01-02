@@ -2,7 +2,6 @@ import 'package:flowva/app/styles/text_styles.dart';
 import 'package:flowva/core/constants/app_colors.dart';
 import 'package:flowva/features/common/flowva_button.dart';
 import 'package:flowva/features/dashboard/earn/presentation/pages/referral_history_page.dart';
-import 'package:flowva/features/onbaording/data/bloc/user_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -44,18 +43,14 @@ class _InviteAndEarnPageState extends State<InviteAndEarnPage> {
   UserProfile userProfile = UserProfile();
 
   List<UserProfile> referrals = [];
-
-  late UserCubit userCubit;
   late ProfileBloc profileBloc;
 
   @override
   void initState() {
     super.initState();
-    userCubit = UserCubit();
-    userCubit.fetchUserProfile();
     profileBloc = context.read<ProfileBloc>();
-    userProfile = profileBloc.state.profile;
     profileBloc.add(GetProfileEvent());
+    userProfile = profileBloc.state.profile;
     BlocProvider.of<HomeCubit>(context).getUserReferrals();
   }
 
@@ -66,14 +61,6 @@ class _InviteAndEarnPageState extends State<InviteAndEarnPage> {
       body: MultiBlocProvider(
         providers: [
           BlocProvider.value(value: FlowvaRoute.userCubit),
-          BlocListener<UserCubit, UserState>(
-            bloc: userCubit,
-            listener: (context, state) {
-              setState(() {
-                userProfile = state.userProfile;
-              });
-            },
-          ),
           BlocListener<HomeCubit, HomeState>(
             listener: (context, state) {
               setState(() {

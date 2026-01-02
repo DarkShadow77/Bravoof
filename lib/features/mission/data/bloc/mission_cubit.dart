@@ -1,6 +1,4 @@
 import 'package:bloc/bloc.dart';
-import 'package:flowva/features/common/model/app_base_response.dart';
-import 'package:flowva/features/dashboard/earn/data/models/mission_res.dart';
 import 'package:flowva/features/mission/data/model/quiz_response.dart';
 import 'package:flowva/features/mission/data/model/rewards_summary_response.dart';
 import 'package:flowva/features/mission/data/model/skill_up_task_response.dart';
@@ -15,50 +13,6 @@ class MissionCubit extends Cubit<MissionState> {
   MissionCubit() : super(MissionInitial());
 
   final missionRepository = MissionRepository();
-
-  void saveAndUpdateSkillUp(Map<String, dynamic> mission) async {
-    emit(MissionUpdateLoading());
-
-    final either = await missionRepository.saveAndUpdateSkillUp(mission);
-    print(either);
-    either.fold(
-      (failure) => emit(MissionFailed(failure.toString())),
-      (mission) => emit(MissionUpdated(mission)),
-    );
-  }
-
-  void updateReward(Map<String, dynamic> mission) async {
-    emit(MissionUpdateLoading());
-    final either = await missionRepository.updateMission(mission);
-    print(either);
-    either.fold(
-      (failure) => emit(MissionUpdateFailed(failure.toString())),
-      (mission) => emit(MissionUpdated(mission)),
-    );
-  }
-
-  void updateMissionLevel(Map<String, dynamic> mission) async {
-    emit(MissionUpdateLoading());
-
-    final either = await missionRepository.updateMission(mission);
-    print(either);
-    either.fold(
-      (failure) => emit(MissionUpdateFailed(failure.toString())),
-      (mission) => emit(MissionUpdated(mission)),
-    );
-  }
-
-  void fetchMission() async {
-    // emit(MissionLoading());
-
-    final either = await missionRepository.fetchMission();
-    print(either);
-    either.fold((failure) => emit(MissionFailed(failure.toString())), (
-      mission,
-    ) {
-      emit(MissionLoaded(mission));
-    });
-  }
 
   void fetchSkillUpChallenge() async {
     // emit(MissionLoading());

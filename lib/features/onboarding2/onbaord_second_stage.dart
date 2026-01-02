@@ -250,7 +250,6 @@ class _OnbaordSecondStageState extends State<OnbaordSecondStage>
                     isSending.value = true;
                   });
                 }
-                if (state is UploadSuccess) {}
 
                 if (state is UserSuccess) {
                   setState(() {

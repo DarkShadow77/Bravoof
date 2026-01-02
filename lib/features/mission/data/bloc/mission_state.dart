@@ -5,12 +5,6 @@ sealed class MissionState {}
 
 final class MissionInitial extends MissionState {}
 
-class MissionUpdateLoading extends MissionState {
-  @override
-  // TODO: implement props
-  List<Object?> get props => [];
-}
-
 class PageLoading extends MissionState {
   @override
   // TODO: implement props
@@ -25,16 +19,6 @@ class RewardLoaded extends MissionState {
   @override
   // TODO: implement props
   List<Object?> get props => [rewardsSummaryResponse];
-}
-
-class MissionLoaded extends MissionState {
-  final MissionResponse missionResponse;
-
-  MissionLoaded(this.missionResponse);
-
-  @override
-  // TODO: implement props
-  List<Object?> get props => [missionResponse];
 }
 
 class SocialMissionLoaded extends MissionState {
@@ -75,16 +59,6 @@ class TriviaLoaded extends MissionState {
   @override
   // TODO: implement props
   List<Object?> get props => [triviaResponse];
-}
-
-class MissionUpdated extends MissionState {
-  final AppBaseResponse appBaseResponse;
-
-  MissionUpdated(this.appBaseResponse);
-
-  @override
-  // TODO: implement props
-  List<Object?> get props => [appBaseResponse];
 }
 
 class MissionUpdateFailed extends MissionState {

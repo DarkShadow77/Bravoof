@@ -8,7 +8,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../dashboard/profile/presentation/bloc/profile_bloc.dart';
-import '../../../onbaording/data/bloc/user_cubit.dart';
 import '../bloc/community_mission_bloc.dart';
 import '../bloc/featured_mission_bloc.dart';
 import '../bloc/skill_up_bloc.dart';
@@ -30,40 +29,26 @@ class _MissionPageState extends State<MissionPage> {
   int currentPage = 0;
   int selectedIndex = 0;
 
-  late CommunityMissionBloc communityMissionBloc;
-  late SocialMissionBloc socialMissionBloc;
-  late FeaturedMissionBloc featuredMissionBloc;
-  late SponsoredMissionBloc sponsoredMissionBloc;
-  late SkillUpBloc skillUpMissionBloc;
-  late StreakBloc streakBloc;
-
   @override
   void initState() {
-    super.initState();
-
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (widget.index != null) {
         selectedIndex = widget.index!;
         _pageController.jumpToPage(widget.index!);
       }
-      final userCubit = UserCubit();
-      userCubit.updateUserProfile();
-
-      context.read<ProfileBloc>().add(GetProfileEvent());
-      communityMissionBloc = BlocProvider.of<CommunityMissionBloc>(context);
-      socialMissionBloc = BlocProvider.of<SocialMissionBloc>(context);
-      featuredMissionBloc = BlocProvider.of<FeaturedMissionBloc>(context);
-      sponsoredMissionBloc = BlocProvider.of<SponsoredMissionBloc>(context);
-      skillUpMissionBloc = BlocProvider.of<SkillUpBloc>(context);
-      streakBloc = BlocProvider.of<StreakBloc>(context);
-
-      communityMissionBloc.add(LoadCommunityMission());
-      socialMissionBloc.add(LoadSocialMission());
-      featuredMissionBloc.add(LoadFeaturedMission());
-      sponsoredMissionBloc.add(LoadSponsoredMission());
-      skillUpMissionBloc.add(LoadSkillUpMission());
-      streakBloc.add(LoadStreaksEvent());
     });
+    _fetchDetails();
+    super.initState();
+  }
+
+  _fetchDetails() {
+    context.read<ProfileBloc>().add(GetProfileEvent());
+    context.read<CommunityMissionBloc>().add(LoadCommunityMission());
+    context.read<SocialMissionBloc>().add(LoadSocialMission());
+    context.read<FeaturedMissionBloc>().add(LoadFeaturedMission());
+    context.read<SponsoredMissionBloc>().add(LoadSponsoredMission());
+    context.read<SkillUpBloc>().add(LoadSkillUpMission());
+    context.read<StreakBloc>().add(LoadStreaksEvent());
   }
 
   @override
@@ -141,15 +126,10 @@ class _MissionPageState extends State<MissionPage> {
                     physics: NeverScrollableScrollPhysics(),
                     controller: _pageController,
                     onPageChanged: (index) {
+                      _fetchDetails();
                       setState(() {
                         selectedIndex = index;
                       });
-                      communityMissionBloc.add(LoadCommunityMission());
-                      socialMissionBloc.add(LoadSocialMission());
-                      featuredMissionBloc.add(LoadFeaturedMission());
-                      sponsoredMissionBloc.add(LoadSponsoredMission());
-                      skillUpMissionBloc.add(LoadSkillUpMission());
-                      streakBloc.add(LoadStreaksEvent());
                     },
                     children: [
                       EarnOverviewScreen(),
