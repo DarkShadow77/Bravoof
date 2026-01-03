@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:app_links/app_links.dart';
 import 'package:flowva/features/dashboard/home/data/bloc/home_cubit.dart';
+import 'package:flowva/features/dashboard/redeem/presentation/bloc/redeem_bloc.dart';
 import 'package:flowva/session/session_manager.dart';
 import 'package:flowva/utility/auth_listener.dart';
 import 'package:flutter/foundation.dart';
@@ -20,14 +21,14 @@ import 'app/theme/app_themes.dart';
 import 'core/constants/strings.dart';
 import 'core/di/service_locator.dart';
 import 'features/app.dart';
+import 'features/dashboard/mission/presentation/bloc/community_mission_bloc.dart';
+import 'features/dashboard/mission/presentation/bloc/featured_mission_bloc.dart';
+import 'features/dashboard/mission/presentation/bloc/growth_mission_bloc.dart';
+import 'features/dashboard/mission/presentation/bloc/skill_up_bloc.dart';
+import 'features/dashboard/mission/presentation/bloc/social_mission_bloc.dart';
+import 'features/dashboard/mission/presentation/bloc/sponsored_mission_bloc.dart';
+import 'features/dashboard/mission/presentation/bloc/streak_bloc.dart';
 import 'features/dashboard/profile/presentation/bloc/profile_bloc.dart';
-import 'features/mission/presentation/bloc/community_mission_bloc.dart';
-import 'features/mission/presentation/bloc/featured_mission_bloc.dart';
-import 'features/mission/presentation/bloc/growth_mission_bloc.dart';
-import 'features/mission/presentation/bloc/skill_up_bloc.dart';
-import 'features/mission/presentation/bloc/social_mission_bloc.dart';
-import 'features/mission/presentation/bloc/sponsored_mission_bloc.dart';
-import 'features/mission/presentation/bloc/streak_bloc.dart';
 import 'features/onbaording/data/bloc/user_cubit.dart';
 import 'utility/navigation.dart';
 
@@ -121,6 +122,7 @@ class _MyAppState extends State<MyApp> {
         BlocProvider(create: (_) => sl<SkillUpBloc>()),
         BlocProvider(create: (_) => sl<StreakBloc>()),
         BlocProvider(create: (_) => sl<GrowthMissionBloc>()),
+        BlocProvider(create: (_) => sl<RedeemBloc>()),
       ],
       child: ScreenUtilInit(
         designSize: const Size(375, 815),

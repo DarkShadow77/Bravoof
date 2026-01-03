@@ -1,14 +1,10 @@
 import 'package:flowva/app/styles/text_styles.dart';
 import 'package:flowva/core/constants/app_assets.dart';
-import 'package:flowva/features/common/custom_success.dart';
 import 'package:flowva/features/common/model/campaign_response.dart';
 import 'package:flowva/features/common/ui_tool_mixin/ui_tool_mixin.dart';
-import 'package:flowva/features/dashboard/earn/data/models/mission_res.dart';
 import 'package:flowva/features/dashboard/home/data/bloc/home_cubit.dart';
 import 'package:flowva/features/dashboard/profile/presentation/bloc/profile_bloc.dart';
 import 'package:flowva/features/dashboard/profile/presentation/pages/profile_page.dart';
-import 'package:flowva/features/mission/data/bloc/mission_cubit.dart';
-import 'package:flowva/features/mission/data/model/rewards_summary_response.dart';
 import 'package:flowva/features/onbaording/data/model/user_profile.dart';
 import 'package:flowva/session/session_manager.dart';
 import 'package:flutter/material.dart';
@@ -19,9 +15,11 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
 
 import '../../../../../core/constants/app_colors.dart';
-import '../../../../mission/presentation/bloc/growth_mission_bloc.dart';
+import '../../../mission/data/bloc/mission_cubit.dart';
+import '../../../mission/data/model/rewards_summary_response.dart';
+import '../../../mission/presentation/bloc/growth_mission_bloc.dart';
+import '../../../mission/presentation/widget/mission_list_title.dart';
 import '../../../nav_bar.dart';
-import '../../../../mission/presentation/widget/mission_list_title.dart';
 import '../widget/referral_widget.dart';
 import '../widget/tool_card.dart';
 import '../widget/top_leader_board.dart';
@@ -73,7 +71,6 @@ class _FlowvaHomePageState extends State<FlowvaHomePage> with UIToolMixin {
           BlocListener<MissionCubit, MissionState>(
             bloc: missionCubit,
             listener: (context, state) {
-
               if (state is RewardLoaded) {
                 rewardsSummary = state.rewardsSummaryResponse.rewardsSummary!;
                 print(rewardsSummary);
@@ -603,7 +600,6 @@ class _FlowvaHomePageState extends State<FlowvaHomePage> with UIToolMixin {
                                       ),
                                       const SizedBox(height: 16),
                                       MissionCard(isFull: false),
-
                                     ],
                                   ),
                                 ),

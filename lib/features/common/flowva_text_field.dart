@@ -33,6 +33,7 @@ class AppTextFeild extends StatelessWidget {
       controller: controller,
       onChanged: onChanged,
       focusNode: focusNode,
+      keyboardType: textInputType,
       maxLength: maxLength,
       maxLines: maxLines,
       decoration: InputDecoration(

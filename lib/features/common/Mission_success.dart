@@ -1,11 +1,6 @@
 import 'dart:ui';
 
 import 'package:flowva/features/common/flowva_button.dart';
-import 'package:flowva/features/dashboard/nav_bar.dart';
-import 'package:flowva/features/mission/data/model/skill_up_task_response.dart';
-import 'package:flowva/features/mission/presentation/page/trivia_result_page.dart';
-import 'package:flowva/features/mission/presentation/page/skillup/skill_up_screen.dart';
-import 'package:flowva/session/session_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_confetti/flutter_confetti.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -14,8 +9,14 @@ class MissionSuccess extends StatefulWidget {
   String? title;
   String? bodyText;
   String? b_text;
-  Function?apply;
-  MissionSuccess({this.title,this.bodyText,this.b_text,this.apply,super.key});
+  Function? apply;
+  MissionSuccess({
+    this.title,
+    this.bodyText,
+    this.b_text,
+    this.apply,
+    super.key,
+  });
 
   @override
   State<MissionSuccess> createState() => _MissionSuccessState();
@@ -99,11 +100,10 @@ class _MissionSuccessState extends State<MissionSuccess> {
 
                 const SizedBox(height: 20),
 
-
                 FlowvaButton.whiteButton(
-                    name: widget.b_text!,
-                    color: Colors.black,
-                    apply:()=>Navigator.pop(context)
+                  name: widget.b_text!,
+                  color: Colors.black,
+                  apply: () => Navigator.pop(context),
                 ),
               ],
             ),

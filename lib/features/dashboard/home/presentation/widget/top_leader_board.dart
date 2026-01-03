@@ -1,8 +1,8 @@
 import 'package:flowva/features/common/flowva_button.dart';
-import 'package:flowva/features/mission/data/model/rewards_summary_response.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../mission/data/model/rewards_summary_response.dart';
 import 'leader_board.dart';
 
 class TopLeaderBoard extends StatelessWidget {

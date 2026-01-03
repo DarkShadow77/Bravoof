@@ -3,13 +3,13 @@ import 'dart:developer';
 import 'package:flowva/app/styles/text_styles.dart';
 import 'package:flowva/core/constants/app_assets.dart';
 import 'package:flowva/features/common/flowva_button.dart';
-import 'package:flowva/features/mission/data/model/rewards_summary_response.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../../core/constants/app_colors.dart';
 import '../../../home/presentation/widget/leader_board.dart';
+import '../../../mission/data/model/rewards_summary_response.dart';
 
 class LeaderboardPage extends StatelessWidget {
   final Color primaryColor = Color(0xFF9419FD); // Purple gradient base

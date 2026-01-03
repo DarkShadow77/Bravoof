@@ -47,6 +47,7 @@ class AppColors {
 
   //State-Colors ---Grey
   static const Color grey = Color(0xFFD9D9D9);
+  static const Color grey900 = Color(0xFF111111);
   static const Color grey600 = Color(0xFF4A4A4A);
   static const Color grey550 = Color(0xFF5F5F5F);
   static const Color grey500 = Color(0xFF767676);
@@ -75,6 +76,8 @@ class AppColors {
   static Color get white85 => white.withValues(alpha: .85);
   static Color get white80 => white.withValues(alpha: .80);
   static Color get white75 => white.withValues(alpha: .75);
+  static Color get white65 => white.withValues(alpha: .65);
+  static Color get white60 => white.withValues(alpha: .60);
   static Color get white50 => white.withValues(alpha: .50);
   static Color get white25 => white.withValues(alpha: .25);
   static Color get white29 => white.withValues(alpha: .29);
@@ -89,4 +92,13 @@ class AppColors {
   static Color get error20 => error.withValues(alpha: .20);
   static Color get error11 => error.withValues(alpha: .11);
   static Color get error5 => error.withValues(alpha: .05);
+
+  //State-Colors ---Orange
+  static const Color orange = Color(0xFFFE5613);
+  static Color get orange70 => orange.withValues(alpha: .70);
+  static Color get orange50 => orange.withValues(alpha: .50);
+  static Color get orange39 => orange.withValues(alpha: .39);
+  static Color get orange20 => orange.withValues(alpha: .20);
+  static Color get orange11 => orange.withValues(alpha: .11);
+  static Color get orange5 => orange.withValues(alpha: .05);
 }

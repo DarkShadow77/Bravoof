@@ -7,30 +7,33 @@ import '../../features/dashboard/home/data/repository/campaign_repository.dart';
 import '../../features/dashboard/home/data/repository/campaign_repository_impl.dart';
 import '../../features/dashboard/home/data/repository/home_repository.dart';
 import '../../features/dashboard/home/data/repository/home_repository_impl.dart';
+import '../../features/dashboard/mission/data/repository/community_mission_repository.dart';
+import '../../features/dashboard/mission/data/repository/community_mission_repository_impl.dart';
+import '../../features/dashboard/mission/data/repository/featured_mission_repository.dart';
+import '../../features/dashboard/mission/data/repository/featured_mission_repository_impl.dart';
+import '../../features/dashboard/mission/data/repository/growth_mission_repository.dart';
+import '../../features/dashboard/mission/data/repository/growth_mission_repository_impl.dart';
+import '../../features/dashboard/mission/data/repository/skill_up_repository.dart';
+import '../../features/dashboard/mission/data/repository/skill_up_repository_impl.dart';
+import '../../features/dashboard/mission/data/repository/social_mission_repository.dart';
+import '../../features/dashboard/mission/data/repository/social_mission_repository_impl.dart';
+import '../../features/dashboard/mission/data/repository/sponsored_mission_repository.dart';
+import '../../features/dashboard/mission/data/repository/sponsored_mission_repository_impl.dart';
+import '../../features/dashboard/mission/data/repository/streak_repository.dart';
+import '../../features/dashboard/mission/data/repository/streak_repository_impl.dart';
+import '../../features/dashboard/mission/presentation/bloc/community_mission_bloc.dart';
+import '../../features/dashboard/mission/presentation/bloc/featured_mission_bloc.dart';
+import '../../features/dashboard/mission/presentation/bloc/growth_mission_bloc.dart';
+import '../../features/dashboard/mission/presentation/bloc/skill_up_bloc.dart';
+import '../../features/dashboard/mission/presentation/bloc/social_mission_bloc.dart';
+import '../../features/dashboard/mission/presentation/bloc/sponsored_mission_bloc.dart';
+import '../../features/dashboard/mission/presentation/bloc/streak_bloc.dart';
 import '../../features/dashboard/profile/data/repository/profile_repository.dart';
 import '../../features/dashboard/profile/data/repository/profile_repository_impl.dart';
 import '../../features/dashboard/profile/presentation/bloc/profile_bloc.dart';
-import '../../features/mission/data/repository/community_mission_repository.dart';
-import '../../features/mission/data/repository/community_mission_repository_impl.dart';
-import '../../features/mission/data/repository/featured_mission_repository.dart';
-import '../../features/mission/data/repository/featured_mission_repository_impl.dart';
-import '../../features/mission/data/repository/growth_mission_repository.dart';
-import '../../features/mission/data/repository/growth_mission_repository_impl.dart';
-import '../../features/mission/data/repository/skill_up_repository.dart';
-import '../../features/mission/data/repository/skill_up_repository_impl.dart';
-import '../../features/mission/data/repository/social_mission_repository.dart';
-import '../../features/mission/data/repository/social_mission_repository_impl.dart';
-import '../../features/mission/data/repository/sponsored_mission_repository.dart';
-import '../../features/mission/data/repository/sponsored_mission_repository_impl.dart';
-import '../../features/mission/data/repository/streak_repository.dart';
-import '../../features/mission/data/repository/streak_repository_impl.dart';
-import '../../features/mission/presentation/bloc/community_mission_bloc.dart';
-import '../../features/mission/presentation/bloc/featured_mission_bloc.dart';
-import '../../features/mission/presentation/bloc/growth_mission_bloc.dart';
-import '../../features/mission/presentation/bloc/skill_up_bloc.dart';
-import '../../features/mission/presentation/bloc/social_mission_bloc.dart';
-import '../../features/mission/presentation/bloc/sponsored_mission_bloc.dart';
-import '../../features/mission/presentation/bloc/streak_bloc.dart';
+import '../../features/dashboard/redeem/data/repository/redeem_repository.dart';
+import '../../features/dashboard/redeem/data/repository/reward_repository_impl.dart';
+import '../../features/dashboard/redeem/presentation/bloc/redeem_bloc.dart';
 import '../../features/onbaording/data/signup_repository/signup_repository.dart';
 import '../../features/onbaording/data/signup_repository/signup_repository_impl.dart';
 
@@ -58,6 +61,7 @@ Future<void> initDI() async {
   sl.registerLazySingleton<SkillUpRepository>(() => SkillUpRepositoryImpl());
   sl.registerLazySingleton<ProfileRepository>(() => ProfileRepositoryImpl());
   sl.registerLazySingleton<StreakRepository>(() => StreakRepositoryImpl());
+  sl.registerLazySingleton<RedeemRepository>(() => RedeemRepositoryImpl());
 
   //Blocs
   sl.registerSingleton<UserCubit>(UserCubit());
@@ -88,4 +92,5 @@ Future<void> initDI() async {
   sl.registerSingleton<SkillUpBloc>(SkillUpBloc(repo: sl<SkillUpRepository>()));
   sl.registerSingleton<ProfileBloc>(ProfileBloc(repo: sl<ProfileRepository>()));
   sl.registerSingleton<StreakBloc>(StreakBloc(repo: sl<StreakRepository>()));
+  sl.registerSingleton<RedeemBloc>(RedeemBloc(repo: sl<RedeemRepository>()));
 }

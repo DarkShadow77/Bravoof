@@ -1,7 +1,6 @@
 import 'package:flowva/core/constants/app_assets.dart';
-import 'package:flowva/features/dashboard/earn/presentation/pages/earn_screen.dart';
 import 'package:flowva/features/dashboard/home/presentation/page/home_page.dart';
-import 'package:flowva/features/mission/presentation/page/mission_page.dart';
+import 'package:flowva/features/dashboard/redeem/presentation/page/redeem_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -11,6 +10,14 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../session/session_manager.dart';
 import '../onboarding2/widget/reward.dart';
 import 'home/presentation/widget/show_welcome_message.dart';
+import 'mission/presentation/bloc/community_mission_bloc.dart';
+import 'mission/presentation/bloc/featured_mission_bloc.dart';
+import 'mission/presentation/bloc/growth_mission_bloc.dart';
+import 'mission/presentation/bloc/skill_up_bloc.dart';
+import 'mission/presentation/bloc/social_mission_bloc.dart';
+import 'mission/presentation/bloc/sponsored_mission_bloc.dart';
+import 'mission/presentation/bloc/streak_bloc.dart';
+import 'mission/presentation/page/mission_page.dart';
 import 'profile/presentation/bloc/profile_bloc.dart';
 
 class BottomNavBar extends StatefulWidget {
@@ -55,9 +62,19 @@ class _BottomNavBarState extends State<BottomNavBar> {
           : null;
 
       SessionManager().isNewUserVal = "NO";
-
-      context.read<ProfileBloc>().add(GetProfileEvent());
     });
+    _fetchDetails();
+  }
+
+  _fetchDetails() {
+    context.read<ProfileBloc>().add(GetProfileEvent());
+    context.read<CommunityMissionBloc>().add(LoadCommunityMission());
+    context.read<SocialMissionBloc>().add(LoadSocialMission());
+    context.read<FeaturedMissionBloc>().add(LoadFeaturedMission());
+    context.read<SponsoredMissionBloc>().add(LoadSponsoredMission());
+    context.read<GrowthMissionBloc>().add(LoadGrowthMission());
+    context.read<SkillUpBloc>().add(LoadSkillUpMission());
+    context.read<StreakBloc>().add(LoadStreaksEvent());
   }
 
   @override
@@ -71,7 +88,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
           children: [
             FlowvaHomePage(),
             MissionPage(index: widget.missionIndex),
-            RewardScreen(),
+            RedeemScreen(),
           ],
         ),
 
@@ -104,6 +121,8 @@ class _BottomNavBarState extends State<BottomNavBar> {
               setState(() {
                 currentIndex = index;
               });
+
+              _fetchDetails();
             },
             items: [
               BottomNavigationBarItem(

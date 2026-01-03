@@ -40,6 +40,7 @@ class AssetsPngImages {
   static String check = "$baseImagePngPath/check.png";
   static String roundedCheck = "$baseImagePngPath/rounded_check.png";
   static String inviteBg = "$baseImagePngPath/invite_bg.png";
+  static String flame = "$baseImagePngPath/flame.png";
 }
 
 class AssetsSvgImages {
