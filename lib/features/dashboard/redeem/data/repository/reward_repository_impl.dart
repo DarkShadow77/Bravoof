@@ -1,17 +1,50 @@
+import 'dart:convert';
+
 import 'package:dartz/dartz.dart';
+import 'package:get/get.dart';
 import 'package:logger/logger.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../redeem_history_model.dart';
 import 'redeem_repository.dart';
 
 class RedeemRepositoryImpl extends RedeemRepository {
   final supabase = Supabase.instance.client;
+
+  Future<Either<String, List<RedeemHistory>>> fetchRedeemHistory({
+    required String userId,
+  }) async {
+    try {
+      final res = await supabase
+          .from('reward_redemptions')
+          .select('''
+          id,
+          reward_type,
+          coins_spent,
+          metadata,
+          created_at
+        ''')
+          .eq('user_id', userId)
+          .order('created_at', ascending: false);
+
+      if (res.isEmpty) {
+        return Right([]);
+      }
+
+      final redeemHistory = res.map((e) => RedeemHistory.fromJson(e)).toList();
+
+      return Right(redeemHistory);
+    } catch (e) {
+      return Left(e.toString());
+    }
+  }
 
   Future<Either<String, String>> redeemAirtimeData({
     required String rewardType,
     required String phone,
     required String userId,
     required String userName,
+    required String email,
     required int coins,
   }) async {
     try {
@@ -23,24 +56,35 @@ class RedeemRepositoryImpl extends RedeemRepository {
           'coins': coins,
           'phone': phone,
           'name': userName,
+          'email': email,
         },
       );
 
       Logger().d("Redeem Airtime and Data Response $res");
 
-      if (res.status != 200) {
-        return Left(res.data['message'] ?? 'Something went wrong');
+      Logger().d("🟢 Raw function response: ${res.data}");
+      Logger().d("🟢 Response runtimeType: ${res.data.runtimeType}");
+
+      late final Map<String, dynamic> data;
+
+      if (res.data is String) {
+        data = jsonDecode(res.data as String) as Map<String, dynamic>;
+      } else if (res.data is Map<String, dynamic>) {
+        data = res.data;
+      } else {
+        return Left("Unexpected response format: ${res.data.runtimeType}");
       }
 
-      final success = res.data['success'] as bool;
-      final message = res.data['message'] as String;
+      Logger().d("🟢 Parsed data: $data");
 
-      if (!success) {
-        return Left(message);
+      if (data['success'] != true) {
+        return Left(
+          data['message'] ?? '${rewardType.capitalize} redemption failed',
+        );
       }
-
-      return Right(message);
-    } catch (e) {
+      return Right("Successfully Redeemed ${rewardType.capitalize}");
+    } catch (e, s) {
+      Logger().e("🔥Redeem '${rewardType.capitalize} crashed E:$e, S:$s");
       return Left(e.toString());
     }
   }
@@ -50,6 +94,7 @@ class RedeemRepositoryImpl extends RedeemRepository {
     required String phone,
     required String userId,
     required String userName,
+    required String email,
     required int coins,
   }) async {
     try {
@@ -61,13 +106,38 @@ class RedeemRepositoryImpl extends RedeemRepository {
           'coins': coins,
           'phone': phone,
           'name': userName,
+          'email': email,
         },
       );
 
-      Logger().d("Redeem Giftcard Response $res");
+      Logger().d("🟢 Raw function response: ${res.data}");
+      Logger().d("🟢 Response runtimeType: ${res.data.runtimeType}");
 
-      return Right(res.data['redirectUrl']);
-    } catch (e) {
+      late final Map<String, dynamic> data;
+
+      if (res.data is String) {
+        data = jsonDecode(res.data as String) as Map<String, dynamic>;
+      } else if (res.data is Map<String, dynamic>) {
+        data = res.data;
+      } else {
+        return Left("Unexpected response format: ${res.data.runtimeType}");
+      }
+
+      Logger().d("🟢 Parsed data: $data");
+
+      if (data['success'] != true) {
+        return Left(data['message'] ?? 'Gift card redemption failed');
+      }
+
+      final redirectUrl = data['redirectUrl'];
+
+      if (redirectUrl == null || redirectUrl is! String) {
+        return Left('Gift card created but redirect URL is missing');
+      }
+
+      return Right(redirectUrl);
+    } catch (e, s) {
+      Logger().e("🔥 redeemGiftcard crashed E:$e, S:$s");
       return Left(e.toString());
     }
   }

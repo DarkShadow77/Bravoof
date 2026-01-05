@@ -269,7 +269,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                         ),
                         Text(
-                          "Followers",
+                          "Certificates",
                           style: GoogleFonts.manrope(
                             fontSize: 10,
                             fontWeight: FontWeight.w600,

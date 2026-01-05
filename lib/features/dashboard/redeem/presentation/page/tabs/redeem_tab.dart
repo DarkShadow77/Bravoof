@@ -5,6 +5,7 @@ import 'package:flowva/app/view/widgets/button/icon_text_button.dart';
 import 'package:flowva/core/constants/app_assets.dart';
 import 'package:flowva/core/constants/app_colors.dart';
 import 'package:flowva/core/constants/fonts.dart';
+import 'package:flowva/core/utils/helpers.dart';
 import 'package:flowva/features/common/flowva_button.dart';
 import 'package:flowva/features/common/model/campaign_response.dart';
 import 'package:flowva/features/dashboard/earn/presentation/pages/invite_earn.dart';
@@ -15,11 +16,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../../../utility/ui_tool_mix.dart';
 import '../../../../../onbaording/data/model/user_profile.dart';
 import '../../../../profile/presentation/bloc/profile_bloc.dart';
-import '../../widget/gift_learn_more_modal.dart';
+import '../../widget/redeem_learn_more_modal.dart';
 
 class RedeemTab extends StatefulWidget {
   RedeemTab({this.campaign, super.key});
@@ -86,7 +88,8 @@ class _RedeemTabState extends State<RedeemTab>
   }
 
   _loadingState(BuildContext context, RedeemLoadingState state) {
-    if (state.type == RedeemType.redeemAirtimeData) {
+    if (state.type == RedeemType.redeemAirtimeData ||
+        state.type == RedeemType.redeemGiftcard) {
       showDialog(
         context: context,
         barrierDismissible: false,
@@ -106,22 +109,47 @@ class _RedeemTabState extends State<RedeemTab>
     }
   }
 
-  _successState(BuildContext context, RedeemSuccessState state) {
+  _successState(BuildContext context, RedeemSuccessState state) async {
     if (state.type == RedeemType.redeemAirtimeData) {
-      Navigator.pop(context);
-      Navigator.pop(context);
+      Navigator.of(context)
+        ..pop()
+        ..pop();
+      context.read<ProfileBloc>().add(GetProfileEvent());
+      context.read<RedeemBloc>().add(LoadRedeemHistory());
       showMessage(
         state.message,
         context,
         color: Colors.white,
         styleColor: Colors.black,
       );
+    } else if (state.type == RedeemType.redeemGiftcard) {
+      Navigator.of(context)
+        ..pop()
+        ..pop();
+
+      context.read<ProfileBloc>().add(GetProfileEvent());
+
+      final uri = Uri.tryParse(state.message);
+
+      if (uri == null) {
+        showMessage(
+          "Invalid gift card URL",
+          context,
+          color: Colors.white,
+          styleColor: Colors.black,
+          iconColor: Colors.red,
+          status: true,
+        );
+      } else
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
     }
   }
 
   _failureState(BuildContext context, RedeemFailureState state) {
-    if (state.type == RedeemType.redeemAirtimeData) {
+    if (state.type == RedeemType.redeemAirtimeData ||
+        state.type == RedeemType.redeemGiftcard) {
       Navigator.pop(context);
+      context.read<ProfileBloc>().add(GetProfileEvent());
       showMessage(
         state.message,
         context,
@@ -154,7 +182,7 @@ class _RedeemTabState extends State<RedeemTab>
               width: double.infinity,
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.5),
+                color: Colors.white.withValues(alpha: 0.5),
                 borderRadius: BorderRadius.circular(24),
               ),
               child: Column(
@@ -196,7 +224,9 @@ class _RedeemTabState extends State<RedeemTab>
                         backgroundColor: Colors.white,
                         child: CircleAvatar(
                           radius: 30,
-                          backgroundColor: Color(0xFFFF8687).withOpacity(0.19),
+                          backgroundColor: Color(
+                            0xFFFF8687,
+                          ).withValues(alpha: 0.19),
                           child: Image.asset(
                             "assets/images/ear_pod.png",
                             fit: BoxFit.cover,
@@ -523,20 +553,23 @@ class _RedeemTabState extends State<RedeemTab>
                     ),*/
                           buildRewardCard(
                             title: "Airtime",
-                            imagePath: "assets/images/dollar.png",
+                            value: 5,
+                            imagePath: AssetsPngImages.cash,
                             coins: 5000,
                             isActive: (profile.totalPoints ?? 0) >= 5000,
                           ),
                           buildRewardCard(
                             title: "Data",
-                            imagePath: "assets/images/slant_visa.png",
+                            value: 5,
+                            imagePath: AssetsPngImages.data,
                             coins: 5000,
                             isActive: (profile.totalPoints ?? 0) >= 5000,
                             isHot: true,
                           ),
                           buildRewardCard(
                             title: "Giftcard",
-                            imagePath: "assets/images/giftCard.png",
+                            value: 10,
+                            imagePath: AssetsPngImages.giftcard,
                             coins: 10000,
                             isActive: (profile.totalPoints ?? 0) >= 10000,
                             isHot: true,
@@ -567,6 +600,7 @@ class _RedeemTabState extends State<RedeemTab>
     required String title,
     required String imagePath,
     required int coins,
+    required int value,
     required bool isActive,
     bool isHot = false,
   }) {
@@ -611,7 +645,7 @@ class _RedeemTabState extends State<RedeemTab>
                 ),
                 RichText(
                   text: TextSpan(
-                    text: title,
+                    text: "\$${value} $title",
                     style: TextStyles.bodyBold16(
                       context,
                     ).copyWith(fontFamily: AppFonts.baloo2, height: 1.sp),
@@ -634,7 +668,7 @@ class _RedeemTabState extends State<RedeemTab>
                       ),
                       RichText(
                         text: TextSpan(
-                          text: '${coins} Coins',
+                          text: '${formatAmount(coins, compact: true)} Coins',
                           style: TextStyles.cardBold10(
                             context,
                           ).copyWith(color: AppColors.primary),
@@ -645,30 +679,48 @@ class _RedeemTabState extends State<RedeemTab>
                 ),
                 IconTextButton(
                   onPressed: () {
-                    redeemGiftModal(
-                      showPhone: ["Airtime", "Data"].contains(title),
-                      onPressed: (val) {
-                        if (isActive)
-                          if (val != null) {
-                            if (["Airtime", "Data"].contains(title)) {
+                    if (isActive)
+                      redeemGiftModal(
+                        showPhone: ["Airtime", "Data"].contains(title),
+                        onPressed: (val) {
+                          final profile = context
+                              .read<ProfileBloc>()
+                              .state
+                              .profile;
+                          if (["Airtime", "Data"].contains(title)) {
+                            if (val != null) {
                               context.read<RedeemBloc>().add(
                                 RedeemAirtimeData(
                                   rewardType: title.toLowerCase(),
                                   phone: val,
-                                  userName:
-                                      context
-                                          .read<ProfileBloc>()
-                                          .state
-                                          .profile
-                                          .name ??
-                                      "",
+                                  userName: profile.name ?? "",
+                                  email: profile.email ?? "",
                                   coins: coins,
                                 ),
                               );
                             }
+                          } else {
+                            context.read<RedeemBloc>().add(
+                              RedeemGiftcard(
+                                rewardType: title.toLowerCase(),
+                                phone: "",
+                                userName: profile.name ?? "",
+                                email: profile.email ?? "",
+                                coins: coins,
+                              ),
+                            );
                           }
-                      },
-                    );
+                        },
+                      );
+                    else
+                      showMessage(
+                        "You don't have Sufficient Coins",
+                        context,
+                        color: Colors.white,
+                        styleColor: Colors.black,
+                        iconColor: Colors.red,
+                        status: true,
+                      );
                   },
                   height: 34,
                   color: isActive ? AppColors.black : AppColors.grey400,
@@ -687,7 +739,7 @@ class _RedeemTabState extends State<RedeemTab>
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
                     onPressed: () {
-                      giftLearnMoreModal(image: imagePath);
+                      redeemLearnMoreModal(image: imagePath);
                     },
                     child: Row(
                       spacing: 6.w,
@@ -765,11 +817,11 @@ class _RedeemTabState extends State<RedeemTab>
       height: 200,
       padding: const EdgeInsets.only(right: 16, left: 16, top: 16),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.4),
+        color: Colors.white.withValues(alpha: 0.4),
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.02),
+            color: Colors.black.withValues(alpha: 0.02),
             blurRadius: 4,
             spreadRadius: -3,
             offset: const Offset(5, 5),
@@ -789,7 +841,7 @@ class _RedeemTabState extends State<RedeemTab>
                       vertical: 6,
                     ),
                     decoration: BoxDecoration(
-                      color: tagColor?.withOpacity(0.15),
+                      color: tagColor?.withValues(alpha: 0.15),
                       borderRadius: BorderRadius.circular(6),
                     ),
                     child: Row(
@@ -866,7 +918,7 @@ class _RedeemTabState extends State<RedeemTab>
       margin: const EdgeInsets.only(left: 4),
       padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
       decoration: BoxDecoration(
-        color: Colors.black.withOpacity(0.04),
+        color: Colors.black.withValues(alpha: 0.04),
         borderRadius: BorderRadius.circular(6),
         border: Border.all(color: Colors.grey.shade200),
       ),

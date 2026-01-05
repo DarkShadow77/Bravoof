@@ -41,6 +41,9 @@ class AssetsPngImages {
   static String roundedCheck = "$baseImagePngPath/rounded_check.png";
   static String inviteBg = "$baseImagePngPath/invite_bg.png";
   static String flame = "$baseImagePngPath/flame.png";
+  static String cash = "$baseImagePngPath/cash.png";
+  static String data = "$baseImagePngPath/data.png";
+  static String giftcard = "$baseImagePngPath/giftcard.png";
 }
 
 class AssetsSvgImages {

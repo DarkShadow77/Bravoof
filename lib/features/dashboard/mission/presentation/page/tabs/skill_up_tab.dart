@@ -184,7 +184,7 @@ class SkillCard extends StatelessWidget {
                         text: skill.title,
                         style: TextStyles.bodySemiBold16(
                           context,
-                        ).copyWith(fontSize: 18.sp),
+                        ),
                       ),
                     ),
                   ),

@@ -27,16 +27,17 @@ class _ToolCardCarouselState extends State<ToolCardCarousel> {
   @override
   void initState() {
     super.initState();
-
-    if (widget.campaign!.isNotEmpty) {
-      _remainingTime = Duration(
-        days: widget.campaign!.first.campaignEndDate!.day,
-        hours: widget.campaign!.first.campaignEndDate!.hour,
-        minutes: widget.campaign!.first.campaignEndDate!.minute,
-        seconds: widget.campaign!.first.campaignEndDate!.second,
-      );
-    }
-    _startCountdown();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (widget.campaign!.isNotEmpty) {
+        _remainingTime = Duration(
+          days: widget.campaign!.first.campaignEndDate!.day,
+          hours: widget.campaign!.first.campaignEndDate!.hour,
+          minutes: widget.campaign!.first.campaignEndDate!.minute,
+          seconds: widget.campaign!.first.campaignEndDate!.second,
+        );
+      }
+      _startCountdown();
+    });
   }
 
   void _startCountdown() {
@@ -50,23 +51,25 @@ class _ToolCardCarouselState extends State<ToolCardCarousel> {
   }
 
   void _updateRemainingTime() {
-    final now = DateTime.now();
-    final difference = widget.campaign!.isNotEmpty
-        ? widget.campaign!.first.campaignEndDate!.difference(now)
-        : null;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final now = DateTime.now();
+      final difference = widget.campaign!.isNotEmpty
+          ? widget.campaign!.first.campaignEndDate!.difference(now)
+          : null;
 
-    if (difference!.isNegative) {
-      setState(() {
-        _isExpired = true;
-        _remainingTime = Duration.zero;
-      });
-      _timer?.cancel();
-    } else {
-      setState(() {
-        _remainingTime = difference;
-        _isExpired = false;
-      });
-    }
+      if (difference!.isNegative) {
+        setState(() {
+          _isExpired = true;
+          _remainingTime = Duration.zero;
+        });
+        _timer?.cancel();
+      } else {
+        setState(() {
+          _remainingTime = difference;
+          _isExpired = false;
+        });
+      }
+    });
   }
 
   int currentPage = 0;

@@ -8,7 +8,7 @@ import '../../../../../app/styles/text_styles.dart';
 import '../../../../../app/view/widgets/bottom_modals/show_modal_sheet.dart';
 import '../../../../../core/constants/app_colors.dart';
 
-Future giftLearnMoreModal({required String image}) {
+Future redeemLearnMoreModal({required String image}) {
   return Get.bottomSheet(
     isScrollControlled: true,
     ignoreSafeArea: true,
@@ -16,20 +16,20 @@ Future giftLearnMoreModal({required String image}) {
     enableDrag: true,
     enterBottomSheetDuration: const Duration(milliseconds: 200),
     exitBottomSheetDuration: const Duration(milliseconds: 200),
-    GiftLearnMoreModal(image: image),
+    RedeemLearnMoreModal(image: image),
   );
 }
 
-class GiftLearnMoreModal extends StatefulWidget {
-  const GiftLearnMoreModal({super.key, required this.image});
+class RedeemLearnMoreModal extends StatefulWidget {
+  const RedeemLearnMoreModal({super.key, required this.image});
 
   final String image;
 
   @override
-  State<GiftLearnMoreModal> createState() => _GiftLearnMoreModalState();
+  State<RedeemLearnMoreModal> createState() => _RedeemLearnMoreModalState();
 }
 
-class _GiftLearnMoreModalState extends State<GiftLearnMoreModal> {
+class _RedeemLearnMoreModalState extends State<RedeemLearnMoreModal> {
   @override
   Widget build(BuildContext ctx) {
     return ShowModalSheet(
@@ -68,7 +68,7 @@ class _GiftLearnMoreModalState extends State<GiftLearnMoreModal> {
               textAlign: TextAlign.center,
               overflow: TextOverflow.ellipsis,
               text: TextSpan(
-                text: "Claim Your Rewards!",
+                text: "How Reward Works on Bravoo!",
                 style: TextStyles.normalBold14(context),
               ),
             ),
@@ -77,7 +77,9 @@ class _GiftLearnMoreModalState extends State<GiftLearnMoreModal> {
               textAlign: TextAlign.center,
               text: TextSpan(
                 text:
-                    "Redeem coins and Sparks for amazing \nrewards. The more you earn, the more you \ncan unlock!",
+                    "Points earned on Bravoo can be redeemed for \$5 airtime, "
+                    "\$5 data or \$10 gift cards. Once redeemed, your reward is "
+                    "verified and credited to the details you provided within 7 days!",
                 style: TextStyles.bodyMedium16(
                   context,
                 ).copyWith(fontFamily: AppFonts.baloo2, height: 1.sp),
@@ -88,9 +90,8 @@ class _GiftLearnMoreModalState extends State<GiftLearnMoreModal> {
               color: AppColors.black,
               textColor: AppColors.white,
               onPressed: () => Get.back(),
-              text: "Redeem Now!",
+              text: "Close",
             ),
-
             SizedBox(height: 20.h + MediaQuery.of(context).padding.bottom),
           ],
         ),

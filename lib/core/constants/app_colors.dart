@@ -76,11 +76,14 @@ class AppColors {
   static Color get white85 => white.withValues(alpha: .85);
   static Color get white80 => white.withValues(alpha: .80);
   static Color get white75 => white.withValues(alpha: .75);
+  static Color get white70 => white.withValues(alpha: .70);
   static Color get white65 => white.withValues(alpha: .65);
   static Color get white60 => white.withValues(alpha: .60);
   static Color get white50 => white.withValues(alpha: .50);
-  static Color get white25 => white.withValues(alpha: .25);
+  static Color get white40 => white.withValues(alpha: .40);
+  static Color get white32 => white.withValues(alpha: .32);
   static Color get white29 => white.withValues(alpha: .29);
+  static Color get white25 => white.withValues(alpha: .25);
   static Color get white10 => white.withValues(alpha: .10);
   static Color get white05 => white.withValues(alpha: .05);
 

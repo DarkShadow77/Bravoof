@@ -1,175 +1,229 @@
+import 'dart:developer';
+
+import 'package:flowva/app/styles/text_styles.dart';
+import 'package:flowva/core/constants/app_assets.dart';
+import 'package:flowva/core/utils/helpers.dart';
+import 'package:flowva/features/dashboard/redeem/data/redeem_history_model.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 
-class RewardTransaction {
-  final String title;
-  final String subtitle;
-  final String type; // Missions, Reward, Jackpot, Conversion, Referral
-  final String amount; // Positive for earned, negative for spent
-  final DateTime date;
-
-  RewardTransaction({
-    required this.title,
-    required this.subtitle,
-    required this.type,
-    required this.amount,
-    required this.date,
-  });
-}
+import '../../../../../../core/constants/app_colors.dart';
+import '../../../../../../core/utils/date_time_helper.dart';
+import '../../../../mission/presentation/bloc/streak_bloc.dart';
+import '../../bloc/redeem_bloc.dart';
 
 class HistoryTab extends StatelessWidget {
   const HistoryTab({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final transactions = [
-      // October 2025
-      RewardTransaction(
-        title: 'Completed Community Mission',
-        subtitle: 'Today, 2:14 PM',
-        type: 'Missions',
-        amount: '+500',
-        date: DateTime(2025, 10, 16),
-      ),
-      RewardTransaction(
-        title: 'Redeemed \$5 Gift Card',
-        subtitle: 'Today, 2:14 PM',
-        type: 'Reward',
-        amount: '-5,000',
-        date: DateTime(2025, 10, 16),
-      ),
-      RewardTransaction(
-        title: 'Entered Bravoo Jackpot',
-        subtitle: 'Today, 2:14 PM',
-        type: 'Jackpot',
-        amount: '-100',
-        date: DateTime(2025, 10, 16),
-      ),
+    return BlocBuilder<RedeemBloc, RedeemState>(
+      builder: (context, state) {
+        final redeemHistory = state.redeemHistory;
 
-      // August 2025
-      RewardTransaction(
-        title: 'Redeemed 10,000 Coins to ₦1,000',
-        subtitle: 'Today, 2:14 PM',
-        type: 'Conversion',
-        amount: '-10,000',
-        date: DateTime(2025, 8, 16),
-      ),
-      RewardTransaction(
-        title: 'Referral Bonus 2 new members joined',
-        subtitle: 'Today, 2:14 PM',
-        type: 'Referral',
-        amount: '+400',
-        date: DateTime(2025, 8, 16),
-      ),
-    ];
+        // Group transactions by month/year
+        final grouped = <String, List<RedeemHistory>>{};
+        for (final tx in redeemHistory) {
+          final key =
+              '${_monthName(tx.createdAt.month)} ${tx.createdAt.year}'; // e.g. October 2025
+          grouped.putIfAbsent(key, () => []).add(tx);
+        }
 
-    // Group transactions by month/year
-    final grouped = <String, List<RewardTransaction>>{};
-    for (final tx in transactions) {
-      final key =
-          '${_monthName(tx.date.month)} ${tx.date.year}'; // e.g. October 2025
-      grouped.putIfAbsent(key, () => []).add(tx);
-    }
+        return Container(
+          child: Column(
+            children: [
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 18.h),
+                child: _buildStatsRow(context),
+              ),
+              Expanded(
+                child: Container(
+                  clipBehavior: Clip.antiAlias,
+                  decoration: BoxDecoration(
+                    color: AppColors.white32,
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(16.r),
+                    ),
+                  ),
+                  child: ListView.separated(
+                    physics: BouncingScrollPhysics(),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 16.w,
+                      vertical: 20.h,
+                    ),
 
-    return Container(
-      child: ListView(
-        shrinkWrap: true,
-        padding: EdgeInsets.only(top: 16, right: 16, left: 16),
-        children: [
-          _buildStatsRow(context),
-          const SizedBox(height: 20),
-          ...grouped.entries.map(
-            (entry) => _buildMonthSection(entry.key, entry.value),
+                    itemCount: grouped.length,
+                    itemBuilder: (context, index) {
+                      return _buildRedeemCard(
+                        context,
+                        month: grouped.keys.elementAt(index),
+                        redeemHistoryList: grouped.values.elementAt(index),
+                      );
+                    },
+                    separatorBuilder: (context, index) {
+                      return SizedBox(height: 20.h);
+                    },
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 
   Widget _buildStatsRow(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      spacing: 10.w,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        _buildStatCard(
-          Image.asset("assets/images/one_50.png", height: 22),
-          '16,120',
-          'Total Coins\nEarned',
+        Expanded(
+          child: StatusCard(
+            icon: "assets/images/one_50.png",
+            value: '16,120',
+            label: 'Total B-Coin\nEarned',
+          ),
         ),
-        _buildStatCard(
-          Image.asset("assets/images/gift_with_money.png"),
-          '8',
-          'Rewards\nRedeemed',
+        BlocBuilder<RedeemBloc, RedeemState>(
+          builder: (context, state) {
+            final redeemHistory = state.redeemHistory;
+            return Expanded(
+              child: StatusCard(
+                icon: "assets/images/gift_with_money.png",
+                value: "${redeemHistory.length}",
+                label: 'Rewards\nRedeemed',
+              ),
+            );
+          },
         ),
-        _buildStatCard(
-          Image.asset("assets/images/fire.png"),
-          '12',
-          'Active\nStreak',
+        BlocBuilder<StreakBloc, StreakState>(
+          builder: (context, state) {
+            final streak = state.streak;
+            return Expanded(
+              child: StatusCard(
+                icon: AssetsPngImages.flame,
+                value: "${streak.currentStreak}",
+                label: 'Active\nStreak',
+              ),
+            );
+          },
         ),
       ],
     );
   }
 
-  Widget _buildStatCard(Widget icon, String value, String label) {
-    return Expanded(
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 4),
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.5),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.white.withOpacity(0.5)),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            icon,
-            const SizedBox(height: 8),
-            Text(
-              value,
-              style: GoogleFonts.manrope(
-                fontSize: 20,
-                fontWeight: FontWeight.w700,
-                color: Colors.black,
-              ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              label,
-
-              style: GoogleFonts.manrope(
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-                color: Color(0xFF767676),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildMonthSection(String month, List<RewardTransaction> items) {
+  Widget _buildRedeemCard(
+    BuildContext context, {
+    required String month,
+    required List<RedeemHistory> redeemHistoryList,
+  }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            month,
-            style: GoogleFonts.manrope(
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
-              color: Color(0xFF5F5F5F),
+          RichText(
+            text: TextSpan(
+              text: month,
+              style: TextStyles.smallSemibold12(
+                context,
+              ).copyWith(color: AppColors.grey550),
             ),
           ),
-          const SizedBox(height: 10),
-          ...items.map(_buildTransactionCard).toList(),
+          SizedBox(height: 12.h),
+          ListView.separated(
+            shrinkWrap: true,
+            itemCount: redeemHistoryList.length,
+            physics: NeverScrollableScrollPhysics(),
+            padding: EdgeInsets.zero,
+            itemBuilder: (context, index) {
+              final redeemHistory = redeemHistoryList[index];
+              return RedeemCard(redeemHistory: redeemHistory);
+            },
+            separatorBuilder: (context, index) {
+              return SizedBox(height: 8.h);
+            },
+          ),
+          // ...items.map(_buildTransactionCard).toList(),
         ],
       ),
     );
   }
 
-  Widget _buildTransactionCard(RewardTransaction tx) {
+  String _monthName(int month) {
+    const months = [
+      '',
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
+    ];
+    return months[month];
+  }
+}
+
+class StatusCard extends StatelessWidget {
+  const StatusCard({
+    super.key,
+    required this.icon,
+    required this.value,
+    required this.label,
+  });
+
+  final String icon;
+  final String value;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 12.h),
+      decoration: BoxDecoration(
+        color: AppColors.white40,
+        borderRadius: BorderRadius.circular(12.r),
+        border: Border.all(color: AppColors.white50, width: 1.5.r),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Image.asset(icon, height: 24.h, width: 24.w, fit: BoxFit.contain),
+          SizedBox(height: 16.h),
+          RichText(
+            text: TextSpan(text: value, style: TextStyles.titleBold20(context)),
+          ),
+          SizedBox(height: 8.h),
+          RichText(
+            text: TextSpan(
+              text: label,
+              style: TextStyles.cardMedium10(
+                context,
+              ).copyWith(fontSize: 11.sp, color: AppColors.grey500),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class RedeemCard extends StatelessWidget {
+  const RedeemCard({super.key, required this.redeemHistory});
+
+  final RedeemHistory redeemHistory;
+
+  @override
+  Widget build(BuildContext context) {
     final colorMap = {
       'Missions': Color(0xFF005F3E),
       'Reward': Color(0xFFF77A38),
@@ -188,20 +242,86 @@ class HistoryTab extends StatelessWidget {
       'Conversion': Image.asset("assets/images/blue_cards.png"),
       'Referral': Image.asset("assets/images/frends.png"),
     };
+    final imageMap = {
+      'Airtime': AssetsPngImages.cash,
+      'Giftcard': AssetsPngImages.giftcard,
+      'Data': AssetsPngImages.data,
+    };
 
-    final color = colorMap[tx.type] ?? Colors.grey;
-    Widget icon = iconMap[tx.type] ?? Icons.info as Widget;
+    final image = imageMap[redeemHistory.rewardType.capitalize] ?? null;
 
+    /* final color = colorMap[redeemHistory.rewardType] ?? Colors.grey;
+    Widget icon = iconMap[redeemHistory.rewardType] ?? Icons.info as Widget;
+*/
+    log("Redeem Date ${redeemHistory.createdAt}");
     return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      padding: const EdgeInsets.only(right: 10, left: 10, bottom: 15, top: 4),
+      height: 88.h,
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.7),
-        borderRadius: BorderRadius.circular(16),
+        color: AppColors.white70,
+        borderRadius: BorderRadius.circular(16.r),
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          CircleAvatar(backgroundColor: Colors.white, child: icon),
+          image == null
+              ? Icon(Icons.info, size: 32.sp, color: AppColors.primary)
+              : Image.asset(image, width: 32.w, height: 32.h),
+          SizedBox(width: 8.w),
+          Expanded(
+            child: RichText(
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+              text: TextSpan(
+                text: "Redeemed ${redeemHistory.rewardType.capitalize}",
+                style: TextStyles.smallSemibold12(context),
+              ),
+            ),
+          ),
+          SizedBox(width: 12.w),
+          Column(
+            spacing: 4.h,
+            crossAxisAlignment: CrossAxisAlignment.end,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                decoration: BoxDecoration(
+                  color: AppColors.primary,
+                  borderRadius: BorderRadius.circular(16.r),
+                ),
+                child: RichText(
+                  text: TextSpan(
+                    text: "Redeem",
+                    style: TextStyles.cardMedium10(
+                      context,
+                    ).copyWith(color: AppColors.white),
+                  ),
+                ),
+              ),
+
+              RichText(
+                text: TextSpan(
+                  text: "-${formatAmount(redeemHistory.coinsSpent)}",
+                  style: TextStyles.normalBold14(
+                    context,
+                  ).copyWith(color: AppColors.primary),
+                ),
+              ),
+
+              RichText(
+                text: TextSpan(
+                  text:
+                      "${formatSmartDate(redeemHistory.createdAt.toIso8601String())}",
+                  style: TextStyles.cardSemibold10(
+                    context,
+                  ).copyWith(color: AppColors.grey500),
+                ),
+              ),
+            ],
+          ),
+
+          /*CircleAvatar(backgroundColor: Colors.white, child: icon),
           const SizedBox(width: 12),
           Expanded(
             child: Column(
@@ -263,28 +383,9 @@ class HistoryTab extends StatelessWidget {
                 ),
               ),
             ],
-          ),
+          ),*/
         ],
       ),
     );
-  }
-
-  String _monthName(int month) {
-    const months = [
-      '',
-      'January',
-      'February',
-      'March',
-      'April',
-      'May',
-      'June',
-      'July',
-      'August',
-      'September',
-      'October',
-      'November',
-      'December',
-    ];
-    return months[month];
   }
 }

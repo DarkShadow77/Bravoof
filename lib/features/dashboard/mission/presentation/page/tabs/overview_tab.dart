@@ -9,6 +9,7 @@ import 'package:hugeicons/hugeicons.dart';
 
 import '../../../../earn/presentation/widgets/leaderboard_widget.dart';
 import '../../../../home/presentation/widget/referral_widget.dart';
+import '../../../../nav_bar.dart';
 import '../../../data/bloc/mission_cubit.dart';
 import '../../../data/model/rewards_summary_response.dart';
 import '../../bloc/featured_mission_bloc.dart';
@@ -70,7 +71,18 @@ class _EarnOverviewScreenState extends State<EarnOverviewScreen>
             TotalPointsCard(),
             SizedBox(height: 20.h),
             // Missions Card
-            _missionCard(),
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => BottomNavBar(index: 1, missionIndex: 1),
+                  ),
+                );
+              },
+              behavior: HitTestBehavior.opaque,
+              child: _missionCard(),
+            ),
             SizedBox(height: 20.h),
             // Streak Section
             StreakCard(),

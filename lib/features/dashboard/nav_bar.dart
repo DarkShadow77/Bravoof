@@ -19,12 +19,13 @@ import 'mission/presentation/bloc/sponsored_mission_bloc.dart';
 import 'mission/presentation/bloc/streak_bloc.dart';
 import 'mission/presentation/page/mission_page.dart';
 import 'profile/presentation/bloc/profile_bloc.dart';
+import 'redeem/presentation/bloc/redeem_bloc.dart';
 
 class BottomNavBar extends StatefulWidget {
-  int index;
-  final int? missionIndex;
-  // int i;
   BottomNavBar({this.index = 0, super.key, this.missionIndex});
+
+  final int index;
+  final int? missionIndex;
 
   @override
   State<BottomNavBar> createState() => _BottomNavBarState();
@@ -33,12 +34,13 @@ class BottomNavBar extends StatefulWidget {
 class _BottomNavBarState extends State<BottomNavBar> {
   int currentIndex = 0;
   int currentI = 0;
+
   @override
   void initState() {
     // currentI=widget.i;
     super.initState();
+    currentIndex = widget.index;
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      currentIndex = widget.index;
       SessionManager().firstWelcomeUserVal == "YES"
           ? Future.delayed(
               Duration(milliseconds: 500),
@@ -75,6 +77,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
     context.read<GrowthMissionBloc>().add(LoadGrowthMission());
     context.read<SkillUpBloc>().add(LoadSkillUpMission());
     context.read<StreakBloc>().add(LoadStreaksEvent());
+    context.read<RedeemBloc>().add(LoadRedeemHistory());
   }
 
   @override
@@ -101,7 +104,6 @@ class _BottomNavBarState extends State<BottomNavBar> {
               ),
             ),
           ),
-
           child: BottomNavigationBar(
             backgroundColor: Colors.white,
             type: BottomNavigationBarType.fixed,
@@ -121,7 +123,6 @@ class _BottomNavBarState extends State<BottomNavBar> {
               setState(() {
                 currentIndex = index;
               });
-
               _fetchDetails();
             },
             items: [

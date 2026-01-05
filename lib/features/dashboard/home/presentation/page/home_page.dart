@@ -256,7 +256,6 @@ class _FlowvaHomePageState extends State<FlowvaHomePage> with UIToolMixin {
                                   ? ToolCardCarousel(campaign: campaign)
                                   : Container(),
                               const SizedBox(height: 20),
-
                               // Progress bar
                               Padding(
                                 padding: const EdgeInsets.symmetric(
@@ -528,16 +527,18 @@ class _FlowvaHomePageState extends State<FlowvaHomePage> with UIToolMixin {
                                             child: Stack(
                                               children: [
                                                 GestureDetector(
-                                                  onTap: () => Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                      builder: (_) =>
-                                                          BottomNavBar(
-                                                            index: 1,
-                                                            missionIndex: 1,
-                                                          ),
-                                                    ),
-                                                  ),
+                                                  onTap: () {
+                                                    Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                        builder: (_) =>
+                                                            BottomNavBar(
+                                                              index: 1,
+                                                              missionIndex: 1,
+                                                            ),
+                                                      ),
+                                                    );
+                                                  },
                                                   child: Container(
                                                     margin: EdgeInsets.only(
                                                       top: 20,

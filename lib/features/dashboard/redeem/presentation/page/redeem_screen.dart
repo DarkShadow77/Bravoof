@@ -8,6 +8,15 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../common/flowva_app_bar.dart';
+import '../../../mission/presentation/bloc/community_mission_bloc.dart';
+import '../../../mission/presentation/bloc/featured_mission_bloc.dart';
+import '../../../mission/presentation/bloc/growth_mission_bloc.dart';
+import '../../../mission/presentation/bloc/skill_up_bloc.dart';
+import '../../../mission/presentation/bloc/social_mission_bloc.dart';
+import '../../../mission/presentation/bloc/sponsored_mission_bloc.dart';
+import '../../../mission/presentation/bloc/streak_bloc.dart';
+import '../../../profile/presentation/bloc/profile_bloc.dart';
+import '../bloc/redeem_bloc.dart';
 
 class RedeemScreen extends StatefulWidget {
   RedeemScreen({super.key});
@@ -27,6 +36,19 @@ class _RedeemScreenState extends State<RedeemScreen> {
   void initState() {
     super.initState();
     BlocProvider.of<HomeCubit>(context).fetchCampaigns();
+    _fetchDetails();
+  }
+
+  _fetchDetails() {
+    context.read<ProfileBloc>().add(GetProfileEvent());
+    context.read<CommunityMissionBloc>().add(LoadCommunityMission());
+    context.read<SocialMissionBloc>().add(LoadSocialMission());
+    context.read<FeaturedMissionBloc>().add(LoadFeaturedMission());
+    context.read<SponsoredMissionBloc>().add(LoadSponsoredMission());
+    context.read<GrowthMissionBloc>().add(LoadGrowthMission());
+    context.read<SkillUpBloc>().add(LoadSkillUpMission());
+    context.read<StreakBloc>().add(LoadStreaksEvent());
+    context.read<RedeemBloc>().add(LoadRedeemHistory());
   }
 
   @override
@@ -107,8 +129,8 @@ class _RedeemScreenState extends State<RedeemScreen> {
                                       border: isSelected2
                                           ? Border.all(
                                               width: 0.2,
-                                              color: Colors.black.withOpacity(
-                                                0.6,
+                                              color: Colors.black.withValues(
+                                                alpha: 0.6,
                                               ),
                                             )
                                           : null,
@@ -121,7 +143,9 @@ class _RedeemScreenState extends State<RedeemScreen> {
                                           fontWeight: FontWeight.w700,
                                           color: isSelected2
                                               ? Colors.black
-                                              : Colors.black.withOpacity(0.6),
+                                              : Colors.black.withValues(
+                                                  alpha: 0.6,
+                                                ),
                                         ),
                                       ),
                                     ),
@@ -142,6 +166,7 @@ class _RedeemScreenState extends State<RedeemScreen> {
                               setState(() {
                                 selectedIndex = index;
                               });
+                              _fetchDetails();
                             },
                             children: [
                               RedeemTab(campaign: campaign.first),
