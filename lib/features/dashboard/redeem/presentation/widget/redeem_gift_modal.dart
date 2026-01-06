@@ -1,3 +1,5 @@
+import 'package:country_state_city/models/country.dart';
+import 'package:country_state_city/utils/country_utils.dart';
 import 'package:flowva/app/view/widgets/button/icon_text_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -6,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
 
 import '../../../../../app/styles/text_styles.dart';
+import '../../../../../app/view/widgets/bottom_modals/country_state_modal.dart';
 import '../../../../../app/view/widgets/bottom_modals/show_modal_sheet.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/fonts.dart';
@@ -42,6 +45,45 @@ class RedeemGiftModal extends StatefulWidget {
 
 class _RedeemGiftModalState extends State<RedeemGiftModal> {
   TextEditingController _phoneController = TextEditingController();
+
+  bool _isPhoneValid = false;
+
+  List<Country> countriesList = [];
+  Country country = Country(
+    name: "United States",
+    flag: "🇺🇸",
+    isoCode: "US",
+    currency: "USD",
+    phoneCode: "+1",
+    longitude: "-97.00000000",
+    latitude: "38.00000000",
+  );
+
+  @override
+  void initState() {
+    super.initState();
+
+    getCountries();
+  }
+
+  @override
+  void dispose() {
+    _phoneController.dispose();
+    super.dispose();
+  }
+
+  Future<void> getCountries() async {
+    countriesList = await getAllCountries();
+    setState(() {});
+  }
+
+  Future<void> _validateForm() async {
+    String phone = _phoneController.text.trim();
+
+    setState(() {
+      _isPhoneValid = GetUtils.isPhoneNumber(phone);
+    });
+  }
 
   @override
   Widget build(BuildContext ctx) {
@@ -123,12 +165,55 @@ class _RedeemGiftModalState extends State<RedeemGiftModal> {
                   RequiredValidator(errorText: "Phone Number is required"),
                 ]).call,
                 onChanged: (val) {
-                  setState(() {});
+                  _validateForm();
                 },
+                prefixIcon: GestureDetector(
+                  onTap: () {
+                    getCountries();
+                    countryStateModal(
+                      title: "Country",
+                      isPhone: true,
+                      onPressed: (value) {
+                        setState(() => country = value);
+                        _validateForm();
+                      },
+                      list: countriesList,
+                    );
+                  },
+                  behavior: HitTestBehavior.opaque,
+                  child: Row(
+                    spacing: 5.w,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      RichText(
+                        textAlign: TextAlign.center,
+                        text: TextSpan(
+                          text: country.flag,
+                          style: TextStyles.titleSemiBold20(context),
+                        ),
+                      ),
+                      RichText(
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        text: TextSpan(
+                          text:
+                              "${country.phoneCode.toString().startsWith("+") ? "" : "+"} ${country.phoneCode}",
+                          style: TextStyles.normalSemibold14(context),
+                        ),
+                      ),
+                      Container(
+                        height: double.infinity,
+                        width: 1.w,
+                        color: AppColors.black50,
+                        margin: EdgeInsets.symmetric(vertical: 5.h),
+                      ),
+                    ],
+                  ),
+                ),
               ),
               SizedBox(height: 36.h),
             ],
-            (!widget.showPhone || _phoneController.text.trim().isNotEmpty)
+            (!widget.showPhone || _isPhoneValid)
                 ? IconTextButton(
                     color: AppColors.black,
                     textColor: AppColors.white,

@@ -1,7 +1,9 @@
 import 'package:flowva/app/view/widgets/button/icon_text_button.dart';
+import 'package:flowva/app/view/widgets/loading/outer_loading.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -95,28 +97,14 @@ class _StreakCardState extends State<StreakCard> with UIToolMixin {
 
   _loadingState(BuildContext context, StreakLoadingState state) {
     if (state.type == StreakType.checkIn) {
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        barrierColor: Colors.black.withValues(alpha: 0.3),
-        builder: (_) => Center(
-          child: Container(
-            height: 400,
-            alignment: Alignment.center,
-            child: const CircularProgressIndicator(
-              backgroundColor: Color(0xff828282),
-              valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF9013FE)),
-              strokeCap: StrokeCap.round,
-            ),
-          ),
-        ),
-      );
+      outerLoadingDialog(text: "Checking In");
     }
   }
 
   _successState(BuildContext context, StreakSuccessState state) {
     if (state.type == StreakType.checkIn) {
-      Navigator.pop(context);
+      if (Get.isDialogOpen ?? false) Get.back();
+      context.read<ProfileBloc>().add(GetProfileEvent());
       showModalBottomSheet(
         context: context,
         isScrollControlled: true,
@@ -131,13 +119,12 @@ class _StreakCardState extends State<StreakCard> with UIToolMixin {
           b_text1: "Done",
         ),
       );
-      context.read<ProfileBloc>().add(GetProfileEvent());
     }
   }
 
   _failureState(BuildContext context, StreakFailureState state) {
     if (state.type == StreakType.checkIn) {
-      Navigator.pop(context);
+      if (Get.isDialogOpen ?? false) Get.back();
       showMessage(
         state.message,
         context,

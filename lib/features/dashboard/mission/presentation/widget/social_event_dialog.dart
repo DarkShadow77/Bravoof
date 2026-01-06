@@ -10,6 +10,7 @@ import 'package:hugeicons/hugeicons.dart';
 import 'package:timelines_plus/timelines_plus.dart';
 
 import '../../../../../app/styles/text_styles.dart';
+import '../../../../../app/view/widgets/loading/outer_loading.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../utility/ui_tool_mix.dart';
 import '../../../../common/Mission_success.dart';
@@ -51,29 +52,12 @@ class _AskingDialogState extends State<SocialEventDialog> with UIToolMixin {
           if (state is SocialMissionLoading &&
               state.type == SocialMissionType.completeMission &&
               state.missionId == widget.socialMission.id) {
-            showDialog(
-              context: context,
-              barrierDismissible: false,
-              barrierColor: Colors.black.withValues(alpha: 0.3),
-              builder: (_) => Center(
-                child: Container(
-                  height: 400,
-                  alignment: Alignment.center,
-                  child: const CircularProgressIndicator(
-                    backgroundColor: Color(0xff828282),
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                      Color(0xFF9013FE),
-                    ),
-                    strokeCap: StrokeCap.round,
-                  ),
-                ),
-              ),
-            );
+            outerLoadingDialog(text: "Completing Mission");
           }
           if (state is SocialMissionError &&
               state.type == SocialMissionType.completeMission &&
               state.missionId == widget.socialMission.id) {
-            Get.back();
+            if (Get.isDialogOpen ?? false) Get.back();
             showMessage(
               state.message,
               context,
@@ -85,11 +69,9 @@ class _AskingDialogState extends State<SocialEventDialog> with UIToolMixin {
 
           if (state is SocialMissionJoined &&
               state.missionId == widget.socialMission.id) {
-            Get.back();
-            Get.back();
-            BlocProvider.of<SocialMissionBloc>(
-              context,
-            ).add(LoadSocialMission());
+            if (Get.isDialogOpen ?? false) Get.back();
+            if (Get.isDialogOpen ?? false) Get.back();
+            context.read<SocialMissionBloc>().add(LoadSocialMission());
             showModalBottomSheet(
               context: context,
               isScrollControlled: true,

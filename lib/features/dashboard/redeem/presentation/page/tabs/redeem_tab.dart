@@ -15,9 +15,11 @@ import 'package:flowva/features/dashboard/redeem/presentation/widget/redeem_gift
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../../../../app/view/widgets/loading/outer_loading.dart';
 import '../../../../../../utility/ui_tool_mix.dart';
 import '../../../../../onbaording/data/model/user_profile.dart';
 import '../../../../profile/presentation/bloc/profile_bloc.dart';
@@ -90,30 +92,14 @@ class _RedeemTabState extends State<RedeemTab>
   _loadingState(BuildContext context, RedeemLoadingState state) {
     if (state.type == RedeemType.redeemAirtimeData ||
         state.type == RedeemType.redeemGiftcard) {
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        barrierColor: Colors.black.withValues(alpha: 0.3),
-        builder: (_) => Center(
-          child: Container(
-            height: 400,
-            alignment: Alignment.center,
-            child: const CircularProgressIndicator(
-              backgroundColor: Color(0xff828282),
-              valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF9013FE)),
-              strokeCap: StrokeCap.round,
-            ),
-          ),
-        ),
-      );
+      outerLoadingDialog(text: "Redeeming");
     }
   }
 
   _successState(BuildContext context, RedeemSuccessState state) async {
     if (state.type == RedeemType.redeemAirtimeData) {
-      Navigator.of(context)
-        ..pop()
-        ..pop();
+      if (Get.isDialogOpen ?? false) Get.back();
+      if (Get.isBottomSheetOpen ?? false) Get.back();
       context.read<ProfileBloc>().add(GetProfileEvent());
       context.read<RedeemBloc>().add(LoadRedeemHistory());
       showMessage(
@@ -123,9 +109,8 @@ class _RedeemTabState extends State<RedeemTab>
         styleColor: Colors.black,
       );
     } else if (state.type == RedeemType.redeemGiftcard) {
-      Navigator.of(context)
-        ..pop()
-        ..pop();
+      if (Get.isDialogOpen ?? false) Get.back();
+      if (Get.isBottomSheetOpen ?? false) Get.back();
 
       context.read<ProfileBloc>().add(GetProfileEvent());
 
@@ -148,7 +133,7 @@ class _RedeemTabState extends State<RedeemTab>
   _failureState(BuildContext context, RedeemFailureState state) {
     if (state.type == RedeemType.redeemAirtimeData ||
         state.type == RedeemType.redeemGiftcard) {
-      Navigator.pop(context);
+      if (Get.isDialogOpen ?? false) Get.back();
       context.read<ProfileBloc>().add(GetProfileEvent());
       showMessage(
         state.message,

@@ -1,5 +1,7 @@
 import 'package:flowva/app/styles/text_styles.dart';
+import 'package:flowva/app/view/widgets/gradient_progress.dart';
 import 'package:flowva/core/constants/app_assets.dart';
+import 'package:flowva/core/utils/helpers.dart';
 import 'package:flowva/features/common/model/campaign_response.dart';
 import 'package:flowva/features/common/ui_tool_mixin/ui_tool_mixin.dart';
 import 'package:flowva/features/dashboard/home/data/bloc/home_cubit.dart';
@@ -258,251 +260,173 @@ class _FlowvaHomePageState extends State<FlowvaHomePage> with UIToolMixin {
                               const SizedBox(height: 20),
                               // Progress bar
                               Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16.0,
-                                ),
-                                child: GestureDetector(
-                                  child: Container(
-                                    // padding: const EdgeInsets.all(2),
-                                    height: 80,
-                                    width: double.infinity,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(15),
-                                      border: Border.all(
-                                        width: 0.2,
-                                        color: Colors.black54,
-                                      ),
-
-                                      color: Color(0xFFAD50FE),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black.withOpacity(0.08),
-                                          blurRadius: 12,
-                                          offset: const Offset(0, 6),
-                                        ),
-                                      ],
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        // Left Section
-                                        Expanded(
-                                          child: Padding(
-                                            padding: const EdgeInsets.only(
-                                              left: 12,
-                                            ),
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                const SizedBox(height: 10),
-                                                // Title + Arrow
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    Text(
-                                                      "More missions await",
-                                                      style:
-                                                          GoogleFonts.manrope(
-                                                            fontWeight:
-                                                                FontWeight.w500,
-                                                            fontSize: 14,
-                                                            color: Color(
-                                                              0xFFE9E9E9,
+                                padding: EdgeInsets.symmetric(horizontal: 16.w),
+                                child: Container(
+                                  // padding: const EdgeInsets.all(2),
+                                  height: 82.h,
+                                  width: double.infinity,
+                                  clipBehavior: Clip.antiAlias,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(16.r),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      // Left Section
+                                      Expanded(
+                                        child: Container(
+                                          padding: EdgeInsets.symmetric(
+                                            horizontal: 12.w,
+                                            vertical: 10.h,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: AppColors.primary,
+                                          ),
+                                          child: Column(
+                                            spacing: 8.h,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.center,
+                                            children: [
+                                              // Title + Arrow
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Expanded(
+                                                    child: RichText(
+                                                      text: TextSpan(
+                                                        text:
+                                                            "More missions await",
+                                                        style:
+                                                            TextStyles.smallMedium12(
+                                                              context,
+                                                            ).copyWith(
+                                                              color: AppColors
+                                                                  .grey200,
                                                             ),
-                                                          ),
+                                                      ),
                                                     ),
-                                                    Row(
+                                                  ),
+                                                  RichText(
+                                                    text: TextSpan(
                                                       children: [
-                                                        Text(
-                                                          "${userProfile.totalPoints}",
+                                                        TextSpan(
+                                                          text:
+                                                              "${formatAmount(userProfile.totalPoints ?? 0)}",
                                                           style:
-                                                              GoogleFonts.manrope(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w600,
-                                                                fontSize: 16,
-                                                                color: Colors
+                                                              TextStyles.bodySemiBold16(
+                                                                context,
+                                                              ).copyWith(
+                                                                color: AppColors
                                                                     .white,
                                                               ),
                                                         ),
-                                                        Text(
-                                                          " / ${userProfile.basePoints}",
-                                                          style:
-                                                              GoogleFonts.manrope(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w500,
-                                                                fontSize: 14,
-                                                                color: Color(
-                                                                  0xFFE9E9E9,
-                                                                ),
-                                                              ),
+                                                        TextSpan(
+                                                          text:
+                                                              " / ${formatAmount(userProfile.basePoints ?? 0)}",
                                                         ),
                                                       ],
-                                                    ),
-                                                  ],
-                                                ),
-                                                const SizedBox(height: 5),
-                                                // Progress Bar
-                                                // Wrap this inside your widget tree
-                                                Container(
-                                                  height: 8,
-                                                  width: double.infinity,
-                                                  decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                          20,
-                                                        ),
-                                                    color: Color(0xFFF1F1F1),
-                                                  ),
-
-                                                  child: Stack(
-                                                    children: [
-                                                      FractionallySizedBox(
-                                                        widthFactor:
-                                                            (userProfile
-                                                                    .totalPoints ??
-                                                                0) /
-                                                            (userProfile
-                                                                    .basePoints ??
-                                                                5000),
-                                                        // progress percentage
-                                                        child: Container(
-                                                          decoration: BoxDecoration(
-                                                            borderRadius:
-                                                                BorderRadius.circular(
-                                                                  10,
-                                                                ),
-                                                            gradient: const LinearGradient(
-                                                              colors: [
-                                                                Color(
-                                                                  0xFFA259FF,
-                                                                ),
-                                                                Color(
-                                                                  0xFFDEC4FF,
-                                                                ),
-                                                              ],
-                                                              begin: Alignment
-                                                                  .topCenter,
-                                                              end: Alignment
-                                                                  .bottomCenter,
-                                                            ),
+                                                      style:
+                                                          TextStyles.smallMedium12(
+                                                            context,
+                                                          ).copyWith(
+                                                            color: AppColors
+                                                                .grey300,
                                                           ),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                                const SizedBox(height: 8),
-                                                // Bottom text
-                                                RichText(
-                                                  text: TextSpan(
-                                                    children: [
-                                                      TextSpan(
-                                                        text:
-                                                            "Just ${(userProfile.basePoints ?? 0) - (userProfile.totalPoints ?? 0)} ",
-                                                        style:
-                                                            GoogleFonts.manrope(
-                                                              fontSize: 12,
-                                                              color: Color(
-                                                                0xFFE9E9E9,
-                                                              ),
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w500,
-                                                            ),
-                                                      ),
-                                                      TextSpan(
-                                                        text: "Coins",
-                                                        style:
-                                                            GoogleFonts.manrope(
-                                                              fontSize: 14,
-                                                              color: Color(
-                                                                0xFFE9E9E9,
-                                                              ),
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w600,
-                                                            ),
-                                                      ),
-                                                      TextSpan(
-                                                        text:
-                                                            " until your next win ✨",
-                                                        style:
-                                                            GoogleFonts.manrope(
-                                                              fontSize: 12,
-                                                              color: Color(
-                                                                0xFFE9E9E9,
-                                                              ),
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w500,
-                                                            ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                        const SizedBox(width: 15),
-                                        // Right Section - Circular Rewards
-                                        Stack(
-                                          children: [
-                                            Positioned.fill(
-                                              child: ClipRRect(
-                                                borderRadius: BorderRadius.only(
-                                                  bottomRight: Radius.circular(
-                                                    15,
-                                                  ),
-                                                  topRight: Radius.circular(15),
-                                                ),
-                                                child: Image.asset(
-                                                  'assets/images/dd.png',
-                                                  fit: BoxFit.cover,
-                                                  height: 85,
-                                                ),
-                                              ),
-                                            ),
-                                            // Your foreground content here
-                                            Padding(
-                                              padding: const EdgeInsets.all(
-                                                12.0,
-                                              ),
-                                              child: Column(
-                                                children: [
-                                                  Image.asset(
-                                                    "assets/images/one_50.png",
-                                                    height: 30,
-                                                  ),
-                                                  // const SizedBox(height: 2),
-                                                  Text(
-                                                    "Redeem",
-                                                    style: GoogleFonts.manrope(
-                                                      fontSize: 14,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                      color: Colors.black87,
                                                     ),
                                                   ),
                                                 ],
                                               ),
+                                              // Progress Bar
+                                              GradientProgress(
+                                                height: 8,
+                                                progress:
+                                                    (userProfile.totalPoints ??
+                                                        0) /
+                                                    (userProfile.basePoints ??
+                                                        5000),
+                                              ),
+                                              // Bottom text
+                                              if ((userProfile.totalPoints ??
+                                                      0) <
+                                                  (userProfile.basePoints ?? 0))
+                                                RichText(
+                                                  maxLines: 1,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  text: TextSpan(
+                                                    text:
+                                                        "Just ${(userProfile.basePoints ?? 0) - (userProfile.totalPoints ?? 0)}  more till your next reward! ✨",
+                                                    style:
+                                                        TextStyles.cardSemibold10(
+                                                          context,
+                                                        ).copyWith(
+                                                          color:
+                                                              AppColors.grey200,
+                                                        ),
+                                                  ),
+                                                )
+                                              else
+                                                RichText(
+                                                  maxLines: 1,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  text: TextSpan(
+                                                    text:
+                                                        "Congratulations on getting to 5000 coins!!",
+                                                    style:
+                                                        TextStyles.cardSemibold10(
+                                                          context,
+                                                        ).copyWith(
+                                                          color:
+                                                              AppColors.grey200,
+                                                        ),
+                                                  ),
+                                                ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                      // Right Section - Circular Rewards
+                                      Container(
+                                        color: AppColors.white50,
+                                        padding: EdgeInsets.symmetric(
+                                          vertical: 12.h,
+                                          horizontal: 12.w,
+                                        ),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Image.asset(
+                                              "assets/images/one_50.png",
+                                              height: 30,
+                                            ),
+                                            RichText(
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                              text: TextSpan(
+                                                text: "Redeem",
+                                                style:
+                                                    TextStyles.normalMedium14(
+                                                      context,
+                                                    ),
+                                              ),
                                             ),
                                           ],
                                         ),
-                                      ],
-                                    ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ),
-                              SizedBox(height: 20),
+                              SizedBox(height: 20.h),
                               Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16.0,
-                                ),
+                                padding: EdgeInsets.symmetric(horizontal: 16.w),
                                 child: Container(
                                   padding: EdgeInsets.symmetric(horizontal: 15),
                                   decoration: BoxDecoration(
@@ -605,7 +529,7 @@ class _FlowvaHomePageState extends State<FlowvaHomePage> with UIToolMixin {
                                   ),
                                 ),
                               ),
-                              const SizedBox(height: 20),
+                              SizedBox(height: 20.h),
                               rewardsSummary.isNotEmpty &&
                                       rewardsSummary.length > 2
                                   ? TopLeaderBoard(

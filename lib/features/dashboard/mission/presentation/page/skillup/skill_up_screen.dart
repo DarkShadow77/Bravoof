@@ -3,8 +3,11 @@ import 'package:flowva/core/constants/app_assets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 
 import '../../../../../../app/styles/text_styles.dart';
+import '../../../../../../app/view/widgets/gradient_progress.dart';
+import '../../../../../../app/view/widgets/loading/outer_loading.dart';
 import '../../../../../../core/constants/app_colors.dart';
 import '../../../../../../core/constants/fonts.dart';
 import '../../../../../../utility/ui_tool_mix.dart';
@@ -40,22 +43,7 @@ class _SkillUpScreenState extends State<SkillUpScreen> with UIToolMixin {
             state.missionId == skill.id) ||
         (state.type == SkillUpType.unlockSkillUp &&
             state.missionId == stepId)) {
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        barrierColor: Colors.black.withValues(alpha: 0.3),
-        builder: (_) => Center(
-          child: Container(
-            height: 400,
-            alignment: Alignment.center,
-            child: const CircularProgressIndicator(
-              backgroundColor: Color(0xff828282),
-              valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF9013FE)),
-              strokeCap: StrokeCap.round,
-            ),
-          ),
-        ),
-      );
+      outerLoadingDialog(text: "Completing Skill Up Mission");
     }
   }
 
@@ -66,7 +54,7 @@ class _SkillUpScreenState extends State<SkillUpScreen> with UIToolMixin {
     bool isLast,
   ) {
     if (state.missionId == skill.id && state.stepId == stepId) {
-      Navigator.pop(context);
+      if (Get.isDialogOpen ?? false) Get.back();
       context.read<SkillUpBloc>().add(LoadSkillUpMission());
       skillUpSuccessDialog(isLast: isLast);
     }
@@ -78,9 +66,8 @@ class _SkillUpScreenState extends State<SkillUpScreen> with UIToolMixin {
     SkillUpStep mission,
   ) {
     if (state.stepId == mission.id) {
-      Navigator.pop(context);
+      if (Get.isDialogOpen ?? false) Get.back();
       context.read<SkillUpBloc>().add(LoadSkillUpMission());
-
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -137,7 +124,7 @@ class _SkillUpScreenState extends State<SkillUpScreen> with UIToolMixin {
             state.missionId == skill.id) ||
         (state.type == SkillUpType.unlockSkillUp &&
             state.missionId == stepId)) {
-      Navigator.pop(context);
+      if (Get.isDialogOpen ?? false) Get.back();
       showMessage(
         state.message,
         context,
@@ -294,31 +281,11 @@ class SkillMissionCard extends StatelessWidget with UIToolMixin {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Expanded(
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(100.r),
-                  child: Container(
-                    height: 14.h,
-                    width: double.infinity,
-                    color: AppColors.grey200, // background
-                    child: Align(
-                      alignment: Alignment.centerLeft,
-                      child: FractionallySizedBox(
-                        widthFactor: (notJoined ? 10 : 100) / 100,
-                        child: Container(
-                          decoration: const BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [Color(0xFFA259FF), Color(0xFFDEC4FF)],
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
+                child: GradientProgress(
+                  height: 14,
+                  progress: (notJoined ? 10 : 100) / 100,
                 ),
               ),
-
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.h),
                 decoration: BoxDecoration(

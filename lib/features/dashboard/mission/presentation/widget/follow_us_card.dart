@@ -66,16 +66,54 @@ class _FollowUsCardState extends State<FollowUsCard> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Title
-              RichText(
-                text: TextSpan(
-                  text: 'Follow Us On Socials 🔥',
-                  style: TextStyles.titleBold20(
-                    context,
-                  ).copyWith(fontFamily: AppFonts.baloo2),
-                ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: RichText(
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      text: TextSpan(
+                        text: 'Follow Us On Socials 🔥',
+                        style: TextStyles.titleBold20(
+                          context,
+                        ).copyWith(fontFamily: AppFonts.baloo2),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 10.w,
+                      vertical: 6.h,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.black05,
+                      borderRadius: BorderRadius.circular(100.r),
+                    ),
+                    child: Row(
+                      spacing: 4.w,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Image.asset(
+                          "assets/images/one_50.png",
+                          height: 14.r,
+                          width: 14.r,
+                        ),
+                        RichText(
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          text: TextSpan(
+                            text: "100",
+                            style: TextStyles.cardSemibold10(context),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
               SizedBox(height: 16.h),
-
               // Progress bar area with markers and icons
               ClipRRect(
                 borderRadius: BorderRadius.circular(100.r),

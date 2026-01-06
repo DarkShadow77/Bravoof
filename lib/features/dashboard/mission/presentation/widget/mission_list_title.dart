@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../../app/view/widgets/cached_image_widget.dart';
+import '../../../../../app/view/widgets/loading/outer_loading.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../utility/in_app_review.dart';
 import '../../../../../utility/ui_tool_mix.dart';
@@ -49,28 +51,13 @@ class _MissionCardState extends State<MissionCard> with UIToolMixin {
 
   _loadingState(BuildContext context, GrowthMissionLoadingState state) {
     if (state.type == GrowthMissionType.completeMission) {
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        barrierColor: Colors.black.withOpacity(0.3),
-        builder: (_) => Center(
-          child: Container(
-            height: 400,
-            alignment: Alignment.center,
-            child: const CircularProgressIndicator(
-              backgroundColor: Color(0xff828282),
-              valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF9013FE)),
-              strokeCap: StrokeCap.round,
-            ),
-          ),
-        ),
-      );
+      outerLoadingDialog(text: "Completing Mission");
     }
   }
 
   _successState(BuildContext context, GrowthMissionSuccessState state) {
     if (state.type == GrowthMissionType.completeMission) {
-      Navigator.pop(context);
+      if (Get.isDialogOpen ?? false) Get.back();
       context.read<ProfileBloc>().add(GetProfileEvent());
       context.read<GrowthMissionBloc>().add(LoadGrowthMission());
       showModalBottomSheet(
@@ -93,7 +80,7 @@ class _MissionCardState extends State<MissionCard> with UIToolMixin {
 
   _failedState(BuildContext context, GrowthMissionFailureState state) {
     if (state.type == GrowthMissionType.completeMission) {
-      Navigator.pop(context);
+      if (Get.isDialogOpen ?? false) Get.back();
       showMessage(
         state.message,
         context,

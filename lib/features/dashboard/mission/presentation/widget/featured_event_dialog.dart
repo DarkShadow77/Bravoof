@@ -12,6 +12,7 @@ import 'package:path/path.dart' as p;
 import 'package:timelines_plus/timelines_plus.dart';
 
 import '../../../../../app/styles/text_styles.dart';
+import '../../../../../app/view/widgets/loading/outer_loading.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../utility/ui_tool_mix.dart';
 import '../../../../common/Mission_success.dart';
@@ -70,29 +71,12 @@ class _AskingDialogState extends State<FeaturedEventDialog> with UIToolMixin {
           if (state is FeaturedMissionLoading &&
               state.type == FeaturedMissionType.completeMission &&
               state.missionId == widget.featuredMission.id) {
-            showDialog(
-              context: context,
-              barrierDismissible: false,
-              barrierColor: Colors.black.withValues(alpha: 0.3),
-              builder: (_) => Center(
-                child: Container(
-                  height: 400,
-                  alignment: Alignment.center,
-                  child: const CircularProgressIndicator(
-                    backgroundColor: Color(0xff828282),
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                      Color(0xFF9013FE),
-                    ),
-                    strokeCap: StrokeCap.round,
-                  ),
-                ),
-              ),
-            );
+            outerLoadingDialog(text: "Completing Mission");
           }
           if (state is FeaturedMissionError &&
               state.type == FeaturedMissionType.completeMission &&
               state.missionId == widget.featuredMission.id) {
-            Get.back();
+            if (Get.isDialogOpen ?? false) Get.back();
             showMessage(
               state.message,
               context,
@@ -104,11 +88,10 @@ class _AskingDialogState extends State<FeaturedEventDialog> with UIToolMixin {
 
           if (state is FeaturedMissionJoined &&
               state.missionId == widget.featuredMission.id) {
-            Get.back();
-            Get.back();
-            BlocProvider.of<FeaturedMissionBloc>(
-              context,
-            ).add(LoadFeaturedMission());
+            if (Get.isDialogOpen ?? false) Get.back();
+            if (Get.isDialogOpen ?? false) Get.back();
+            context.read<FeaturedMissionBloc>().add(LoadFeaturedMission());
+
             showModalBottomSheet(
               context: context,
               isScrollControlled: true,
