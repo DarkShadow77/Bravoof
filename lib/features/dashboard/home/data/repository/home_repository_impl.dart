@@ -31,7 +31,12 @@ class HomeRepositoryImpl extends HomeRepository {
           .select()
           .order('created_at', ascending: false)
           .limit(1)
-          .single();
+          .maybeSingle();
+
+      if (res == null) {
+        Logger().w("No spotlight record found");
+        return Left("No spotlight available");
+      }
 
       Logger().d("Latest spotlight: $res");
 

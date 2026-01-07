@@ -397,6 +397,7 @@ class _ToolCardCarouselState extends State<ToolCardCarousel> {
       },
     ),
     BlocBuilder<HomeCubit, HomeState>(
+      bloc: homeCubit,
       builder: (context, state) {
         final spotlight = state.spotlight;
 
