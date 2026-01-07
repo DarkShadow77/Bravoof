@@ -2,9 +2,9 @@ import 'package:flowva/app/styles/text_styles.dart';
 import 'package:flowva/app/view/widgets/gradient_progress.dart';
 import 'package:flowva/core/constants/app_assets.dart';
 import 'package:flowva/core/utils/helpers.dart';
-import 'package:flowva/features/common/model/campaign_response.dart';
 import 'package:flowva/features/common/ui_tool_mixin/ui_tool_mixin.dart';
-import 'package:flowva/features/dashboard/home/data/bloc/home_cubit.dart';
+import 'package:flowva/features/dashboard/home/data/model/campaign_response.dart';
+import 'package:flowva/features/dashboard/home/presentation/bloc/home_cubit.dart';
 import 'package:flowva/features/dashboard/profile/presentation/bloc/profile_bloc.dart';
 import 'package:flowva/features/dashboard/profile/presentation/pages/profile_page.dart';
 import 'package:flowva/features/onbaording/data/model/user_profile.dart';
@@ -39,7 +39,7 @@ class _FlowvaHomePageState extends State<FlowvaHomePage> with UIToolMixin {
   final sessionManager = SessionManager();
   UserProfile userProfile = UserProfile.empty();
   late ProfileBloc profileBloc;
-  List<Campaign> campaign = [];
+  List<CampaignModel> campaign = [];
   List<RewardsSummary> rewardsSummary = [];
 
   @override
@@ -47,6 +47,7 @@ class _FlowvaHomePageState extends State<FlowvaHomePage> with UIToolMixin {
     super.initState();
     missionCubit = MissionCubit();
     BlocProvider.of<HomeCubit>(context).fetchCampaigns();
+    BlocProvider.of<HomeCubit>(context).fetchSpotlight();
     missionCubit.fetchAllUsersReward();
 
     profileBloc = context.read<ProfileBloc>();
@@ -65,7 +66,7 @@ class _FlowvaHomePageState extends State<FlowvaHomePage> with UIToolMixin {
             listener: (context, state) {
               print(state);
               setState(() {
-                campaign = state.campaignResponse.campaign!;
+                campaign = state.campaign;
               });
               print(campaign);
             },
@@ -254,9 +255,7 @@ class _FlowvaHomePageState extends State<FlowvaHomePage> with UIToolMixin {
                                 ),
                                 SizedBox(height: 16.h),
                               ],
-                              campaign.isNotEmpty
-                                  ? ToolCardCarousel(campaign: campaign)
-                                  : Container(),
+                              ToolCardCarousel(),
                               const SizedBox(height: 20),
                               // Progress bar
                               Padding(

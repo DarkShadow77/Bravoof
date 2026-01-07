@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:app_links/app_links.dart';
-import 'package:flowva/features/dashboard/home/data/bloc/home_cubit.dart';
+import 'package:flowva/features/dashboard/home/presentation/bloc/home_cubit.dart';
 import 'package:flowva/features/dashboard/redeem/presentation/bloc/redeem_bloc.dart';
 import 'package:flowva/session/session_manager.dart';
 import 'package:flowva/utility/auth_listener.dart';

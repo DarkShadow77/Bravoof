@@ -5,7 +5,7 @@ import 'package:equatable/equatable.dart';
 
 import '../../../../../session/session_manager.dart';
 import '../../../../onbaording/data/model/user_profile.dart';
-import '../repository/campaign_repository.dart';
+import '../../data/repository/campaign_repository.dart';
 
 part 'campaign_state.dart';
 

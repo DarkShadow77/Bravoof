@@ -1,23 +1,49 @@
 import 'package:dartz/dartz.dart';
-import 'package:flowva/features/common/model/campaign_response.dart';
+import 'package:flowva/features/dashboard/home/data/model/campaign_response.dart';
+import 'package:logger/logger.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../onbaording/data/model/user_profile.dart';
+import '../model/spotlight_model.dart';
 import 'home_repository.dart';
 
 class HomeRepositoryImpl extends HomeRepository {
   final SupabaseClient supabase = Supabase.instance.client;
 
-  Future<Either<String, CampaignResponse>> fetchCampaigns() async {
+  Future<Either<String, List<CampaignModel>>> fetchCampaigns() async {
     try {
       var res = await supabase.from('campaigns').select();
 
-      CampaignResponse campaignResponse = CampaignResponse.fromJson({
-        "campaign": res,
-      });
-      return Right(campaignResponse);
+      final campaign = res.map((e) => CampaignModel.fromJson(e)).toList();
+
+      return Right(campaign);
     } on AuthException catch (e) {
       return Left(e.message);
+    } catch (e) {
+      return Left(e.toString());
+    }
+  }
+
+  Future<Either<String, SpotlightModel>> fetchSpotlight() async {
+    try {
+      final res = await supabase
+          .from('spotlight')
+          .select()
+          .order('created_at', ascending: false)
+          .limit(1)
+          .single();
+
+      Logger().d("Latest spotlight: $res");
+
+      SpotlightModel spotlight = SpotlightModel.fromJson(res);
+
+      return Right(spotlight);
+    } on AuthException catch (e) {
+      Logger().d("Latest spotlight: ${e.message}");
+      return Left(e.message);
+    } catch (e) {
+      Logger().d("Latest spotlight: ${e.toString()}");
+      return Left(e.toString());
     }
   }
 

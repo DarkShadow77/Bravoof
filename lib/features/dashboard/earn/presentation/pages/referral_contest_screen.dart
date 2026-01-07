@@ -23,7 +23,7 @@ import '../../../../../core/constants/app_assets.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/fonts.dart';
 import '../../../../onbaording/data/model/user_profile.dart';
-import '../../../home/data/bloc/campaign_cubit.dart';
+import '../../../home/presentation/bloc/campaign_cubit.dart';
 import '../../../profile/presentation/bloc/profile_bloc.dart';
 import '../widgets/price_details_dialog.dart';
 import 'invite_earn.dart';

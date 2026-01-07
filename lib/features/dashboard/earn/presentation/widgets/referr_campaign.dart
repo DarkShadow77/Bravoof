@@ -1,17 +1,17 @@
 import 'dart:async';
 
-import 'package:flowva/features/common/model/campaign_response.dart';
 import 'package:flowva/features/dashboard/earn/presentation/pages/referral_contest_screen.dart';
+import 'package:flowva/features/dashboard/home/data/model/campaign_response.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../../core/di/service_locator.dart';
-import '../../../home/data/bloc/campaign_cubit.dart';
+import '../../../home/presentation/bloc/campaign_cubit.dart';
 import 'draw_end_page.dart';
 
 class ReferCampaign extends StatefulWidget {
-  List<Campaign> campaign = [];
+  List<CampaignModel> campaign = [];
   ReferCampaign({super.key, required this.campaign});
 
   @override

@@ -18,6 +18,7 @@ class ProfileBloc extends HydratedBloc<ProfileEvent, ProfileState> {
     : super(ProfileInitialState(profile: UserProfile())) {
     on<GetProfileEvent>(_onGetProfile);
     on<UpdateProfileEvent>(_onUpdateProfile);
+    on<LogoutProfileEvent>(_onLogout);
   }
 
   Future<void> _onGetProfile(
@@ -95,6 +96,22 @@ class ProfileBloc extends HydratedBloc<ProfileEvent, ProfileState> {
           ),
         );
       },
+    );
+  }
+
+  Future<void> _onLogout(
+    LogoutProfileEvent event,
+    Emitter<ProfileState> emit,
+  ) async {
+    logger.w("🚪 Logging out user");
+
+    // 🔥 Clear persisted state for this bloc
+    await clear();
+
+    emit(
+      ProfileInitialState(
+        profile: UserProfile(), // empty profile
+      ),
     );
   }
 

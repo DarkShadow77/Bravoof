@@ -1,5 +1,5 @@
-import 'package:flowva/features/common/model/campaign_response.dart';
-import 'package:flowva/features/dashboard/home/data/bloc/home_cubit.dart';
+import 'package:flowva/features/dashboard/home/data/model/campaign_response.dart';
+import 'package:flowva/features/dashboard/home/presentation/bloc/home_cubit.dart';
 import 'package:flowva/features/dashboard/redeem/presentation/page/tabs/history_tab.dart';
 import 'package:flowva/features/dashboard/redeem/presentation/page/tabs/redeem_tab.dart';
 import 'package:flutter/material.dart';
@@ -26,7 +26,7 @@ class RedeemScreen extends StatefulWidget {
 }
 
 class _RedeemScreenState extends State<RedeemScreen> {
-  List<Campaign> campaign = [];
+  List<CampaignModel> campaign = [];
   var tab = ["Redeem", "History"];
   final _pageController = PageController(initialPage: 0);
   int currentPage = 0;
@@ -68,7 +68,7 @@ class _RedeemScreenState extends State<RedeemScreen> {
               print(state);
               setState(() {
                 init = false;
-                campaign = state.campaignResponse.campaign!;
+                campaign = state.campaign;
               });
             },
 

@@ -167,49 +167,96 @@ class _RedeemGiftModalState extends State<RedeemGiftModal> {
                 onChanged: (val) {
                   _validateForm();
                 },
-                prefixIcon: GestureDetector(
-                  onTap: () {
-                    getCountries();
-                    countryStateModal(
-                      title: "Country",
-                      isPhone: true,
-                      onPressed: (value) {
-                        setState(() => country = value);
-                        _validateForm();
-                      },
-                      list: countriesList,
-                    );
-                  },
-                  behavior: HitTestBehavior.opaque,
-                  child: Row(
-                    spacing: 5.w,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      RichText(
-                        textAlign: TextAlign.center,
-                        text: TextSpan(
-                          text: country.flag,
-                          style: TextStyles.titleSemiBold20(context),
-                        ),
+                prefixIcon: IntrinsicHeight(
+                  child: GestureDetector(
+                    onTap: () {
+                      getCountries();
+                      countryStateModal(
+                        title: "Country",
+                        isPhone: true,
+                        onPressed: (value) {
+                          setState(() => country = value);
+                          _validateForm();
+                        },
+                        list: countriesList,
+                      );
+                    },
+                    behavior: HitTestBehavior.opaque,
+                    child: Container(
+                      margin: EdgeInsets.symmetric(horizontal: 10.w),
+                      child: Row(
+                        spacing: 5.w,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          RichText(
+                            textAlign: TextAlign.center,
+                            text: TextSpan(
+                              text: country.flag,
+                              style: TextStyles.normalMedium14(context),
+                            ),
+                          ),
+                          Flexible(
+                            child: RichText(
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              text: TextSpan(
+                                text:
+                                    "${country.phoneCode.toString().startsWith("+") ? "" : "+"} ${country.phoneCode}",
+                                style: TextStyles.normalMedium14(context),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                      RichText(
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        text: TextSpan(
-                          text:
-                              "${country.phoneCode.toString().startsWith("+") ? "" : "+"} ${country.phoneCode}",
-                          style: TextStyles.normalSemibold14(context),
-                        ),
-                      ),
-                      Container(
-                        height: double.infinity,
-                        width: 1.w,
-                        color: AppColors.black50,
-                        margin: EdgeInsets.symmetric(vertical: 5.h),
-                      ),
-                    ],
+                    ),
                   ),
-                ),
+                ) /*suffixIcon: SizedBox(
+                  width: 50.w,
+                  child: GestureDetector(
+                    onTap: () {
+                      getCountries();
+                      countryStateModal(
+                        title: "Country",
+                        isPhone: true,
+                        onPressed: (value) {
+                          setState(() => country = value);
+                          _validateForm();
+                        },
+                        list: countriesList,
+                      );
+                    },
+                    behavior: HitTestBehavior.opaque,
+                    child: Row(
+                      spacing: 5.w,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        RichText(
+                          textAlign: TextAlign.center,
+                          text: TextSpan(
+                            text: country.flag,
+                            style: TextStyles.titleSemiBold20(context),
+                          ),
+                        ),
+                        RichText(
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          text: TextSpan(
+                            text:
+                                "${country.phoneCode.toString().startsWith("+") ? "" : "+"} ${country.phoneCode}",
+                            style: TextStyles.normalSemibold14(context),
+                          ),
+                        ),
+                        Container(
+                          height: double.infinity,
+                          width: 1.w,
+                          color: AppColors.black50,
+                          margin: EdgeInsets.symmetric(vertical: 5.h),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),*/,
               ),
               SizedBox(height: 36.h),
             ],
@@ -217,8 +264,11 @@ class _RedeemGiftModalState extends State<RedeemGiftModal> {
                 ? IconTextButton(
                     color: AppColors.black,
                     textColor: AppColors.white,
-                    onPressed: () =>
-                        widget.onPressed(_phoneController.text.trim()),
+                    onPressed: () => widget.onPressed(
+                      "${country.phoneCode.toString().startsWith("+") ? "" : "+"}"
+                      "${country.phoneCode}"
+                      "${_phoneController.text.trim()}",
+                    ),
                     text: "Confirm redemption ✅",
                   )
                 : IconTextButton(

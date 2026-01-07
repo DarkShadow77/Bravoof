@@ -12,7 +12,7 @@ import 'package:share_plus/share_plus.dart';
 
 import '../../../../common/routes.dart';
 import '../../../../onbaording/data/model/user_profile.dart';
-import '../../../home/data/bloc/home_cubit.dart';
+import '../../../home/presentation/bloc/home_cubit.dart';
 import '../../../profile/presentation/bloc/profile_bloc.dart';
 import 'jackpot_page.dart';
 

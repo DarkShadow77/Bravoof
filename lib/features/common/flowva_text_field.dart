@@ -1,4 +1,6 @@
+import 'package:flowva/app/styles/text_styles.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl_phone_field/intl_phone_field.dart';
 
@@ -38,24 +40,22 @@ class AppTextFeild extends StatelessWidget {
       maxLines: maxLines,
       decoration: InputDecoration(
         hintText: hintText,
-        hintStyle: GoogleFonts.inter(
-          fontSize: 14,
-          fontWeight: FontWeight.w400,
-          color: Colors.black54,
-        ),
+        hintStyle: TextStyles.normalRegular14(context, opacity: .5),
+        prefixIcon: prefixIcon,
         filled: true,
         fillColor: Colors.white,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(15),
-
+          borderRadius: BorderRadius.circular(15.r),
           borderSide: BorderSide(width: 0.5, color: Colors.grey.shade500),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(15),
-
+          borderRadius: BorderRadius.circular(15.r),
           borderSide: BorderSide(width: 0.5, color: Colors.grey.shade500),
         ),
       ),
+      style: TextStyles.normalMedium14(
+        context,
+      ).copyWith(fontSize: 14.sp + 1.sp),
       validator: validator,
     );
   }

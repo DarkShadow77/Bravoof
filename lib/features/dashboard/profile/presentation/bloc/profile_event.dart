@@ -13,8 +13,7 @@ class UpdateProfileEvent extends ProfileEvent {
   final UserProfile profile;
   final File? imageFile;
 
-  UpdateProfileEvent({
-    required this.profile,
-    this.imageFile,
-  });
+  UpdateProfileEvent({required this.profile, this.imageFile});
 }
+
+class LogoutProfileEvent extends ProfileEvent {}

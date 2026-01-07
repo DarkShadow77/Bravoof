@@ -1,30 +1,41 @@
 part of 'home_cubit.dart';
 
-enum HomeType { getCampaign, getReferrals }
+enum HomeType { getCampaign, getSpotlight, getReferrals }
 
 @immutable
 class HomeState extends Equatable {
-  final CampaignResponse campaignResponse;
+  final List<CampaignModel> campaign;
+  final SpotlightModel spotlight;
   final List<UserProfile> referrals;
 
-  HomeState({required this.campaignResponse, required this.referrals});
+  HomeState({
+    required this.campaign,
+    required this.spotlight,
+    required this.referrals,
+  });
 
   HomeState copyWith({
-    CampaignResponse? campaignResponse,
+    List<CampaignModel>? campaign,
+    SpotlightModel? spotlight,
     List<UserProfile>? referrals,
   }) {
     return HomeState(
-      campaignResponse: campaignResponse ?? this.campaignResponse,
+      campaign: campaign ?? this.campaign,
+      spotlight: spotlight ?? this.spotlight,
       referrals: referrals ?? this.referrals,
     );
   }
 
   @override
-  List<Object?> get props => [campaignResponse, referrals];
+  List<Object?> get props => [campaign, spotlight, referrals];
 }
 
 final class HomeInitialState extends HomeState {
-  HomeInitialState({required super.campaignResponse, required super.referrals});
+  HomeInitialState({
+    required super.campaign,
+    required super.spotlight,
+    required super.referrals,
+  });
 
   @override
   List<Object> get props => [];
@@ -34,7 +45,8 @@ final class HomeLoadingState extends HomeState {
   final HomeType type;
   HomeLoadingState({
     required this.type,
-    required super.campaignResponse,
+    required super.campaign,
+    required super.spotlight,
     required super.referrals,
   });
 
@@ -48,7 +60,8 @@ final class HomeSuccessState extends HomeState {
   HomeSuccessState({
     required this.type,
     required this.message,
-    required super.campaignResponse,
+    required super.campaign,
+    required super.spotlight,
     required super.referrals,
   });
 
@@ -62,7 +75,8 @@ final class HomeFailureState extends HomeState {
   HomeFailureState({
     required this.type,
     required this.message,
-    required super.campaignResponse,
+    required super.campaign,
+    required super.spotlight,
     required super.referrals,
   });
 

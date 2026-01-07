@@ -1,8 +1,8 @@
-import 'package:flowva/features/common/model/campaign_response.dart';
 import 'package:flowva/features/common/ui_tool_mixin/ui_tool_mixin.dart';
 import 'package:flowva/features/dashboard/earn/data/models/mission_res.dart';
 import 'package:flowva/features/dashboard/earn/presentation/widgets/referr_campaign.dart';
-import 'package:flowva/features/dashboard/home/data/bloc/home_cubit.dart';
+import 'package:flowva/features/dashboard/home/data/model/campaign_response.dart';
+import 'package:flowva/features/dashboard/home/presentation/bloc/home_cubit.dart';
 import 'package:flowva/session/session_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -33,7 +33,7 @@ class _AdventuresTabState extends State<AdventuresTab> with UIToolMixin {
   final sessionManager = SessionManager();
 
   bool init = false;
-  List<Campaign> campaign = [];
+  List<CampaignModel> campaign = [];
   List<Mission> missions = [];
 
   int sum = 0;
@@ -80,7 +80,7 @@ class _AdventuresTabState extends State<AdventuresTab> with UIToolMixin {
             listener: (context, state) {
               print(state);
               setState(() {
-                campaign = state.campaignResponse.campaign!;
+                campaign = state.campaign;
               });
             },
           ),

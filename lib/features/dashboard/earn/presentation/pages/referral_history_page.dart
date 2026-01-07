@@ -8,7 +8,7 @@ import 'package:intl/intl.dart';
 import '../../../../../app/styles/text_styles.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../onbaording/data/model/user_profile.dart';
-import '../../../home/data/bloc/home_cubit.dart';
+import '../../../home/presentation/bloc/home_cubit.dart';
 
 class ReferralHistory {
   final String name;

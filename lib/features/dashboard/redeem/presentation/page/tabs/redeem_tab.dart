@@ -7,9 +7,9 @@ import 'package:flowva/core/constants/app_colors.dart';
 import 'package:flowva/core/constants/fonts.dart';
 import 'package:flowva/core/utils/helpers.dart';
 import 'package:flowva/features/common/flowva_button.dart';
-import 'package:flowva/features/common/model/campaign_response.dart';
 import 'package:flowva/features/dashboard/earn/presentation/pages/invite_earn.dart';
 import 'package:flowva/features/dashboard/earn/presentation/pages/jackpot_page.dart';
+import 'package:flowva/features/dashboard/home/data/model/campaign_response.dart';
 import 'package:flowva/features/dashboard/redeem/presentation/bloc/redeem_bloc.dart';
 import 'package:flowva/features/dashboard/redeem/presentation/widget/redeem_gift_modal.dart';
 import 'package:flutter/material.dart';
@@ -27,7 +27,7 @@ import '../../widget/redeem_learn_more_modal.dart';
 
 class RedeemTab extends StatefulWidget {
   RedeemTab({this.campaign, super.key});
-  final Campaign? campaign;
+  final CampaignModel? campaign;
   @override
   State<RedeemTab> createState() => _RedeemTabState();
 }

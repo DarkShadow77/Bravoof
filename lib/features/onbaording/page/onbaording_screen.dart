@@ -162,12 +162,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> with UIToolMixin {
                   context.read<ProfileBloc>().add(GetProfileEvent());
                   SessionManager().firstWelcomeUserVal = "YES";
                   SessionManager().firstTimeUserVal = "YES";
-                  Future.delayed(Duration(seconds: 3), () {
-                    Navigator.of(context).pushAndRemoveUntil(
-                      MaterialPageRoute(builder: (ctx) => BottomNavBar()),
-                      (ctx) => false,
-                    );
-                  });
+                  Navigator.pop(context);
+                  Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(builder: (ctx) => BottomNavBar()),
+                    (ctx) => false,
+                  );
                 }
                 if (state is UserFailure) {
                   setState(() {
