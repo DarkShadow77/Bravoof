@@ -363,7 +363,8 @@ class ReferralCard extends StatelessWidget {
                                       alignment: Alignment.centerLeft,
                                       child: FractionallySizedBox(
                                         widthFactor:
-                                            userProfile.referralCount! / 10,
+                                            (userProfile.referralCount ?? 0) /
+                                            10,
                                         child: Container(
                                           decoration: const BoxDecoration(
                                             gradient: LinearGradient(
