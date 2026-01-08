@@ -84,7 +84,6 @@ class _FeaturedCardState extends State<FeaturedCard> with UIToolMixin {
                   padEnds: true,
                   controller: _pageController,
                   physics: BouncingScrollPhysics(),
-
                   allowImplicitScrolling: true,
                   scrollDirection: Axis.horizontal,
                   itemCount: featuredMissions.length,

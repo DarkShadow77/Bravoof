@@ -38,8 +38,6 @@ class ReferralContestScreen extends StatefulWidget {
 }
 
 class _ReferralContestScreenState extends State<ReferralContestScreen> {
-  bool onClick = false;
-
   @override
   void initState() {
     super.initState();
@@ -91,6 +89,7 @@ class _ReferralContestScreenState extends State<ReferralContestScreen> {
                       text: "Enter to win the Oraimo\nOpenSnap!",
                       style: TextStyles.bigTitleRegular24(context).copyWith(
                         fontFamily: AppFonts.baloo,
+                        height: 1.sp,
                         color: AppColors.white,
                       ),
                     ),

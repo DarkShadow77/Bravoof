@@ -36,4 +36,14 @@ class CampaignModel {
       ),
     );
   }
+
+  factory CampaignModel.empty() {
+    return CampaignModel(
+      id: 0,
+      name: '',
+      title: '',
+      url: '',
+      campaignEndDate: DateTime.now(),
+    );
+  }
 }

@@ -2,6 +2,9 @@ import 'package:flowva/features/dashboard/home/presentation/bloc/campaign_cubit.
 import 'package:flowva/features/onbaording/data/bloc/user_cubit.dart';
 import 'package:get_it/get_it.dart';
 
+import '../../features/dashboard/earn/data/repositories/jackpot_repository.dart';
+import '../../features/dashboard/earn/data/repositories/jackpot_repository_impl.dart';
+import '../../features/dashboard/earn/presentation/bloc/jackpot_bloc.dart';
 import '../../features/dashboard/home/data/repository/campaign_repository.dart';
 import '../../features/dashboard/home/data/repository/campaign_repository_impl.dart';
 import '../../features/dashboard/home/data/repository/home_repository.dart';
@@ -62,6 +65,7 @@ Future<void> initDI() async {
   sl.registerLazySingleton<ProfileRepository>(() => ProfileRepositoryImpl());
   sl.registerLazySingleton<StreakRepository>(() => StreakRepositoryImpl());
   sl.registerLazySingleton<RedeemRepository>(() => RedeemRepositoryImpl());
+  sl.registerLazySingleton<JackpotRepository>(() => JackpotRepositoryImpl());
 
   //Blocs
   sl.registerSingleton<UserCubit>(UserCubit());
@@ -91,4 +95,5 @@ Future<void> initDI() async {
   sl.registerSingleton<ProfileBloc>(ProfileBloc(repo: sl<ProfileRepository>()));
   sl.registerSingleton<StreakBloc>(StreakBloc(repo: sl<StreakRepository>()));
   sl.registerSingleton<RedeemBloc>(RedeemBloc(repo: sl<RedeemRepository>()));
+  sl.registerSingleton<JackpotBloc>(JackpotBloc(repo: sl<JackpotRepository>()));
 }

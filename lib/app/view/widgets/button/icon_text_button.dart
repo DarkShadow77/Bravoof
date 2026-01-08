@@ -12,6 +12,7 @@ class IconTextButton extends StatelessWidget {
     required this.onPressed,
     required this.text,
     this.icon,
+    this.fontFamily,
     this.iconWidget,
     this.color,
     this.textColor,
@@ -24,6 +25,7 @@ class IconTextButton extends StatelessWidget {
   final VoidCallback onPressed;
   final String text;
   final String? icon;
+  final String? fontFamily;
   final Widget? iconWidget;
   final Color? color;
   final Color? textColor;
@@ -40,6 +42,7 @@ class IconTextButton extends StatelessWidget {
     return GestureDetector(
       onTap: onPressed,
       child: Container(
+        height: buttonHeight,
         padding: EdgeInsets.symmetric(vertical: 2.5.h, horizontal: 2.5.w),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(100.r),
@@ -57,7 +60,6 @@ class IconTextButton extends StatelessWidget {
           isShadowTopLeft: true,
           isShadowTopRight: true,
           child: Container(
-            height: buttonHeight,
             alignment: Alignment.center,
             decoration: BoxDecoration(
               color: nullColor,
@@ -104,9 +106,11 @@ class IconTextButton extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                     text: TextSpan(
                       text: text,
-                      style: TextStyles.normalBold14(
-                        context,
-                      ).copyWith(color: textColor, fontSize: textSize?.sp),
+                      style: TextStyles.normalBold14(context).copyWith(
+                        color: textColor,
+                        fontSize: textSize?.sp,
+                        fontFamily: fontFamily,
+                      ),
                     ),
                   ),
                 ),

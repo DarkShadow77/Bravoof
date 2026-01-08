@@ -2,8 +2,8 @@ class SpotlightModel {
   final int id;
   final String name;
   final String image;
-  final int missions_completed;
-  final int coins_earned;
+  final int missionsCompleted;
+  final int coinsEarned;
   final int redeemed;
   final DateTime createdAt;
 
@@ -11,8 +11,8 @@ class SpotlightModel {
     required this.id,
     required this.name,
     required this.image,
-    required this.missions_completed,
-    required this.coins_earned,
+    required this.missionsCompleted,
+    required this.coinsEarned,
     required this.redeemed,
     required this.createdAt,
   });
@@ -22,8 +22,8 @@ class SpotlightModel {
       id: json['id'] ?? 0,
       name: json['name'] ?? '',
       image: json['image'] ?? '',
-      missions_completed: json['missions_completed'] ?? 0,
-      coins_earned: json['coins_earned'] ?? 0,
+      missionsCompleted: json['missions_completed'] ?? 0,
+      coinsEarned: json['coins_earned'] ?? 0,
       redeemed: json['redeemed'] ?? 0,
       createdAt: DateTime.parse(json['created_at'] ?? DateTime.now()),
     );
@@ -34,8 +34,8 @@ class SpotlightModel {
       id: 0,
       name: '',
       image: '',
-      missions_completed: 0,
-      coins_earned: 0,
+      missionsCompleted: 0,
+      coinsEarned: 0,
       redeemed: 0,
       createdAt: DateTime.now(),
     );

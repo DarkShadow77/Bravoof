@@ -1,14 +1,20 @@
 import 'dart:async';
 import 'dart:math';
 
-import 'package:flowva/features/common/flowva_button.dart';
+import 'package:flowva/app/view/widgets/button/icon_text_button.dart';
+import 'package:flowva/core/constants/fonts.dart';
 import 'package:flowva/features/common/ui_tool_mixin/ui_tool_mixin.dart';
 import 'package:flowva/features/common/wins_pop.dart';
+import 'package:flowva/features/dashboard/earn/presentation/bloc/jackpot_bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hugeicons/hugeicons.dart';
 
+import '../../../../../app/styles/text_styles.dart';
 import '../../../../../core/constants/app_assets.dart';
+import '../../../../../core/constants/app_colors.dart';
+import '../../../profile/presentation/bloc/profile_bloc.dart';
 
 class GridItem {
   final String type;
@@ -29,43 +35,50 @@ class _JackpotScreenState extends State<JackpotScreen> with UIToolMixin {
   int selectedIndex = 7;
   int currentPosition = 0;
   bool isSpinning = false;
-  int spinsLeft = 3;
+  int spinsLeft = 0;
   GridItem? winner;
   bool showResult = false;
   Timer? spinTimer;
   final Random random = Random();
 
+  int? winningIndex;
+  bool apiResolved = false;
+  DateTime? spinStartTime;
+
   // Define grid items
   final List<GridItem> gridItems = [
     // Section 1 - Row 1 (4 items)
-    GridItem(type: 'coins', value: 50, emoji: "assets/images/one_50.png"),
+    GridItem(type: 'coins', value: 5, emoji: AssetsPngImages.one50),
     GridItem(type: 'gift', value: 1, emoji: AssetsPngImages.jackpot),
-    GridItem(type: 'gift', value: 2, emoji: AssetsPngImages.jackpot),
-    GridItem(type: 'coins', value: 50, emoji: "assets/images/one_50.png"),
+    GridItem(type: 'coins', value: 10, emoji: AssetsPngImages.one50),
+    GridItem(type: 'gift', value: 1, emoji: AssetsPngImages.jackpot),
 
     // Section 2 - Rows 2-3 (8 items)
-    GridItem(type: 'coins', value: 50, emoji: "assets/images/one_50.png"),
+    GridItem(type: 'coins', value: 20, emoji: AssetsPngImages.one50),
     GridItem(type: 'gift', value: 1, emoji: AssetsPngImages.jackpot),
+    GridItem(type: 'coins', value: 20, emoji: AssetsPngImages.one50),
     GridItem(type: 'gift', value: 2, emoji: AssetsPngImages.jackpot),
-    GridItem(type: 'coins', value: 50, emoji: "assets/images/one_50.png"),
-    GridItem(type: 'coins', value: 50, emoji: "assets/images/one_50.png"),
+
+    GridItem(type: 'coins', value: 50, emoji: AssetsPngImages.one50),
     GridItem(type: 'gift', value: 1, emoji: AssetsPngImages.jackpot),
+    GridItem(type: 'coins', value: 50, emoji: AssetsPngImages.one50),
     GridItem(type: 'gift', value: 2, emoji: AssetsPngImages.jackpot),
-    GridItem(type: 'coins', value: 50, emoji: "assets/images/one_50.png"),
 
     // Section 3 - Rows 4-6 (12 items)
-    GridItem(type: 'coins', value: 50, emoji: "assets/images/one_50.png"),
-    GridItem(type: 'gift', value: 1, emoji: AssetsPngImages.jackpot),
+    GridItem(type: 'coins', value: 100, emoji: AssetsPngImages.one50),
     GridItem(type: 'gift', value: 2, emoji: AssetsPngImages.jackpot),
-    GridItem(type: 'coins', value: 50, emoji: "assets/images/one_50.png"),
-    GridItem(type: 'coins', value: 50, emoji: "assets/images/one_50.png"),
-    GridItem(type: 'gift', value: 1, emoji: AssetsPngImages.jackpot),
+    GridItem(type: 'coins', value: 100, emoji: AssetsPngImages.one50),
+    GridItem(type: 'gift', value: 3, emoji: AssetsPngImages.jackpot),
+
+    GridItem(type: 'coins', value: 200, emoji: AssetsPngImages.one50),
     GridItem(type: 'gift', value: 2, emoji: AssetsPngImages.jackpot),
-    GridItem(type: 'coins', value: 50, emoji: "assets/images/one_50.png"),
-    GridItem(type: 'coins', value: 50, emoji: "assets/images/one_50.png"),
+    GridItem(type: 'coins', value: 200, emoji: AssetsPngImages.one50),
+    GridItem(type: 'gift', value: 3, emoji: AssetsPngImages.jackpot),
+
+    GridItem(type: 'coins', value: 50, emoji: AssetsPngImages.one50),
     GridItem(type: 'gift', value: 1, emoji: AssetsPngImages.jackpot),
-    GridItem(type: 'gift', value: 2, emoji: AssetsPngImages.jackpot),
-    GridItem(type: 'coins', value: 50, emoji: "assets/images/one_50.png"),
+    GridItem(type: 'coins', value: 20, emoji: AssetsPngImages.one50),
+    GridItem(type: 'gift', value: 1, emoji: AssetsPngImages.jackpot),
   ];
 
   @override
@@ -73,6 +86,141 @@ class _JackpotScreenState extends State<JackpotScreen> with UIToolMixin {
     spinTimer?.cancel();
     super.dispose();
   }
+
+  Future<void> startSpinWithServer() async {
+    if (spinsLeft <= 0 || isSpinning) return;
+
+    context.read<JackpotBloc>().add(SpinJackpotEvent());
+  }
+
+  _loadingState(BuildContext context, JackpotLoadingState state) {
+    setState(() {
+      isSpinning = true;
+      showResult = false;
+      winner = null;
+      winningIndex = null;
+      apiResolved = false;
+      spinStartTime = DateTime.now();
+    });
+
+    // 🔁 Start free spinning immediately
+    _startFreeSpin();
+  }
+
+  _spinedState(BuildContext context, JackpotSpinedState state) {
+    context.read<ProfileBloc>().add(GetProfileEvent());
+    final rewardType = state.result['rewardType'];
+    final rewardValue = state.result['rewardValue'];
+
+    final matchingIndices = <int>[];
+
+    for (int i = 0; i < gridItems.length; i++) {
+      final item = gridItems[i];
+      if (item.type == rewardType && item.value == rewardValue) {
+        matchingIndices.add(i);
+      }
+    }
+
+    if (matchingIndices.isNotEmpty) {
+      winningIndex = matchingIndices[Random().nextInt(matchingIndices.length)];
+    } else {
+      // Fallback safety net
+      winningIndex = Random().nextInt(gridItems.length);
+    }
+
+    apiResolved = true;
+    _startTargetedSlowdown();
+  }
+
+  _failureState(BuildContext context, JackpotErrorState state) {
+    context.read<ProfileBloc>().add(GetProfileEvent());
+    stopSpinning(force: true);
+
+    showMessage(
+      state.message,
+      context,
+      color: Colors.red,
+      styleColor: Colors.white,
+      status: true,
+    );
+  }
+
+  void _startFreeSpin() {
+    spinTimer = Timer.periodic(const Duration(milliseconds: 80), (timer) {
+      if (apiResolved) {
+        timer.cancel();
+        return;
+      }
+
+      setState(() {
+        currentPosition = (currentPosition + 1) % gridItems.length;
+      });
+    });
+  }
+
+  void _startTargetedSlowdown() {
+    if (winningIndex == null) return;
+
+    const int extraLoops = 2; // Makes it feel satisfying
+    final totalSteps =
+        (extraLoops * gridItems.length) +
+        ((winningIndex! - currentPosition + gridItems.length) %
+            gridItems.length);
+
+    int step = 0;
+
+    void move() {
+      if (step >= totalSteps) {
+        stopSpinning();
+        return;
+      }
+
+      double progress = step / totalSteps;
+      int delay = (80 + (progress * progress * 600)).toInt(); // smooth ease-out
+
+      spinTimer = Timer(Duration(milliseconds: delay), () {
+        if (!mounted) return;
+
+        setState(() {
+          currentPosition = (currentPosition + 1) % gridItems.length;
+          step++;
+        });
+
+        move();
+      });
+    }
+
+    move();
+  }
+
+  void stopSpinning({bool force = false}) {
+    spinTimer?.cancel();
+
+    if (!force && winningIndex != null) {
+      setState(() {
+        currentPosition = winningIndex!;
+        winner = gridItems[winningIndex!];
+      });
+    }
+
+    setState(() {
+      isSpinning = false;
+      showResult = true;
+      spinsLeft--;
+    });
+
+    if (force) {
+    } else {
+      showDialog(
+        context: context,
+        barrierColor: Colors.black.withOpacity(0.3),
+        builder: (_) =>
+            WinsPop(/*rewardType: winner!.type, rewardValue: winner!.value*/),
+      );
+    }
+  }
+
+  /*
 
   // RECOMMENDED: Most flexible version with clear speed controls
   void handleSpin() {
@@ -286,406 +434,249 @@ class _JackpotScreenState extends State<JackpotScreen> with UIToolMixin {
       showResult = true;
       spinsLeft--;
     });
-  }
+  }*/
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFF2C0066),
-      body: ListView(
-        shrinkWrap: true,
-        padding: EdgeInsets.only(bottom: 0),
-        children: [
-          Stack(
-            children: [
-              Positioned.fill(
-                child: Image.asset(
-                  "assets/images/enter_win_bg.png",
-                  fit: BoxFit.fill,
+    return BlocListener<JackpotBloc, JackpotState>(
+      listener: (context, state) {
+        if (state is JackpotLoadingState) {
+          _loadingState(context, state);
+        } else if (state is JackpotSpinedState) {
+          _spinedState(context, state);
+        } else if (state is JackpotErrorState) {
+          _failureState(context, state);
+        }
+      },
+      child: Scaffold(
+        backgroundColor: AppColors.purple,
+        extendBodyBehindAppBar: true,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          centerTitle: false,
+          titleSpacing: 12.w,
+          automaticallyImplyLeading: false,
+          title: GestureDetector(
+            onTap: () => Navigator.pop(context),
+            child: Row(
+              spacing: 8.w,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Icon(
+                  Icons.arrow_back_rounded,
+                  size: 16.sp,
+                  color: AppColors.white,
                 ),
+                Expanded(
+                  child: RichText(
+                    text: TextSpan(
+                      text: "Spin a Jackpot",
+                      style: TextStyles.titleSemiBold20(
+                        context,
+                      ).copyWith(color: AppColors.white),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        body: SafeArea(
+          top: false,
+          child: Stack(
+            children: [
+              Image.asset(
+                AssetsPngImages.homeBg,
+                fit: BoxFit.cover,
+                height: 440.h + MediaQuery.of(context).padding.top,
+                width: double.infinity,
               ),
               Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  const SizedBox(height: 70),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        GestureDetector(
-                          onTap: () => Navigator.pop(context),
-                          child: const Padding(
-                            padding: EdgeInsets.only(top: 4),
-                            // fine-tune so it matches first line
-                            child: Icon(
-                              Icons.arrow_back,
-                              color: Colors.white,
-                              size: 22,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        Text(
-                          "Spin a Jackpot",
-                          style: GoogleFonts.manrope(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 20,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 30),
                   SizedBox(
-                    height: 140,
-                    child: Stack(
-                      alignment: Alignment.bottomCenter,
-                      children: [
-                        // Front face (main block)
-                        Positioned.fill(
-                          top: 30,
-                          bottom: 0,
-                          child: Container(
-                            width: 380,
-                            height: 100,
-                            decoration: BoxDecoration(color: Color(0xFF550AA9)),
-                            alignment: Alignment.bottomCenter,
-                          ),
+                    height: kToolbarHeight + MediaQuery.of(context).padding.top,
+                  ),
+                  ClipPath(
+                    clipper: _TopInwardClipper(),
+                    child: Container(
+                      width: double.infinity,
+                      height: 36.h,
+                      decoration: const BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.centerLeft,
+                          end: Alignment.centerRight,
+                          colors: [AppColors.purple700, Color(0xFF4C277D)],
                         ),
-                        Positioned(
-                          child: Container(
-                            margin: EdgeInsets.only(
-                              right: 10,
-                              left: 10,
-                              bottom: 5,
-                            ),
-                            height: 100,
-                            decoration: BoxDecoration(
-                              color: Color(0xFF5B17C6),
-                              borderRadius: BorderRadius.circular(10),
-                              border: Border.all(
-                                color: Colors.white.withOpacity(0.4),
-                                width: 1.8,
-                              ),
-                            ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  "FLOWVA’S",
-                                  style: GoogleFonts.manrope(
-                                    fontSize: 14,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w800,
-                                    letterSpacing: 1,
-                                  ),
-                                ),
-
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Image.asset("assets/images/star.png"),
-                                    // const SizedBox(width: 8),
-                                    Image.asset(
-                                      "assets/images/jackpot.png",
-                                      height: 60,
-                                    ),
-                                    // const SizedBox(width: 8),
-                                    Image.asset("assets/images/star.png"),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        // Top face (angled using Transform)
-                        Positioned(
-                          top: -10,
-                          child: Center(
-                            child: ClipPath(
-                              clipper: _TopInwardClipper(),
-                              child: Container(
-                                width: 390,
-                                height: 40,
-                                decoration: const BoxDecoration(
-                                  gradient: LinearGradient(
-                                    begin: Alignment.centerLeft,
-                                    end: Alignment.centerRight,
-                                    colors: [
-                                      Color(0xFF3A0874),
-                                      Color(0xFF371222),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
                   ),
-
-                  const SizedBox(height: 24),
-
-                  // 🟦 Jackpot Grid (3D style)
                   Container(
-                    margin: EdgeInsets.only(right: 20, left: 20),
-                    color: const Color(0xFF400387),
-                    padding: const EdgeInsets.all(16),
+                    width: double.infinity,
+                    color: AppColors.purple700,
+                    alignment: Alignment.center,
+                    padding: EdgeInsets.symmetric(
+                      vertical: 12.h,
+                      horizontal: 15.w,
+                    ),
                     child: Container(
-                      width: 340,
-
-                      padding: const EdgeInsets.all(16),
+                      width: double.infinity,
+                      clipBehavior: Clip.antiAlias,
+                      padding: EdgeInsets.symmetric(
+                        vertical: 10.h,
+                        horizontal: 22.w,
+                      ),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF550AA9),
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(width: 2, color: Color(0xFF6B16CA)),
-                        // boxShadow: const [
-                        //   BoxShadow(
-                        //     color: Colors.black26,
-                        //     blurRadius: 12,
-                        //     offset: Offset(0, 8),
-                        //   ),
-                        // ],
+                        color: AppColors.purple600,
+                        borderRadius: BorderRadius.circular(8.r),
+                        border: Border.all(
+                          width: 4.w,
+                          color: AppColors.white50,
+                        ),
                       ),
                       child: Column(
+                        spacing: 6.h,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          buildGridSection(0, 4),
-                          const SizedBox(height: 16),
-
-                          // Section 2: 2 rows (8 items)
-                          buildGridSection(4, 12),
-                          const SizedBox(height: 16),
-
-                          // Section 3: 3 rows (12 items)
-                          buildGridSection(12, 24),
-                          //  SizedBox(height: 80,
-                          //  child:GridView.builder(
-                          //    shrinkWrap: true,
-                          //    itemCount: 4,
-                          //    padding: EdgeInsets.symmetric(vertical: 10),
-                          //    physics: const NeverScrollableScrollPhysics(),
-                          //    gridDelegate:
-                          //    const SliverGridDelegateWithFixedCrossAxisCount(
-                          //        crossAxisCount: 4,
-                          //        mainAxisSpacing: 14,
-                          //        crossAxisSpacing: 14,
-                          //        childAspectRatio: 1.5
-                          //    ),
-                          //    itemBuilder: (context, index) {
-                          //      final isSelected = index == selectedIndex;
-                          //      return AnimatedContainer(
-                          //        duration: const Duration(milliseconds: 250),
-                          //        decoration: BoxDecoration(
-                          //          gradient: const LinearGradient(
-                          //            colors: [Color(0xFF6A3CEB), Color(0xFF6A11CB)],
-                          //            begin: Alignment.topLeft,
-                          //            end: Alignment.bottomRight,
-                          //          ),
-                          //          borderRadius: BorderRadius.circular(12),
-                          //          border: isSelected
-                          //              ? Border.all(color: Colors.white, width: 2)
-                          //              : null,
-                          //          boxShadow: [
-                          //            BoxShadow(
-                          //              color: Colors.black.withOpacity(0.25),
-                          //              blurRadius: 8,
-                          //              offset: const Offset(0, 4),
-                          //            ),
-                          //          ],
-                          //        ),
-                          //        child: Center(
-                          //          child: index % 2 == 0
-                          //              ? _buildRewardIcon(
-                          //            "assets/images/one_50.png",
-                          //            "50",
-                          //          )
-                          //              : _buildRewardIcon(
-                          //
-                          //AssetsPngImages.jackpot,
-                          //            "x${index % 3 + 1}",
-                          //          ),
-                          //        ),
-                          //      );
-                          //    },
-                          //  ) ,),
-                          // SizedBox(height: 130,
-                          // child:  GridView.builder(
-                          //   shrinkWrap: true,
-                          //   itemCount: 8,
-                          //   padding: EdgeInsets.symmetric(vertical: 10),
-                          //   physics: const NeverScrollableScrollPhysics(),
-                          //   gridDelegate:
-                          //   const SliverGridDelegateWithFixedCrossAxisCount(
-                          //       crossAxisCount: 4,
-                          //       mainAxisSpacing: 10,
-                          //       crossAxisSpacing: 14,
-                          //       childAspectRatio: 1.5
-                          //   ),
-                          //   itemBuilder: (context, index) {
-                          //     final isSelected = index == selectedIndex;
-                          //     return AnimatedContainer(
-                          //       duration: const Duration(milliseconds: 250),
-                          //       decoration: BoxDecoration(
-                          //         gradient: const LinearGradient(
-                          //           colors: [Color(0xFF6A3CEB), Color(0xFF6A11CB)],
-                          //           begin: Alignment.topLeft,
-                          //           end: Alignment.bottomRight,
-                          //         ),
-                          //         borderRadius: BorderRadius.circular(12),
-                          //         border: isSelected
-                          //             ? Border.all(color: Colors.white, width: 2)
-                          //             : null,
-                          //         boxShadow: [
-                          //           BoxShadow(
-                          //             color: Colors.black.withOpacity(0.25),
-                          //             blurRadius: 8,
-                          //             offset: const Offset(0, 4),
-                          //           ),
-                          //         ],
-                          //       ),
-                          //       child: Center(
-                          //         child: index % 2 == 0
-                          //             ? _buildRewardIcon(
-                          //           "assets/images/one_50.png",
-                          //           "50",
-                          //         )
-                          //             : _buildRewardIcon(
-                          //
-                          // AssetsPngImages.jackpot,
-                          //           "x${index % 3 + 1}",
-                          //         ),
-                          //       ),
-                          //     );
-                          //   },
-                          // ),),
-                          // SizedBox(height: 170,
-                          // child:  GridView.builder(
-                          //   shrinkWrap: true,
-                          //   itemCount: 12,
-                          //   padding: EdgeInsets.symmetric(vertical: 10),
-                          //   physics: const NeverScrollableScrollPhysics(),
-                          //   gridDelegate:
-                          //   const SliverGridDelegateWithFixedCrossAxisCount(
-                          //       crossAxisCount: 4,
-                          //       mainAxisSpacing: 10,
-                          //       crossAxisSpacing: 14,
-                          //       childAspectRatio: 1.5
-                          //   ),
-                          //   itemBuilder: (context, index) {
-                          //     final isSelected = index == selectedIndex;
-                          //     return AnimatedContainer(
-                          //       duration: const Duration(milliseconds: 250),
-                          //       decoration: BoxDecoration(
-                          //         gradient: const LinearGradient(
-                          //           colors: [Color(0xFF6A3CEB), Color(0xFF6A11CB)],
-                          //           begin: Alignment.topLeft,
-                          //           end: Alignment.bottomRight,
-                          //         ),
-                          //         borderRadius: BorderRadius.circular(12),
-                          //         border: isSelected
-                          //             ? Border.all(color: Colors.white, width: 2)
-                          //             : null,
-                          //         boxShadow: [
-                          //           BoxShadow(
-                          //             color: Colors.black.withOpacity(0.25),
-                          //             blurRadius: 8,
-                          //             offset: const Offset(0, 4),
-                          //           ),
-                          //         ],
-                          //       ),
-                          //       child: Center(
-                          //         child: index % 2 == 0
-                          //             ? _buildRewardIcon(
-                          //           "assets/images/one_50.png",
-                          //           "50",
-                          //         )
-                          //             : _buildRewardIcon(
-                          //
-                          //AssetsPngImages.jackpot,
-                          //           "x${index % 3 + 1}",
-                          //         ),
-                          //       ),
-                          //     );
-                          //   },
-                          // ),),
+                          RichText(
+                            text: TextSpan(
+                              text: "BRAVOO'S",
+                              style: TextStyles.smallRegular12(context)
+                                  .copyWith(
+                                    fontFamily: AppFonts.baloo,
+                                    height: 1.sp,
+                                    color: AppColors.white,
+                                  ),
+                            ),
+                          ),
+                          Image.asset(
+                            AssetsPngImages.fullJackpot,
+                            alignment: Alignment.topCenter,
+                            width: double.infinity,
+                            height: 70.h,
+                            fit: BoxFit.cover,
+                          ),
                         ],
                       ),
                     ),
                   ),
-
-                  // 🟣 Spin Button (3D gradient)
-                  SizedBox(
-                    height: 140,
-                    child: Stack(
-                      alignment: Alignment.bottomCenter,
-                      children: [
-                        // Front face (main block)
-                        Positioned.fill(
-                          top: 30,
-                          bottom: 0,
-                          child: Container(
-                            width: 380,
-                            height: 100,
-                            decoration: BoxDecoration(color: Color(0xFF550AA9)),
-                            alignment: Alignment.bottomCenter,
+                  RotatedBox(
+                    quarterTurns: 2,
+                    child: ClipPath(
+                      clipper: _TopInwardClipper(),
+                      child: Container(
+                        width: double.infinity,
+                        height: 23.h,
+                        decoration: const BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.centerLeft,
+                            end: Alignment.centerRight,
+                            colors: [AppColors.purple900, AppColors.purple900],
                           ),
                         ),
-                        Positioned(
-                          top: 60,
-                          bottom: 0,
-                          right: 0,
-                          left: 0,
-                          child: Container(
-                            margin: const EdgeInsets.symmetric(horizontal: 16),
-                            padding: const EdgeInsets.symmetric(vertical: 0),
-                            child: FlowvaButton.jackpotButton(
-                              icon: HugeIcon(
-                                icon: HugeIcons.strokeRoundedRepeat,
-                                color: isSpinning ? Colors.grey : Colors.white,
-                              ),
-                              name: isSpinning
-                                  ? 'SPINNING...'
-                                  : 'SPIN ($spinsLeft LEFT)',
-                              color: isSpinning ? Colors.grey : Colors.white,
-                              apply: () => (spinsLeft <= 0 || isSpinning)
-                                  ? null
-                                  : handleSpinFixed(),
-                            ),
-                          ),
+                      ),
+                    ),
+                  ),
+                  Container(
+                    height: 391.h,
+                    width: double.infinity,
+                    color: AppColors.purple800,
+                    alignment: Alignment.center,
+                    margin: EdgeInsets.symmetric(horizontal: 24.w),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 18.w,
+                      vertical: 12.h,
+                    ),
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 18.w,
+                        vertical: 18.h,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.purple700,
+                        borderRadius: BorderRadius.circular(16.r),
+                        border: Border.all(
+                          width: 2.w,
+                          color: AppColors.purple600,
                         ),
-                        // Top face (angled using Transform)
-                        Positioned(
-                          top: -10,
-                          child: Center(
-                            child: ClipPath(
-                              clipper: _TopInwardClipper(),
-                              child: Container(
-                                width: 400,
-                                height: 40,
-                                decoration: const BoxDecoration(
-                                  gradient: LinearGradient(
-                                    begin: Alignment.centerLeft,
-                                    end: Alignment.centerRight,
-                                    colors: [
-                                      Color(0xFF3A0874),
-                                      Color(0xFF371222),
-                                    ],
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          buildGridSection(0, 4),
+                          // Section 2: 2 rows (8 items)
+                          buildGridSection(4, 12),
+                          // Section 3: 3 rows (12 items)
+                          buildGridSection(12, 24),
+                        ],
+                      ),
+                    ),
+                  ),
+                  ClipPath(
+                    clipper: _TopInwardClipper(),
+                    child: Container(
+                      width: double.infinity,
+                      height: 37.h,
+                      decoration: const BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.centerLeft,
+                          end: Alignment.centerRight,
+                          colors: [Color(0xff3A0874), Color(0xff371222)],
+                        ),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Container(
+                      width: double.infinity,
+                      color: AppColors.purple800,
+                      padding: EdgeInsets.symmetric(horizontal: 15.w),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Expanded(
+                            child: BlocBuilder<ProfileBloc, ProfileState>(
+                              builder: (context, state) {
+                                final profile = state.profile;
+                                spinsLeft = profile.spins ?? 0;
+                                return IconTextButton(
+                                  height: 65,
+                                  color: AppColors.purple600,
+                                  borderColor: AppColors.white32,
+                                  iconWidget: HugeIcon(
+                                    icon: HugeIcons.strokeRoundedRepeat,
+                                    color: isSpinning
+                                        ? AppColors.grey
+                                        : AppColors.white,
                                   ),
-                                ),
-                              ),
+                                  text: isSpinning
+                                      ? 'SPINNING...'
+                                      : 'SPIN ($spinsLeft LEFT)',
+                                  fontFamily: AppFonts.baloo,
+                                  textColor: isSpinning
+                                      ? AppColors.grey
+                                      : AppColors.white,
+                                  onPressed: () =>
+                                      (spinsLeft <= 0 || isSpinning)
+                                      ? null
+                                      : startSpinWithServer(),
+                                );
+                              },
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                 ],
               ),
             ],
           ),
-        ],
+        ),
       ),
     );
   }
@@ -695,13 +686,12 @@ class _JackpotScreenState extends State<JackpotScreen> with UIToolMixin {
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      padding: EdgeInsets.symmetric(vertical: 10),
-
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+      padding: EdgeInsets.zero,
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 4,
-        mainAxisSpacing: 14,
-        crossAxisSpacing: 14,
-        childAspectRatio: 1.5,
+        mainAxisSpacing: 9.h,
+        crossAxisSpacing: 12.w,
+        mainAxisExtent: 34.h,
       ),
       itemCount: items.length,
       itemBuilder: (context, index) {
@@ -710,23 +700,22 @@ class _JackpotScreenState extends State<JackpotScreen> with UIToolMixin {
         final isSelected = currentPosition == actualIndex;
         final selectedTransform = Matrix4.identity()..scale(1.05);
         final normalTransform = Matrix4.identity();
-        print(item.emoji);
         return AnimatedContainer(
           duration: const Duration(milliseconds: 200),
+          padding: EdgeInsets.symmetric(horizontal: 1.5.w, vertical: 1.5.h),
           decoration: BoxDecoration(
-            // color: isSelected
-            //     ? const Color(0xFFAB47BC)
-            //     : const Color(0xFF7B1FA2).withOpacity(0.6),
-            gradient: const LinearGradient(
-              colors: [Color(0xFF6A3CEB), Color(0xFF6A11CB)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
+            gradient: LinearGradient(
+              colors: (isSelected)
+                  ? [AppColors.orange300, AppColors.orange300]
+                  : [
+                      AppColors.white.withValues(alpha: 0),
+                      AppColors.white75,
+                      AppColors.white.withValues(alpha: 0),
+                    ],
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
             ),
-
-            borderRadius: BorderRadius.circular(16),
-            border: isSelected
-                ? Border.all(color: const Color(0xFFFFD700), width: 4)
-                : null,
+            borderRadius: BorderRadius.circular(8.r),
             boxShadow: isSelected
                 ? [
                     BoxShadow(
@@ -738,29 +727,44 @@ class _JackpotScreenState extends State<JackpotScreen> with UIToolMixin {
                 : null,
           ),
           transform: isSelected ? selectedTransform : normalTransform,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Image.asset(
-                item.emoji,
-                height: 20,
-                width: 20,
-                fit: BoxFit.contain,
+          child: Container(
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [
+                  Color(0xFF7038F3),
+                  Color(0xFF7F52E8),
+                  Color(0xFF7038F3),
+                ],
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
               ),
-              // Text(
-              //   item.emoji,
-              //   style: const TextStyle(fontSize: 32),
-              // ),
-              const SizedBox(width: 4),
-              Text(
-                item.type == 'coins' ? '${item.value}' : 'x${item.value}',
-                style: GoogleFonts.manrope(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w700,
-                  fontSize: 14,
+              borderRadius: BorderRadius.circular(8.r),
+            ),
+            child: Row(
+              spacing: 2.w,
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Image.asset(
+                  item.emoji,
+                  height: 20.h,
+                  width: 20.w,
+                  fit: BoxFit.contain,
                 ),
-              ),
-            ],
+                RichText(
+                  text: TextSpan(
+                    text: item.type == 'coins'
+                        ? '${item.value}'
+                        : 'x${item.value}',
+                    style: TextStyles.normalBold14(context).copyWith(
+                      fontFamily: AppFonts.baloo2,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         );
       },

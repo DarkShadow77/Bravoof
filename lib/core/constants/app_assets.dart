@@ -37,13 +37,18 @@ class AssetsPngImages {
   static String prizeDetailTitle = "$baseImagePngPath/prize_detail_title.png";
   static String sparklingStar = "$baseImagePngPath/sparkling_star.png";
   static String jackpot = "$baseImagePngPath/jackpot.png";
+  static String fullJackpot = "$baseImagePngPath/full_jackpot.png";
   static String check = "$baseImagePngPath/check.png";
+  static String clap = "$baseImagePngPath/clap.png";
   static String roundedCheck = "$baseImagePngPath/rounded_check.png";
   static String inviteBg = "$baseImagePngPath/invite_bg.png";
   static String flame = "$baseImagePngPath/flame.png";
   static String cash = "$baseImagePngPath/cash.png";
   static String data = "$baseImagePngPath/data.png";
   static String giftcard = "$baseImagePngPath/giftcard.png";
+  static String topToolBg = "$baseImagePngPath/top_tool_bg.png";
+  static String spotlightBg = "$baseImagePngPath/spotlight_bg.png";
+  static String quoteBg = "$baseImagePngPath/quote_bg.png";
 }
 
 class AssetsSvgImages {

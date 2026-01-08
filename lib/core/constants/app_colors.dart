@@ -29,6 +29,10 @@ class AppColors {
 
   //State-Colors ---Purple
   static const Color purple = Color(0xFF2C0066);
+  static const Color purple900 = Color(0xFF2C0066);
+  static const Color purple800 = Color(0xFF400387);
+  static const Color purple700 = Color(0xFF550AA9);
+  static const Color purple600 = Color(0xFF5B17C6);
 
   //State-Colors ---Dark
   static const Color dark = Color(0xFF1E1E1E);
@@ -99,6 +103,7 @@ class AppColors {
 
   //State-Colors ---Orange
   static const Color orange = Color(0xFFFE5613);
+  static const Color orange300 = Color(0xFFFDA161);
   static Color get orange70 => orange.withValues(alpha: .70);
   static Color get orange50 => orange.withValues(alpha: .50);
   static Color get orange39 => orange.withValues(alpha: .39);

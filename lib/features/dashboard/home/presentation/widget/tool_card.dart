@@ -2,17 +2,21 @@ import 'dart:async';
 
 import 'package:flowva/app/styles/text_styles.dart';
 import 'package:flowva/app/view/widgets/cached_image_widget.dart';
+import 'package:flowva/core/constants/app_assets.dart';
 import 'package:flowva/features/dashboard/earn/presentation/pages/referral_contest_screen.dart';
 import 'package:flowva/features/dashboard/earn/presentation/widgets/draw_end_page.dart';
 import 'package:flowva/features/dashboard/home/data/model/campaign_response.dart';
+import 'package:flowva/features/dashboard/home/data/model/spotlight_model.dart';
 import 'package:flowva/features/dashboard/home/presentation/bloc/home_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_confetti/flutter_confetti.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/di/service_locator.dart';
+import '../../../../../core/utils/helpers.dart';
 import '../../presentation/bloc/campaign_cubit.dart';
 
 class ToolCardCarousel extends StatefulWidget {
@@ -38,6 +42,12 @@ class _ToolCardCarouselState extends State<ToolCardCarousel> {
 
     homeCubit.fetchSpotlight();
     homeCubit.fetchSpotlight();
+
+    _pageController.addListener(() {
+      setState(() {
+        _currentPage = _pageController.page!;
+      });
+    });
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (campaign.isNotEmpty) {
         _remainingTime = Duration(
@@ -83,6 +93,7 @@ class _ToolCardCarouselState extends State<ToolCardCarousel> {
     });
   }
 
+  double _currentPage = 0;
   int currentPage = 0;
   final List<String> backgroundImages = [
     'assets/images/top_tool_bg.png',
@@ -126,11 +137,13 @@ class _ToolCardCarouselState extends State<ToolCardCarousel> {
       children: [
         // PageView of cards
         Container(
-          height: 235,
-
-          // width: MediaQuery.of(context).size.width,
+          height: 230.h,
           child: PageView.builder(
+            padEnds: true,
             controller: _pageController,
+            physics: BouncingScrollPhysics(),
+            allowImplicitScrolling: true,
+            scrollDirection: Axis.horizontal,
             itemCount: carousel.length,
             onPageChanged: (index) {
               setState(() {
@@ -139,12 +152,36 @@ class _ToolCardCarouselState extends State<ToolCardCarousel> {
               homeCubit.fetchSpotlight();
             },
             itemBuilder: (context, index) {
-              return Container(
-                child: _buildToolCard(
-                  index,
-                  backgroundImages[index],
-                  data[index],
-                ),
+              double scaleFactor = .8;
+              double height = 230.h;
+              Matrix4 matrix = Matrix4.identity();
+
+              if (index == _currentPage.floor()) {
+                var currScale = 1 - (_currentPage - index) * (1 - scaleFactor);
+                var currTrans = height * (1 - currScale) / 2;
+                matrix = Matrix4.diagonal3Values(1.0, currScale, 1.0)
+                  ..setTranslationRaw(0, currTrans, 0);
+              } else if (index == _currentPage.floor() + 1) {
+                var currScale =
+                    scaleFactor +
+                    (_currentPage - index + 1) * (1 - scaleFactor);
+
+                var currTrans = height * (1 - currScale) / 2;
+                matrix = Matrix4.diagonal3Values(1.0, currScale, 1.0)
+                  ..setTranslationRaw(0, currTrans, 0);
+              } else if (index == _currentPage.floor() - 1) {
+                var currScale = 1 - (_currentPage - index) * (1 - scaleFactor);
+                var currTrans = height * (1 - currScale) / 2;
+                matrix = Matrix4.diagonal3Values(1.0, currScale, 1.0)
+                  ..setTranslationRaw(0, currTrans, 0);
+              } else {
+                var currScale = .8;
+                matrix = Matrix4.diagonal3Values(1.0, currScale, 1.0)
+                  ..setTranslationRaw(0, height * (1 - scaleFactor) / 2, 0);
+              }
+              return Transform(
+                transform: matrix,
+                child: Container(child: _buildToolCard(index)),
               );
             },
           ),
@@ -244,10 +281,12 @@ class _ToolCardCarouselState extends State<ToolCardCarousel> {
 
                         CircleAvatar(
                           radius: 45,
-                          backgroundColor: Colors.white.withOpacity(0.08),
+                          backgroundColor: Colors.white.withValues(alpha: 0.08),
                           child: CircleAvatar(
                             radius: 40,
-                            backgroundColor: Colors.white.withOpacity(0.3),
+                            backgroundColor: Colors.white.withValues(
+                              alpha: 0.3,
+                            ),
                             child: CircleAvatar(
                               radius: 35,
                               backgroundColor: Color(0xFFDEC4FF),
@@ -279,7 +318,7 @@ class _ToolCardCarouselState extends State<ToolCardCarousel> {
                                 vertical: 5,
                               ),
                               decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.80),
+                                color: Colors.white.withValues(alpha: 0.80),
                                 borderRadius: BorderRadius.only(
                                   topLeft: Radius.circular(15),
                                   topRight: Radius.circular(15),
@@ -396,10 +435,119 @@ class _ToolCardCarouselState extends State<ToolCardCarousel> {
         );
       },
     ),
-    BlocBuilder<HomeCubit, HomeState>(
-      bloc: homeCubit,
+    SpotlightCard(),
+    QuoteCard(),
+  ];
+
+  Widget _buildToolCard(int index) {
+    return Container(
+      // height: 240,
+      margin: const EdgeInsets.symmetric(horizontal: 16.0),
+      width: double.infinity,
+      child: Stack(children: [?carousel[index]]),
+    );
+  }
+
+  Widget _timerBox(String text) {
+    return Container(
+      // margin: const EdgeInsets.only(left: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 4),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(color: Colors.grey.shade200),
+      ),
+      child: Text(
+        text,
+        style: GoogleFonts.manrope(
+          fontSize: 14,
+          fontWeight: FontWeight.w700,
+          color: Color(0xFF191919),
+        ),
+      ),
+    );
+  }
+}
+
+class ReferralCard extends StatefulWidget {
+  const ReferralCard({super.key});
+
+  @override
+  State<ReferralCard> createState() => _ReferralCardState();
+}
+
+class _ReferralCardState extends State<ReferralCard> {
+  CampaignModel campaign = CampaignModel.empty();
+
+  @override
+  void initState() {
+    super.initState();
+    context.read<HomeCubit>().fetchSpotlight();
+    campaign = context.read<HomeCubit>().state.campaign.last;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<HomeCubit, HomeState>(
       builder: (context, state) {
-        final spotlight = state.spotlight;
+        campaign = state.campaign.last;
+        return Container();
+      },
+    );
+  }
+}
+
+class QuoteCard extends StatelessWidget {
+  const QuoteCard({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16.r),
+        image: DecorationImage(
+          image: AssetImage(AssetsPngImages.quoteBg),
+          fit: BoxFit.cover,
+        ),
+      ),
+      child: Center(
+        child: RichText(
+          textAlign: TextAlign.center,
+          text: TextSpan(
+            text:
+                "“Progress isn’t always loud, sometimes it’s "
+                "just steady. Your pace is enough.“",
+            style: TextStyles.titleSemiBold20(context),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class SpotlightCard extends StatefulWidget {
+  const SpotlightCard({super.key});
+
+  @override
+  State<SpotlightCard> createState() => _SpotlightCardState();
+}
+
+class _SpotlightCardState extends State<SpotlightCard> {
+  SpotlightModel spotlight = SpotlightModel.empty();
+
+  @override
+  void initState() {
+    super.initState();
+    context.read<HomeCubit>().fetchSpotlight();
+    spotlight = context.read<HomeCubit>().state.spotlight;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<HomeCubit, HomeState>(
+      builder: (context, state) {
+        spotlight = state.spotlight;
 
         if (spotlight.name.isEmpty)
           return Text(
@@ -409,13 +557,17 @@ class _ToolCardCarouselState extends State<ToolCardCarousel> {
             ).copyWith(color: AppColors.white),
           );
         else
-          return Padding(
-            padding: EdgeInsets.symmetric(
-              vertical: 16.h,
-              horizontal: 16.w,
-            ), // Keep this if you want inner spacing
+          return Container(
+            padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 16.w),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16.r),
+              image: DecorationImage(
+                image: AssetImage(AssetsPngImages.spotlightBg),
+                fit: BoxFit.cover,
+              ),
+            ),
             child: Column(
-              spacing: 14.h,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 RichText(
@@ -437,7 +589,6 @@ class _ToolCardCarouselState extends State<ToolCardCarousel> {
                       circle: true,
                       fit: BoxFit.cover,
                     ),
-
                     Expanded(
                       child: Column(
                         spacing: 6.5.h,
@@ -473,24 +624,184 @@ class _ToolCardCarouselState extends State<ToolCardCarousel> {
                                 child: Stack(
                                   clipBehavior: Clip.none,
                                   children: [
-                                    _buildToolIcon(
-                                      "assets/images/one_50.png",
-                                      0,
-                                    ),
-                                    _buildToolIcon(
-                                      "assets/images/one_50.png",
-                                      20,
-                                    ),
-                                    _buildToolIcon(
-                                      "assets/images/one_50.png",
-                                      40,
-                                    ),
+                                    _buildToolIcon(AssetsPngImages.one50, 0),
+                                    _buildToolIcon(AssetsPngImages.one50, 20),
+                                    _buildToolIcon(AssetsPngImages.one50, 40),
                                   ],
                                 ),
                               ),
                             ],
                           ),
                         ],
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  spacing: 20.w,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        Confetti.launch(
+                          context,
+                          options: const ConfettiOptions(
+                            particleCount: 100,
+                            spread: 30,
+                            drift: -1,
+                            y: 0.5,
+                          ),
+                        );
+                      },
+                      behavior: HitTestBehavior.opaque,
+                      child: Container(
+                        height: 38.h,
+                        width: 100.w,
+                        decoration: BoxDecoration(
+                          color: AppColors.white80,
+                          borderRadius: BorderRadius.circular(100.r),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Image.asset(
+                              AssetsPngImages.clap,
+                              width: 16.w,
+                              height: 16.h,
+                              fit: BoxFit.contain,
+                            ),
+                            RichText(
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              text: TextSpan(
+                                text: "Cheers",
+                                style: TextStyles.cardBold10(
+                                  context,
+                                ).copyWith(color: AppColors.grey900),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                          vertical: 10.h,
+                          horizontal: 16.w,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColors.white10,
+                          borderRadius: BorderRadius.circular(100.r),
+                        ),
+                        child: IntrinsicHeight(
+                          child: Row(
+                            spacing: 6.w,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    RichText(
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      text: TextSpan(
+                                        text:
+                                            "${formatAmount(spotlight.missionsCompleted, compact: true, uniComp: true)}",
+                                        style: TextStyles.smallSemibold12(
+                                          context,
+                                        ).copyWith(color: AppColors.white),
+                                      ),
+                                    ),
+                                    RichText(
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      text: TextSpan(
+                                        text: "Mission",
+                                        style: TextStyles.smallCardRegular8(
+                                          context,
+                                          opacity: .8,
+                                        ).copyWith(color: AppColors.white85),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                height: double.infinity,
+                                width: 1.w,
+                                color: AppColors.white10,
+                              ),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    RichText(
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      text: TextSpan(
+                                        text:
+                                            "${formatAmount(spotlight.coinsEarned, compact: true, uniComp: true)}",
+                                        style: TextStyles.smallSemibold12(
+                                          context,
+                                        ).copyWith(color: AppColors.white),
+                                      ),
+                                    ),
+                                    RichText(
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      text: TextSpan(
+                                        text: "Coins",
+                                        style: TextStyles.smallCardRegular8(
+                                          context,
+                                          opacity: .8,
+                                        ).copyWith(color: AppColors.white85),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                height: double.infinity,
+                                width: 1.w,
+                                color: AppColors.white10,
+                              ),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    RichText(
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      text: TextSpan(
+                                        text:
+                                            "\$${formatAmount(spotlight.redeemed, compact: true, uniComp: true)}",
+                                        style: TextStyles.smallSemibold12(
+                                          context,
+                                        ).copyWith(color: AppColors.white),
+                                      ),
+                                    ),
+                                    RichText(
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      text: TextSpan(
+                                        text: "Redeemed",
+                                        style: TextStyles.smallCardRegular8(
+                                          context,
+                                          opacity: .8,
+                                        ).copyWith(color: AppColors.white85),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
                     ),
                   ],
@@ -610,81 +921,17 @@ class _ToolCardCarouselState extends State<ToolCardCarousel> {
             ),
           );
       },
-    ),
-  ];
-
-  Widget _buildToolCard(
-    int index,
-    String backgroundImag,
-    Map<String, dynamic> data,
-  ) {
-    final days = _remainingTime.inDays;
-    final hours = _remainingTime.inHours.remainder(24);
-    final minutes = _remainingTime.inMinutes.remainder(60);
-    final seconds = _remainingTime.inSeconds.remainder(60);
-
-    return Container(
-      // height: 240,
-      margin: const EdgeInsets.symmetric(horizontal: 16.0),
-      width: double.infinity,
-      child: Stack(
-        children: [
-          // SVG background
-          Positioned.fill(
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(16),
-              child: Image.asset(backgroundImag, fit: BoxFit.cover),
-            ),
-          ),
-          ?carousel[index],
-        ],
-      ),
-    );
-  }
-
-  Widget _timerBox(String text) {
-    return Container(
-      // margin: const EdgeInsets.only(left: 4),
-      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 4),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(6),
-        border: Border.all(color: Colors.grey.shade200),
-      ),
-      child: Text(
-        text,
-        style: GoogleFonts.manrope(
-          fontSize: 14,
-          fontWeight: FontWeight.w700,
-          color: Color(0xFF191919),
-        ),
-      ),
     );
   }
 
   Widget _buildToolIcon(String asset, double left) {
     return Positioned(
       left: left,
-      child: Container(
-        padding: const EdgeInsets.all(2),
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: Colors.white, // white border
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.1),
-              blurRadius: 2,
-              offset: const Offset(0, 1),
-            ),
-          ],
-        ),
-        child: CircleAvatar(
-          radius: 12,
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(50),
-            child: Image.asset(asset, fit: BoxFit.cover, height: 25),
-          ),
-        ),
+      child: Image.asset(
+        AssetsPngImages.one50,
+        width: 26.w,
+        height: 26.h,
+        fit: BoxFit.contain,
       ),
     );
   }

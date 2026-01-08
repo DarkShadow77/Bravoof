@@ -21,6 +21,7 @@ import 'app/theme/app_themes.dart';
 import 'core/constants/strings.dart';
 import 'core/di/service_locator.dart';
 import 'features/app.dart';
+import 'features/dashboard/earn/presentation/bloc/jackpot_bloc.dart';
 import 'features/dashboard/mission/presentation/bloc/community_mission_bloc.dart';
 import 'features/dashboard/mission/presentation/bloc/featured_mission_bloc.dart';
 import 'features/dashboard/mission/presentation/bloc/growth_mission_bloc.dart';
@@ -123,6 +124,7 @@ class _MyAppState extends State<MyApp> {
         BlocProvider(create: (_) => sl<StreakBloc>()),
         BlocProvider(create: (_) => sl<GrowthMissionBloc>()),
         BlocProvider(create: (_) => sl<RedeemBloc>()),
+        BlocProvider(create: (_) => sl<JackpotBloc>()),
       ],
       child: ScreenUtilInit(
         designSize: const Size(375, 815),
