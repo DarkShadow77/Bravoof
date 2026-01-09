@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flowva/app/styles/text_styles.dart';
 import 'package:flowva/app/view/widgets/button/icon_text_button.dart';
 import 'package:flowva/core/constants/app_assets.dart';
@@ -9,7 +7,7 @@ import 'package:flowva/core/utils/helpers.dart';
 import 'package:flowva/features/common/flowva_button.dart';
 import 'package:flowva/features/dashboard/earn/presentation/pages/invite_earn.dart';
 import 'package:flowva/features/dashboard/earn/presentation/pages/jackpot_page.dart';
-import 'package:flowva/features/dashboard/home/data/model/campaign_response.dart';
+import 'package:flowva/features/dashboard/earn/presentation/widgets/referr_campaign.dart';
 import 'package:flowva/features/dashboard/redeem/presentation/bloc/redeem_bloc.dart';
 import 'package:flowva/features/dashboard/redeem/presentation/widget/redeem_gift_modal.dart';
 import 'package:flutter/material.dart';
@@ -26,8 +24,7 @@ import '../../../../profile/presentation/bloc/profile_bloc.dart';
 import '../../widget/redeem_learn_more_modal.dart';
 
 class RedeemTab extends StatefulWidget {
-  RedeemTab({this.campaign, super.key});
-  final CampaignModel? campaign;
+  RedeemTab({super.key});
   @override
   State<RedeemTab> createState() => _RedeemTabState();
 }
@@ -38,56 +35,6 @@ class _RedeemTabState extends State<RedeemTab>
   final _pageController = PageController(initialPage: 0);
   double _pageHeight = 300;
   int _currentPage = 0;
-  Timer? _timer;
-  Duration? _remainingTime;
-  bool _isExpired = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _remainingTime = Duration(
-      days: widget.campaign!.campaignEndDate!.day,
-      hours: widget.campaign!.campaignEndDate!.hour,
-      minutes: widget.campaign!.campaignEndDate!.minute,
-      seconds: widget.campaign!.campaignEndDate!.second,
-    );
-    _startCountdown();
-  }
-
-  void _startCountdown() {
-    // Calculate initial remaining time
-    _updateRemainingTime();
-
-    // Update every second
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      _updateRemainingTime();
-    });
-  }
-
-  void _updateRemainingTime() {
-    final now = DateTime.now();
-    final difference = widget.campaign!.campaignEndDate!.difference(now);
-
-    if (difference.isNegative) {
-      setState(() {
-        _isExpired = true;
-        _remainingTime = Duration.zero;
-      });
-      _timer?.cancel();
-    } else {
-      setState(() {
-        _remainingTime = difference;
-        _isExpired = false;
-      });
-    }
-  }
-
-  @override
-  void dispose() {
-    _timer?.cancel();
-    // _tabController.dispose();
-    super.dispose();
-  }
 
   _loadingState(BuildContext context, RedeemLoadingState state) {
     if (state.type == RedeemType.redeemAirtimeData ||
@@ -148,177 +95,16 @@ class _RedeemTabState extends State<RedeemTab>
 
   @override
   Widget build(BuildContext context) {
-    final days = _remainingTime!.inDays;
-    final hours = _remainingTime!.inHours.remainder(24);
-    final minutes = _remainingTime!.inMinutes.remainder(60);
-    final seconds = _remainingTime!.inSeconds.remainder(60);
-
     return SingleChildScrollView(
       child: Column(
         // shrinkWrap: true,
         // padding: EdgeInsets.only(top: 16),
         // physics: const ClampingScrollPhysics(),
         children: [
-          const SizedBox(height: 20),
-          // 🎁 Giveaway Card
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16),
-            child: Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.5),
-                borderRadius: BorderRadius.circular(24),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Image.asset("assets/images/oraimo.png"),
-                      SizedBox(width: 8),
-                      Text(
-                        'Oraimo OpenSnap Contest',
-                        style: GoogleFonts.manrope(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: SizedBox(
-                          width: 250,
-                          child: Text(
-                            'Refer to win Oraimo OpenSnap Airpod!',
-                            style: GoogleFonts.baloo2(
-                              fontSize: 24,
-                              fontWeight: FontWeight.w700,
-                              color: Color(0xFFAB7A7A),
-                            ),
-                          ),
-                        ),
-                      ),
+          SizedBox(height: 20.h),
+          ReferCampaign(transparent: true),
 
-                      CircleAvatar(
-                        radius: 35,
-                        backgroundColor: Colors.white,
-                        child: CircleAvatar(
-                          radius: 30,
-                          backgroundColor: Color(
-                            0xFFFF8687,
-                          ).withValues(alpha: 0.19),
-                          child: Image.asset(
-                            "assets/images/ear_pod.png",
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-
-                      // SvgPicture.asset("assets/images/ear_pod.svg",height: 40,),
-                    ],
-                  ),
-                  Container(
-                    height: 100,
-
-                    alignment: Alignment.bottomCenter,
-                    child: Stack(
-                      alignment: Alignment.bottomCenter,
-                      clipBehavior: Clip.none,
-                      children: [
-                        // White container
-                        Positioned(
-                          bottom: 40, // lift the white box slightly
-                          child: Container(
-                            width: 290,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 10,
-                              vertical: 5,
-                            ),
-                            decoration: const BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(15),
-                                topRight: Radius.circular(15),
-                              ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black12,
-                                  blurRadius: 6,
-                                  offset: Offset(0, 2),
-                                ),
-                              ],
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  'Ends in ',
-                                  style: GoogleFonts.manrope(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w700,
-                                    color: const Color(0xFF191919),
-                                  ),
-                                ),
-                                _timerBox('$days days'),
-                                const Icon(
-                                  Icons.more_vert,
-                                  size: 14,
-                                  color: Colors.black,
-                                ),
-                                _timerBox('${hours}h'),
-                                const Icon(
-                                  Icons.more_vert,
-                                  size: 14,
-                                  color: Colors.black,
-                                ),
-                                _timerBox('${minutes}m'),
-                                const Icon(
-                                  Icons.more_vert,
-                                  size: 14,
-                                  color: Colors.black,
-                                ),
-                                _timerBox('${seconds}s'),
-                              ],
-                            ),
-                          ),
-                        ),
-
-                        // Button overlapping the white box bottom
-                        Positioned(
-                          bottom: -20,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(50),
-                            ),
-                            width: 330,
-                            clipBehavior: Clip.hardEdge,
-                            child: FlowvaButton.noneOutlineBlackButton(
-                              name: "Refer your friends",
-                              fontSize: 16,
-                              apply: () => Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (ctx) => InviteAndEarnPage(),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                ],
-              ),
-            ),
-          ),
-
-          const SizedBox(height: 20),
+          SizedBox(height: 20.h),
 
           // 💡 Info Box
           Padding(

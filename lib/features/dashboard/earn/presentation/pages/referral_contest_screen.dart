@@ -732,7 +732,7 @@ class _ReferralContainerState extends State<ReferralContainer> {
                         : "Your entry is confirmed for this draw.",
                     style: TextStyles.smallSemibold12(
                       context,
-                    ).copyWith(color: AppColors.white29),
+                    ).copyWith(color: AppColors.white30),
                   ),
                 ),
                 Padding(
@@ -960,8 +960,8 @@ class SocialBox extends StatelessWidget {
   }
 }
 
-class WinnerDailog extends StatelessWidget {
-  const WinnerDailog({super.key});
+class WinnerDialog extends StatelessWidget {
+  const WinnerDialog({super.key});
 
   @override
   Widget build(BuildContext context) {

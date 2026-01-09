@@ -1,279 +1,308 @@
-import 'dart:async';
-
+import 'package:flowva/app/styles/text_styles.dart';
+import 'package:flowva/core/constants/fonts.dart';
 import 'package:flowva/features/dashboard/earn/presentation/pages/referral_contest_screen.dart';
 import 'package:flowva/features/dashboard/home/data/model/campaign_response.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:timer_count_down/timer_controller.dart';
+import 'package:timer_count_down/timer_count_down.dart';
 
+import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/di/service_locator.dart';
 import '../../../home/presentation/bloc/campaign_cubit.dart';
+import '../../../home/presentation/bloc/home_cubit.dart';
 import 'draw_end_page.dart';
 
 class ReferCampaign extends StatefulWidget {
-  List<CampaignModel> campaign = [];
-  ReferCampaign({super.key, required this.campaign});
+  ReferCampaign({super.key, this.transparent = false});
+
+  final bool transparent;
 
   @override
   State<ReferCampaign> createState() => _ReferCampaignState();
 }
 
 class _ReferCampaignState extends State<ReferCampaign> {
-  Timer? _timer;
-  Duration? _remainingTime;
-  bool _isExpired = false;
+  final CountdownController _timerController = CountdownController(
+    autoStart: true,
+  );
+  int differenceInSeconds = 0;
+
+  List<CampaignModel> campaign = [];
+
+  late HomeCubit homeCubit;
 
   @override
   void initState() {
     super.initState();
-    if (widget.campaign.isNotEmpty) {
-      _remainingTime = Duration(
-        days: widget.campaign.first.campaignEndDate!.day,
-        hours: widget.campaign.first.campaignEndDate!.hour,
-        minutes: widget.campaign.first.campaignEndDate!.minute,
-        seconds: widget.campaign.first.campaignEndDate!.second,
-      );
+    homeCubit = HomeCubit();
+    campaign = homeCubit.state.campaign;
+
+    if (campaign.isNotEmpty) {
+      final now = DateTime.now().toUtc();
+      differenceInSeconds = campaign.last.campaignEndDate
+          .difference(now)
+          .inSeconds
+          .clamp(0, double.infinity)
+          .toInt();
     }
-    _startCountdown();
+    homeCubit.fetchCampaigns();
   }
 
-  void _startCountdown() {
-    // Calculate initial remaining time
-    _updateRemainingTime();
+  List<String> formattedTime2(double time) {
+    final int days = (time / 86400).floor(); // 1 day = 86400 seconds
+    final int hours = ((time % 86400) / 3600).floor();
+    final int minutes = ((time % 3600) / 60).floor();
+    final int seconds = (time % 60).floor();
 
-    // Update every second
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      _updateRemainingTime();
-    });
-  }
-
-  void _updateRemainingTime() {
-    final now = DateTime.now();
-    final difference = widget.campaign!.isNotEmpty
-        ? widget.campaign!.first.campaignEndDate!.difference(now)
-        : null;
-
-    if (difference!.isNegative) {
-      setState(() {
-        _isExpired = true;
-        _remainingTime = Duration.zero;
-      });
-      _timer?.cancel();
-    } else {
-      setState(() {
-        _remainingTime = difference;
-        _isExpired = false;
-      });
-    }
+    return [
+      days.toString().padLeft(2, "0"),
+      hours.toString().padLeft(2, "0"),
+      minutes.toString().padLeft(2, "0"),
+      seconds.toString().padLeft(2, "0"),
+    ];
   }
 
   @override
   Widget build(BuildContext context) {
-    final days = _remainingTime!.inDays;
-    final hours = _remainingTime!.inHours.remainder(24);
-    final minutes = _remainingTime!.inMinutes.remainder(60);
-    final seconds = _remainingTime!.inSeconds.remainder(60);
-    return Container(
-      child: Stack(
-        // crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Positioned.fill(
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(16),
-              child: Image.asset(
-                "assets/images/giveaway_card.png",
-                fit: BoxFit.cover,
-              ),
-            ),
+    return BlocBuilder<HomeCubit, HomeState>(
+      builder: (context, state) {
+        campaign = state.campaign;
+
+        if (campaign.isEmpty) return SizedBox.shrink();
+
+        final now = DateTime.now().toUtc();
+        differenceInSeconds = campaign.last.campaignEndDate
+            .difference(now)
+            .inSeconds
+            .clamp(0, double.infinity)
+            .toInt();
+
+        return Container(
+          margin: EdgeInsets.symmetric(horizontal: 16.w),
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: Colors.white.withValues(alpha: 0.5),
+            borderRadius: BorderRadius.circular(24.r),
           ),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    Image.asset("assets/images/oraimo.png"),
-                    SizedBox(width: 8),
-                    Text(
-                      widget.campaign.first.name.toString(),
-                      style: GoogleFonts.manrope(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.white,
-                      ),
+          child: Stack(
+            // crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (!widget.transparent)
+                Positioned.fill(
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(16),
+                    child: Image.asset(
+                      "assets/images/giveaway_card.png",
+                      fit: BoxFit.cover,
                     ),
-                  ],
+                  ),
                 ),
-                const SizedBox(height: 4),
-                Row(
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+
+                child: Column(
+                  spacing: 4.h,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    Expanded(
-                      child: SizedBox(
-                        width: 250,
-                        child: Text(
-                          widget.campaign!.first.title.toString(),
-                          style: GoogleFonts.baloo2(
-                            fontSize: 24,
-                            fontWeight: FontWeight.w700,
-                            color: Color(0xFFDCB5FF),
-                          ),
-                        ),
-                      ),
-                    ),
-
-                    CircleAvatar(
-                      radius: 45,
-                      backgroundColor: Colors.white.withOpacity(0.08),
-                      child: CircleAvatar(
-                        radius: 40,
-                        backgroundColor: Colors.white.withOpacity(0.3),
-                        child: CircleAvatar(
-                          radius: 35,
-                          backgroundColor: Color(0xFFDEC4FF),
-                          child: Image.network(
-                            widget.campaign!.first.url.toString(),
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                    ),
-                    // SvgPicture.asset("assets/images/ear_pod.svg",height: 40,),
-                  ],
-                ),
-                Container(
-                  height: 90,
-
-                  alignment: Alignment.bottomCenter,
-                  child: Stack(
-                    alignment: Alignment.bottomCenter,
-                    clipBehavior: Clip.none,
-                    children: [
-                      // White container
-                      Positioned(
-                        bottom: 40, // lift the white box slightly
-                        child: Container(
-                          width: 290,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 5,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.80),
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(15),
-                              topRight: Radius.circular(15),
+                    Row(
+                      children: [
+                        Image.asset("assets/images/oraimo.png"),
+                        SizedBox(width: 8.w),
+                        RichText(
+                          text: TextSpan(
+                            text: campaign.last.name.toString(),
+                            style: TextStyles.smallBold12(context).copyWith(
+                              color: widget.transparent
+                                  ? null
+                                  : AppColors.white,
                             ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black12,
-                                blurRadius: 6,
-                                offset: Offset(0, 2),
-                              ),
-                            ],
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                'Ends in ',
-                                style: GoogleFonts.manrope(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w700,
-                                  color: const Color(0xFF191919),
-                                ),
-                              ),
-                              _timerBox('$days days'),
-                              const Icon(
-                                Icons.more_vert,
-                                size: 14,
-                                color: Colors.black,
-                              ),
-                              _timerBox('${hours}h'),
-                              const Icon(
-                                Icons.more_vert,
-                                size: 14,
-                                color: Colors.black,
-                              ),
-                              _timerBox('${minutes}m'),
-                              const Icon(
-                                Icons.more_vert,
-                                size: 14,
-                                color: Colors.black,
-                              ),
-                              _timerBox('${seconds}s'),
-                            ],
                           ),
                         ),
-                      ),
+                      ],
+                    ),
+                    Row(
+                      spacing: 10.w,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          child: RichText(
+                            text: TextSpan(
+                              text: campaign.last.title.toString(),
+                              style: TextStyles.bigTitleBold24(context)
+                                  .copyWith(
+                                    fontSize: 22.sp,
+                                    fontFamily: AppFonts.baloo2,
+                                    height: 1.2.sp,
+                                    color: !widget.transparent
+                                        ? Color(0xFFDCB5FF)
+                                        : Color(0xFFAB7A7A),
+                                  ),
+                            ),
+                          ),
+                        ),
 
-                      // Button overlapping the white box bottom
-                      Positioned(
-                        bottom: 0,
-                        child: GestureDetector(
-                          //ReferralContestScreen() //DrawEndPage()
-                          onTap: () {
-                            final now = DateTime.now();
+                        CircleAvatar(
+                          radius: 45,
+                          backgroundColor: AppColors.white05,
+                          child: CircleAvatar(
+                            radius: 40,
+                            backgroundColor: AppColors.white30,
+                            child: CircleAvatar(
+                              radius: 35,
+                              backgroundColor: widget.transparent
+                                  ? AppColors.redBrown20
+                                  : Color(0xFFDEC4FF),
+                              child: Image.network(
+                                campaign.last.url.toString(),
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Container(
+                      height: 90,
 
-                            if (now.isAfter(
-                              widget.campaign.first.campaignEndDate!,
-                            )) {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (ctx) => DrawEndPage(),
+                      alignment: Alignment.bottomCenter,
+                      child: Stack(
+                        alignment: Alignment.bottomCenter,
+                        clipBehavior: Clip.none,
+                        children: [
+                          // White container
+                          Positioned(
+                            bottom: 40, // lift the white box slightly
+                            child: Container(
+                              width: 290,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 5,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.white.withValues(alpha: 0.80),
+                                borderRadius: BorderRadius.only(
+                                  topLeft: Radius.circular(15),
+                                  topRight: Radius.circular(15),
                                 ),
-                              );
-                            } else {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => BlocProvider<CampaignCubit>(
-                                    create: (_) => sl<CampaignCubit>(
-                                      param1: widget.campaign.first.id ?? 0,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black12,
+                                    blurRadius: 6,
+                                    offset: Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              child: Countdown(
+                                controller: _timerController,
+                                seconds: differenceInSeconds,
+                                build: (BuildContext context, double time) {
+                                  List<String> timeList = formattedTime2(time);
+                                  return Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        'Ends in ',
+                                        style: GoogleFonts.manrope(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w700,
+                                          color: const Color(0xFF191919),
+                                        ),
+                                      ),
+                                      _timerBox('${timeList[0]} days'),
+                                      const Icon(
+                                        Icons.more_vert,
+                                        size: 14,
+                                        color: Colors.black,
+                                      ),
+                                      _timerBox('${timeList[1]}h'),
+                                      const Icon(
+                                        Icons.more_vert,
+                                        size: 14,
+                                        color: Colors.black,
+                                      ),
+                                      _timerBox('${timeList[2]}m'),
+                                      const Icon(
+                                        Icons.more_vert,
+                                        size: 14,
+                                        color: Colors.black,
+                                      ),
+                                      _timerBox('${timeList[3]}s'),
+                                    ],
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
+
+                          // Button overlapping the white box bottom
+                          Positioned(
+                            bottom: 0,
+                            child: GestureDetector(
+                              //ReferralContestScreen() //DrawEndPage()
+                              onTap: () {
+                                if (differenceInSeconds == 0) {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (ctx) => DrawEndPage(),
                                     ),
-                                    child: ReferralContestScreen(
-                                      campaignEndDate:
-                                          widget
-                                              .campaign
-                                              .first
-                                              .campaignEndDate ??
-                                          DateTime.now(),
+                                  );
+                                } else {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) =>
+                                          BlocProvider<CampaignCubit>(
+                                            create: (_) => sl<CampaignCubit>(
+                                              param1: campaign.last.id ?? 0,
+                                            ),
+                                            child: ReferralContestScreen(
+                                              campaignEndDate:
+                                                  campaign
+                                                      .last
+                                                      .campaignEndDate ??
+                                                  DateTime.now(),
+                                            ),
+                                          ),
+                                    ),
+                                  );
+                                }
+                              },
+                              child: Container(
+                                padding: EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(50),
+                                ),
+                                width: 320,
+
+                                child: Center(
+                                  child: Text(
+                                    'Join the draw',
+                                    style: GoogleFonts.manrope(
+                                      fontWeight: FontWeight.w700,
+                                      color: Color(0xFF2B2B2B),
+                                      fontSize: 16,
                                     ),
                                   ),
                                 ),
-                              );
-                            }
-                          },
-                          child: Container(
-                            padding: EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(50),
-                            ),
-                            width: 320,
-
-                            child: Center(
-                              child: Text(
-                                'Join the draw',
-                                style: GoogleFonts.manrope(
-                                  fontWeight: FontWeight.w700,
-                                  color: Color(0xFF2B2B2B),
-                                  fontSize: 16,
-                                ),
                               ),
                             ),
                           ),
-                        ),
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                    // const SizedBox(height: 4),
+                  ],
                 ),
-                // const SizedBox(height: 4),
-              ],
-            ),
+              ),
+            ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 

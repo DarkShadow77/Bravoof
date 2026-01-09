@@ -87,10 +87,13 @@ class AppColors {
   static Color get white50 => white.withValues(alpha: .50);
   static Color get white40 => white.withValues(alpha: .40);
   static Color get white32 => white.withValues(alpha: .32);
-  static Color get white29 => white.withValues(alpha: .29);
+  static Color get white30 => white.withValues(alpha: .30);
   static Color get white25 => white.withValues(alpha: .25);
+  static Color get white20 => white.withValues(alpha: .20);
   static Color get white10 => white.withValues(alpha: .10);
+  static Color get white08 => white.withValues(alpha: .08);
   static Color get white05 => white.withValues(alpha: .05);
+  static Color get white03 => white.withValues(alpha: .03);
 
   //State-Colors ---Error
   static const Color error = Color(0xFFDC0D18);
@@ -110,4 +113,13 @@ class AppColors {
   static Color get orange20 => orange.withValues(alpha: .20);
   static Color get orange11 => orange.withValues(alpha: .11);
   static Color get orange5 => orange.withValues(alpha: .05);
+
+  //State-Colors ---RedBrown
+  static const Color redBrown = Color(0xFFFF8687);
+  static Color get redBrown70 => redBrown.withValues(alpha: .70);
+  static Color get redBrown50 => redBrown.withValues(alpha: .50);
+  static Color get redBrown39 => redBrown.withValues(alpha: .39);
+  static Color get redBrown20 => redBrown.withValues(alpha: .20);
+  static Color get redBrown11 => redBrown.withValues(alpha: .11);
+  static Color get redBrown5 => redBrown.withValues(alpha: .05);
 }

@@ -1,10 +1,6 @@
-import 'dart:async';
-
 import 'package:flowva/app/styles/text_styles.dart';
 import 'package:flowva/app/view/widgets/cached_image_widget.dart';
 import 'package:flowva/core/constants/app_assets.dart';
-import 'package:flowva/features/dashboard/earn/presentation/pages/referral_contest_screen.dart';
-import 'package:flowva/features/dashboard/earn/presentation/widgets/draw_end_page.dart';
 import 'package:flowva/features/dashboard/home/data/model/campaign_response.dart';
 import 'package:flowva/features/dashboard/home/data/model/spotlight_model.dart';
 import 'package:flowva/features/dashboard/home/presentation/bloc/home_cubit.dart';
@@ -12,12 +8,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_confetti/flutter_confetti.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../../core/constants/app_colors.dart';
-import '../../../../../core/di/service_locator.dart';
 import '../../../../../core/utils/helpers.dart';
-import '../../presentation/bloc/campaign_cubit.dart';
+import '../../../earn/presentation/widgets/referr_campaign.dart';
 
 class ToolCardCarousel extends StatefulWidget {
   ToolCardCarousel({Key? key}) : super(key: key);
@@ -28,9 +22,6 @@ class ToolCardCarousel extends StatefulWidget {
 
 class _ToolCardCarouselState extends State<ToolCardCarousel> {
   final _pageController = PageController(viewportFraction: 1);
-  Timer? _timer;
-  Duration _remainingTime = Duration.zero;
-  bool _isExpired = false;
   late HomeCubit homeCubit;
   List<CampaignModel> campaign = [];
 
@@ -41,89 +32,16 @@ class _ToolCardCarouselState extends State<ToolCardCarousel> {
     campaign = homeCubit.state.campaign;
 
     homeCubit.fetchSpotlight();
-    homeCubit.fetchSpotlight();
 
     _pageController.addListener(() {
       setState(() {
         _currentPage = _pageController.page!;
       });
     });
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (campaign.isNotEmpty) {
-        _remainingTime = Duration(
-          days: campaign.first.campaignEndDate.day,
-          hours: campaign.first.campaignEndDate.hour,
-          minutes: campaign.first.campaignEndDate.minute,
-          seconds: campaign.first.campaignEndDate.second,
-        );
-      }
-      _startCountdown();
-    });
-  }
-
-  void _startCountdown() {
-    // Calculate initial remaining time
-    _updateRemainingTime();
-
-    // Update every second
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      _updateRemainingTime();
-    });
-  }
-
-  void _updateRemainingTime() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final now = DateTime.now();
-      final difference = campaign.isNotEmpty
-          ? campaign.first.campaignEndDate.difference(now)
-          : Duration.zero;
-
-      if (difference.isNegative) {
-        setState(() {
-          _isExpired = true;
-          _remainingTime = Duration.zero;
-        });
-        _timer?.cancel();
-      } else {
-        setState(() {
-          _remainingTime = difference;
-          _isExpired = false;
-        });
-      }
-    });
   }
 
   double _currentPage = 0;
   int currentPage = 0;
-  final List<String> backgroundImages = [
-    'assets/images/top_tool_bg.png',
-    'assets/images/top_user_b.png',
-    'assets/images/quote_bg.png',
-  ];
-
-  final List<Map<String, dynamic>> data = [
-    {
-      'title': "Top User Spotlight",
-      'name': "James Martins",
-      'subtitle': "Top user",
-      'image': "assets/avatar/2.png",
-    },
-    {
-      'title': "Top User Spotlight",
-      'name': "James Martins",
-      'subtitle': "Top user",
-      'image': "assets/avatar/2.png",
-      'listOfImages': [
-        "assets/images/one_50.png",
-        "assets/images/one_50.png",
-        "assets/images/one_50.png",
-      ],
-    },
-    {
-      'title':
-          "“Progress isn’t always loud, sometimes it’s just steady. Your pace is enough.“",
-    },
-  ];
 
   @override
   void dispose() {
@@ -137,53 +55,57 @@ class _ToolCardCarouselState extends State<ToolCardCarousel> {
       children: [
         // PageView of cards
         Container(
-          height: 230.h,
-          child: PageView.builder(
-            padEnds: true,
-            controller: _pageController,
-            physics: BouncingScrollPhysics(),
-            allowImplicitScrolling: true,
-            scrollDirection: Axis.horizontal,
-            itemCount: carousel.length,
-            onPageChanged: (index) {
-              setState(() {
-                currentPage = index;
-              });
-              homeCubit.fetchSpotlight();
-            },
-            itemBuilder: (context, index) {
-              double scaleFactor = .8;
-              double height = 230.h;
-              Matrix4 matrix = Matrix4.identity();
+          height: 240.h,
+          child: Center(
+            child: PageView.builder(
+              padEnds: true,
+              controller: _pageController,
+              physics: BouncingScrollPhysics(),
+              allowImplicitScrolling: true,
+              scrollDirection: Axis.horizontal,
+              itemCount: carousel.length,
+              onPageChanged: (index) {
+                setState(() {
+                  currentPage = index;
+                });
+                homeCubit.fetchSpotlight();
+              },
+              itemBuilder: (context, index) {
+                double scaleFactor = .8;
+                double height = 230.h;
+                Matrix4 matrix = Matrix4.identity();
 
-              if (index == _currentPage.floor()) {
-                var currScale = 1 - (_currentPage - index) * (1 - scaleFactor);
-                var currTrans = height * (1 - currScale) / 2;
-                matrix = Matrix4.diagonal3Values(1.0, currScale, 1.0)
-                  ..setTranslationRaw(0, currTrans, 0);
-              } else if (index == _currentPage.floor() + 1) {
-                var currScale =
-                    scaleFactor +
-                    (_currentPage - index + 1) * (1 - scaleFactor);
+                if (index == _currentPage.floor()) {
+                  var currScale =
+                      1 - (_currentPage - index) * (1 - scaleFactor);
+                  var currTrans = height * (1 - currScale) / 2;
+                  matrix = Matrix4.diagonal3Values(1.0, currScale, 1.0)
+                    ..setTranslationRaw(0, currTrans, 0);
+                } else if (index == _currentPage.floor() + 1) {
+                  var currScale =
+                      scaleFactor +
+                      (_currentPage - index + 1) * (1 - scaleFactor);
 
-                var currTrans = height * (1 - currScale) / 2;
-                matrix = Matrix4.diagonal3Values(1.0, currScale, 1.0)
-                  ..setTranslationRaw(0, currTrans, 0);
-              } else if (index == _currentPage.floor() - 1) {
-                var currScale = 1 - (_currentPage - index) * (1 - scaleFactor);
-                var currTrans = height * (1 - currScale) / 2;
-                matrix = Matrix4.diagonal3Values(1.0, currScale, 1.0)
-                  ..setTranslationRaw(0, currTrans, 0);
-              } else {
-                var currScale = .8;
-                matrix = Matrix4.diagonal3Values(1.0, currScale, 1.0)
-                  ..setTranslationRaw(0, height * (1 - scaleFactor) / 2, 0);
-              }
-              return Transform(
-                transform: matrix,
-                child: Container(child: _buildToolCard(index)),
-              );
-            },
+                  var currTrans = height * (1 - currScale) / 2;
+                  matrix = Matrix4.diagonal3Values(1.0, currScale, 1.0)
+                    ..setTranslationRaw(0, currTrans, 0);
+                } else if (index == _currentPage.floor() - 1) {
+                  var currScale =
+                      1 - (_currentPage - index) * (1 - scaleFactor);
+                  var currTrans = height * (1 - currScale) / 2;
+                  matrix = Matrix4.diagonal3Values(1.0, currScale, 1.0)
+                    ..setTranslationRaw(0, currTrans, 0);
+                } else {
+                  var currScale = .8;
+                  matrix = Matrix4.diagonal3Values(1.0, currScale, 1.0)
+                    ..setTranslationRaw(0, height * (1 - scaleFactor) / 2, 0);
+                }
+                return Transform(
+                  transform: matrix,
+                  child: Container(child: _buildToolCard(index)),
+                );
+              },
+            ),
           ),
         ),
         SizedBox(height: 12.h),
@@ -220,279 +142,13 @@ class _ToolCardCarouselState extends State<ToolCardCarousel> {
     );
   }
 
-  List<Widget?> get carousel => [
-    BlocBuilder<HomeCubit, HomeState>(
-      builder: (context, state) {
-        campaign = state.campaign;
-
-        if (campaign.isEmpty) return SizedBox.shrink();
-
-        final days = _remainingTime.inDays;
-        final hours = _remainingTime.inHours.remainder(24);
-        final minutes = _remainingTime.inMinutes.remainder(60);
-        final seconds = _remainingTime.inSeconds.remainder(60);
-        return Container(
-          child: Stack(
-            // crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Positioned.fill(
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(16),
-                  child: Image.asset(
-                    "assets/images/giveaway_card.png",
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        Image.asset("assets/images/oraimo.png"),
-                        SizedBox(width: 8),
-                        Text(
-                          campaign.first.name.toString(),
-                          style: GoogleFonts.manrope(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 4),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: SizedBox(
-                            width: 250,
-                            child: Text(
-                              campaign.first.title.toString(),
-                              style: GoogleFonts.baloo2(
-                                fontSize: 24,
-                                fontWeight: FontWeight.w700,
-                                color: Color(0xFFDCB5FF),
-                              ),
-                            ),
-                          ),
-                        ),
-
-                        CircleAvatar(
-                          radius: 45,
-                          backgroundColor: Colors.white.withValues(alpha: 0.08),
-                          child: CircleAvatar(
-                            radius: 40,
-                            backgroundColor: Colors.white.withValues(
-                              alpha: 0.3,
-                            ),
-                            child: CircleAvatar(
-                              radius: 35,
-                              backgroundColor: Color(0xFFDEC4FF),
-                              child: Image.network(
-                                campaign.first.url.toString(),
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
-                        ),
-                        // SvgPicture.asset("assets/images/ear_pod.svg",height: 40,),
-                      ],
-                    ),
-                    Container(
-                      height: 90,
-
-                      alignment: Alignment.bottomCenter,
-                      child: Stack(
-                        alignment: Alignment.bottomCenter,
-                        clipBehavior: Clip.none,
-                        children: [
-                          // White container
-                          Positioned(
-                            bottom: 40, // lift the white box slightly
-                            child: Container(
-                              width: 290,
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 10,
-                                vertical: 5,
-                              ),
-                              decoration: BoxDecoration(
-                                color: Colors.white.withValues(alpha: 0.80),
-                                borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(15),
-                                  topRight: Radius.circular(15),
-                                ),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black12,
-                                    blurRadius: 6,
-                                    offset: Offset(0, 2),
-                                  ),
-                                ],
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    'Ends in ',
-                                    style: GoogleFonts.manrope(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w700,
-                                      color: const Color(0xFF191919),
-                                    ),
-                                  ),
-                                  _timerBox('$days days'),
-                                  const Icon(
-                                    Icons.more_vert,
-                                    size: 14,
-                                    color: Colors.black,
-                                  ),
-                                  _timerBox('${hours}h'),
-                                  const Icon(
-                                    Icons.more_vert,
-                                    size: 14,
-                                    color: Colors.black,
-                                  ),
-                                  _timerBox('${minutes}m'),
-                                  const Icon(
-                                    Icons.more_vert,
-                                    size: 14,
-                                    color: Colors.black,
-                                  ),
-                                  _timerBox('${seconds}s'),
-                                ],
-                              ),
-                            ),
-                          ),
-
-                          // Button overlapping the white box bottom
-                          Positioned(
-                            bottom: 0,
-                            child: GestureDetector(
-                              //ReferralContestScreen() //DrawEndPage()
-                              onTap: () {
-                                final now = DateTime.now();
-
-                                if (now.isAfter(
-                                  campaign.first.campaignEndDate,
-                                )) {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (ctx) => DrawEndPage(),
-                                    ),
-                                  );
-                                } else {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) =>
-                                          BlocProvider<CampaignCubit>(
-                                            create: (_) => sl<CampaignCubit>(
-                                              param1: campaign.first.id,
-                                            ),
-                                            child: ReferralContestScreen(
-                                              campaignEndDate: campaign
-                                                  .first
-                                                  .campaignEndDate,
-                                            ),
-                                          ),
-                                    ),
-                                  );
-                                }
-                              },
-                              child: Container(
-                                padding: EdgeInsets.all(12),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(50),
-                                ),
-                                width: 320,
-
-                                child: Center(
-                                  child: Text(
-                                    'Join the draw',
-                                    style: GoogleFonts.manrope(
-                                      fontWeight: FontWeight.w700,
-                                      color: Color(0xFF2B2B2B),
-                                      fontSize: 16,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    // const SizedBox(height: 4),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    ),
-    SpotlightCard(),
-    QuoteCard(),
-  ];
+  List<Widget?> get carousel => [ReferCampaign(), SpotlightCard(), QuoteCard()];
 
   Widget _buildToolCard(int index) {
     return Container(
       // height: 240,
-      margin: const EdgeInsets.symmetric(horizontal: 16.0),
       width: double.infinity,
       child: Stack(children: [?carousel[index]]),
-    );
-  }
-
-  Widget _timerBox(String text) {
-    return Container(
-      // margin: const EdgeInsets.only(left: 4),
-      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 4),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(6),
-        border: Border.all(color: Colors.grey.shade200),
-      ),
-      child: Text(
-        text,
-        style: GoogleFonts.manrope(
-          fontSize: 14,
-          fontWeight: FontWeight.w700,
-          color: Color(0xFF191919),
-        ),
-      ),
-    );
-  }
-}
-
-class ReferralCard extends StatefulWidget {
-  const ReferralCard({super.key});
-
-  @override
-  State<ReferralCard> createState() => _ReferralCardState();
-}
-
-class _ReferralCardState extends State<ReferralCard> {
-  CampaignModel campaign = CampaignModel.empty();
-
-  @override
-  void initState() {
-    super.initState();
-    context.read<HomeCubit>().fetchSpotlight();
-    campaign = context.read<HomeCubit>().state.campaign.last;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<HomeCubit, HomeState>(
-      builder: (context, state) {
-        campaign = state.campaign.last;
-        return Container();
-      },
     );
   }
 }
@@ -503,9 +159,10 @@ class QuoteCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      margin: EdgeInsets.symmetric(horizontal: 16.w),
       padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16.r),
+        borderRadius: BorderRadius.circular(24.r),
         image: DecorationImage(
           image: AssetImage(AssetsPngImages.quoteBg),
           fit: BoxFit.cover,
@@ -539,8 +196,8 @@ class _SpotlightCardState extends State<SpotlightCard> {
   @override
   void initState() {
     super.initState();
-    context.read<HomeCubit>().fetchSpotlight();
     spotlight = context.read<HomeCubit>().state.spotlight;
+    context.read<HomeCubit>().fetchSpotlight();
   }
 
   @override
@@ -550,17 +207,20 @@ class _SpotlightCardState extends State<SpotlightCard> {
         spotlight = state.spotlight;
 
         if (spotlight.name.isEmpty)
-          return Text(
-            "Empty",
-            style: TextStyles.bodyBold16(
-              context,
-            ).copyWith(color: AppColors.white),
+          return Center(
+            child: Text(
+              "Empty",
+              style: TextStyles.bodyBold16(
+                context,
+              ).copyWith(color: AppColors.white),
+            ),
           );
         else
           return Container(
+            margin: EdgeInsets.symmetric(horizontal: 16.w),
             padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 16.w),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16.r),
+              borderRadius: BorderRadius.circular(24.r),
               image: DecorationImage(
                 image: AssetImage(AssetsPngImages.spotlightBg),
                 fit: BoxFit.cover,

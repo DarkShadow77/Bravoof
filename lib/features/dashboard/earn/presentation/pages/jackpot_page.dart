@@ -4,8 +4,8 @@ import 'dart:math';
 import 'package:flowva/app/view/widgets/button/icon_text_button.dart';
 import 'package:flowva/core/constants/fonts.dart';
 import 'package:flowva/features/common/ui_tool_mixin/ui_tool_mixin.dart';
-import 'package:flowva/features/common/wins_pop.dart';
 import 'package:flowva/features/dashboard/earn/presentation/bloc/jackpot_bloc.dart';
+import 'package:flowva/features/dashboard/earn/presentation/widgets/jackpot_success_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -49,36 +49,36 @@ class _JackpotScreenState extends State<JackpotScreen> with UIToolMixin {
   final List<GridItem> gridItems = [
     // Section 1 - Row 1 (4 items)
     GridItem(type: 'coins', value: 5, emoji: AssetsPngImages.one50),
-    GridItem(type: 'gift', value: 1, emoji: AssetsPngImages.jackpot),
+    GridItem(type: 'gift', value: 1, emoji: AssetsPngImages.gift),
     GridItem(type: 'coins', value: 10, emoji: AssetsPngImages.one50),
-    GridItem(type: 'gift', value: 1, emoji: AssetsPngImages.jackpot),
+    GridItem(type: 'gift', value: 1, emoji: AssetsPngImages.gift),
 
     // Section 2 - Rows 2-3 (8 items)
     GridItem(type: 'coins', value: 20, emoji: AssetsPngImages.one50),
-    GridItem(type: 'gift', value: 1, emoji: AssetsPngImages.jackpot),
+    GridItem(type: 'gift', value: 1, emoji: AssetsPngImages.gift),
     GridItem(type: 'coins', value: 20, emoji: AssetsPngImages.one50),
-    GridItem(type: 'gift', value: 2, emoji: AssetsPngImages.jackpot),
+    GridItem(type: 'gift', value: 2, emoji: AssetsPngImages.gift),
 
     GridItem(type: 'coins', value: 50, emoji: AssetsPngImages.one50),
-    GridItem(type: 'gift', value: 1, emoji: AssetsPngImages.jackpot),
+    GridItem(type: 'gift', value: 1, emoji: AssetsPngImages.gift),
     GridItem(type: 'coins', value: 50, emoji: AssetsPngImages.one50),
-    GridItem(type: 'gift', value: 2, emoji: AssetsPngImages.jackpot),
+    GridItem(type: 'gift', value: 2, emoji: AssetsPngImages.gift),
 
     // Section 3 - Rows 4-6 (12 items)
     GridItem(type: 'coins', value: 100, emoji: AssetsPngImages.one50),
-    GridItem(type: 'gift', value: 2, emoji: AssetsPngImages.jackpot),
+    GridItem(type: 'gift', value: 2, emoji: AssetsPngImages.gift),
     GridItem(type: 'coins', value: 100, emoji: AssetsPngImages.one50),
-    GridItem(type: 'gift', value: 3, emoji: AssetsPngImages.jackpot),
+    GridItem(type: 'gift', value: 3, emoji: AssetsPngImages.gift),
 
     GridItem(type: 'coins', value: 200, emoji: AssetsPngImages.one50),
-    GridItem(type: 'gift', value: 2, emoji: AssetsPngImages.jackpot),
+    GridItem(type: 'gift', value: 2, emoji: AssetsPngImages.gift),
     GridItem(type: 'coins', value: 200, emoji: AssetsPngImages.one50),
-    GridItem(type: 'gift', value: 3, emoji: AssetsPngImages.jackpot),
+    GridItem(type: 'gift', value: 3, emoji: AssetsPngImages.gift),
 
     GridItem(type: 'coins', value: 50, emoji: AssetsPngImages.one50),
-    GridItem(type: 'gift', value: 1, emoji: AssetsPngImages.jackpot),
+    GridItem(type: 'gift', value: 1, emoji: AssetsPngImages.gift),
     GridItem(type: 'coins', value: 20, emoji: AssetsPngImages.one50),
-    GridItem(type: 'gift', value: 1, emoji: AssetsPngImages.jackpot),
+    GridItem(type: 'gift', value: 1, emoji: AssetsPngImages.gift),
   ];
 
   @override
@@ -88,7 +88,19 @@ class _JackpotScreenState extends State<JackpotScreen> with UIToolMixin {
   }
 
   Future<void> startSpinWithServer() async {
-    if (spinsLeft <= 0 || isSpinning) return;
+    if (spinsLeft <= 0 || isSpinning) {
+      if (spinsLeft <= 0) {
+        showMessage(
+          "Insufficient Spin Tokens",
+          context,
+          color: Colors.red,
+          styleColor: Colors.white,
+          status: true,
+        );
+      }
+      return;
+    }
+    ;
 
     context.read<JackpotBloc>().add(SpinJackpotEvent());
   }
@@ -211,230 +223,19 @@ class _JackpotScreenState extends State<JackpotScreen> with UIToolMixin {
 
     if (force) {
     } else {
-      showDialog(
-        context: context,
-        barrierColor: Colors.black.withOpacity(0.3),
-        builder: (_) =>
-            WinsPop(/*rewardType: winner!.type, rewardValue: winner!.value*/),
+      jackpotSuccessDialog(
+        rewardType: winner!.type,
+        rewardValue: winner!.value,
       );
+
+      /* showDialog(
+        context: context,
+        barrierColor: Colors.black.withValues(alpha: 0.3),
+        builder: (_) =>
+            WinsPop(*/ /*rewardType: winner!.type, rewardValue: winner!.value*/ /*),
+      );*/
     }
   }
-
-  /*
-
-  // RECOMMENDED: Most flexible version with clear speed controls
-  void handleSpin() {
-    if (spinsLeft <= 0 || isSpinning) return;
-
-    setState(() {
-      isSpinning = true;
-      showResult = false;
-      winner = null;
-    });
-
-    // Random duration between 3-5 seconds
-    final spinDuration = 3000 + random.nextInt(2000);
-    final startTime = DateTime.now().millisecondsSinceEpoch;
-
-    // SPEED CONTROL: Increase these values to slow down
-    int initialSpeed = 100; // Changed from 50 to 100 (slower start)
-    int slowdownMultiplier = 500; // Changed from 300 to 500 (slower end)
-
-    spinTimer = Timer.periodic(Duration(milliseconds: initialSpeed), (timer) {
-      final elapsed = DateTime.now().millisecondsSinceEpoch - startTime;
-      final progress = elapsed / spinDuration;
-
-      // Slow down as we approach the end
-      if (progress > 0.7) {
-        timer.cancel();
-        int newSpeed = (initialSpeed + (progress - 0.7) * slowdownMultiplier)
-            .toInt();
-
-        spinTimer = Timer.periodic(Duration(milliseconds: newSpeed), (
-          slowTimer,
-        ) {
-          final newElapsed = DateTime.now().millisecondsSinceEpoch - startTime;
-          if (newElapsed >= spinDuration) {
-            slowTimer.cancel();
-            stopSpinning();
-          } else {
-            setState(() {
-              currentPosition = (currentPosition + 1) % gridItems.length;
-            });
-          }
-        });
-      } else {
-        setState(() {
-          currentPosition = (currentPosition + 1) % gridItems.length;
-        });
-      }
-
-      if (elapsed >= spinDuration) {
-        timer.cancel();
-        stopSpinning();
-      }
-    });
-  }
-
-  // ALTERNATIVE: Better approach with smoother deceleration
-  void handleSpinSmooth() {
-    if (spinsLeft <= 0 || isSpinning) return;
-
-    setState(() {
-      isSpinning = true;
-      showResult = false;
-      winner = null;
-    });
-
-    final spinDuration = 4000; // 4 seconds total
-    final startTime = DateTime.now().millisecondsSinceEpoch;
-
-    void animate() {
-      final elapsed = DateTime.now().millisecondsSinceEpoch - startTime;
-      final progress = elapsed / spinDuration;
-
-      if (progress >= 1.0) {
-        stopSpinning();
-        return;
-      }
-
-      // Calculate speed based on progress (gets slower over time)
-      // Adjust these values to control speed:
-      int baseSpeed = 80; // Starting speed (lower = faster)
-      int maxSpeed = 400; // Ending speed (higher = slower at end)
-
-      // Ease-out curve for natural deceleration
-      double easedProgress = 1 - (1 - progress) * (1 - progress);
-      int currentSpeed = (baseSpeed + (maxSpeed - baseSpeed) * easedProgress)
-          .toInt();
-
-      setState(() {
-        currentPosition = (currentPosition + 1) % gridItems.length;
-      });
-
-      spinTimer = Timer(Duration(milliseconds: currentSpeed), animate);
-    }
-
-    animate();
-  }
-
-  // RECOMMENDED: Fixed version with proper speed control
-  void handleSpinFixed() {
-    if (spinsLeft <= 0 || isSpinning) return;
-
-    setState(() {
-      isSpinning = true;
-      showResult = false;
-      winner = null;
-    });
-
-    // ===== SPEED CONFIGURATION =====
-    // INCREASE these values to make it SLOWER:
-    const int startSpeedMs = 150; // Time between moves at start (try 150-300)
-    const int endSpeedMs = 800; // Time between moves at end (try 600-1200)
-    const int totalDurationMs = 5000; // Total spin time (try 4000-6000)
-    const double slowdownAt = 0.7; // When to start slowing (0.6-0.8)
-    // ===============================
-
-    final startTime = DateTime.now();
-    int moveCount = 0;
-
-    void scheduleNextMove() {
-      final elapsed = DateTime.now().difference(startTime).inMilliseconds;
-      final progress = elapsed / totalDurationMs;
-
-      if (progress >= 1.0) {
-        stopSpinning();
-        showDialog(
-          context: context,
-          barrierColor: Colors.black.withOpacity(0.3),
-          builder: (_) => WinsPop(),
-        );
-        Future.delayed(Duration(seconds: 3), () => Navigator.pop(context));
-
-        return;
-      }
-
-      // Calculate delay until next move
-      int delayMs;
-      if (progress < slowdownAt) {
-        // Constant speed in first phase
-        delayMs = startSpeedMs;
-      } else {
-        // Smooth deceleration in second phase
-        double slowdownProgress = (progress - slowdownAt) / (1 - slowdownAt);
-        // Use quadratic easing for smoother slowdown
-        double easedProgress = slowdownProgress * slowdownProgress;
-        delayMs = (startSpeedMs + (endSpeedMs - startSpeedMs) * easedProgress)
-            .round();
-      }
-
-      // Move to next position after delay
-      spinTimer = Timer(Duration(milliseconds: delayMs), () {
-        if (mounted) {
-          setState(() {
-            currentPosition = (currentPosition + 1) % gridItems.length;
-            moveCount++;
-          });
-          scheduleNextMove();
-        }
-      });
-    }
-
-    scheduleNextMove();
-  }
-
-  // ALTERNATIVE: Even simpler with periodic timer but correct speed
-  void handleSpinSimple() {
-    if (spinsLeft <= 0 || isSpinning) return;
-
-    setState(() {
-      isSpinning = true;
-      showResult = false;
-      winner = null;
-    });
-
-    // Control the base speed here - HIGHER = SLOWER
-    const int baseDelayMs = 200; // Start with 200ms between each move
-    const int maxDelayMs = 1000; // End with 1000ms between each move
-
-    final totalMoves = gridItems.length * 3; // Go around 3 times
-    int moveCount = 0;
-
-    void doMove() {
-      if (moveCount >= totalMoves) {
-        stopSpinning();
-        return;
-      }
-
-      // Calculate current delay based on progress
-      double progress = moveCount / totalMoves;
-      int currentDelay =
-          (baseDelayMs + (maxDelayMs - baseDelayMs) * progress * progress)
-              .round();
-
-      setState(() {
-        currentPosition = (currentPosition + 1) % gridItems.length;
-        moveCount++;
-      });
-
-      spinTimer = Timer(Duration(milliseconds: currentDelay), doMove);
-    }
-
-    doMove();
-  } // Example: highlight center box
-
-  void stopSpinning() {
-    final finalPosition = random.nextInt(gridItems.length);
-
-    setState(() {
-      currentPosition = finalPosition;
-      isSpinning = false;
-      winner = gridItems[finalPosition];
-      showResult = true;
-      spinsLeft--;
-    });
-  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -660,10 +461,7 @@ class _JackpotScreenState extends State<JackpotScreen> with UIToolMixin {
                                   textColor: isSpinning
                                       ? AppColors.grey
                                       : AppColors.white,
-                                  onPressed: () =>
-                                      (spinsLeft <= 0 || isSpinning)
-                                      ? null
-                                      : startSpinWithServer(),
+                                  onPressed: () => startSpinWithServer(),
                                 );
                               },
                             ),
@@ -719,7 +517,7 @@ class _JackpotScreenState extends State<JackpotScreen> with UIToolMixin {
             boxShadow: isSelected
                 ? [
                     BoxShadow(
-                      color: const Color(0xFFFFD700).withOpacity(0.5),
+                      color: const Color(0xFFFFD700).withValues(alpha: 0.5),
                       blurRadius: 15,
                       spreadRadius: 2,
                     ),
@@ -771,8 +569,8 @@ class _JackpotScreenState extends State<JackpotScreen> with UIToolMixin {
     );
   }
 }
-// 🟣 Custom Clipper for the sharp top trapezoid
 
+// 🟣 Custom Clipper for the sharp top trapezoid
 class _TopInwardClipper extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {

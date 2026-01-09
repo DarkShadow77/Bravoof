@@ -49,6 +49,7 @@ class AssetsPngImages {
   static String topToolBg = "$baseImagePngPath/top_tool_bg.png";
   static String spotlightBg = "$baseImagePngPath/spotlight_bg.png";
   static String quoteBg = "$baseImagePngPath/quote_bg.png";
+  static String gift = "$baseImagePngPath/gift.png";
 }
 
 class AssetsSvgImages {

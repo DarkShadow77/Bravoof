@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../utility/permission_handler.dart';
 import 'common/data/constants.dart';
 import 'dashboard/nav_bar.dart';
 import 'dashboard/profile/presentation/bloc/profile_bloc.dart';
@@ -30,7 +29,7 @@ class _AppState extends State<App> {
       }
     });
 
-    requestNotificationPermission(context);
+    // requestNotificationPermission(context);
   }
 
   @override

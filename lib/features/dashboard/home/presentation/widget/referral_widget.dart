@@ -1,5 +1,6 @@
 import 'package:flowva/app/styles/text_styles.dart';
 import 'package:flowva/app/view/widgets/button/icon_text_button.dart';
+import 'package:flowva/app/view/widgets/gradient_progress.dart';
 import 'package:flowva/core/constants/app_assets.dart';
 import 'package:flowva/features/common/flowva_colors.dart';
 import 'package:flowva/features/dashboard/earn/presentation/pages/invite_earn.dart';
@@ -339,12 +340,12 @@ class ReferralCard extends StatelessWidget {
                                         children: [
                                           TextSpan(
                                             text:
-                                                "${userProfile.referralCount}",
+                                                "${(((userProfile.referralCount ?? 0) > 10 ? 10 : userProfile.referralCount) ?? 0) * 100}",
                                             style: TextStyles.bodySemiBold16(
                                               context,
                                             ),
                                           ),
-                                          TextSpan(text: "/10"),
+                                          TextSpan(text: "/1000"),
                                         ],
                                         style: TextStyles.smallMedium12(
                                           context,
@@ -353,33 +354,10 @@ class ReferralCard extends StatelessWidget {
                                     ),
                                   ],
                                 ),
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(100.r),
-                                  child: Container(
-                                    height: 8.h,
-                                    width: double.infinity,
-                                    color: AppColors.grey100, // background
-                                    child: Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: FractionallySizedBox(
-                                        widthFactor:
-                                            (userProfile.referralCount ?? 0) /
-                                            10,
-                                        child: Container(
-                                          decoration: const BoxDecoration(
-                                            gradient: LinearGradient(
-                                              colors: [
-                                                Color(0xFFA259FF),
-                                                Color(0xFFDEC4FF),
-                                              ],
-                                              begin: Alignment.topCenter,
-                                              end: Alignment.bottomCenter,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
+                                GradientProgress(
+                                  height: 8.h,
+                                  progress:
+                                      (userProfile.referralCount ?? 0) / 10,
                                 ),
                               ],
                             ),

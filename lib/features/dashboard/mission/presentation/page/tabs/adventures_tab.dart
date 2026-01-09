@@ -105,15 +105,9 @@ class _AdventuresTabState extends State<AdventuresTab> with UIToolMixin {
                   children: [
                     // COMMUNITY MISSIONS CARD
                     CommunityMissionCard(),
-                    const SizedBox(height: 20),
-                    campaign.isNotEmpty
-                        ? Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 16.w),
-                            child: ReferCampaign(campaign: campaign),
-                          )
-                        : Container(),
-                    const SizedBox(height: 20),
-
+                    SizedBox(height: 20.h),
+                    ReferCampaign(),
+                    SizedBox(height: 20.h),
                     // Growth Missions header
                     Container(
                       margin: EdgeInsets.symmetric(horizontal: 16.w),

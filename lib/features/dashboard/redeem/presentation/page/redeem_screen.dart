@@ -168,10 +168,7 @@ class _RedeemScreenState extends State<RedeemScreen> {
                               });
                               _fetchDetails();
                             },
-                            children: [
-                              RedeemTab(campaign: campaign.first),
-                              HistoryTab(),
-                            ],
+                            children: [RedeemTab(), HistoryTab()],
                           ),
                         ),
                       ],

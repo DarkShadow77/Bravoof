@@ -2,16 +2,19 @@ import 'dart:developer';
 
 import 'package:flowva/app/styles/text_styles.dart';
 import 'package:flowva/core/constants/app_assets.dart';
+import 'package:flowva/core/constants/fonts.dart';
 import 'package:flowva/core/utils/helpers.dart';
 import 'package:flowva/features/dashboard/redeem/data/redeem_history_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
 import '../../../../../../core/constants/app_colors.dart';
 import '../../../../../../core/utils/date_time_helper.dart';
 import '../../../../mission/presentation/bloc/streak_bloc.dart';
+import '../../../../profile/presentation/bloc/profile_bloc.dart';
 import '../../bloc/redeem_bloc.dart';
 
 class HistoryTab extends StatelessWidget {
@@ -47,25 +50,61 @@ class HistoryTab extends StatelessWidget {
                       top: Radius.circular(16.r),
                     ),
                   ),
-                  child: ListView.separated(
-                    physics: BouncingScrollPhysics(),
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 16.w,
-                      vertical: 20.h,
-                    ),
+                  child: grouped.isEmpty
+                      ? Column(
+                          spacing: 6.h,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SvgPicture.asset(
+                              AssetsNavbar.redeem,
+                              width: 40.w,
+                              height: 40.h,
+                              fit: BoxFit.contain,
+                            ),
+                            RichText(
+                              textAlign: TextAlign.center,
+                              text: TextSpan(
+                                text: "No Redeem Yet",
+                                style: TextStyles.titleSemiBold20(
+                                  context,
+                                ).copyWith(fontFamily: AppFonts.baloo2),
+                              ),
+                            ),
+                            RichText(
+                              textAlign: TextAlign.center,
+                              text: TextSpan(
+                                text:
+                                    "Complete Missions to unlock\nmore Rewards!",
+                                style: TextStyles.normalMedium14(
+                                  context,
+                                  opacity: .65,
+                                ),
+                              ),
+                            ),
+                          ],
+                        )
+                      : ListView.separated(
+                          physics: BouncingScrollPhysics(),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 16.w,
+                            vertical: 20.h,
+                          ),
 
-                    itemCount: grouped.length,
-                    itemBuilder: (context, index) {
-                      return _buildRedeemCard(
-                        context,
-                        month: grouped.keys.elementAt(index),
-                        redeemHistoryList: grouped.values.elementAt(index),
-                      );
-                    },
-                    separatorBuilder: (context, index) {
-                      return SizedBox(height: 20.h);
-                    },
-                  ),
+                          itemCount: grouped.length,
+                          itemBuilder: (context, index) {
+                            return _buildRedeemCard(
+                              context,
+                              month: grouped.keys.elementAt(index),
+                              redeemHistoryList: grouped.values.elementAt(
+                                index,
+                              ),
+                            );
+                          },
+                          separatorBuilder: (context, index) {
+                            return SizedBox(height: 20.h);
+                          },
+                        ),
                 ),
               ),
             ],
@@ -80,12 +119,18 @@ class HistoryTab extends StatelessWidget {
       spacing: 10.w,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Expanded(
-          child: StatusCard(
-            icon: "assets/images/one_50.png",
-            value: '16,120',
-            label: 'Total B-Coin\nEarned',
-          ),
+        BlocBuilder<ProfileBloc, ProfileState>(
+          builder: (context, state) {
+            final profile = state.profile;
+            return Expanded(
+              child: StatusCard(
+                icon: AssetsPngImages.one50,
+                value:
+                    "${formatAmount(profile.totalPoints ?? 0, compact: true)}",
+                label: 'Total \nEarned',
+              ),
+            );
+          },
         ),
         BlocBuilder<RedeemBloc, RedeemState>(
           builder: (context, state) {
