@@ -1,5 +1,6 @@
 import 'package:flowva/app/styles/text_styles.dart';
 import 'package:flowva/app/view/widgets/cached_image_widget.dart';
+import 'package:flowva/app/view/widgets/gradient_progress.dart';
 import 'package:flowva/core/constants/app_assets.dart';
 import 'package:flowva/core/constants/fonts.dart';
 import 'package:flutter/material.dart';
@@ -96,7 +97,7 @@ class _FollowUsCardState extends State<FollowUsCard> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Image.asset(
-                          "assets/images/one_50.png",
+                          AssetsPngImages.one50,
                           height: 14.r,
                           width: 14.r,
                         ),
@@ -115,29 +116,7 @@ class _FollowUsCardState extends State<FollowUsCard> {
               ),
               SizedBox(height: 16.h),
               // Progress bar area with markers and icons
-              ClipRRect(
-                borderRadius: BorderRadius.circular(100.r),
-                child: Container(
-                  height: 8.h,
-                  width: double.infinity,
-                  color: Color(0xFFF1F1F1), // background
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: FractionallySizedBox(
-                      widthFactor: safeProgress,
-                      child: Container(
-                        decoration: const BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [Color(0xFFA259FF), Color(0xFFDEC4FF)],
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+              GradientProgress(height: 8, progress: safeProgress),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [

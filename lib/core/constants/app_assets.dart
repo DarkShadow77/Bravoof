@@ -50,6 +50,11 @@ class AssetsPngImages {
   static String spotlightBg = "$baseImagePngPath/spotlight_bg.png";
   static String quoteBg = "$baseImagePngPath/quote_bg.png";
   static String gift = "$baseImagePngPath/gift.png";
+  static String socialFacebook = "$baseImagePngPath/social_facebook.png";
+  static String socialInstagram = "$baseImagePngPath/social_instagram.png";
+  static String socialLinkedin = "$baseImagePngPath/social_linkedin.png";
+  static String socialTik_tok = "$baseImagePngPath/social_tik_tok.png";
+  static String socialTwitter = "$baseImagePngPath/social_twitter.png";
 }
 
 class AssetsSvgImages {

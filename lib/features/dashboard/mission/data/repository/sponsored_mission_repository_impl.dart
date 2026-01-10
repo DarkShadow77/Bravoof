@@ -11,7 +11,10 @@ class SponsoredMissionRepositoryImpl extends SponsoredMissionRepository {
   /// Fetch sponsored mission
   Future<Either<String, List<SponsoredMission>>> fetchSponsoredMission() async {
     try {
-      final res = await supabase.from('sponsored_missions').select();
+      final res = await supabase
+          .from('sponsored_missions')
+          .select()
+          .order('id', ascending: true);
 
       if (res.isEmpty) {
         return Left('No sponsored mission found');

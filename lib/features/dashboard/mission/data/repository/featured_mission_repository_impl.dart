@@ -11,7 +11,10 @@ class FeaturedMissionRepositoryImpl extends FeaturedMissionRepository {
   /// Fetch featured mission
   Future<Either<String, List<FeaturedMission>>> fetchFeaturedMission() async {
     try {
-      final res = await supabase.from('featured_missions').select();
+      final res = await supabase
+          .from('featured_missions')
+          .select()
+          .order('id', ascending: true);
 
       if (res.isEmpty) {
         return Left('No featured mission found');

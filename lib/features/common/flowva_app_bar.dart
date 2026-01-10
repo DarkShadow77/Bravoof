@@ -75,7 +75,7 @@ class _FlowvaAppBarState extends State<FlowvaAppBar> {
 
                       RichText(
                         text: TextSpan(
-                          text: "x${formatAmount(profile.totalPoints ?? 0)}",
+                          text: "${formatAmount(profile.totalPoints ?? 0)}",
                           style: TextStyles.normalSemibold14(context),
                         ),
                       ),

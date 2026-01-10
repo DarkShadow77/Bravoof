@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flowva/core/constants/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -10,6 +11,7 @@ import 'package:hugeicons/hugeicons.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as p;
 import 'package:timelines_plus/timelines_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../../app/styles/text_styles.dart';
 import '../../../../../app/view/widgets/loading/outer_loading.dart';
@@ -312,11 +314,22 @@ class _AskingDialogState extends State<FeaturedEventDialog> with UIToolMixin {
                       color: AppColors.grey300.withValues(alpha: .5),
                     ),
                   ),
-                  child: RichText(
-                    text: TextSpan(
-                      text: instruction.text,
-                      style: TextStyles.normalSemibold14(context),
+                  child: Linkify(
+                    text: instruction.text,
+                    style: TextStyles.normalSemibold14(context),
+                    linkStyle: TextStyle(
+                      color: AppColors.primary,
+                      decoration: TextDecoration.underline,
                     ),
+                    onOpen: (link) async {
+                      final uri = Uri.parse(link.url);
+                      if (await canLaunchUrl(uri)) {
+                        await launchUrl(
+                          uri,
+                          mode: LaunchMode.externalApplication,
+                        );
+                      }
+                    },
                   ),
                 ),
                 Padding(
@@ -356,11 +369,19 @@ class _AskingDialogState extends State<FeaturedEventDialog> with UIToolMixin {
                 ),
               ],
             )
-          : RichText(
-              text: TextSpan(
-                text: instruction.text,
-                style: TextStyles.normalSemibold14(context),
+          : Linkify(
+              text: instruction.text,
+              style: TextStyles.normalSemibold14(context),
+              linkStyle: TextStyle(
+                color: AppColors.primary,
+                decoration: TextDecoration.underline,
               ),
+              onOpen: (link) async {
+                final uri = Uri.parse(link.url);
+                if (await canLaunchUrl(uri)) {
+                  await launchUrl(uri, mode: LaunchMode.externalApplication);
+                }
+              },
             ),
     );
   }

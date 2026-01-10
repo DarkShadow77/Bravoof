@@ -1,4 +1,5 @@
 import 'package:flowva/app/view/widgets/cached_image_widget.dart';
+import 'package:flowva/core/constants/app_assets.dart';
 import 'package:flowva/features/common/flowva_button.dart';
 import 'package:flowva/features/dashboard/profile/presentation/pages/settings_page.dart';
 import 'package:flowva/features/dashboard/profile/presentation/widgets/edit_profile.dart';
@@ -8,6 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../../app/styles/text_styles.dart';
 import '../../../../../core/constants/app_colors.dart';
@@ -35,6 +37,35 @@ class _ProfilePageState extends State<ProfilePage> {
     userProfile = profileBloc.state.profile;
     profileBloc.add(GetProfileEvent());
   }
+
+  List<Map<String, dynamic>> socials = [
+    {
+      "image": AssetsPngImages.socialFacebook,
+      "url": "https://www.facebook.com/share/1Pqc12gFdH/?mibextid=wwXIfr",
+      "name": "Facebook",
+    },
+    {
+      "image": AssetsPngImages.socialInstagram,
+      "url":
+          "https://www.instagram.com/joinbravoo?igsh=MXE0cGsyMnRzc3FpeQ%3D%3D&utm_source=qr",
+      "name": "Instagram",
+    },
+    {
+      "image": AssetsPngImages.socialTwitter,
+      "url": "https://x.com/flowvahub?s=21",
+      "name": "Twitter(x)",
+    },
+    {
+      "image": AssetsPngImages.socialLinkedin,
+      "url": "https://www.linkedin.com/company/flowva/",
+      "name": "LinkedIn",
+    },
+    {
+      "image": AssetsPngImages.socialTik_tok,
+      "url": "https://www.tiktok.com/@joinbravoo?_r=1&_t=ZS-92w1Hqj0gUP",
+      "name": "Tiktok",
+    },
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -301,135 +332,30 @@ class _ProfilePageState extends State<ProfilePage> {
                     color: Colors.black,
                   ),
                 ),
-                SizedBox(height: 20),
-                Row(
-                  children: [
-                    Container(
-                      padding: EdgeInsets.all(8),
-
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(100),
-                        gradient: LinearGradient(
-                          begin: Alignment.centerLeft,
-                          end: Alignment.centerRight,
-                          colors: [Color(0xFFFBFBFC), Color(0xFFDBDDE8)],
-                        ),
+                SizedBox(height: 20.h),
+                Wrap(
+                  spacing: 18.w,
+                  runSpacing: 10.h,
+                  children: socials.map((e) {
+                    return GestureDetector(
+                      onTap: () async {
+                        final uri = Uri.parse(e["url"]);
+                        if (await canLaunchUrl(uri)) {
+                          await launchUrl(
+                            uri,
+                            mode: LaunchMode.externalApplication,
+                          );
+                        }
+                      },
+                      child: Image.asset(
+                        e["image"],
+                        width: 46.77.r,
+                        height: 46.77.r,
                       ),
-                      child: Container(
-                        padding: EdgeInsets.all(8),
-                        height: 30,
-                        width: 30,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(100),
-                          color: Color(0xFF0062E0),
-                        ),
-                        child: Image.asset(
-                          "assets/images/fb.png",
-                          fit: BoxFit.fill,
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: 20),
-                    Container(
-                      padding: EdgeInsets.all(8),
-
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(100),
-                        gradient: LinearGradient(
-                          begin: Alignment.centerLeft,
-                          end: Alignment.centerRight,
-                          colors: [Color(0xFFFBFBFC), Color(0xFFDBDDE8)],
-                        ),
-                      ),
-                      child: Container(
-                        height: 30,
-                        width: 30,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(100),
-                          gradient: LinearGradient(
-                            begin: Alignment.centerLeft,
-                            end: Alignment.centerRight,
-                            colors: [Color(0xFFFBFBFC), Color(0xFFDBDDE8)],
-                          ),
-                        ),
-                        child: Image.asset(
-                          "assets/images/insta.png",
-                          fit: BoxFit.cover,
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: 20),
-                    Container(
-                      padding: EdgeInsets.all(8),
-
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(100),
-                        gradient: LinearGradient(
-                          begin: Alignment.centerLeft,
-                          end: Alignment.centerRight,
-                          colors: [Color(0xFFFBFBFC), Color(0xFFDBDDE8)],
-                        ),
-                      ),
-                      child: Container(
-                        padding: EdgeInsets.all(8),
-                        height: 30,
-                        width: 30,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(100),
-                          color: Colors.black,
-                        ),
-                        child: Image.asset("assets/images/xx.png"),
-                      ),
-                    ),
-                    SizedBox(width: 20),
-                    Container(
-                      padding: EdgeInsets.all(8),
-
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(100),
-                        gradient: LinearGradient(
-                          begin: Alignment.centerLeft,
-                          end: Alignment.centerRight,
-                          colors: [Color(0xFFFBFBFC), Color(0xFFDBDDE8)],
-                        ),
-                      ),
-                      child: Container(
-                        padding: EdgeInsets.all(8),
-                        height: 30,
-                        width: 30,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(100),
-                          color: Color(0xFF0062E0),
-                        ),
-                        child: Image.asset("assets/images/linkedin.png"),
-                      ),
-                    ),
-                    SizedBox(width: 20),
-                    Container(
-                      padding: EdgeInsets.all(8),
-
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(100),
-                        gradient: LinearGradient(
-                          begin: Alignment.centerLeft,
-                          end: Alignment.centerRight,
-                          colors: [Color(0xFFFBFBFC), Color(0xFFDBDDE8)],
-                        ),
-                      ),
-                      child: Container(
-                        padding: EdgeInsets.all(8),
-                        height: 30,
-                        width: 30,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(100),
-                          color: Colors.black,
-                        ),
-                        child: Image.asset("assets/images/tictok.png"),
-                      ),
-                    ),
-                  ],
+                    );
+                  }).toList(),
                 ),
-                SizedBox(height: 20),
+                SizedBox(height: 20.h),
               ],
             ),
           );
