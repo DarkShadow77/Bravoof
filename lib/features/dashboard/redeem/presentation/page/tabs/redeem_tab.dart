@@ -1,5 +1,6 @@
 import 'package:flowva/app/styles/text_styles.dart';
 import 'package:flowva/app/view/widgets/button/icon_text_button.dart';
+import 'package:flowva/app/view/widgets/dialog/success_dialog.dart';
 import 'package:flowva/core/constants/app_assets.dart';
 import 'package:flowva/core/constants/app_colors.dart';
 import 'package:flowva/core/constants/fonts.dart';
@@ -54,6 +55,13 @@ class _RedeemTabState extends State<RedeemTab>
         context,
         color: Colors.white,
         styleColor: Colors.black,
+      );
+      successDialog(
+        title: "Reward unlocked! 🎉",
+        subTitle:
+            "Your Bravoo coins just turned into something real. Nicely done!",
+        mainBtnText: "Back to Missions",
+        mainBtnPressed: () => Get.back(),
       );
     } else if (state.type == RedeemType.redeemGiftcard) {
       if (Get.isDialogOpen ?? false) Get.back();

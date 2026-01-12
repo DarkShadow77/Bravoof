@@ -227,6 +227,12 @@ class _JackpotScreenState extends State<JackpotScreen> with UIToolMixin {
         rewardType: winner!.type,
         rewardValue: winner!.value,
       );
+      showMessage(
+        "${winner!.value} ${winner!.type == "gift" ? "Jackpot" : "Coins"} added to your winnings",
+        context,
+        color: Colors.red,
+        styleColor: Colors.white,
+      );
 
       /* showDialog(
         context: context,

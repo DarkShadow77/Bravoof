@@ -1,25 +1,28 @@
 import 'dart:developer';
 
 import 'package:flowva/app/styles/text_styles.dart';
+import 'package:flowva/app/view/widgets/cached_image_widget.dart';
 import 'package:flowva/core/constants/app_assets.dart';
 import 'package:flowva/features/common/flowva_button.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../../core/constants/app_colors.dart';
-import '../../../home/presentation/widget/leader_board.dart';
+import '../../../home/presentation/page/leaderboard_screen.dart';
 import '../../../mission/data/model/rewards_summary_response.dart';
+import '../../../profile/presentation/bloc/profile_bloc.dart';
 
 class LeaderboardPage extends StatelessWidget {
-  final Color primaryColor = Color(0xFF9419FD); // Purple gradient base
-  final Color secondaryColor = Color(0xFFFDD3D8);
-  List<RewardsSummary> rewardsSummary = [];
+  final List<RewardsSummary> rewardsSummary;
   final bool fullScreen;
   LeaderboardPage({required this.rewardsSummary, this.fullScreen = false});
 
   @override
   Widget build(BuildContext context) {
+    final Color primaryColor = Color(0xFF9419FD); // Purple gradient base
+    final Color secondaryColor = Color(0xFFFDD3D8);
     rewardsSummary.sort(
       (a, b) => b.totalPointRedeemed!.compareTo(a.totalPointRedeemed!),
     );
@@ -37,156 +40,171 @@ class LeaderboardPage extends StatelessWidget {
     final third = rewardsSummary.length > 2 ? rewardsSummary[2] : null;
 
     log("Leaderboards ${rewardsSummary}");
-    return Container(
-      padding: EdgeInsets.all(16.r),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16.r),
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [primaryColor, secondaryColor],
-        ),
-      ),
-      child: Column(
-        children: [
-          // Top Leaderboard Info
-          if (fullScreen) SizedBox(height: MediaQuery.of(context).padding.top),
-          Column(
+    return BlocBuilder<ProfileBloc, ProfileState>(
+      builder: (context, state) {
+        final profile = state.profile;
+        final userLeaderboard = rewardsSummary.firstWhere(
+          (element) => element.userId == profile.userId,
+          orElse: () => RewardsSummary(),
+        );
+        int userIndex = rewardsSummary.indexOf(userLeaderboard);
+        return Container(
+          padding: EdgeInsets.all(16.r),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16.r),
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [primaryColor, secondaryColor],
+            ),
+          ),
+          child: Column(
             children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                spacing: 20.w,
+              // Top Leaderboard Info
+              if (fullScreen)
+                SizedBox(height: MediaQuery.of(context).padding.top),
+              Column(
                 children: [
-                  if (fullScreen)
-                    GestureDetector(
-                      onTap: () => Navigator.pop(context),
-                      child: Icon(
-                        Icons.arrow_back_ios_new_rounded,
-                        size: 20.sp,
-                        color: AppColors.white,
-                      ),
-                    ),
-                  Text(
-                    'Leaderboard',
-                    style: GoogleFonts.baloo2(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.white,
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 12),
-              Container(
-                padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-                decoration: BoxDecoration(
-                  color: Color(0xFFFFC58F),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Color(0xFFF77A38),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Text(
-                        '#49',
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    spacing: 20.w,
+                    children: [
+                      if (fullScreen)
+                        GestureDetector(
+                          onTap: () => Navigator.pop(context),
+                          child: Icon(
+                            Icons.arrow_back_ios_new_rounded,
+                            size: 20.sp,
+                            color: AppColors.white,
+                          ),
+                        ),
+                      Text(
+                        'Leaderboard',
                         style: GoogleFonts.baloo2(
                           fontSize: 20,
                           fontWeight: FontWeight.w700,
                           color: Colors.white,
                         ),
                       ),
+                    ],
+                  ),
+                  SizedBox(height: 12),
+                  Container(
+                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+                    decoration: BoxDecoration(
+                      color: Color(0xFFFFC58F),
+                      borderRadius: BorderRadius.circular(12),
                     ),
-                    SizedBox(width: 10),
-                    Expanded(
-                      child: Text(
-                        'Keep the momentum going! You are number 49 this month!',
-                        style: GoogleFonts.manrope(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                          color: Color(0xFF111111),
+                    child: Row(
+                      children: [
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 4,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Color(0xFFF77A38),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            '#${userIndex + 1}',
+                            style: GoogleFonts.baloo2(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.white,
+                            ),
+                          ),
                         ),
-                      ),
+                        SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            'Keep the momentum going! You are number ${userIndex + 1} this month!',
+                            style: GoogleFonts.manrope(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w700,
+                              color: Color(0xFF111111),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 20.h),
+              // Podium
+              Container(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Top3Widget(
+                      isFullScreen: fullScreen,
+                      summary: second,
+                      position: 2,
+                      podiumHeight: 115,
+                      podiumColor: Color(0xFF6312A8),
+                    ),
+                    Top3Widget(
+                      isFullScreen: fullScreen,
+                      isFirst: true,
+                      summary: first,
+                      position: 1,
+                      podiumHeight: 140,
+                      podiumColor: Color(0xFF7B24E8),
+                    ),
+                    Top3Widget(
+                      isFullScreen: fullScreen,
+                      summary: third,
+                      position: 3,
+                      podiumHeight: 100,
+                      podiumColor: Color(0xFF6312A8),
                     ),
                   ],
                 ),
               ),
-            ],
-          ),
-          SizedBox(height: 20.h),
-          // Podium
-          Container(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Top3Widget(
-                  isFullScreen: fullScreen,
-                  summary: second,
-                  position: 2,
-                  podiumHeight: 115,
-                  podiumColor: Color(0xFF6312A8),
+              Container(
+                constraints: BoxConstraints(minHeight: 100.h, maxHeight: 330.h),
+                clipBehavior: Clip.antiAlias,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16.r),
                 ),
-                Top3Widget(
-                  isFullScreen: fullScreen,
-                  isFirst: true,
-                  summary: first,
-                  position: 1,
-                  podiumHeight: 140,
-                  podiumColor: Color(0xFF7B24E8),
-                ),
-                Top3Widget(
-                  isFullScreen: fullScreen,
-                  summary: third,
-                  position: 3,
-                  podiumHeight: 100,
-                  podiumColor: Color(0xFF6312A8),
-                ),
-              ],
-            ),
-          ),
-          Container(
-            constraints: BoxConstraints(minHeight: 100.h, maxHeight: 330.h),
-            clipBehavior: Clip.antiAlias,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16.r),
-            ),
-            child: leaderboardList.isEmpty
-                ? Center(
-                    child: Text(
-                      'No more players yet',
-                      style: GoogleFonts.manrope(color: Colors.grey),
-                    ),
-                  )
-                : ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: leaderboardList.length,
-                    physics: fullScreen
-                        ? BouncingScrollPhysics()
-                        : NeverScrollableScrollPhysics(),
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 16.w,
-                      vertical: 16.h,
-                    ),
-                    itemBuilder: (context, index) {
-                      final leaderboard = leaderboardList[index];
-                      return leaderboardTile(
-                        rank: index + 4,
-                        name: leaderboard.userProfile!.name!,
-                        role: leaderboard.userProfile!.bio!,
-                        score: leaderboard.totalPointRedeemed.toString(),
-                        image: leaderboard.userProfile!.profilePic!,
-                      );
-                    },
-                  ),
-            /*child: Column(
+                child: leaderboardList.isEmpty
+                    ? Center(
+                        child: Text(
+                          'No more players yet',
+                          style: GoogleFonts.manrope(color: Colors.grey),
+                        ),
+                      )
+                    : ListView.separated(
+                        shrinkWrap: true,
+                        itemCount: leaderboardList.length,
+                        physics: fullScreen
+                            ? BouncingScrollPhysics()
+                            : NeverScrollableScrollPhysics(),
+                        padding: EdgeInsets.symmetric(vertical: 16.h),
+                        itemBuilder: (context, index) {
+                          final leaderboard = leaderboardList[index];
+                          int userIndex = leaderboardList.indexOf(
+                            userLeaderboard,
+                          );
+                          return leaderboardTile(
+                            context,
+                            rank: index + 4,
+                            leaderboard: leaderboard,
+                            name: leaderboard.userProfile!.name!,
+                            role: leaderboard.userProfile!.bio!,
+                            score: leaderboard.totalPointRedeemed.toString(),
+                            image: leaderboard.userProfile!.profilePic!,
+                            isUser: userIndex == index,
+                          );
+                        },
+                        separatorBuilder: (_, _) {
+                          return SizedBox(height: 4.h);
+                        },
+                      ),
+                /*child: Column(
                       children: [
                         ...rewardsSummary.asMap().entries.map((e) {
                           final index = e.key;
@@ -201,104 +219,120 @@ class LeaderboardPage extends StatelessWidget {
                         }),
                       ],
                     ),*/
+              ),
+              if (!fullScreen) ...[
+                // Leader List
+                SizedBox(height: 10.h),
+                FlowvaButton.whiteButton(
+                  color: Colors.black,
+                  name: 'See Leaderboard',
+                  apply: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (ctx) =>
+                            LeaderboardScreen(leaderboardList: rewardsSummary),
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ],
           ),
-          if (!fullScreen) ...[
-            // Leader List
-            SizedBox(height: 10.h),
-            FlowvaButton.whiteButton(
-              color: Colors.black,
-              name: 'See Leaderboard',
-              apply: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (ctx) =>
-                        LeaderboardScreen(leaderboardList: rewardsSummary),
-                  ),
-                );
-              },
-            ),
-          ],
-        ],
-      ),
+        );
+      },
     );
   }
 
-  Widget leaderboardTile({
+  Widget leaderboardTile(
+    BuildContext context, {
+    required RewardsSummary leaderboard,
     required int rank,
     required String name,
     required String role,
     required String score,
     required String image,
     bool isLast = false,
+    bool isUser = false,
   }) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12.0),
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 5.w),
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.5.h),
+      decoration: BoxDecoration(
+        color: isUser ? AppColors.primary10 : null,
+        borderRadius: BorderRadius.circular(14.r),
+        border: isUser ? Border.all(color: AppColors.black10) : null,
+      ),
       child: Row(
+        spacing: 8.w,
         children: [
-          Stack(
-            alignment: Alignment.center,
-            children: [
-              if (rank <= 3)
-                Image.asset('assets/images/badge.png', width: 32, height: 32),
-              if (rank > 3)
-                Container(
-                  margin: const EdgeInsets.only(right: 8.0),
-                  padding: const EdgeInsets.only(left: 10.0),
-                  child: Text(
-                    '$rank',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                  ),
+          Container(
+            width: 40.w,
+            child: Center(
+              child: RichText(
+                text: TextSpan(
+                  text: "$rank",
+                  style: TextStyles.titleBold20(context),
                 ),
-            ],
+              ),
+            ),
           ),
-          SizedBox(width: 12),
-          CircleAvatar(radius: 24, backgroundImage: NetworkImage(image)),
-          SizedBox(width: 12),
+          CachedImageRadius(
+            imageUrl: leaderboard.userProfile!.profilePic!,
+            size: 40,
+            circle: true,
+            color: AppColors.grey200,
+          ),
           Expanded(
             child: Column(
+              spacing: 8,
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
-                  name,
-                  style: GoogleFonts.manrope(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
+                RichText(
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  text: TextSpan(
+                    text: "$name ${isUser ? "(You)" : ""}",
+                    style: TextStyles.smallSemibold12(context),
                   ),
                 ),
-                Text(
-                  role,
-                  style: GoogleFonts.manrope(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w500,
-                    color: Color(0xFF767676),
+                RichText(
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  text: TextSpan(
+                    text: role,
+                    style: TextStyles.cardMedium10(
+                      context,
+                    ).copyWith(color: AppColors.grey500),
                   ),
                 ),
               ],
             ),
           ),
           Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+            padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 6.h),
             decoration: BoxDecoration(
-              color: Colors.black.withOpacity(0.04),
-              borderRadius: BorderRadius.circular(30),
-              // boxShadow: [
-              //   BoxShadow(
-              //     color: Colors.black.withOpacity(0.06),
-              //     blurRadius: 6,
-              //   ),
-              // ],
+              color: AppColors.black05,
+              borderRadius: BorderRadius.circular(100.r),
             ),
             child: Row(
+              spacing: 4.w,
               mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Image.asset("assets/images/one_50.png", height: 12),
-                const SizedBox(width: 6),
-                Text(
-                  score,
-                  style: GoogleFonts.manrope(
-                    fontWeight: FontWeight.w700,
-                    fontSize: 10,
+                Image.asset(
+                  AssetsPngImages.one50,
+                  height: 12.h,
+                  width: 12.w,
+                  fit: BoxFit.contain,
+                ),
+                RichText(
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  text: TextSpan(
+                    text: score,
+                    style: TextStyles.cardBold10(context),
                   ),
                 ),
               ],

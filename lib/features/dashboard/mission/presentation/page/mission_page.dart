@@ -5,8 +5,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../profile/presentation/bloc/profile_bloc.dart';
+import '../../../redeem/presentation/bloc/redeem_bloc.dart';
 import '../bloc/community_mission_bloc.dart';
 import '../bloc/featured_mission_bloc.dart';
+import '../bloc/growth_mission_bloc.dart';
 import '../bloc/skill_up_bloc.dart';
 import '../bloc/social_mission_bloc.dart';
 import '../bloc/sponsored_mission_bloc.dart';
@@ -47,14 +49,15 @@ class _MissionPageState extends State<MissionPage> {
     context.read<SocialMissionBloc>().add(LoadSocialMission());
     context.read<FeaturedMissionBloc>().add(LoadFeaturedMission());
     context.read<SponsoredMissionBloc>().add(LoadSponsoredMission());
+    context.read<GrowthMissionBloc>().add(LoadGrowthMission());
     context.read<SkillUpBloc>().add(LoadSkillUpMission());
     context.read<StreakBloc>().add(LoadStreaksEvent());
+    context.read<RedeemBloc>().add(LoadRedeemHistory());
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // extendBodyBehindAppBar: true,
       body: Stack(
         children: [
           Positioned.fill(
@@ -78,9 +81,9 @@ class _MissionPageState extends State<MissionPage> {
                   child: ListView.separated(
                     scrollDirection: Axis.horizontal,
                     shrinkWrap: true,
-                    padding: const EdgeInsets.symmetric(vertical: 5),
+                    padding: EdgeInsets.symmetric(vertical: 5.h),
                     itemCount: tab.length,
-                    separatorBuilder: (_, __) => const SizedBox(width: 10),
+                    separatorBuilder: (_, __) => SizedBox(width: 10.w),
                     itemBuilder: (context, index) {
                       final isSelected2 = selectedIndex == index;
                       return GestureDetector(
@@ -90,9 +93,9 @@ class _MissionPageState extends State<MissionPage> {
                         },
                         child: AnimatedContainer(
                           duration: const Duration(milliseconds: 300),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 6,
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 12.w,
+                            vertical: 6.h,
                           ),
                           decoration: BoxDecoration(
                             color: isSelected2 ? Colors.white : null,

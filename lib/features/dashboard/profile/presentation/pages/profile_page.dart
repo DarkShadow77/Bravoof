@@ -1,5 +1,6 @@
 import 'package:flowva/app/view/widgets/cached_image_widget.dart';
 import 'package:flowva/core/constants/app_assets.dart';
+import 'package:flowva/core/utils/helpers.dart';
 import 'package:flowva/features/common/flowva_button.dart';
 import 'package:flowva/features/dashboard/profile/presentation/pages/settings_page.dart';
 import 'package:flowva/features/dashboard/profile/presentation/widgets/edit_profile.dart';
@@ -41,7 +42,7 @@ class _ProfilePageState extends State<ProfilePage> {
   List<Map<String, dynamic>> socials = [
     {
       "image": AssetsPngImages.socialFacebook,
-      "url": "https://www.facebook.com/share/1Pqc12gFdH/?mibextid=wwXIfr",
+      "url": "https://www.facebook.com/share/17aaV2imwV/?mibextid=wwXIfr",
       "name": "Facebook",
     },
     {
@@ -212,7 +213,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       children: [
                         Flexible(
                           child: Text(
-                            "Top 24 on Global Leaderboard",
+                            "Top 24 on Leaderboard",
                             style: GoogleFonts.manrope(
                               fontSize: 11,
                               fontWeight: FontWeight.w700,
@@ -222,7 +223,6 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                         HugeIcon(
                           icon: HugeIcons.strokeRoundedArrowUpRight03,
-
                           size: 15,
                         ),
                       ],
@@ -236,7 +236,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     Column(
                       children: [
                         Text(
-                          userProfile.totalPoints.toString(),
+                          formatAmount(userProfile.totalPoints ?? 0),
                           style: GoogleFonts.manrope(
                             fontSize: 16,
                             fontWeight: FontWeight.w700,
@@ -264,7 +264,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     Column(
                       children: [
                         Text(
-                          (userProfile.missionsCompleted ?? 0).toString(),
+                          formatAmount(userProfile.missionsCompleted ?? 0),
                           style: GoogleFonts.manrope(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../mission/data/model/rewards_summary_response.dart';
-import 'leader_board.dart';
+import '../page/leaderboard_screen.dart';
 
 class TopLeaderBoard extends StatelessWidget {
   List<RewardsSummary> rewardsSummary = [];

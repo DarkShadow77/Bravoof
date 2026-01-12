@@ -55,6 +55,7 @@ class AssetsPngImages {
   static String socialLinkedin = "$baseImagePngPath/social_linkedin.png";
   static String socialTik_tok = "$baseImagePngPath/social_tik_tok.png";
   static String socialTwitter = "$baseImagePngPath/social_twitter.png";
+  static String coinBox = "$baseImagePngPath/coin_box.png";
 }
 
 class AssetsSvgImages {

@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flowva/app/styles/text_styles.dart';
 import 'package:flowva/core/constants/app_assets.dart';
 import 'package:flowva/core/constants/fonts.dart';
@@ -269,36 +267,23 @@ class RedeemCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorMap = {
-      'Missions': Color(0xFF005F3E),
-      'Reward': Color(0xFFF77A38),
-      'Jackpot': Color(0xFF9013FE),
-      'Conversion': Color(0xFF1C52D1),
-      'Referral': Color(0xFFF76593),
-    };
-
-    final iconMap = {
-      'Missions': Image.asset("assets/images/one_50.png"),
-      'Reward': Image.asset(
-        "assets/images/gift_with_money.png",
-        fit: BoxFit.cover,
-      ),
-      'Jackpot': Image.asset("assets/images/flying_coins.png"),
-      'Conversion': Image.asset("assets/images/blue_cards.png"),
-      'Referral': Image.asset("assets/images/frends.png"),
-    };
     final imageMap = {
       'Airtime': AssetsPngImages.cash,
       'Giftcard': AssetsPngImages.giftcard,
       'Data': AssetsPngImages.data,
     };
+    final colorMap = {
+      'Airtime': Color(0xFFF77A38),
+      'Giftcard': AppColors.primary,
+      'Data': Color(0xFFF76593),
+    };
 
     final image = imageMap[redeemHistory.rewardType.capitalize] ?? null;
+    final color = colorMap[redeemHistory.rewardType.capitalize] ?? null;
 
     /* final color = colorMap[redeemHistory.rewardType] ?? Colors.grey;
     Widget icon = iconMap[redeemHistory.rewardType] ?? Icons.info as Widget;
 */
-    log("Redeem Date ${redeemHistory.createdAt}");
     return Container(
       height: 88.h,
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
@@ -332,7 +317,7 @@ class RedeemCard extends StatelessWidget {
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
                 decoration: BoxDecoration(
-                  color: AppColors.primary,
+                  color: color,
                   borderRadius: BorderRadius.circular(16.r),
                 ),
                 child: RichText(

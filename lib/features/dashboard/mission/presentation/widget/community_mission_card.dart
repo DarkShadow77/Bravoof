@@ -346,7 +346,7 @@ class _TimeSectionState extends State<_TimeSection> with UIToolMixin {
                       state.hasJoined == MissionStatus.pending
                           ? "Mission Already Completed"
                           : differenceInSeconds == 0
-                          ? "Mission Expired"
+                          ? "Mission Ended"
                           : "Mission Full",
                       context,
                       color: Colors.white,

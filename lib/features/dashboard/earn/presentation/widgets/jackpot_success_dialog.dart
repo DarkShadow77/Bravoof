@@ -4,6 +4,7 @@ import 'package:flowva/core/constants/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:hugeicons/hugeicons.dart';
 
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../utility/ui_tool_mix.dart';
@@ -39,46 +40,74 @@ class _AskingDialogState extends State<JackpotSuccessDialog> with UIToolMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.transparent,
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(30.r),
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.white50,
-                  blurRadius: 30,
-                  spreadRadius: 2,
-                ),
-              ],
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                SizedBox(height: 20.h),
-                Image.asset(
-                  widget.rewardType == "gift"
-                      ? AssetsPngImages.gift
-                      : AssetsPngImages.one50,
-                  height: 42.h,
-                  width: 42.w,
-                ),
-                RichText(
-                  text: TextSpan(
-                    text: "+${widget.rewardValue}",
-                    style: TextStyles.bigTitleBold24(
-                      context,
-                    ).copyWith(fontFamily: AppFonts.baloo2),
-                  ),
-                ),
-              ],
-            ),
+      body: Center(
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(30.r),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.white50,
+                blurRadius: 50.r,
+                spreadRadius: 40.r,
+              ),
+            ],
           ),
-        ],
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  SizedBox(width: 60.w),
+                  IconButton(
+                    onPressed: () => Navigator.pop(context),
+                    icon: HugeIcon(
+                      icon: HugeIcons.strokeRoundedCancelCircle,
+                      color: AppColors.black50,
+                      size: 24.sp,
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 20.h),
+              Image.asset(
+                widget.rewardType == "gift"
+                    ? AssetsPngImages.gift
+                    : AssetsPngImages.one50,
+                height: 42.h,
+                width: 42.w,
+              ),
+              RichText(
+                text: TextSpan(
+                  text: "+${widget.rewardValue}",
+                  style: TextStyles.bigTitleBold24(
+                    context,
+                  ).copyWith(fontFamily: AppFonts.baloo2),
+                ),
+              ),
+              SizedBox(height: 20.h),
+              Opacity(
+                opacity: 0,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    IconButton(
+                      onPressed: () => Navigator.pop(context),
+                      icon: HugeIcon(
+                        icon: HugeIcons.strokeRoundedCancelCircle,
+                        color: AppColors.white75,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
