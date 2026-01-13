@@ -1,0 +1,11 @@
+import 'package:dartz/dartz.dart';
+import 'package:flowva/features/dashboard/home/data/model/notification_model.dart';
+
+abstract class NotificationRepository {
+  Future<Either<String, List<NotificationModel>>> fetchNotifications();
+  Future<Either<String, String>> markNotificationAsRead({
+    required int notificationId,
+  });
+  Future<Either<String, String>> markAllNotificationAsRead();
+  Future<Either<String, String>> clearNotification();
+}

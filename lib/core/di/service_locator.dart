@@ -9,7 +9,10 @@ import '../../features/dashboard/home/data/repository/campaign_repository.dart';
 import '../../features/dashboard/home/data/repository/campaign_repository_impl.dart';
 import '../../features/dashboard/home/data/repository/home_repository.dart';
 import '../../features/dashboard/home/data/repository/home_repository_impl.dart';
+import '../../features/dashboard/home/data/repository/notification_repository.dart';
+import '../../features/dashboard/home/data/repository/notification_repository_impl.dart';
 import '../../features/dashboard/home/presentation/bloc/home_cubit.dart';
+import '../../features/dashboard/home/presentation/bloc/notification_bloc.dart';
 import '../../features/dashboard/mission/data/repository/community_mission_repository.dart';
 import '../../features/dashboard/mission/data/repository/community_mission_repository_impl.dart';
 import '../../features/dashboard/mission/data/repository/featured_mission_repository.dart';
@@ -66,6 +69,9 @@ Future<void> initDI() async {
   sl.registerLazySingleton<StreakRepository>(() => StreakRepositoryImpl());
   sl.registerLazySingleton<RedeemRepository>(() => RedeemRepositoryImpl());
   sl.registerLazySingleton<JackpotRepository>(() => JackpotRepositoryImpl());
+  sl.registerLazySingleton<NotificationRepository>(
+    () => NotificationRepositoryImpl(),
+  );
 
   //Blocs
   sl.registerSingleton<UserCubit>(UserCubit());
@@ -96,4 +102,7 @@ Future<void> initDI() async {
   sl.registerSingleton<StreakBloc>(StreakBloc(repo: sl<StreakRepository>()));
   sl.registerSingleton<RedeemBloc>(RedeemBloc(repo: sl<RedeemRepository>()));
   sl.registerSingleton<JackpotBloc>(JackpotBloc(repo: sl<JackpotRepository>()));
+  sl.registerSingleton<NotificationBloc>(
+    NotificationBloc(repo: sl<NotificationRepository>()),
+  );
 }

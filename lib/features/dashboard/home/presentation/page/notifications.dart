@@ -1,267 +1,307 @@
+import 'package:flowva/app/styles/text_styles.dart';
+import 'package:flowva/core/constants/app_assets.dart';
+import 'package:flowva/features/dashboard/home/data/model/notification_model.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:hugeicons/hugeicons.dart';
 
-class NotificationsPage extends StatelessWidget {
-  final List<Map<String, dynamic>> notifications = [
-    {
-      "date": "Today",
-      "items": [
-        {
-          "title": "Payment",
-          "subtitle": "Payment Confirmation",
-          "description":
-              "Your Subscription to the Flowwa Pro Plan has been confirmed",
-          "time": "4:24PM",
-          "unread": true,
-        },
-        {
-          "title": "Payment",
-          "subtitle": "Payment Confirmation",
-          "description":
-              "Your Subscription to the Flowwa Pro Plan has been confirmed",
-          "time": "4:24PM",
-          "unread": false,
-        },
-        {
-          "title": "Payment",
-          "subtitle": "Payment Confirmation",
-          "description":
-              "Your Subscription to the Flowwa Pro Plan has been confirmed",
-          "time": "4:24PM",
-          "unread": true,
-        },
-        {
-          "title": "Payment",
-          "subtitle": "Payment Confirmation",
-          "description":
-              "Your Subscription to the Flowwa Pro Plan has been confirmed",
-          "time": "4:24PM",
-          "unread": false,
-        },
-      ],
-    },
-    {
-      "date": "Yesterday",
-      "items": [
-        {
-          "title": "Payment",
-          "subtitle": "Payment Confirmation",
-          "description":
-              "Your Subscription to the Flowwa Pro Plan has been confirmed",
-          "time": "4:24PM",
-          "unread": true,
-        },
-        {
-          "title": "Payment",
-          "subtitle": "Payment Confirmation",
-          "description":
-              "Your Subscription to the Flowwa Pro Plan has been confirmed",
-          "time": "4:24PM",
-          "unread": true,
-        },
-      ],
-    },
-  ];
+import '../../../../../core/constants/app_colors.dart';
+import '../bloc/notification_bloc.dart';
+
+class NotificationsPage extends StatefulWidget {
+  @override
+  State<NotificationsPage> createState() => _NotificationsPageState();
+}
+
+class _NotificationsPageState extends State<NotificationsPage> {
+  List<NotificationModel> notifications = [];
+  @override
+  void initState() {
+    super.initState();
+    final notificationBloc = context.read<NotificationBloc>();
+    notifications = notificationBloc.state.notification;
+    notificationBloc.add(LoadNotifications());
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: Row(
-            children: [
-              GestureDetector(
-                onTap: () => Navigator.pop(context),
-                child: HugeIcon(icon: HugeIcons.strokeRoundedArrowLeft02),
+        backgroundColor: AppColors.white,
+        automaticallyImplyLeading: false,
+        titleSpacing: 16.w,
+        title: Row(
+          spacing: 8.w,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            GestureDetector(
+              onTap: () => Navigator.pop(context),
+              child: HugeIcon(icon: HugeIcons.strokeRoundedArrowLeft02),
+            ),
+            RichText(
+              text: TextSpan(
+                text: "Notifications",
+                style: TextStyles.titleSemiBold20(context),
               ),
-              SizedBox(width: 8,),
-              Text("Notifications",
-                style: GoogleFonts.manrope(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w600,
-                ),),
+            ),
+          ],
+        ),
+        actions: [
+          PopupMenuButton<String>(
+            color: AppColors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8.r),
+            ),
+            position: PopupMenuPosition.under,
+            onSelected: (value) {
+              if (value == "mark all as read") {
+                context.read<NotificationBloc>().add(MarkAllNotificationRead());
+              } else if (value == "clear") {
+                context.read<NotificationBloc>().add(ClearNotification());
+              }
+            },
+            icon: Icon(Icons.more_horiz),
+            menuPadding: EdgeInsets.zero,
+            itemBuilder: (BuildContext context) => [
+              _buildPopupMenuItem(
+                value: "mark all as read",
+                text: "Mark As Read",
+                icon: AssetsSvgIcons.mail_open,
+              ),
+              _buildPopupMenuItem(
+                value: "clear",
+                text: "Clear all",
+                icon: AssetsSvgIcons.delete,
+              ),
             ],
           ),
-        ),
-        leadingWidth: 200,
-        actions:  [
-          GestureDetector(
-            onTap: (){
-              final RenderBox button = context.findRenderObject() as RenderBox;
-              final RenderBox overlay =
-              Overlay.of(context).context.findRenderObject() as RenderBox;
-              final Offset position =
-              button.localToGlobal(Offset.zero, ancestor: overlay);
-              showCustomMenu(context, position);
-            },
-            child: Padding(
-              padding: EdgeInsets.only(right: 16),
-              child: Icon(Icons.more_horiz,size: 16,),
-            ),
-          ),
         ],
-        backgroundColor: Colors.white,
-        elevation: 0,
-        foregroundColor: Colors.black,
       ),
-      body: Container(
-        color: Colors.white,
-        child: ListView.builder(
-          padding: const EdgeInsets.all(16),
-          itemCount: notifications.length,
-          itemBuilder: (context, sectionIndex) {
-            final section = notifications[sectionIndex];
+      body: BlocBuilder<NotificationBloc, NotificationState>(
+        builder: (context, state) {
+          notifications = state.notification;
+          // Group transactions by month/year
+          final grouped = <String, List<NotificationModel>>{};
+          for (final tx in notifications) {
+            final key =
+                '${_monthName(tx.createdAt.month)} ${tx.createdAt.year}'; // e.g. October 2025
+            grouped.putIfAbsent(key, () => []).add(tx);
+          }
+
+          if (grouped.isEmpty)
             return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
+              spacing: 20.h,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
-                  section["date"],
-                  style: GoogleFonts.manrope(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 14,
-                    color: Color(0xFF767676),
+                RichText(
+                  textAlign: TextAlign.center,
+                  text: TextSpan(
+                    text: "All Caught Up!",
+                    style: TextStyles.normalBold14(context),
                   ),
                 ),
-                const SizedBox(height: 5),
-                ...section["items"].map<Widget>((item) {
-                  return ListTile(
-                    title:  Text(
-                      item["title"],
-                      style: GoogleFonts.manrope(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 14,
-                        color: Colors.black,
-                      ),
-                    ),
-                    subtitle:Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(height: 5),
-                        Text(
-                          item["subtitle"],
-                          style: GoogleFonts.manrope(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 13,
-                            color: Color(0xFF2B2B2B),
-                          ),
-                        ),
-                        const SizedBox(height: 5),
-                        Text(
-                          item["description"],
-
-                          style: GoogleFonts.manrope(
-                            fontWeight: FontWeight.w500,
-                            fontSize: 12,
-                            color: Color(0xFF767676),
-                          ),
-                        ),
-                      ],
-                    ),
-                    leading:  Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          Icons.circle,
-                          size: 10,
-                          color: item["unread"]
-                              ? Colors.purple
-                              : Colors.grey.shade300,
-                        ),
-                        const SizedBox(width: 8),
-                        Container(
-                          width: 32,
-                          height: 32,
-                          decoration: BoxDecoration(
-                            color: Color(0xFFD9D9D9),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                      ],
-                    ),
-                     trailing: Text(
-                       item["time"],
-                       style: GoogleFonts.manrope(
-                         fontWeight: FontWeight.w700,
-                         fontSize: 10,
-                         color: Color(0xFF767676),
-                       ),
-                     ),
-                     minLeadingWidth: 0,
-                    minVerticalPadding: 10,
-                    horizontalTitleGap: 10,
-                    contentPadding: EdgeInsets.zero,
-                  );
-
-
-                }).toList(),
-                const SizedBox(height: 16),
+                RichText(
+                  textAlign: TextAlign.center,
+                  text: TextSpan(
+                    text:
+                        "Start earning coins and your notifications\n"
+                        "will light up in no time ⚡",
+                    style: TextStyles.smallMedium12(
+                      context,
+                    ).copyWith(color: AppColors.grey500),
+                  ),
+                ),
+                SvgPicture.asset(
+                  AssetsSvgImages.emptyNotification,
+                  width: 49.w,
+                  height: 60.h,
+                  fit: BoxFit.contain,
+                ),
               ],
             );
-          },
-        ),
+          else
+            return ListView.separated(
+              physics: BouncingScrollPhysics(),
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 20.h),
+              itemCount: grouped.length,
+              itemBuilder: (context, index) {
+                return _buildNotificationCard(
+                  context,
+                  month: grouped.keys.elementAt(index),
+                  notificationList: grouped.values.elementAt(index),
+                );
+              },
+              separatorBuilder: (context, index) {
+                return SizedBox(height: 20.h);
+              },
+            );
+        },
       ),
     );
   }
-  showCustomMenu(BuildContext context, Offset position) async {
-    var selected = await showMenu<String>(
-      context: context,
-      position: RelativeRect.fromLTRB(
-        position.dx + 20, // shift to the right
-        position.dy + 100, // slight down shift
-        15,
-        0,
+
+  Widget _buildNotificationCard(
+    BuildContext context, {
+    required String month,
+    required List<NotificationModel> notificationList,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          RichText(
+            text: TextSpan(
+              text: month,
+              style: TextStyles.smallSemibold12(
+                context,
+              ).copyWith(color: AppColors.grey550),
+            ),
+          ),
+          SizedBox(height: 12.h),
+          ListView.separated(
+            shrinkWrap: true,
+            itemCount: notificationList.length,
+            physics: NeverScrollableScrollPhysics(),
+            padding: EdgeInsets.zero,
+            itemBuilder: (context, index) {
+              final notification = notificationList[index];
+              return NotificationCard(notification: notification);
+            },
+            separatorBuilder: (context, index) {
+              return SizedBox(height: 16.h);
+            },
+          ),
+        ],
       ),
-      color:Colors.white,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      items: [
-        PopupMenuItem<String>(
-          value: 'read',
-          child: ConstrainedBox(
-            constraints: BoxConstraints(maxWidth: 150),
-            child: Row(
-              children:  [
-                HugeIcon(icon: HugeIcons.strokeRoundedMailOpen02),
-                SizedBox(width: 10),
-                Text('Mark as read',
-                  style: GoogleFonts.manrope(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 12,
-                    color: Color(0xFF5F5F5F),
-                  ),),
-              ],
+    );
+  }
+
+  String _monthName(int month) {
+    const months = [
+      '',
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
+    ];
+    return months[month];
+  }
+
+  PopupMenuItem<String> _buildPopupMenuItem({
+    required String value,
+    required String text,
+    required String icon,
+    Color? color,
+  }) {
+    return PopupMenuItem<String>(
+      height: 32.h,
+      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h),
+      value: value,
+      child: Row(
+        spacing: 6.w,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          SvgPicture.asset(
+            icon,
+            width: 14.w,
+            height: 14.h,
+            colorFilter: color != null
+                ? ColorFilter.mode(color, BlendMode.srcIn)
+                : null,
+          ),
+          RichText(
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            text: TextSpan(
+              text: text,
+              style: TextStyles.smallSemibold12(context).copyWith(color: color),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class NotificationCard extends StatelessWidget {
+  const NotificationCard({super.key, required this.notification});
+
+  final NotificationModel notification;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      spacing: 8.w,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Container(
+          width: 8.w,
+          height: 8.h,
+          decoration: BoxDecoration(
+            color: notification.read ? AppColors.purple0 : AppColors.purple400,
+            shape: BoxShape.circle,
+          ),
+        ),
+        Container(
+          width: 32.w,
+          height: 32.h,
+          decoration: BoxDecoration(
+            color: notification.read ? AppColors.grey200 : AppColors.purple50,
+            borderRadius: BorderRadius.circular(12.r),
+          ),
+          child: Center(
+            child: RichText(
+              text: TextSpan(
+                text: "B.",
+                style: TextStyles.normalBold14(
+                  context,
+                ).copyWith(color: notification.read ? AppColors.grey500 : null),
+              ),
             ),
           ),
         ),
-        PopupMenuItem<String>(
-          value: 'clear',
-          child: ConstrainedBox(
-            constraints: BoxConstraints(maxWidth: 150),
-            child: Row(
-              children:  [
-               HugeIcon(icon: HugeIcons.strokeRoundedDelete04),
-                SizedBox(width: 10),
-                Text('Clear all',
-                  style: GoogleFonts.manrope(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 12,
-                    color: Color(0xFF5F5F5F),
-                  ),),
-              ],
-            ),
+        Expanded(
+          child: Column(
+            spacing: 8.h,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              RichText(
+                text: TextSpan(
+                  text: notification.title,
+                  style: TextStyles.normalBold14(context).copyWith(
+                    color: notification.read ? AppColors.grey500 : null,
+                  ),
+                ),
+              ),
+              MarkdownBody(
+                data: notification.message,
+                styleSheet: MarkdownStyleSheet(
+                  p: TextStyles.smallMedium12(
+                    context,
+                  ).copyWith(color: AppColors.grey500),
+                  strong: TextStyles.smallBold12(
+                    context,
+                  ).copyWith(color: AppColors.grey500),
+                ),
+              ),
+            ],
           ),
         ),
       ],
-      elevation: 8.0,
     );
-    // Handle selected option
-    if (selected == 'read') {
-      // _switchTheme();
-    } else if (selected == 'clear') {
-      // showLogoutDialog(context);
-    }
   }
 }

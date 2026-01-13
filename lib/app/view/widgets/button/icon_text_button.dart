@@ -18,8 +18,10 @@ class IconTextButton extends StatelessWidget {
     this.textColor,
     this.borderColor,
     this.shadowColor = AppColors.black,
+    this.innerShadow,
     this.height,
     this.textSize,
+    this.spacing = 8,
   });
 
   final VoidCallback onPressed;
@@ -31,8 +33,10 @@ class IconTextButton extends StatelessWidget {
   final Color? textColor;
   final Color? borderColor;
   final Color shadowColor;
+  final Color? innerShadow;
   final double? height;
   final double? textSize;
+  final double spacing;
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +60,7 @@ class IconTextButton extends StatelessWidget {
           blur: 9.r,
           borderRadius: 100.r,
           backgroundColor: nullColor,
-          shadowColor: AppColors.white.withValues(alpha: .35),
+          shadowColor: innerShadow ?? AppColors.white.withValues(alpha: .35),
           isShadowTopLeft: true,
           isShadowTopRight: true,
           child: Container(
@@ -83,7 +87,7 @@ class IconTextButton extends StatelessWidget {
               ],
             ),
             child: Row(
-              spacing: 8.w,
+              spacing: spacing.w,
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [

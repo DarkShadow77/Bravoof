@@ -190,7 +190,6 @@ class HistoryTab extends StatelessWidget {
               return SizedBox(height: 8.h);
             },
           ),
-          // ...items.map(_buildTransactionCard).toList(),
         ],
       ),
     );

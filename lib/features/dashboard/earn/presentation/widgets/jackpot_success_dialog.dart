@@ -4,10 +4,8 @@ import 'package:flowva/core/constants/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:hugeicons/hugeicons.dart';
 
 import '../../../../../core/constants/app_colors.dart';
-import '../../../../../utility/ui_tool_mix.dart';
 
 Future<dynamic> jackpotSuccessDialog({
   required String rewardType,
@@ -35,7 +33,18 @@ class JackpotSuccessDialog extends StatefulWidget {
   State<JackpotSuccessDialog> createState() => _AskingDialogState();
 }
 
-class _AskingDialogState extends State<JackpotSuccessDialog> with UIToolMixin {
+class _AskingDialogState extends State<JackpotSuccessDialog> {
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Future.delayed((Duration(seconds: 1)), () {
+        if (Get.isDialogOpen == true) Get.back();
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -57,21 +66,6 @@ class _AskingDialogState extends State<JackpotSuccessDialog> with UIToolMixin {
             mainAxisAlignment: MainAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: [
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  SizedBox(width: 60.w),
-                  IconButton(
-                    onPressed: () => Navigator.pop(context),
-                    icon: HugeIcon(
-                      icon: HugeIcons.strokeRoundedCancelCircle,
-                      color: AppColors.black50,
-                      size: 24.sp,
-                    ),
-                  ),
-                ],
-              ),
               SizedBox(height: 20.h),
               Image.asset(
                 widget.rewardType == "gift"
@@ -89,22 +83,6 @@ class _AskingDialogState extends State<JackpotSuccessDialog> with UIToolMixin {
                 ),
               ),
               SizedBox(height: 20.h),
-              Opacity(
-                opacity: 0,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    IconButton(
-                      onPressed: () => Navigator.pop(context),
-                      icon: HugeIcon(
-                        icon: HugeIcons.strokeRoundedCancelCircle,
-                        color: AppColors.white75,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
             ],
           ),
         ),

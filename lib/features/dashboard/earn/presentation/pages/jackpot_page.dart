@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:flowva/app/view/widgets/button/icon_text_button.dart';
 import 'package:flowva/core/constants/fonts.dart';
+import 'package:flowva/core/utils/helpers.dart';
 import 'package:flowva/features/common/ui_tool_mixin/ui_tool_mixin.dart';
 import 'package:flowva/features/dashboard/earn/presentation/bloc/jackpot_bloc.dart';
 import 'package:flowva/features/dashboard/earn/presentation/widgets/jackpot_success_dialog.dart';
@@ -48,37 +49,37 @@ class _JackpotScreenState extends State<JackpotScreen> with UIToolMixin {
   // Define grid items
   final List<GridItem> gridItems = [
     // Section 1 - Row 1 (4 items)
-    GridItem(type: 'coins', value: 5, emoji: AssetsPngImages.one50),
+    GridItem(type: 'coins', value: 50, emoji: AssetsPngImages.one50),
     GridItem(type: 'gift', value: 1, emoji: AssetsPngImages.gift),
-    GridItem(type: 'coins', value: 10, emoji: AssetsPngImages.one50),
-    GridItem(type: 'gift', value: 1, emoji: AssetsPngImages.gift),
+    GridItem(type: 'coins', value: 100, emoji: AssetsPngImages.one50),
+    GridItem(type: 'coins', value: 500, emoji: AssetsPngImages.one50),
 
     // Section 2 - Rows 2-3 (8 items)
-    GridItem(type: 'coins', value: 20, emoji: AssetsPngImages.one50),
+    GridItem(type: 'coins', value: 100, emoji: AssetsPngImages.one50),
     GridItem(type: 'gift', value: 1, emoji: AssetsPngImages.gift),
     GridItem(type: 'coins', value: 20, emoji: AssetsPngImages.one50),
-    GridItem(type: 'gift', value: 2, emoji: AssetsPngImages.gift),
+    GridItem(type: 'coins', value: 50, emoji: AssetsPngImages.one50),
 
-    GridItem(type: 'coins', value: 50, emoji: AssetsPngImages.one50),
-    GridItem(type: 'gift', value: 1, emoji: AssetsPngImages.gift),
+    GridItem(type: 'coins', value: 1000, emoji: AssetsPngImages.one50),
     GridItem(type: 'coins', value: 50, emoji: AssetsPngImages.one50),
     GridItem(type: 'gift', value: 2, emoji: AssetsPngImages.gift),
+    GridItem(type: 'coins', value: 50, emoji: AssetsPngImages.one50),
 
     // Section 3 - Rows 4-6 (12 items)
-    GridItem(type: 'coins', value: 100, emoji: AssetsPngImages.one50),
-    GridItem(type: 'gift', value: 2, emoji: AssetsPngImages.gift),
-    GridItem(type: 'coins', value: 100, emoji: AssetsPngImages.one50),
-    GridItem(type: 'gift', value: 3, emoji: AssetsPngImages.gift),
-
-    GridItem(type: 'coins', value: 200, emoji: AssetsPngImages.one50),
-    GridItem(type: 'gift', value: 2, emoji: AssetsPngImages.gift),
-    GridItem(type: 'coins', value: 200, emoji: AssetsPngImages.one50),
-    GridItem(type: 'gift', value: 3, emoji: AssetsPngImages.gift),
-
     GridItem(type: 'coins', value: 50, emoji: AssetsPngImages.one50),
     GridItem(type: 'gift', value: 1, emoji: AssetsPngImages.gift),
-    GridItem(type: 'coins', value: 20, emoji: AssetsPngImages.one50),
+    GridItem(type: 'coins', value: 50, emoji: AssetsPngImages.one50),
+    GridItem(type: 'coins', value: 2000, emoji: AssetsPngImages.one50),
+
+    GridItem(type: 'coins', value: 200, emoji: AssetsPngImages.one50),
+    GridItem(type: 'coins', value: 50, emoji: AssetsPngImages.one50),
+    GridItem(type: 'gift', value: 2, emoji: AssetsPngImages.gift),
+    GridItem(type: 'coins', value: 50, emoji: AssetsPngImages.one50),
+
     GridItem(type: 'gift', value: 1, emoji: AssetsPngImages.gift),
+    GridItem(type: 'coins', value: 50, emoji: AssetsPngImages.one50),
+    GridItem(type: 'coins', value: 20, emoji: AssetsPngImages.one50),
+    GridItem(type: 'coins', value: 500, emoji: AssetsPngImages.one50),
   ];
 
   @override
@@ -494,7 +495,7 @@ class _JackpotScreenState extends State<JackpotScreen> with UIToolMixin {
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 4,
         mainAxisSpacing: 9.h,
-        crossAxisSpacing: 12.w,
+        crossAxisSpacing: 8.w,
         mainAxisExtent: 34.h,
       ),
       itemCount: items.length,
@@ -559,8 +560,8 @@ class _JackpotScreenState extends State<JackpotScreen> with UIToolMixin {
                 RichText(
                   text: TextSpan(
                     text: item.type == 'coins'
-                        ? '${item.value}'
-                        : 'x${item.value}',
+                        ? '${formatAmount(item.value, uniComp: true)}'
+                        : 'x${formatAmount(item.value, uniComp: true)}',
                     style: TextStyles.normalBold14(context).copyWith(
                       fontFamily: AppFonts.baloo2,
                       color: Colors.white,

@@ -274,7 +274,7 @@ class _EditProfilePageState extends State<EditProfilePage> with UIToolMixin {
                     vertical: 10,
                   ),
                   child: Text(
-                    "Update your name and bio,",
+                    "Update your name and bio",
                     style: GoogleFonts.manrope(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,

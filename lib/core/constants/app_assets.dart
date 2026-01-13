@@ -63,6 +63,7 @@ class AssetsSvgImages {
   static String podium = "$baseImageSvgPath/podium.svg";
   static String prizeDetailTitle = "$baseImageSvgPath/prize_detail_title.svg";
   static String prizeDetailBottom = "$baseImageSvgPath/prize_detail_bottom.svg";
+  static String emptyNotification = "$baseImageSvgPath/empty_notification.svg";
 }
 
 class AssetsSvgIcons {
@@ -77,4 +78,6 @@ class AssetsSvgIcons {
   static String circleLock = "$baseSvgIconsPath/circle_lock.svg";
   static String invite = "$baseSvgIconsPath/invite.svg";
   static String share = "$baseSvgIconsPath/share.svg";
+  static String delete = "$baseSvgIconsPath/delete.svg";
+  static String mail_open = "$baseSvgIconsPath/mail_open.svg";
 }

@@ -60,7 +60,7 @@ class _RedeemTabState extends State<RedeemTab>
         title: "Reward unlocked! 🎉",
         subTitle:
             "Your Bravoo coins just turned into something real. Nicely done!",
-        mainBtnText: "Back to Missions",
+        mainBtnText: "Close",
         mainBtnPressed: () => Get.back(),
       );
     } else if (state.type == RedeemType.redeemGiftcard) {

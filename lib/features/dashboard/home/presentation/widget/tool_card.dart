@@ -9,6 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_confetti/flutter_confetti.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../../../app/view/widgets/button/icon_text_button.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/utils/helpers.dart';
 import '../../../earn/presentation/widgets/referr_campaign.dart';
@@ -298,11 +299,36 @@ class _SpotlightCardState extends State<SpotlightCard> {
                   ],
                 ),
                 Row(
-                  spacing: 20.w,
+                  spacing: 15.w,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    GestureDetector(
+                    Flexible(
+                      child: IconTextButton(
+                        text: "Cheers",
+                        textSize: 10,
+                        spacing: 0,
+                        innerShadow: AppColors.primary10,
+                        iconWidget: Image.asset(
+                          AssetsPngImages.clap,
+                          width: 16.w,
+                          height: 16.h,
+                          fit: BoxFit.contain,
+                        ),
+                        onPressed: () {
+                          Confetti.launch(
+                            context,
+                            options: const ConfettiOptions(
+                              particleCount: 100,
+                              spread: 30,
+                              drift: -1,
+                              y: 0.5,
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    /*   GestureDetector(
                       onTap: () {
                         Confetti.launch(
                           context,
@@ -345,8 +371,9 @@ class _SpotlightCardState extends State<SpotlightCard> {
                           ],
                         ),
                       ),
-                    ),
+                    ),*/
                     Expanded(
+                      flex: 2,
                       child: Container(
                         padding: EdgeInsets.symmetric(
                           vertical: 10.h,
