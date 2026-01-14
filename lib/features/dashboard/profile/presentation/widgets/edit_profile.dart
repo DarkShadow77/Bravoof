@@ -25,7 +25,7 @@ class EditProfilePage extends StatefulWidget {
 }
 
 class _EditProfilePageState extends State<EditProfilePage> with UIToolMixin {
-  UserProfile userProfile = UserProfile();
+  UserProfile userProfile = UserProfile.empty();
   late ProfileBloc profileBloc;
 
   int? selectedAvatar;
@@ -292,9 +292,10 @@ class _EditProfilePageState extends State<EditProfilePage> with UIToolMixin {
                     // important for blur
                     builder: (_) => EditNameWidget(
                       apply: (val) async {
+                        final profile = UserProfile.empty();
                         context.read<ProfileBloc>().add(
                           UpdateProfileEvent(
-                            profile: UserProfile(
+                            profile: profile.copyWith(
                               name: val['name'],
                               bio: val['bio'],
                             ),

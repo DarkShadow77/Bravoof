@@ -27,7 +27,7 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  UserProfile userProfile = UserProfile();
+  UserProfile userProfile = UserProfile.empty();
   late ProfileBloc profileBloc;
 
   @override

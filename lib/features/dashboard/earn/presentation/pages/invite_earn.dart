@@ -40,7 +40,7 @@ class InviteAndEarnPage extends StatefulWidget {
 class _InviteAndEarnPageState extends State<InviteAndEarnPage> {
   Duration timeLeft = Duration(days: 00, hours: 24, minutes: 13, seconds: 13);
 
-  UserProfile userProfile = UserProfile();
+  UserProfile userProfile = UserProfile.empty();
 
   List<UserProfile> referrals = [];
   late ProfileBloc profileBloc;

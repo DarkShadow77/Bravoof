@@ -461,7 +461,7 @@ class ReferralContainer extends StatefulWidget {
 class _ReferralContainerState extends State<ReferralContainer> {
   List<UserProfile> referredUsers = [];
 
-  UserProfile userProfile = UserProfile();
+  UserProfile userProfile = UserProfile.empty();
 
   List<UserProfile> referrals = [];
   late ProfileBloc profileBloc;

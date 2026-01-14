@@ -202,8 +202,9 @@ class _LoginPageState extends State<LoginPage> with UIToolMixin {
                               name: "Login",
                               apply: () {
                                 if (!formkey.currentState!.validate()) return;
+                                final profile = UserProfile.empty();
                                 userCubit.signIn(
-                                  userProfile: UserProfile(
+                                  userProfile: profile.copyWith(
                                     email: email.text,
                                     pass: pass.text,
                                   ),

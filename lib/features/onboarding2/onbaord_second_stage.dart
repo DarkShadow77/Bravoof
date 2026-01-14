@@ -313,8 +313,10 @@ class _OnbaordSecondStageState extends State<OnbaordSecondStage>
                             status: true,
                           );
                         if (currentPage == 2) {
+
+                          final profile = UserProfile.empty();
                           userCubit.signup(
-                            userProfile: UserProfile(
+                            userProfile: profile.copyWith(
                               name: username.text,
                               email: widget.data!['email'],
                               referralCode: widget.data!['referral_code'],

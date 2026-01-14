@@ -1,4 +1,4 @@
-import 'package:flowva/features/common/flowva_button.dart';
+import 'package:flowva/app/view/widgets/button/icon_text_button.dart';
 import 'package:flowva/features/dashboard/nav_bar.dart';
 import 'package:flowva/features/dashboard/profile/presentation/bloc/profile_bloc.dart';
 import 'package:flowva/features/onbaording/data/bloc/user_cubit.dart';
@@ -10,7 +10,9 @@ import 'package:flowva/features/onboarding2/widget/login_bottom_sheet.dart';
 import 'package:flowva/utility/ui_tool_mix.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../core/constants/app_colors.dart';
 import '../../../session/session_manager.dart';
 import '../../common/data/constants.dart';
 import 'referral_code.dart';
@@ -43,7 +45,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> with UIToolMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
       body: Container(
         decoration: const BoxDecoration(
           image: DecorationImage(
@@ -53,7 +54,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> with UIToolMixin {
         ),
         child: Column(
           children: [
-            // SizedBox(height: 20),
             Expanded(
               child: PageView(
                 controller: _pageController,
@@ -65,37 +65,41 @@ class _OnboardingScreenState extends State<OnboardingScreen> with UIToolMixin {
                 children: [FirstScreen(), SecondScreen(), ThirdScreen()],
               ),
             ),
-            // SizedBox(height: 20),
-            Container(
-              width: 58,
-              decoration: BoxDecoration(
-                color: const Color(0x11111114),
-                // Use a clean light grey background
-                borderRadius: BorderRadius.circular(
-                  20,
-                ), // Optional: soften corners
-              ),
-              padding: EdgeInsets.symmetric(horizontal: 1, vertical: 5),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(
-                  3,
-                  (index) => AnimatedContainer(
-                    duration: const Duration(milliseconds: 300),
-                    margin: const EdgeInsets.symmetric(horizontal: 5),
-                    width: currentPage == index ? 8 : 8,
-                    height: 8,
-                    decoration: BoxDecoration(
-                      color: currentPage == index
-                          ? Colors.black
-                          : Colors.black.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(100),
+
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    color: const Color(0x11111114),
+                    // Use a clean light grey background
+                    borderRadius: BorderRadius.circular(
+                      20,
+                    ), // Optional: soften corners
+                  ),
+                  padding: EdgeInsets.symmetric(horizontal: 4.w, vertical: 4.h),
+                  child: Row(
+                    spacing: 6.w,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: List.generate(
+                      3,
+                      (index) => AnimatedContainer(
+                        duration: const Duration(milliseconds: 300),
+                        width: currentPage == index ? 18.w : 6.w,
+                        height: 6.h,
+                        decoration: BoxDecoration(
+                          color: currentPage == index
+                              ? Colors.black
+                              : Colors.black.withOpacity(0.2),
+                          borderRadius: BorderRadius.circular(100),
+                        ),
+                      ),
                     ),
                   ),
                 ),
-              ),
+              ],
             ),
-            SizedBox(height: 10),
+            SizedBox(height: 16.h),
             BlocListener<UserCubit, UserState>(
               bloc: userCubit,
               listener: (context, state) async {
@@ -188,9 +192,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> with UIToolMixin {
               },
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                child: FlowvaButton.blueButton(
-                  name: "Get started",
-                  apply: () async {
+                child: IconTextButton(
+                  height: 56,
+                  text: "Get started",
+                  onPressed: () async {
                     setState(() {
                       _isTapped = true;
                     });
@@ -217,8 +222,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> with UIToolMixin {
                                 }
                                 if (!_formkey.currentState!.validate()) return;
                                 if (val['isLogin']) {
+                                  final profile = UserProfile.empty();
                                   userCubit.signIn(
-                                    userProfile: UserProfile(
+                                    userProfile: profile.copyWith(
                                       email: _email.text,
                                       pass: _pass.text,
                                     ),
@@ -262,11 +268,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> with UIToolMixin {
                       }),
                     );
                   },
-                  isTapped: _isTapped,
+                  color: AppColors.black,
+                  textColor: AppColors.white,
                 ),
               ),
             ),
-            SizedBox(height: 20),
+            SizedBox(height: 10 + MediaQuery.of(context).viewPadding.bottom),
           ],
         ),
       ),

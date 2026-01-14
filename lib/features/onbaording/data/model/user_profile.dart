@@ -1,54 +1,64 @@
 class UserProfile {
-  String? id;
-  String? userId;
-  String? name;
-  String? bio;
-  String? pass;
-  String? fullName;
-  String? email;
-  bool? isLogin;
-  String? referralCode;
-  String? referrerEmail;
-  String? referrerName;
-  String? profilePic;
-  int? totalPoints;
-  int? missionsCompleted;
-  int? basePoints;
-  int? referralCount;
-  int? spins;
-  int? currentStreak;
-  bool? isBanned;
-  bool? isAuthenticated;
-  DateTime? createdAt;
-  List<String>? stack;
-  String? interest;
-  List<String>? goals;
+  String id;
+  String userId;
+  String name;
+  String email;
+  String pass;
+  String fullName;
+  bool isLogin;
+  String interest;
+  List<String> goals;
+  String profilePic;
+  String referralCode;
+  String referrerEmail;
+  String referrerName;
+  int referralCount;
+  int totalPoints;
+  int basePoints;
+  int currentStreak;
+  bool isBanned;
+  bool isAuthenticated;
+  DateTime createdAt;
+  String bio;
+  int spins;
+  int missionsCompleted;
+  String coverPic;
+  String country;
+  String city;
+  String flag;
+  String countryCode;
+  String countryCodeIso3;
 
   UserProfile({
-    this.id,
-    this.userId,
-    this.name,
-    this.bio,
-    this.pass,
-    this.fullName,
-    this.email,
-    this.isLogin,
-    this.referralCode,
-    this.referrerEmail,
-    this.referrerName,
-    this.profilePic,
-    this.totalPoints,
-    this.missionsCompleted,
-    this.basePoints,
-    this.referralCount,
-    this.spins,
-    this.currentStreak,
-    this.isBanned,
-    this.isAuthenticated,
-    this.createdAt,
-    this.stack,
-    this.interest,
-    this.goals,
+    required this.id,
+    required this.userId,
+    required this.name,
+    required this.bio,
+    required this.email,
+    required this.pass,
+    required this.fullName,
+    required this.isLogin,
+    required this.referralCode,
+    required this.referrerEmail,
+    required this.referrerName,
+    required this.profilePic,
+    required this.totalPoints,
+    required this.missionsCompleted,
+    required this.basePoints,
+    required this.referralCount,
+    required this.spins,
+    required this.currentStreak,
+    required this.isBanned,
+    required this.isAuthenticated,
+    required this.createdAt,
+    required this.interest,
+    required this.goals,
+    required this.coverPic,
+    required this.country,
+    required this.city,
+    required this.flag,
+    required this.countryCode,
+    required this.countryCodeIso3,
   });
 
   factory UserProfile.empty() {
@@ -57,9 +67,9 @@ class UserProfile {
       userId: '',
       name: '',
       bio: '',
+      email: '',
       pass: '',
       fullName: '',
-      email: '',
       isLogin: false,
       referralCode: '',
       referrerEmail: '',
@@ -67,16 +77,21 @@ class UserProfile {
       profilePic: '',
       totalPoints: 0,
       missionsCompleted: 0,
-      basePoints: 0,
+      basePoints: 1,
       referralCount: 0,
       spins: 0,
       currentStreak: 0,
       isBanned: false,
       isAuthenticated: false,
-      createdAt: DateTime.fromMillisecondsSinceEpoch(0),
-      stack: const [],
+      createdAt: DateTime.now(),
       interest: '',
       goals: const [],
+      coverPic: "",
+      country: "",
+      city: "",
+      flag: "",
+      countryCode: "",
+      countryCodeIso3: "",
     );
   }
 
@@ -94,7 +109,7 @@ class UserProfile {
     String? referrerName,
     String? profilePic,
     int? totalPoints,
-    int? missions_completed,
+    int? missionsCompleted,
     int? basePoints,
     int? referralCount,
     int? spins,
@@ -105,15 +120,21 @@ class UserProfile {
     List<String>? stack,
     String? interest,
     List<String>? goals,
+    String? coverPic,
+    String? country,
+    String? city,
+    String? flag,
+    String? countryCode,
+    String? countryCodeIso3,
   }) {
     return UserProfile(
       id: id ?? this.id,
       userId: userId ?? this.userId,
       name: name ?? this.name,
       bio: bio ?? this.bio,
+      email: email ?? this.email,
       pass: pass ?? this.pass,
       fullName: fullName ?? this.fullName,
-      email: email ?? this.email,
       isLogin: isLogin ?? this.isLogin,
       referralCode: referralCode ?? this.referralCode,
       referrerEmail: referrerEmail ?? this.referrerEmail,
@@ -128,89 +149,55 @@ class UserProfile {
       isBanned: isBanned ?? this.isBanned,
       isAuthenticated: isAuthenticated ?? this.isAuthenticated,
       createdAt: createdAt ?? this.createdAt,
-      stack: stack ?? this.stack,
       interest: interest ?? this.interest,
       goals: goals ?? this.goals,
+      coverPic: coverPic ?? this.coverPic,
+      country: country ?? this.country,
+      city: city ?? this.city,
+      flag: flag ?? this.flag,
+      countryCode: countryCode ?? this.countryCode,
+      countryCodeIso3: countryCodeIso3 ?? this.countryCodeIso3,
     );
   }
 
-  UserProfile.fromJson(Map<String, dynamic> json) {
-    if (json['id'] != null) {
-      id = json['id'];
-    }
-    if (json['user_id'] != null) {
-      userId = json['user_id'];
-    }
-    if (json['name'] != null) {
-      name = json['name'];
-    }
-    if (json['bio'] != null) {
-      bio = json['bio'];
-    }
-    if (json['full_name'] != null) {
-      fullName = json['full_name'];
-    }
-
-    if (json['email'] != null) {
-      email = json['email'];
-    }
-
-    if (json['interest'] != null) {
-      interest = json['interest'];
-    }
-    if (json['tools'] != null) {
-      stack =
-          (json['tools'] as List<dynamic>?)
-              ?.map((e) => e.toString())
-              .toList() ??
-          [];
-    }
-    if (json['goals'] != null) {
-      goals =
+  factory UserProfile.fromJson(Map<String, dynamic> json) {
+    return UserProfile(
+      id: json['id'] ?? "",
+      userId: json['user_id'] ?? '',
+      name: json['name'] ?? "",
+      email: json['email'] ?? '',
+      pass: json['pass'] ?? '',
+      fullName: json['full_name'] ?? '',
+      isLogin: json['isLogin'] ?? false,
+      interest: json['interest'] ?? "",
+      goals:
           (json['goals'] as List<dynamic>?)
               ?.map((e) => e.toString())
               .toList() ??
-          [];
-    }
-    if (json['profile_image'] != null) {
-      profilePic = json['profile_image'];
-    }
-    if (json['total_points'] != null) {
-      totalPoints = json['total_points'];
-    }
-    if (json['missions_completed'] != null) {
-      missionsCompleted = json['missions_completed'];
-    }
-    if (json['base_point'] != null) {
-      basePoints = json['base_point'];
-    }
-    if (json['referral_count'] != null) {
-      referralCount = json['referral_count'];
-    }
-    if (json['referral_code'] != null) {
-      referralCode = json['referral_code'];
-    }
-    if (json['current_streak'] != null) {
-      currentStreak = json['current_streak'];
-    }
-    if (json['referrer_email'] != null) {
-      referrerEmail = json['referrer_email'];
-    }
-    if (json['referrer_name'] != null) {
-      referrerName = json['referrer_name'];
-    }
-    if (json['spins'] != null) {
-      spins = json['spins'];
-    }
-    if (json['is_banned'] != null) {
-      isBanned = json['is_banned'];
-    }
-    if (json['is_authenticated'] != null) {
-      isAuthenticated = json['is_authenticated'];
-    }
-    if (json['created_at'] != null) {
-      createdAt = DateTime.parse(json['created_at']);
-    }
+          [],
+      profilePic: json['profile_image'] ?? '',
+      referralCode: json['referral_code'] ?? "",
+      referrerEmail: json['referrer_email'] ?? "",
+      referrerName: json['referrer_name'] ?? '',
+      referralCount: json['referral_count'] ?? 0,
+      totalPoints: json['total_points'] ?? 0,
+      basePoints: json['base_point'] ?? 1,
+      currentStreak: json['current_streak'] ?? 0,
+      isBanned: json['is_banned'] ?? false,
+      isAuthenticated: json['is_authenticated'] ?? false,
+      createdAt: DateTime.parse(
+        json['created_at'] ?? DateTime.now().toIso8601String(),
+      ),
+      bio: json['bio'] ?? '',
+      spins: json['spins'] ?? 0,
+      missionsCompleted: json['missions_completed'] ?? 0,
+      coverPic: json['cover_pic'] ?? '',
+      country: json['country'] ?? '',
+      city: json['city'] ?? '',
+      flag: json['flag'] ?? '',
+      countryCode: json['country_code'] ?? '',
+      countryCodeIso3: json['country_code_iso3'] ?? '',
+    );
   }
 
   Map<String, dynamic> toJson() {

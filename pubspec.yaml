@@ -87,6 +87,7 @@ dependencies:
   country_state_city: ^0.1.6
   flutter_linkify: ^6.0.0
   flutter_markdown: ^0.7.7+1
+  dio: ^5.9.0
 
 
 dev_dependencies:

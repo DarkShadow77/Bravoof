@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+
+import '../../../app/styles/text_styles.dart';
+import '../../../core/constants/app_colors.dart';
 
 class SecondScreen extends StatefulWidget {
   const SecondScreen({super.key});
@@ -8,7 +12,8 @@ class SecondScreen extends StatefulWidget {
   State<SecondScreen> createState() => _SecondScreenState();
 }
 
-class _SecondScreenState extends State<SecondScreen> with TickerProviderStateMixin {
+class _SecondScreenState extends State<SecondScreen>
+    with TickerProviderStateMixin {
   late AnimationController _controller;
   late List<Animation<Offset>> _slideAnimations;
 
@@ -31,7 +36,11 @@ class _SecondScreenState extends State<SecondScreen> with TickerProviderStateMix
       ).animate(
         CurvedAnimation(
           parent: _controller,
-          curve: Interval(start, end, curve: Curves.easeOut), // smooth fall animation
+          curve: Interval(
+            start,
+            end,
+            curve: Curves.easeOut,
+          ), // smooth fall animation
         ),
       );
     });
@@ -59,83 +68,31 @@ class _SecondScreenState extends State<SecondScreen> with TickerProviderStateMix
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20),
+      padding: EdgeInsets.symmetric(horizontal: 16.w),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          const SizedBox(height: 150),
-          Image.asset("assets/images/second_slide.png",),
-          // Card 1
-          // buildCard(
-          //   index: 0,
-          //   transform: Matrix4.skewY(-0.03),
-          //   child: buildContainer(
-          //     title: "Designers Toolkit",
-          //     subtitle: "1,200 creatives trust this stack",
-          //     icons: [
-          //       'assets/images/figma.png',
-          //       'assets/images/framer.png',
-          //       'assets/images/canvas.png',
-          //     ],
-          //   ),
-          // ),
-          //
-          // // Card 2
-          // buildCard(
-          //   index: 1,
-          //   transform: Matrix4.skewY(0.01),
-          //   child: buildContainer(
-          //     title: "Indie Hacker’s Essentials",
-          //     subtitle:
-          //     "Curated by Sam Ortega building profitable products solo",
-          //     icons: [
-          //       'assets/images/youtube.png',
-          //       'assets/images/notion.png',
-          //       'assets/images/serve.png',
-          //     ],
-          //   ),
-          // ),
-          // const SizedBox(height: 20),
-          // // Card 3
-          // buildCard(
-          //   index: 2,
-          //   transform: Matrix4.skew(-0.0004, -0.05),
-          //   child: buildContainer(
-          //     title: "Remote Team Starter Pack",
-          //     subtitle:
-          //     "Curated by Kendra Holt helping distributed teams thrive",
-          //     icons: [
-          //       'assets/images/slack.png',
-          //       'assets/images/miro.png',
-          //       'assets/images/loom.png',
-          //     ],
-          //   ),
-          // ),
-
-          const SizedBox(height: 32),
-          Center(
-            child: Text(
-              "Turn progress into \nrewards.",
-              style: GoogleFonts.manrope(
-                fontSize: 30,
-                fontWeight: FontWeight.w700,
-                color: Color(0xFF191919),
-              ),
-              textAlign: TextAlign.center,
+          Image.asset("assets/images/second_slide.png"),
+          SizedBox(height: 70.h),
+          RichText(
+            textAlign: TextAlign.center,
+            text: TextSpan(
+              text: "Turn progress into\nrewards.",
+              style: TextStyles.bigTitleBold24(context).copyWith(fontSize: 28),
             ),
           ),
-          const SizedBox(height: 8),
-          Center(
-            child: Text(
-              "Make daily actions count for real skill-building.",
-              textAlign: TextAlign.center,
-              style: GoogleFonts.manrope(
-                fontSize: 16,
-                fontWeight: FontWeight.w400,
-                color: Colors.black54,
-              ),
+          SizedBox(height: 16.h),
+          RichText(
+            textAlign: TextAlign.center,
+            text: TextSpan(
+              text: "Make daily actions count for real skill-building.",
+              style: TextStyles.smallRegular12(
+                context,
+              ).copyWith(color: AppColors.grey500),
             ),
           ),
-          const SizedBox(height: 24),
+          SizedBox(height: 41.h),
         ],
       ),
     );
@@ -176,10 +133,12 @@ class _SecondScreenState extends State<SecondScreen> with TickerProviderStateMix
           const SizedBox(height: 12),
           Row(
             children: icons
-                .map((icon) => Padding(
-              padding: const EdgeInsets.only(right: 20),
-              child: Image.asset(icon, height: 30),
-            ))
+                .map(
+                  (icon) => Padding(
+                    padding: const EdgeInsets.only(right: 20),
+                    child: Image.asset(icon, height: 30),
+                  ),
+                )
                 .toList(),
           ),
           const SizedBox(height: 12),

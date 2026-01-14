@@ -1,9 +1,9 @@
 import 'package:flowva/app/styles/text_styles.dart';
+import 'package:flowva/app/view/widgets/cached_image_widget.dart';
 import 'package:flowva/app/view/widgets/gradient_progress.dart';
 import 'package:flowva/core/constants/app_assets.dart';
 import 'package:flowva/core/utils/helpers.dart';
 import 'package:flowva/features/common/ui_tool_mixin/ui_tool_mixin.dart';
-import 'package:flowva/features/dashboard/home/data/model/campaign_response.dart';
 import 'package:flowva/features/dashboard/home/presentation/bloc/home_cubit.dart';
 import 'package:flowva/features/dashboard/profile/presentation/bloc/profile_bloc.dart';
 import 'package:flowva/features/dashboard/profile/presentation/pages/profile_page.dart';
@@ -22,6 +22,7 @@ import '../../../mission/data/model/rewards_summary_response.dart';
 import '../../../mission/presentation/bloc/growth_mission_bloc.dart';
 import '../../../mission/presentation/widget/mission_list_title.dart';
 import '../../../nav_bar.dart';
+import '../bloc/notification_bloc.dart';
 import '../widget/referral_widget.dart';
 import '../widget/tool_card.dart';
 import '../widget/top_leader_board.dart';
@@ -39,7 +40,6 @@ class _FlowvaHomePageState extends State<FlowvaHomePage> with UIToolMixin {
   final sessionManager = SessionManager();
   UserProfile userProfile = UserProfile.empty();
   late ProfileBloc profileBloc;
-  List<CampaignModel> campaign = [];
   List<RewardsSummary> rewardsSummary = [];
 
   @override
@@ -62,15 +62,6 @@ class _FlowvaHomePageState extends State<FlowvaHomePage> with UIToolMixin {
       backgroundColor: Colors.white,
       body: MultiBlocProvider(
         providers: [
-          BlocListener<HomeCubit, HomeState>(
-            listener: (context, state) {
-              print(state);
-              setState(() {
-                campaign = state.campaign;
-              });
-              print(campaign);
-            },
-          ),
           BlocListener<MissionCubit, MissionState>(
             bloc: missionCubit,
             listener: (context, state) {
@@ -101,42 +92,70 @@ class _FlowvaHomePageState extends State<FlowvaHomePage> with UIToolMixin {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const SizedBox(height: 60),
+                      SizedBox(
+                        height: 10.h + MediaQuery.of(context).padding.top,
+                      ),
                       // Greeting Row
                       Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        padding: EdgeInsets.symmetric(horizontal: 16.w),
                         child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
-                              "Hey, ${userProfile.name}!",
-                              style: GoogleFonts.manrope(
-                                fontSize: 20,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.black,
+                            RichText(
+                              text: TextSpan(
+                                text: "Hey, ${userProfile.name}!",
+                                style: TextStyles.titleSemiBold20(context),
                               ),
                             ),
                             Row(
+                              spacing: 14.w,
                               crossAxisAlignment: CrossAxisAlignment.center,
-
                               children: [
-                                GestureDetector(
-                                  onTap: () => Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (ctx) => NotificationsPage(),
-                                    ),
-                                  ),
-                                  child: Container(
-                                    padding: EdgeInsets.only(bottom: 20),
-                                    child: HugeIcon(
-                                      icon:
-                                          HugeIcons.strokeRoundedNotification01,
-                                      size: 28,
-                                    ),
-                                  ),
+                                BlocBuilder<
+                                  NotificationBloc,
+                                  NotificationState
+                                >(
+                                  builder: (context, state) {
+                                    final noti = state.notification;
+                                    return GestureDetector(
+                                      onTap: () => Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (ctx) => NotificationsPage(),
+                                        ),
+                                      ),
+                                      child: Container(
+                                        width: 28.w,
+                                        height: 28.h,
+                                        child: Stack(
+                                          children: [
+                                            HugeIcon(
+                                              icon: HugeIcons
+                                                  .strokeRoundedNotification01,
+                                              size: 28.sp,
+                                            ),
+                                            if (noti.any(
+                                              (e) => e.read == false,
+                                            ))
+                                              Positioned(
+                                                top: 0,
+                                                right: 4.w,
+                                                child: Container(
+                                                  width: 8.w,
+                                                  height: 8.h,
+                                                  decoration: BoxDecoration(
+                                                    color: AppColors.redBrown,
+                                                    shape: BoxShape.circle,
+                                                  ),
+                                                ),
+                                              ),
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  },
                                 ),
-                                SizedBox(width: 20),
                                 GestureDetector(
                                   onTap: () {
                                     Navigator.push(
@@ -146,30 +165,12 @@ class _FlowvaHomePageState extends State<FlowvaHomePage> with UIToolMixin {
                                       ),
                                     );
                                   },
-                                  child: Column(
-                                    children: [
-                                      Container(
-                                        height: 30,
-                                        width: 30,
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                        ),
-                                        clipBehavior: Clip.hardEdge,
-                                        child: userProfile.profilePic != null
-                                            ? Image.network(
-                                                userProfile.profilePic!,
-                                                fit: BoxFit.fill,
-                                              )
-                                            : Container(),
-                                      ),
-
-                                      // Text("Profile",style: GoogleFonts.manrope(
-                                      //   fontWeight: FontWeight.w500,
-                                      //   fontSize: 12,
-                                      //   color: Color(0xFF2B2B2B),
-                                      // ),),
-                                      SizedBox(height: 20),
-                                    ],
+                                  child: CachedImageRadius(
+                                    imageUrl: userProfile.profilePic ?? "",
+                                    size: 30,
+                                    circle: true,
+                                    fit: BoxFit.contain,
+                                    color: AppColors.grey200,
                                   ),
                                 ),
                               ],

@@ -12,7 +12,7 @@ part 'user_state.dart';
 
 class UserCubit extends Cubit<UserState> {
   final SignupRepository _signupRepository = sl<SignupRepository>();
-  UserCubit() : super(UserInitial(userProfile: UserProfile()));
+  UserCubit() : super(UserInitial(userProfile: UserProfile.empty()));
 
   void signup({UserProfile? userProfile}) async {
     emit(UserLoading(userProfile: state.userProfile));

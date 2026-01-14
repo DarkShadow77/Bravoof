@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+
+import '../../../app/styles/text_styles.dart';
+import '../../../core/constants/app_colors.dart';
 
 class ThirdScreen extends StatefulWidget {
   const ThirdScreen({super.key});
@@ -8,7 +12,8 @@ class ThirdScreen extends StatefulWidget {
   State<ThirdScreen> createState() => _ThirdScreenState();
 }
 
-class _ThirdScreenState extends State<ThirdScreen>  with SingleTickerProviderStateMixin {
+class _ThirdScreenState extends State<ThirdScreen>
+    with SingleTickerProviderStateMixin {
   // late AnimationController _controller;
   // late Animation<Offset> _leftSlide;
   // late Animation<Offset> _rightSlide;
@@ -50,43 +55,32 @@ class _ThirdScreenState extends State<ThirdScreen>  with SingleTickerProviderSta
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 0),
-      child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const SizedBox(height: 180),
-        
-        
-            Image.asset("assets/images/third_slide.png"),
-        
-        
-            const SizedBox(height: 40),
-        
-            /// Title
-            Center(
-              child: Text(
-                "Your efforts unlock \nreal perks.",
-                textAlign: TextAlign.center,
-                style: GoogleFonts.manrope(
-                  fontWeight: FontWeight.w700,
-                  fontSize: 30,
-                ),
-              ),
+      padding: EdgeInsets.symmetric(horizontal: 16.w),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          Image.asset("assets/images/third_slide.png"),
+          SizedBox(height: 90.h),
+          RichText(
+            textAlign: TextAlign.center,
+            text: TextSpan(
+              text: "Your efforts unlock\nreal perks.",
+              style: TextStyles.bigTitleBold24(context).copyWith(fontSize: 28),
             ),
-        
-            const SizedBox(height: 8),
-        
-            /// Subtitle
-            Center(
-              child: Text(
-                "Cash out with gift cards and real rewards.",
-                style: GoogleFonts.manrope(fontSize: 16, color: Colors.black54),
-              ),
+          ),
+          SizedBox(height: 16.h),
+          RichText(
+            textAlign: TextAlign.center,
+            text: TextSpan(
+              text: "Cash out with gift cards and real rewards.",
+              style: TextStyles.smallRegular12(
+                context,
+              ).copyWith(color: AppColors.grey500),
             ),
-            const SizedBox(height: 20),
-          ],
-        ),
+          ),
+          SizedBox(height: 41.h),
+        ],
       ),
     );
   }
@@ -168,11 +162,11 @@ class _ThirdScreenState extends State<ThirdScreen>  with SingleTickerProviderSta
   }
 
   Widget actionButton(
-      String text, {
-        Color? textColor,
-        Color? bgColor,
-        required VoidCallback onTap,
-      }) {
+    String text, {
+    Color? textColor,
+    Color? bgColor,
+    required VoidCallback onTap,
+  }) {
     return Expanded(
       child: GestureDetector(
         onTap: onTap,

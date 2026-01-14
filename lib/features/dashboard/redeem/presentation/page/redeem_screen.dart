@@ -63,7 +63,7 @@ class _RedeemScreenState extends State<RedeemScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: 20.h + MediaQuery.of(context).padding.top),
+                SizedBox(height: 10.h + MediaQuery.of(context).padding.top),
                 FlowvaAppBar(title: "Redeem"),
                 SizedBox(height: 12.h),
                 // Tabs

@@ -15,9 +15,10 @@ class ProfileBloc extends HydratedBloc<ProfileEvent, ProfileState> {
   Logger logger = Logger();
 
   ProfileBloc({required this.repo})
-    : super(ProfileInitialState(profile: UserProfile())) {
+    : super(ProfileInitialState(profile: UserProfile.empty())) {
     on<GetProfileEvent>(_onGetProfile);
     on<UpdateProfileEvent>(_onUpdateProfile);
+    on<UpdateCoverPicEvent>(_onUpdateCoverPic);
     on<LogoutProfileEvent>(_onLogout);
   }
 
@@ -33,7 +34,7 @@ class ProfileBloc extends HydratedBloc<ProfileEvent, ProfileState> {
 
     response.fold(
       (failure) {
-        logger.e("Failed to get Profile");
+        logger.e("Failed to get Profile $failure");
         emit(
           ProfileFailureState(
             type: ProfileType.getProfile,
@@ -99,6 +100,44 @@ class ProfileBloc extends HydratedBloc<ProfileEvent, ProfileState> {
     );
   }
 
+  Future<void> _onUpdateCoverPic(
+    UpdateCoverPicEvent event,
+    Emitter<ProfileState> emit,
+  ) async {
+    emit(
+      ProfileLoadingState(
+        type: ProfileType.updateCoverPic,
+        profile: state.profile,
+      ),
+    );
+
+    final response = await repo.updateCoverPic(imageFile: event.imageFile);
+
+    response.fold(
+      (failure) {
+        logger.e("Failed to Update Cover Pic");
+        emit(
+          ProfileFailureState(
+            type: ProfileType.updateCoverPic,
+            message: failure,
+            profile: state.profile,
+          ),
+        );
+      },
+      (user) {
+        logger.t("Cover Pic Updated  Successfully");
+        add(GetProfileEvent());
+        emit(
+          ProfileSuccessState(
+            type: ProfileType.updateCoverPic,
+            message: "Cover Pic updated successfully",
+            profile: state.profile,
+          ),
+        );
+      },
+    );
+  }
+
   Future<void> _onLogout(
     LogoutProfileEvent event,
     Emitter<ProfileState> emit,
@@ -110,7 +149,7 @@ class ProfileBloc extends HydratedBloc<ProfileEvent, ProfileState> {
 
     emit(
       ProfileInitialState(
-        profile: UserProfile(), // empty profile
+        profile: UserProfile.empty(), // empty profile
       ),
     );
   }

@@ -24,7 +24,7 @@ class _EditNameWidgetState extends State<EditNameWidget> {
   final name = TextEditingController();
   final bio = TextEditingController();
 
-  UserProfile userProfile = UserProfile();
+  UserProfile userProfile = UserProfile.empty();
   late ProfileBloc profileBloc;
 
   @override
@@ -50,10 +50,7 @@ class _EditNameWidgetState extends State<EditNameWidget> {
     return AnimatedPadding(
       duration: const Duration(milliseconds: 200),
       padding: EdgeInsets.only(
-        bottom: MediaQuery
-            .of(context)
-            .viewInsets
-            .bottom,
+        bottom: MediaQuery.of(context).viewInsets.bottom,
       ),
       child: Stack(
         children: [
@@ -71,9 +68,10 @@ class _EditNameWidgetState extends State<EditNameWidget> {
             maxChildSize: 0.9,
             builder: (ctx, scrollController) {
               return BlocListener<ProfileBloc, ProfileState>(
-                listener: (context, state) {if (state is ProfileSuccessState) {
-                  _successProfileState(context, state);
-                }
+                listener: (context, state) {
+                  if (state is ProfileSuccessState) {
+                    _successProfileState(context, state);
+                  }
                 },
                 child: ClipRRect(
                   borderRadius: const BorderRadius.vertical(

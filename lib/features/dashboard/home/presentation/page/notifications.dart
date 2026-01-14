@@ -126,7 +126,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
           else
             return ListView.separated(
               physics: BouncingScrollPhysics(),
-              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 20.h),
+              padding: EdgeInsets.symmetric(vertical: 20.h),
               itemCount: grouped.length,
               itemBuilder: (context, index) {
                 return _buildNotificationCard(
@@ -149,12 +149,12 @@ class _NotificationsPageState extends State<NotificationsPage> {
     required String month,
     required List<NotificationModel> notificationList,
   }) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          RichText(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16.w),
+          child: RichText(
             text: TextSpan(
               text: month,
               style: TextStyles.smallSemibold12(
@@ -162,22 +162,19 @@ class _NotificationsPageState extends State<NotificationsPage> {
               ).copyWith(color: AppColors.grey550),
             ),
           ),
-          SizedBox(height: 12.h),
-          ListView.separated(
-            shrinkWrap: true,
-            itemCount: notificationList.length,
-            physics: NeverScrollableScrollPhysics(),
-            padding: EdgeInsets.zero,
-            itemBuilder: (context, index) {
-              final notification = notificationList[index];
-              return NotificationCard(notification: notification);
-            },
-            separatorBuilder: (context, index) {
-              return SizedBox(height: 16.h);
-            },
-          ),
-        ],
-      ),
+        ),
+        SizedBox(height: 12.h),
+        ListView.builder(
+          shrinkWrap: true,
+          itemCount: notificationList.length,
+          physics: NeverScrollableScrollPhysics(),
+          padding: EdgeInsets.zero,
+          itemBuilder: (context, index) {
+            final notification = notificationList[index];
+            return NotificationCard(notification: notification);
+          },
+        ),
+      ],
     );
   }
 
@@ -243,65 +240,80 @@ class NotificationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      spacing: 8.w,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Container(
-          width: 8.w,
-          height: 8.h,
-          decoration: BoxDecoration(
-            color: notification.read ? AppColors.purple0 : AppColors.purple400,
-            shape: BoxShape.circle,
-          ),
-        ),
-        Container(
-          width: 32.w,
-          height: 32.h,
-          decoration: BoxDecoration(
-            color: notification.read ? AppColors.grey200 : AppColors.purple50,
-            borderRadius: BorderRadius.circular(12.r),
-          ),
-          child: Center(
-            child: RichText(
-              text: TextSpan(
-                text: "B.",
-                style: TextStyles.normalBold14(
-                  context,
-                ).copyWith(color: notification.read ? AppColors.grey500 : null),
+    return InkWell(
+      onTap: () {
+        if (!notification.read)
+          context.read<NotificationBloc>().add(
+            MarkNotificationRead(notificationId: notification.id),
+          );
+      },
+      child: Ink(
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
+        child: Row(
+          spacing: 8.w,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Container(
+              width: 8.w,
+              height: 8.h,
+              decoration: BoxDecoration(
+                color: notification.read
+                    ? AppColors.purple0
+                    : AppColors.purple400,
+                shape: BoxShape.circle,
               ),
             ),
-          ),
-        ),
-        Expanded(
-          child: Column(
-            spacing: 8.h,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              RichText(
-                text: TextSpan(
-                  text: notification.title,
-                  style: TextStyles.normalBold14(context).copyWith(
-                    color: notification.read ? AppColors.grey500 : null,
+            Container(
+              width: 32.w,
+              height: 32.h,
+              decoration: BoxDecoration(
+                color: notification.read
+                    ? AppColors.grey200
+                    : AppColors.purple50,
+                borderRadius: BorderRadius.circular(12.r),
+              ),
+              child: Center(
+                child: RichText(
+                  text: TextSpan(
+                    text: "B.",
+                    style: TextStyles.normalBold14(context).copyWith(
+                      color: notification.read ? AppColors.grey500 : null,
+                    ),
                   ),
                 ),
               ),
-              MarkdownBody(
-                data: notification.message,
-                styleSheet: MarkdownStyleSheet(
-                  p: TextStyles.smallMedium12(
-                    context,
-                  ).copyWith(color: AppColors.grey500),
-                  strong: TextStyles.smallBold12(
-                    context,
-                  ).copyWith(color: AppColors.grey500),
-                ),
+            ),
+            Expanded(
+              child: Column(
+                spacing: 8.h,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  RichText(
+                    text: TextSpan(
+                      text: notification.title,
+                      style: TextStyles.normalBold14(context).copyWith(
+                        color: notification.read ? AppColors.grey500 : null,
+                      ),
+                    ),
+                  ),
+                  MarkdownBody(
+                    data: notification.message,
+                    styleSheet: MarkdownStyleSheet(
+                      p: TextStyles.smallMedium12(
+                        context,
+                      ).copyWith(color: AppColors.grey500),
+                      strong: TextStyles.smallBold12(
+                        context,
+                      ).copyWith(color: AppColors.grey500),
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 }

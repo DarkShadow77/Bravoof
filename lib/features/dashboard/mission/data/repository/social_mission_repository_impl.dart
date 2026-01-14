@@ -11,7 +11,10 @@ class SocialMissionRepositoryImpl extends SocialMissionRepository {
   /// Fetch social mission
   Future<Either<String, List<SocialMission>>> fetchSocialMission() async {
     try {
-      final res = await supabase.from('social_missions').select();
+      final res = await supabase
+          .from('social_missions')
+          .select()
+          .order('id', ascending: true);
 
       if (res.isEmpty) {
         return Left('No social mission found');

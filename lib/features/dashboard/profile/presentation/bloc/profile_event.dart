@@ -16,4 +16,10 @@ class UpdateProfileEvent extends ProfileEvent {
   UpdateProfileEvent({required this.profile, this.imageFile});
 }
 
+class UpdateCoverPicEvent extends ProfileEvent {
+  final File imageFile;
+
+  UpdateCoverPicEvent({required this.imageFile});
+}
+
 class LogoutProfileEvent extends ProfileEvent {}

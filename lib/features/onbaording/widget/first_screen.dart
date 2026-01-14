@@ -1,36 +1,45 @@
+import 'package:flowva/app/styles/text_styles.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../core/constants/app_colors.dart';
+
 class FirstScreen extends StatelessWidget {
-  const  FirstScreen({super.key});
+  const FirstScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 0),
+      padding: EdgeInsets.symmetric(horizontal: 16.w),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          const SizedBox(height: 140),
-         Image.asset("assets/images/first_slide.png",fit: BoxFit.cover,filterQuality: FilterQuality.low,),
-          Center(
-            child: Text(
-              "Grow through small \nmissions.",
-              textAlign: TextAlign.center,
-              style: GoogleFonts.manrope(
-                fontWeight: FontWeight.w700,
-                fontSize: 30,
-              ),
+          Image.asset(
+            "assets/images/first_slide.png",
+            fit: BoxFit.cover,
+            filterQuality: FilterQuality.low,
+          ),
+          SizedBox(height: 22.h),
+          RichText(
+            textAlign: TextAlign.center,
+            text: TextSpan(
+              text: "Grow through small \nmissions.",
+              style: TextStyles.bigTitleBold24(context).copyWith(fontSize: 28),
             ),
           ),
-          // const SizedBox(height: 3),
-          Center(
-            child: Text(
-              "Level up your skills one mission at a time.",
-              style: GoogleFonts.manrope(fontSize: 16,fontWeight: FontWeight.w400, color: Colors.black54),
+          SizedBox(height: 16.h),
+          RichText(
+            textAlign: TextAlign.center,
+            text: TextSpan(
+              text: "Level up your skills one mission at a time.",
+              style: TextStyles.smallRegular12(
+                context,
+              ).copyWith(color: AppColors.grey500),
             ),
           ),
-          const SizedBox(height: 20),
+          SizedBox(height: 41.h),
         ],
       ),
     );
@@ -113,11 +122,11 @@ class FirstScreen extends StatelessWidget {
   }
 
   Widget actionButton(
-      String text, {
-        Color? textColor,
-        Color? bgColor,
-        required VoidCallback onTap,
-      }) {
+    String text, {
+    Color? textColor,
+    Color? bgColor,
+    required VoidCallback onTap,
+  }) {
     return Expanded(
       child: GestureDetector(
         onTap: onTap,

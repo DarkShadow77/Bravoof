@@ -15,7 +15,6 @@ class SkillUpRepositoryImpl extends SkillUpRepository {
     required String userId,
   }) async {
     try {
-      log("Skill Up Missions ");
       final res = await supabase
           .from('skill_up_missions')
           .select('''
@@ -48,9 +47,6 @@ class SkillUpRepositoryImpl extends SkillUpRepository {
     ''')
           .eq('skill_up_steps.skill_up_user_progress.user_id', userId)
           .eq('skill_up_steps.skill_up_step_unlocks.user_id', userId);
-
-      Logger().t("Skill Up Missions $res");
-      log("Skill Up Missions $res");
 
       if (res.isEmpty) {
         return Left('No SkillUp Mission found');

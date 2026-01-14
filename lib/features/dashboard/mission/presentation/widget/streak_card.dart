@@ -34,7 +34,7 @@ class _StreakCardState extends State<StreakCard> with UIToolMixin {
     "Progress loves consistency.",
   ];
 
-  UserProfile userProfile = UserProfile();
+  UserProfile userProfile = UserProfile.empty();
   StreakResponse streaks = StreakResponse(
     id: 0,
     userId: '',
