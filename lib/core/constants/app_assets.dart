@@ -80,4 +80,6 @@ class AssetsSvgIcons {
   static String share = "$baseSvgIconsPath/share.svg";
   static String delete = "$baseSvgIconsPath/delete.svg";
   static String mail_open = "$baseSvgIconsPath/mail_open.svg";
+  static String camera = "$baseSvgIconsPath/camera.svg";
+  static String upload = "$baseSvgIconsPath/upload.svg";
 }

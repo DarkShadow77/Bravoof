@@ -11,9 +11,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 class VerifyOtpRepository {
   final supabase = Supabase.instance.client;
   Future<Either<String, AppBaseResponse>> verifyOtp({String? otp}) async {
-    var response;
-
     try {
+      final user = supabase.auth.currentSession?.user;
       var userProfile = await Constants().getUser();
       final fileName = '${basename(userProfile['profile_image'])}';
       var res = await supabase.auth.verifyOTP(
@@ -22,14 +21,14 @@ class VerifyOtpRepository {
         type: OtpType.email,
       );
       final exists = await supabase.storage
-          .from('test-avatar')
+          .from('profile_pic')
           .list(
             path: '',
             searchOptions: SearchOptions(search: fileName),
           );
       if (exists.isEmpty) {
         await supabase.storage
-            .from('test-avatar')
+            .from('profile_pic')
             .upload(
               '$fileName',
               File(userProfile['profile_image']),
@@ -38,23 +37,24 @@ class VerifyOtpRepository {
       }
 
       final publicUrl = supabase.storage
-          .from('test-avatar')
+          .from('profile_pic')
           .getPublicUrl('$fileName');
-      if (res.user != null) {
-        response = await supabase.auth.updateUser(
-          UserAttributes(password: userProfile['pass']),
-        );
-      }
 
-      if (response.user != null) {
-        userProfile['user_id'] = response.user!.id;
+      if (user != null) {
+        if ((userProfile['pass'].toString() ?? "").isNotEmpty) {
+          await supabase.auth.updateUser(
+            UserAttributes(password: userProfile['pass']),
+          );
+        }
+
+        userProfile['user_id'] = user.id;
         userProfile['profile_image'] = publicUrl;
-        SessionManager().userIdVal = response.user!.id;
+        SessionManager().userIdVal = user.id;
         SessionManager().hasAccountVal = true;
 
         final res = await createProfile(userProfile);
 
-        await applyReferralIfAny(response.user!.id);
+        await applyReferralIfAny(user.id);
 
         if (res == res['statusCode']) return Left(res['message']);
         AppBaseResponse appBaseResponse = AppBaseResponse(status: true);
@@ -112,6 +112,7 @@ class VerifyOtpRepository {
           .select()
           .eq('user_id', data['user_id'])
           .maybeSingle();
+
       if (res != null) {
         final response = await supabase.auth.signInWithPassword(
           email: data['email'],
@@ -126,6 +127,19 @@ class VerifyOtpRepository {
           .select()
           .single();
       SessionManager().userEmailval = data['email'];
+
+      // 📨 Create notification (non-blocking)
+      String notificationTitle = "Welcome to Bravoo 🎉";
+
+      String notificationMessage =
+          "Hey there, Rockstar! You’ve just scored **50 Bravoo coins** to kick off your journey. Complete fun missions, build real tech skills and stack up even more rewards. Your adventure starts **NOW** — let’s make it even more epic! 🚀";
+      await supabase.from("notification").insert({
+        "user_id": data['user_id'],
+        "title": notificationTitle,
+        "message": notificationMessage,
+        "read": false,
+      });
+
       return response;
     } catch (e) {
       print(e);

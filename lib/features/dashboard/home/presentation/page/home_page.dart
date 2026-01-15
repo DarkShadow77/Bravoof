@@ -19,7 +19,6 @@ import 'package:hugeicons/hugeicons.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../mission/data/bloc/mission_cubit.dart';
 import '../../../mission/data/model/rewards_summary_response.dart';
-import '../../../mission/presentation/bloc/growth_mission_bloc.dart';
 import '../../../mission/presentation/widget/mission_list_title.dart';
 import '../../../nav_bar.dart';
 import '../bloc/notification_bloc.dart';
@@ -53,7 +52,6 @@ class _FlowvaHomePageState extends State<FlowvaHomePage> with UIToolMixin {
     profileBloc = context.read<ProfileBloc>();
     userProfile = profileBloc.state.profile;
     profileBloc.add(GetProfileEvent());
-    context.read<GrowthMissionBloc>().add(LoadGrowthMission());
   }
 
   @override
@@ -92,12 +90,13 @@ class _FlowvaHomePageState extends State<FlowvaHomePage> with UIToolMixin {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SizedBox(
-                        height: 10.h + MediaQuery.of(context).padding.top,
-                      ),
+                      SizedBox(height: MediaQuery.of(context).padding.top),
                       // Greeting Row
                       Padding(
-                        padding: EdgeInsets.symmetric(horizontal: 16.w),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 16.w,
+                          vertical: 10.h,
+                        ),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -166,7 +165,7 @@ class _FlowvaHomePageState extends State<FlowvaHomePage> with UIToolMixin {
                                     );
                                   },
                                   child: CachedImageRadius(
-                                    imageUrl: userProfile.profilePic ?? "",
+                                    imageUrl: userProfile.profilePic,
                                     size: 30,
                                     circle: true,
                                     fit: BoxFit.contain,
@@ -188,242 +187,18 @@ class _FlowvaHomePageState extends State<FlowvaHomePage> with UIToolMixin {
                               SizedBox(height: 18.h),
                               if (SessionManager().firstTimeUserVal ==
                                   "YES") ...[
-                                Container(
-                                  margin: EdgeInsets.symmetric(
-                                    horizontal: 16.w,
-                                  ),
-                                  padding: EdgeInsets.symmetric(
-                                    vertical: 16.h,
-                                    horizontal: 16.w,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(16.r),
-                                  ),
-                                  child: Column(
-                                    spacing: 4.h,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.stretch,
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Expanded(
-                                            child: RichText(
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                              text: TextSpan(
-                                                text:
-                                                    "Invite your friends to play with you",
-                                                style: TextStyles.normalBold14(
-                                                  context,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                          GestureDetector(
-                                            onTap: () {
-                                              setState(() {
-                                                SessionManager()
-                                                        .firstTimeUserVal =
-                                                    "NO";
-                                              });
-                                            },
-                                            behavior: HitTestBehavior.opaque,
-                                            child: SvgPicture.asset(
-                                              AssetsSvgIcons.close,
-                                              width: 14.r,
-                                              height: 14.r,
-                                              fit: BoxFit.contain,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      RichText(
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        text: TextSpan(
-                                          text:
-                                              "Get 1000 coins when you bring in your first 10 friends.",
-                                          style: TextStyles.smallMedium12(
-                                            context,
-                                          ).copyWith(color: AppColors.grey550),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
+                                InviteFriendContainer(
+                                  onTap: () {
+                                    setState(() {
+                                      SessionManager().firstTimeUserVal = "NO";
+                                    });
+                                  },
                                 ),
                                 SizedBox(height: 16.h),
                               ],
                               ToolCardCarousel(),
-                              const SizedBox(height: 20),
-                              // Progress bar
-                              Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 16.w),
-                                child: Container(
-                                  // padding: const EdgeInsets.all(2),
-                                  height: 82.h,
-                                  width: double.infinity,
-                                  clipBehavior: Clip.antiAlias,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(16.r),
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      // Left Section
-                                      Expanded(
-                                        child: Container(
-                                          padding: EdgeInsets.symmetric(
-                                            horizontal: 12.w,
-                                            vertical: 10.h,
-                                          ),
-                                          decoration: BoxDecoration(
-                                            color: AppColors.primary,
-                                          ),
-                                          child: Column(
-                                            spacing: 8.h,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              // Title + Arrow
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  Expanded(
-                                                    child: RichText(
-                                                      text: TextSpan(
-                                                        text:
-                                                            "More missions await",
-                                                        style:
-                                                            TextStyles.smallMedium12(
-                                                              context,
-                                                            ).copyWith(
-                                                              color: AppColors
-                                                                  .grey200,
-                                                            ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  RichText(
-                                                    text: TextSpan(
-                                                      children: [
-                                                        TextSpan(
-                                                          text:
-                                                              "${formatAmount(userProfile.totalPoints ?? 0)}",
-                                                          style:
-                                                              TextStyles.bodySemiBold16(
-                                                                context,
-                                                              ).copyWith(
-                                                                color: AppColors
-                                                                    .white,
-                                                              ),
-                                                        ),
-                                                        TextSpan(
-                                                          text:
-                                                              " / ${formatAmount(userProfile.basePoints ?? 0)}",
-                                                        ),
-                                                      ],
-                                                      style:
-                                                          TextStyles.smallMedium12(
-                                                            context,
-                                                          ).copyWith(
-                                                            color: AppColors
-                                                                .grey300,
-                                                          ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              // Progress Bar
-                                              GradientProgress(
-                                                height: 8,
-                                                progress:
-                                                    (userProfile.totalPoints ??
-                                                        0) /
-                                                    (userProfile.basePoints ??
-                                                        5000),
-                                              ),
-                                              // Bottom text
-                                              if ((userProfile.totalPoints ??
-                                                      0) <
-                                                  (userProfile.basePoints ?? 0))
-                                                RichText(
-                                                  maxLines: 1,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  text: TextSpan(
-                                                    text:
-                                                        "Just ${(userProfile.basePoints ?? 0) - (userProfile.totalPoints ?? 0)}  more till your next reward! ✨",
-                                                    style:
-                                                        TextStyles.cardSemibold10(
-                                                          context,
-                                                        ).copyWith(
-                                                          color:
-                                                              AppColors.grey200,
-                                                        ),
-                                                  ),
-                                                )
-                                              else
-                                                RichText(
-                                                  maxLines: 1,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  text: TextSpan(
-                                                    text:
-                                                        "Congratulations on getting to 5000 coins!!",
-                                                    style:
-                                                        TextStyles.cardSemibold10(
-                                                          context,
-                                                        ).copyWith(
-                                                          color:
-                                                              AppColors.grey200,
-                                                        ),
-                                                  ),
-                                                ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                      // Right Section - Circular Rewards
-                                      Container(
-                                        color: AppColors.white50,
-                                        padding: EdgeInsets.symmetric(
-                                          vertical: 12.h,
-                                          horizontal: 12.w,
-                                        ),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Image.asset(
-                                              "assets/images/one_50.png",
-                                              height: 30,
-                                            ),
-                                            RichText(
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                              text: TextSpan(
-                                                text: "Redeem",
-                                                style:
-                                                    TextStyles.normalMedium14(
-                                                      context,
-                                                    ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
+                              SizedBox(height: 20.h),
+                              MissionAwaitWidget(),
                               SizedBox(height: 20.h),
                               Padding(
                                 padding: EdgeInsets.symmetric(horizontal: 16.w),
@@ -669,6 +444,199 @@ class _FlowvaHomePageState extends State<FlowvaHomePage> with UIToolMixin {
       ),
     );
   }
+}
 
-  // Missions state
+class InviteFriendContainer extends StatelessWidget {
+  const InviteFriendContainer({super.key, required this.onTap});
+
+  final VoidCallback onTap;
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.symmetric(horizontal: 16.w),
+      padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 16.w),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16.r),
+      ),
+      child: Column(
+        spacing: 4.h,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: RichText(
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  text: TextSpan(
+                    text: "Invite your friends to play with you",
+                    style: TextStyles.normalBold14(context),
+                  ),
+                ),
+              ),
+              GestureDetector(
+                onTap: onTap,
+                behavior: HitTestBehavior.opaque,
+                child: SvgPicture.asset(
+                  AssetsSvgIcons.close,
+                  width: 14.r,
+                  height: 14.r,
+                  fit: BoxFit.contain,
+                ),
+              ),
+            ],
+          ),
+          RichText(
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            text: TextSpan(
+              text: "Get 1000 coins when you bring in your first 10 friends.",
+              style: TextStyles.smallMedium12(
+                context,
+              ).copyWith(color: AppColors.grey550),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class MissionAwaitWidget extends StatelessWidget {
+  const MissionAwaitWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<ProfileBloc, ProfileState>(
+      builder: (context, state) {
+        final profile = state.profile;
+        return Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16.w),
+          child: Container(
+            // padding: const EdgeInsets.all(2),
+            height: 82.h,
+            width: double.infinity,
+            clipBehavior: Clip.antiAlias,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16.r),
+            ),
+            child: Row(
+              children: [
+                // Left Section
+                Expanded(
+                  child: Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 12.w,
+                      vertical: 10.h,
+                    ),
+                    decoration: BoxDecoration(color: AppColors.primary),
+                    child: Column(
+                      spacing: 8.h,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        // Title + Arrow
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: RichText(
+                                text: TextSpan(
+                                  text: "More missions await",
+                                  style: TextStyles.smallMedium12(
+                                    context,
+                                  ).copyWith(color: AppColors.grey200),
+                                ),
+                              ),
+                            ),
+                            RichText(
+                              text: TextSpan(
+                                children: [
+                                  TextSpan(
+                                    text:
+                                        "${formatAmount(profile.totalPoints)}",
+                                    style: TextStyles.bodySemiBold16(
+                                      context,
+                                    ).copyWith(color: AppColors.white),
+                                  ),
+                                  TextSpan(
+                                    text:
+                                        " / ${formatAmount(profile.basePoints)}",
+                                  ),
+                                ],
+                                style: TextStyles.smallMedium12(
+                                  context,
+                                ).copyWith(color: AppColors.grey300),
+                              ),
+                            ),
+                          ],
+                        ),
+                        // Progress Bar
+                        GradientProgress(
+                          height: 8,
+                          progress:
+                              (profile.totalPoints) / (profile.basePoints),
+                        ),
+                        // Bottom text
+                        if ((profile.totalPoints) < (profile.basePoints))
+                          RichText(
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            text: TextSpan(
+                              text:
+                                  "Just ${(profile.basePoints) - (profile.totalPoints)} "
+                                  " more till your next reward! ✨",
+                              style: TextStyles.cardSemibold10(
+                                context,
+                              ).copyWith(color: AppColors.grey200),
+                            ),
+                          )
+                        else
+                          RichText(
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            text: TextSpan(
+                              text:
+                                  "Congratulations on getting to 5000 coins!!",
+                              style: TextStyles.cardSemibold10(
+                                context,
+                              ).copyWith(color: AppColors.grey200),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                ),
+                // Right Section - Circular Rewards
+                Container(
+                  color: AppColors.white50,
+                  padding: EdgeInsets.symmetric(
+                    vertical: 12.h,
+                    horizontal: 12.w,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset("assets/images/one_50.png", height: 30),
+                      RichText(
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        text: TextSpan(
+                          text: "Redeem",
+                          style: TextStyles.normalMedium14(context),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
 }

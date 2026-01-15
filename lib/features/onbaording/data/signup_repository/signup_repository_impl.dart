@@ -176,7 +176,7 @@ class SignupRepositoryImpl extends SignupRepository {
 
     try {
       await supabase.storage
-          .from('test-avatar')
+          .from('profile_pic')
           .upload(
             '$fileName',
             imageFile,
@@ -185,7 +185,7 @@ class SignupRepositoryImpl extends SignupRepository {
 
       // Get the public URL for the image
       final publicUrl = supabase.storage
-          .from('test-avatar')
+          .from('profile_pic')
           .getPublicUrl('$fileName');
       return Right(publicUrl);
     } catch (e) {

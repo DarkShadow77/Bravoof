@@ -16,6 +16,7 @@ import '../../../../../app/styles/text_styles.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../home/presentation/widget/referral_widget.dart';
 import '../bloc/profile_bloc.dart';
+import '../widgets/edit_cover_pic_modal.dart';
 
 class ProfilePage extends StatefulWidget {
   ProfilePage({super.key});
@@ -73,26 +74,27 @@ class _ProfilePageState extends State<ProfilePage> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        leading: Padding(
+        automaticallyImplyLeading: false,
+        titleSpacing: 12.w,
+        title: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8.0),
           child: Row(
+            spacing: 8.w,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               GestureDetector(
                 onTap: () => Navigator.pop(context),
                 child: const Icon(Icons.close, size: 25),
               ),
-              SizedBox(width: 8),
-              Text(
-                "Profile",
-                style: GoogleFonts.manrope(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w600,
+              RichText(
+                text: TextSpan(
+                  text: "Profile",
+                  style: TextStyles.titleMedium20(context),
                 ),
               ),
             ],
           ),
         ),
-        leadingWidth: 120,
         actions: [
           GestureDetector(
             onTap: () => Navigator.push(
@@ -104,7 +106,7 @@ class _ProfilePageState extends State<ProfilePage> {
               child: HugeIcon(
                 icon: HugeIcons.strokeRoundedSettings01,
                 strokeWidth: 2.5,
-                size: 25,
+                size: 24.sp,
               ),
             ),
           ),
@@ -115,58 +117,106 @@ class _ProfilePageState extends State<ProfilePage> {
         builder: (context, state) {
           userProfile = state.profile;
           return SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
+            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Profile Section
-                Container(
-                  height: 85,
-                  width: 85,
+                SizedBox(
+                  height: 160.h,
+                  width: double.infinity,
                   child: Stack(
                     children: [
-                      CachedImageRadius(
-                        imageUrl: userProfile.profilePic ?? "",
-                        size: 71.r,
-                        circle: true,
+                      CachedImageSize(
+                        imageUrl: userProfile.coverPic,
                         fit: BoxFit.fill,
-                        color: AppColors.grey300.withValues(alpha: .5),
-                      ),
-                      Positioned(
-                        top: 2,
-                        // bottom: -13,
-                        right: 10,
-                        child: GestureDetector(
-                          onTap: () => Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (ctx) => EditProfilePage(),
-                            ),
+                        width: double.infinity,
+                        height: 140.h,
+                        borderRadius: 12,
+                        color: AppColors.grey200,
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 12.w,
+                            vertical: 12.h,
                           ),
-                          child: Container(
-                            padding: EdgeInsets.all(5),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(15),
-                              border: Border.all(
-                                color: Colors.black.withValues(alpha: 0.2),
+                          child: Align(
+                            alignment: Alignment.topRight,
+                            child: GestureDetector(
+                              onTap: () => editCoverPicModal(),
+                              behavior: HitTestBehavior.opaque,
+                              child: Container(
+                                height: 24.h,
+                                width: 24.w,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.white,
+                                  border: Border.all(color: AppColors.black15),
+                                ),
+                                child: Center(
+                                  child: HugeIcon(
+                                    icon: HugeIcons.strokeRoundedEdit03,
+                                    size: 12.sp,
+                                  ),
+                                ),
                               ),
-                            ),
-                            child: HugeIcon(
-                              icon: HugeIcons.strokeRoundedEdit03,
-                              strokeWidth: 2.5,
-                              size: 12,
                             ),
                           ),
                         ),
                       ),
-                      Positioned(
-                        // top: 10,
-                        bottom: -5,
-                        right: 4,
-                        child: Image.asset(
-                          "assets/images/badge.png",
-                          height: 42,
+                      Align(
+                        alignment: Alignment.bottomLeft,
+                        child: Container(
+                          height: 80.h,
+                          width: 80.w,
+                          child: Stack(
+                            children: [
+                              CachedImageRadius(
+                                imageUrl: userProfile.profilePic,
+                                size: 71.r,
+                                circle: true,
+                                fit: BoxFit.fill,
+                                color: AppColors.grey200,
+                              ),
+                              Align(
+                                alignment: Alignment.topRight,
+                                child: GestureDetector(
+                                  onTap: () => Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (ctx) => EditProfilePage(),
+                                    ),
+                                  ),
+                                  behavior: HitTestBehavior.opaque,
+                                  child: Container(
+                                    height: 24.h,
+                                    width: 24.w,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: Colors.white,
+                                      border: Border.all(
+                                        color: AppColors.black15,
+                                      ),
+                                    ),
+                                    child: Center(
+                                      child: HugeIcon(
+                                        icon: HugeIcons.strokeRoundedEdit03,
+                                        size: 12.sp,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Align(
+                                alignment: Alignment.bottomRight,
+                                child: CachedImageRadius(
+                                  imageUrl: userProfile.flag,
+                                  circle: true,
+                                  size: 30,
+                                  color: AppColors.grey200,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ],

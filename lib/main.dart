@@ -9,6 +9,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -41,18 +42,12 @@ void main() async {
     widgetsBinding: WidgetsFlutterBinding.ensureInitialized(),
   );
 
-  // try {
-  //   await dotenv.load(fileName: ".env"); // Load environment variables
-  //   print('initialized');
-  // } catch (e) {
-  //   throw Exception('Error loading .env file: $e'); // Print error if any
-  // }
+  //Initialize dotenv for environment variables
+  await dotenv.load(fileName: ".env.development");
 
   await Supabase.initialize(
-    // url: "https://kjdgnwokoxaxwfpvpyru.supabase.co",
-    url: "https://urdebuxbzqiwqgyzrrmy.supabase.co",
-    anonKey:
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVyZGVidXhienFpd3FneXpycm15Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA0NDgzMzEsImV4cCI6MjA3NjAyNDMzMX0.sX0a4xtEfHAHeSSCReY-9JUGrHxZwYLe0nYKsbTdRpE",
+    url: dotenv.env["BASE_URL"] ?? "",
+    anonKey: dotenv.env["ANON_KEY"] ?? "",
   );
 
   setupAuthListener();

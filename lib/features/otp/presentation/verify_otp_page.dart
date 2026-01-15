@@ -1,5 +1,6 @@
-import 'dart:developer';
-
+import 'package:flowva/app/styles/text_styles.dart';
+import 'package:flowva/core/constants/app_colors.dart';
+import 'package:flowva/core/constants/fonts.dart';
 import 'package:flowva/features/common/app_enum.dart';
 import 'package:flowva/features/common/flowva_button.dart';
 import 'package:flowva/features/common/ui_tool_mixin/ui_tool_mixin.dart';
@@ -8,6 +9,7 @@ import 'package:flowva/features/otp/data/bloc/verify_otp_cubit.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:pinput/pinput.dart';
 
@@ -34,6 +36,17 @@ class _VerifyOtpPageState extends State<VerifyOtpPage> with UIToolMixin {
 
   @override
   Widget build(BuildContext context) {
+    final defaultPinTheme = PinTheme(
+      width: 75.w,
+      height: 50.h,
+      textStyle: TextStyles.h2Medium32(
+        context,
+      ).copyWith(color: AppColors.grey300, fontFamily: AppFonts.baloo),
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(12.r),
+      ),
+    );
     return Scaffold(
       body: Container(
         decoration: const BoxDecoration(
@@ -47,45 +60,41 @@ class _VerifyOtpPageState extends State<VerifyOtpPage> with UIToolMixin {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: 100),
-              Text(
-                "Check your email",
-                style: GoogleFonts.dmSans(
-                  fontSize: 24,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.black,
+              SizedBox(height: 100.h),
+              RichText(
+                text: TextSpan(
+                  text: "Check your email",
+                  style: TextStyles.bigTitleSemiBold24(
+                    context,
+                  ).copyWith(fontFamily: AppFonts.baloo2),
                 ),
               ),
-              const SizedBox(height: 8),
-              // Subtitle
-              Text(
-                "Enter the 6-digit code we sent to your inbox",
-                style: GoogleFonts.dmSans(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w300,
-                  color: Color(0xFF767676),
+              SizedBox(height: 4.h),
+              RichText(
+                text: TextSpan(
+                  text: "Enter the 6-digit code we sent to your inbox",
+                  style: TextStyles.normalRegular14(
+                    context,
+                  ).copyWith(color: AppColors.grey500),
                 ),
               ),
-              SizedBox(height: 20),
+              SizedBox(height: 20.h),
               Pinput(
                 controller: _pinController,
                 length: 6,
                 defaultPinTheme: defaultPinTheme,
                 focusedPinTheme: defaultPinTheme.copyWith(
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.5),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: const Color(0xFF0D1E63),
-                      width: 1,
-                    ),
+                    color: AppColors.white50,
+                    borderRadius: BorderRadius.circular(12.r),
+                    border: Border.all(color: AppColors.primary, width: 1.w),
                   ),
                 ),
                 obscureText: false,
                 showCursor: true,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
               ),
-              SizedBox(height: 40),
+              SizedBox(height: 40.h),
               Center(
                 child: RichText(
                   text: TextSpan(
@@ -107,8 +116,12 @@ class _VerifyOtpPageState extends State<VerifyOtpPage> with UIToolMixin {
                           ..onTap = () async {
                             var userProfile = await Constants().getUser();
                             final email = userProfile['email'];
-
-                            log("Resend Otp Email: $email");
+                            showMessage(
+                              "Code resent",
+                              context,
+                              color: Colors.white,
+                              styleColor: Colors.black,
+                            );
                             verifyOtpCubit.resendOtp(email: email);
                           },
                       ),
@@ -166,18 +179,4 @@ class _VerifyOtpPageState extends State<VerifyOtpPage> with UIToolMixin {
       ),
     );
   }
-
-  final defaultPinTheme = PinTheme(
-    width: 75,
-    height: 50,
-    textStyle: GoogleFonts.poppins(
-      fontSize: 32,
-      fontWeight: FontWeight.w600,
-      color: Colors.black.withOpacity(0.2),
-    ),
-    decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(12),
-    ),
-  );
 }

@@ -124,6 +124,7 @@ flutter:
       - assets/images/svg/navbar/
       - assets/avatar/
       - assets/logo/
+      - .env.development
 
   fonts:
     - family: Manrope

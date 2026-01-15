@@ -1,7 +1,6 @@
 import 'package:flowva/app/styles/text_styles.dart';
 import 'package:flowva/app/view/widgets/cached_image_widget.dart';
 import 'package:flowva/core/constants/app_assets.dart';
-import 'package:flowva/features/dashboard/home/data/model/campaign_response.dart';
 import 'package:flowva/features/dashboard/home/data/model/spotlight_model.dart';
 import 'package:flowva/features/dashboard/home/presentation/bloc/home_cubit.dart';
 import 'package:flutter/material.dart';
@@ -23,31 +22,30 @@ class ToolCardCarousel extends StatefulWidget {
 
 class _ToolCardCarouselState extends State<ToolCardCarousel> {
   final _pageController = PageController(viewportFraction: 1);
-  late HomeCubit homeCubit;
-  List<CampaignModel> campaign = [];
-
-  @override
-  void initState() {
-    super.initState();
-    homeCubit = HomeCubit();
-    campaign = homeCubit.state.campaign;
-
-    homeCubit.fetchSpotlight();
-
-    _pageController.addListener(() {
-      setState(() {
-        _currentPage = _pageController.page!;
-      });
-    });
-  }
 
   double _currentPage = 0;
   int currentPage = 0;
 
   @override
+  void initState() {
+    super.initState();
+    _pageController.addListener(() {
+      setState(() {
+        _currentPage = _pageController.page!;
+      });
+    });
+    _fetchDetails();
+  }
+
+  @override
   void dispose() {
     _pageController.dispose();
     super.dispose();
+  }
+
+  _fetchDetails() {
+    BlocProvider.of<HomeCubit>(context).fetchCampaigns();
+    BlocProvider.of<HomeCubit>(context).fetchSpotlight();
   }
 
   @override
@@ -66,10 +64,10 @@ class _ToolCardCarouselState extends State<ToolCardCarousel> {
               scrollDirection: Axis.horizontal,
               itemCount: carousel.length,
               onPageChanged: (index) {
+                _fetchDetails();
                 setState(() {
                   currentPage = index;
                 });
-                homeCubit.fetchSpotlight();
               },
               itemBuilder: (context, index) {
                 double scaleFactor = .8;
@@ -143,13 +141,13 @@ class _ToolCardCarouselState extends State<ToolCardCarousel> {
     );
   }
 
-  List<Widget?> get carousel => [ReferCampaign(), SpotlightCard(), QuoteCard()];
+  List<Widget> get carousel => [ReferCampaign(), SpotlightCard(), QuoteCard()];
 
   Widget _buildToolCard(int index) {
     return Container(
       // height: 240,
       width: double.infinity,
-      child: Stack(children: [?carousel[index]]),
+      child: carousel[index],
     );
   }
 }
