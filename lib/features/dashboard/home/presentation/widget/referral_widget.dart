@@ -174,222 +174,233 @@ class ReferralCard extends StatelessWidget {
               ),
             ],
           ),
-          child: GestureDetector(
-            onTap: () {
-              Clipboard.setData(
-                ClipboardData(
-                  text: referralMessage(userProfile.referralCode ?? ""),
-                ),
-              );
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('Referral link copied to clipboard!'),
-                  behavior: SnackBarBehavior.floating,
-                  duration: const Duration(seconds: 2),
-                ),
-              );
-            },
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SizedBox(height: 20.h),
-                Row(
-                  spacing: 8.w,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              GestureDetector(
+                onTap: () {
+                  Clipboard.setData(
+                    ClipboardData(
+                      text: referralMessage(userProfile.referralCode),
+                    ),
+                  );
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Referral link copied to clipboard!'),
+                      behavior: SnackBarBehavior.floating,
+                      duration: const Duration(seconds: 2),
+                    ),
+                  );
+                },
+                behavior: HitTestBehavior.opaque,
+                child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    RichText(
-                      text: TextSpan(
-                        text: 'Your Referral Link',
-                        style: TextStyles.normalSemibold14(context),
-                      ),
-                    ),
-                    SvgPicture.asset(
-                      AssetsSvgIcons.copy,
-                      height: 12.r,
-                      width: 12.r,
-                      fit: BoxFit.contain,
-                    ),
-                  ],
-                ),
-                SizedBox(height: 10.h),
-                // Referral link pill
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Flexible(
-                      child: Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 10.w,
-                          vertical: 12.h,
+                    SizedBox(height: 20.h),
+                    Row(
+                      spacing: 8.w,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        RichText(
+                          text: TextSpan(
+                            text: 'Your Referral Link',
+                            style: TextStyles.normalSemibold14(context),
+                          ),
                         ),
-                        margin: EdgeInsets.symmetric(horizontal: 10.w),
-                        decoration: BoxDecoration(
-                          color: AppColors.white,
-                          borderRadius: BorderRadius.circular(28.r),
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppColors.primary15,
-                              blurRadius: 12.r,
-                              offset: const Offset(0, 4),
+                        SvgPicture.asset(
+                          AssetsSvgIcons.copy,
+                          height: 12.r,
+                          width: 12.r,
+                          fit: BoxFit.contain,
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 10.h),
+                    // Referral link pill
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Flexible(
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 10.w,
+                              vertical: 12.h,
                             ),
-                          ],
-                        ),
-                        child: Row(
-                          spacing: 8.w,
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.link, size: 18.sp, color: kPurple),
-                            Flexible(
-                              child: RichText(
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                text: TextSpan(
-                                  text:
-                                      'https://app.joinbravoo.com?ref=${userProfile.referralCode}',
-                                  style: TextStyles.normalSemibold14(
-                                    context,
-                                  ).copyWith(color: AppColors.primary),
+                            margin: EdgeInsets.symmetric(horizontal: 10.w),
+                            decoration: BoxDecoration(
+                              color: AppColors.white,
+                              borderRadius: BorderRadius.circular(28.r),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: AppColors.primary15,
+                                  blurRadius: 12.r,
+                                  offset: const Offset(0, 4),
                                 ),
-                              ),
+                              ],
                             ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 20.h),
-                Container(
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: AppColors.white,
-                    borderRadius: BorderRadius.circular(18.r),
-                    border: Border.all(width: 1.5.r, color: AppColors.black05),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColors.grey200.withValues(alpha: .1),
-                        blurRadius: 4.r,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                  ),
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 16.w,
-                    vertical: 16.h,
-                  ),
-                  child: Column(
-                    children: [
-                      if (share)
-                        IconTextButton(
-                          onPressed: () => SharePlus.instance.share(
-                            ShareParams(
-                              text: referralMessage(
-                                userProfile.referralCode ?? "",
-                              ),
+                            child: Row(
+                              spacing: 8.w,
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.link, size: 18.sp, color: kPurple),
+                                Flexible(
+                                  child: RichText(
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    text: TextSpan(
+                                      text:
+                                          'https://app.joinbravoo.com?ref=${userProfile.referralCode}',
+                                      style: TextStyles.normalSemibold14(
+                                        context,
+                                      ).copyWith(color: AppColors.primary),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                          text: "Share Referral Code",
-                          color: AppColors.black,
-                          textColor: AppColors.white,
-                          icon: AssetsSvgIcons.share,
-                        )
-                      else
-                        IconTextButton(
-                          onPressed: () => Navigator.push(
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 20.h),
+                  ],
+                ),
+              ),
+              Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: AppColors.white,
+                  borderRadius: BorderRadius.circular(18.r),
+                  border: Border.all(width: 1.5.r, color: AppColors.black05),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.grey200.withValues(alpha: .1),
+                      blurRadius: 4.r,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+                child: Column(
+                  children: [
+                    if (share)
+                      IconTextButton(
+                        onPressed: () => SharePlus.instance.share(
+                          ShareParams(
+                            text: referralMessage(
+                              userProfile.referralCode ?? "",
+                            ),
+                          ),
+                        ),
+                        text: "Share Referral Code",
+                        color: AppColors.black,
+                        textColor: AppColors.white,
+                        icon: AssetsSvgIcons.share,
+                      )
+                    else
+                      IconTextButton(
+                        onPressed: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (ctx) => InviteAndEarnPage(),
+                          ),
+                        ),
+                        text: "Invite Friends",
+                        color: AppColors.black,
+                        textColor: AppColors.white,
+                        icon: AssetsSvgIcons.invite,
+                      ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: 16.h),
+                      child: Divider(height: 1.h, color: AppColors.black10),
+                    ),
+                    // Progress row
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        // coin circle
+                        Image.asset("assets/images/one_50.png", height: 50),
+                        const SizedBox(width: 12),
+                        // center column with next unlock and progress
+                        Expanded(
+                          child: Column(
+                            spacing: 2.h,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'First 10 referrals :',
+                                style: GoogleFonts.manrope(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400,
+                                  color: Colors.black87,
+                                ),
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  RichText(
+                                    text: TextSpan(
+                                      children: [
+                                        TextSpan(
+                                          text:
+                                              "${(((userProfile.referralCount ?? 0) > 10 ? 10 : userProfile.referralCount) ?? 0) * 100}",
+                                          style: TextStyles.bodySemiBold16(
+                                            context,
+                                          ),
+                                        ),
+                                        TextSpan(text: "/1000"),
+                                      ],
+                                      style: TextStyles.smallMedium12(
+                                        context,
+                                      ).copyWith(color: AppColors.grey550),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              GradientProgress(
+                                height: 8.h,
+                                progress: (userProfile.referralCount ?? 0) / 10,
+                              ),
+                            ],
+                          ),
+                        ),
+                        // right fraction
+                      ],
+                    ),
+                    SizedBox(height: 20),
+                    // you referred row
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          child: Row(
+                            spacing: 4.w,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              RichText(
+                                text: TextSpan(
+                                  text: 'You referred',
+                                  style: TextStyles.smallSemibold12(context),
+                                ),
+                              ),
+                              Icon(
+                                Icons.info_outline_rounded,
+                                color: AppColors.grey400,
+                                size: 16.sp,
+                              ),
+                            ],
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () => Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (ctx) => InviteAndEarnPage(),
                             ),
                           ),
-                          text: "Invite Friends",
-                          color: AppColors.black,
-                          textColor: AppColors.white,
-                          icon: AssetsSvgIcons.invite,
-                        ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(vertical: 16.h),
-                        child: Divider(height: 1.h, color: AppColors.black10),
-                      ),
-                      // Progress row
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          // coin circle
-                          Image.asset("assets/images/one_50.png", height: 50),
-                          const SizedBox(width: 12),
-                          // center column with next unlock and progress
-                          Expanded(
-                            child: Column(
-                              spacing: 2.h,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'First 10 referrals :',
-                                  style: GoogleFonts.manrope(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w400,
-                                    color: Colors.black87,
-                                  ),
-                                ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    RichText(
-                                      text: TextSpan(
-                                        children: [
-                                          TextSpan(
-                                            text:
-                                                "${(((userProfile.referralCount ?? 0) > 10 ? 10 : userProfile.referralCount) ?? 0) * 100}",
-                                            style: TextStyles.bodySemiBold16(
-                                              context,
-                                            ),
-                                          ),
-                                          TextSpan(text: "/1000"),
-                                        ],
-                                        style: TextStyles.smallMedium12(
-                                          context,
-                                        ).copyWith(color: AppColors.grey550),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                GradientProgress(
-                                  height: 8.h,
-                                  progress:
-                                      (userProfile.referralCount ?? 0) / 10,
-                                ),
-                              ],
-                            ),
-                          ),
-                          // right fraction
-                        ],
-                      ),
-                      SizedBox(height: 20),
-                      // you referred row
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Expanded(
-                            child: Row(
-                              spacing: 4.w,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                RichText(
-                                  text: TextSpan(
-                                    text: 'You referred',
-                                    style: TextStyles.smallSemibold12(context),
-                                  ),
-                                ),
-                                Icon(
-                                  Icons.info_outline_rounded,
-                                  color: AppColors.grey400,
-                                  size: 16.sp,
-                                ),
-                              ],
-                            ),
-                          ),
-                          Row(
+                          behavior: HitTestBehavior.opaque,
+                          child: Row(
                             spacing: 4.w,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
@@ -407,13 +418,13 @@ class ReferralCard extends StatelessWidget {
                               ),
                             ],
                           ),
-                        ],
-                      ),
-                    ],
-                  ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         );
       },

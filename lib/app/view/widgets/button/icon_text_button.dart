@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:inner_shadow_container/inner_shadow_container.dart';
 
 import '../../../../core/constants/app_colors.dart';
+import '../../../../features/common/app_enum.dart';
 import '../../../styles/text_styles.dart';
 
 class IconTextButton extends StatelessWidget {
@@ -21,7 +22,9 @@ class IconTextButton extends StatelessWidget {
     this.innerShadow,
     this.height,
     this.textSize,
+    this.iconSize = 16,
     this.spacing = 8,
+    this.buttonState = AppButtonState.idle,
   });
 
   final VoidCallback onPressed;
@@ -36,7 +39,9 @@ class IconTextButton extends StatelessWidget {
   final Color? innerShadow;
   final double? height;
   final double? textSize;
+  final double iconSize;
   final double spacing;
+  final AppButtonState buttonState;
 
   @override
   Widget build(BuildContext context) {
@@ -91,33 +96,44 @@ class IconTextButton extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                ?iconWidget,
-                if (icon != null) ...[
-                  SvgPicture.asset(
-                    icon!,
-                    width: 16.w,
-                    height: 16.h,
-                    fit: BoxFit.contain,
-                    colorFilter: textColor != null
-                        ? ColorFilter.mode(textColor!, BlendMode.srcIn)
-                        : null,
-                  ),
-                ],
-                Flexible(
-                  child: RichText(
-                    maxLines: 1,
-                    textAlign: TextAlign.center,
-                    overflow: TextOverflow.ellipsis,
-                    text: TextSpan(
-                      text: text,
-                      style: TextStyles.normalBold14(context).copyWith(
-                        color: textColor,
-                        fontSize: textSize?.sp,
-                        fontFamily: fontFamily,
+                if (buttonState == AppButtonState.loading)
+                  SizedBox(
+                    height: 20.h,
+                    width: 20.w,
+                    child: CircularProgressIndicator(
+                      color: textColor ?? AppColors.black,
+                      strokeWidth: 2,
+                    ),
+                  )
+                else ...[
+                  ?iconWidget,
+                  if (icon != null) ...[
+                    SvgPicture.asset(
+                      icon!,
+                      width: iconSize.w,
+                      height: iconSize.h,
+                      fit: BoxFit.contain,
+                      colorFilter: textColor != null
+                          ? ColorFilter.mode(textColor!, BlendMode.srcIn)
+                          : null,
+                    ),
+                  ],
+                  Flexible(
+                    child: RichText(
+                      maxLines: 1,
+                      textAlign: TextAlign.center,
+                      overflow: TextOverflow.ellipsis,
+                      text: TextSpan(
+                        text: text,
+                        style: TextStyles.normalBold14(context).copyWith(
+                          color: textColor,
+                          fontSize: textSize?.sp,
+                          fontFamily: fontFamily,
+                        ),
                       ),
                     ),
                   ),
-                ),
+                ],
               ],
             ),
           ),

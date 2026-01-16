@@ -76,9 +76,7 @@ class ProfileRepositoryImpl extends ProfileRepository {
     }
   }
 
-  Future<Either<String, UserProfile>> updateCoverPic({
-    required File imageFile,
-  }) async {
+  Future<Either<String, void>> updateCoverPic({required File imageFile}) async {
     final token =
         Supabase.instance.client.auth.currentSession?.accessToken ?? "";
     final formData = FormData.fromMap({
@@ -88,24 +86,17 @@ class ProfileRepositoryImpl extends ProfileRepository {
       ),
     });
 
-    final response = await ApiService.instance!.postRequestHandler(
+    final response = await ApiService.instance!.postRequest(
       "functions/v1/update-cover-pic",
       formData,
       accessToken: token,
       apiKey: dotenv.env["ANON_KEY"] ?? "",
-      transform: (dynamic res) {
-        return UserProfile.fromJson(res);
-      },
     );
 
     Logger().d("Update Cover Pic Response $response");
 
     if (response.responseSuccessful == true) {
-      final updatedUserProfile = response.responseBody!;
-
-      SessionManager().pointsVal = updatedUserProfile.totalPoints;
-      SessionManager().jackpotVal = updatedUserProfile.spins;
-      return Right(updatedUserProfile);
+      return Right(null);
     } else {
       return Left(response.responseMessage ?? "Failed to Update Cover Pic");
     }

@@ -222,6 +222,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     ],
                   ),
                 ),
+                SizedBox(height: 20.h),
                 RichText(
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -238,7 +239,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     style: TextStyles.smallMedium12(context, opacity: .5),
                   ),
                 ),
-                SizedBox(height: 20.h),
+                SizedBox(height: 25.h),
                 Container(
                   // width: double.infinity,
                   width: 200,
@@ -279,7 +280,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 30),
+                 SizedBox(height: 30.h),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [

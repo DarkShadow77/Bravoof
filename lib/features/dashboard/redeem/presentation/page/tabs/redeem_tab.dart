@@ -5,7 +5,6 @@ import 'package:flowva/core/constants/app_assets.dart';
 import 'package:flowva/core/constants/app_colors.dart';
 import 'package:flowva/core/constants/fonts.dart';
 import 'package:flowva/core/utils/helpers.dart';
-import 'package:flowva/features/common/flowva_button.dart';
 import 'package:flowva/features/dashboard/earn/presentation/pages/invite_earn.dart';
 import 'package:flowva/features/dashboard/earn/presentation/pages/jackpot_page.dart';
 import 'package:flowva/features/dashboard/earn/presentation/widgets/referr_campaign.dart';
@@ -15,7 +14,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../../../app/view/widgets/loading/outer_loading.dart';
@@ -32,11 +30,155 @@ class RedeemTab extends StatefulWidget {
 
 class _RedeemTabState extends State<RedeemTab>
     with SingleTickerProviderStateMixin, UIToolMixin {
-  // late TabController _tabController;
   final _pageController = PageController(initialPage: 0);
-  double _pageHeight = 300;
+
+  double _pageHeight = 350;
   int _currentPage = 0;
 
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          SizedBox(height: 20.h),
+          ReferCampaign(transparent: true),
+
+          SizedBox(height: 20.h),
+          // 💡 Info Box
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+              decoration: BoxDecoration(
+                color: AppColors.white50,
+                borderRadius: BorderRadius.circular(8.r),
+              ),
+              child: Row(
+                spacing: 8.w,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(Icons.info_outline, color: AppColors.black, size: 18.sp),
+                  Expanded(
+                    child: Column(
+                      spacing: 8.h,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        RichText(
+                          text: TextSpan(
+                            text: 'Keep engaging to unlock more rewards',
+                            style: TextStyles.normalBold14(context),
+                          ),
+                        ),
+                        TextButton(
+                          style: TextButton.styleFrom(
+                            padding: EdgeInsets.zero,
+                            minimumSize: Size.zero,
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          ),
+                          onPressed: () {},
+                          child: RichText(
+                            text: TextSpan(
+                              text: 'Refer more users to get more spin',
+                              style: TextStyles.smallSemibold12(context)
+                                  .copyWith(
+                                    color: AppColors.primary,
+                                    decoration: TextDecoration.underline,
+                                  ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          SizedBox(height: 24.h),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              _buildTabTitle(context, index: 0, text: 'JACKPOT & GIVEAWAYS'),
+              _buildTabTitle(context, index: 1, text: 'GIFTS & VIRTUAL CARDS'),
+            ],
+          ),
+          SizedBox(height: 10.h),
+          // 💰 Jackpot Cards
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+            height: _pageHeight.h,
+            child: PageView(
+              controller: _pageController,
+              onPageChanged: (index) {
+                print(index);
+                setState(() {
+                  _currentPage = index;
+                  // 👇 set different heights for different pages
+                  _pageHeight = index == 0
+                      ? 350
+                      : (MediaQuery.of(context).size.height * 0.7);
+                });
+              },
+              children: [JackpotCard(), RewardCard()],
+            ),
+          ),
+          SizedBox(height: 10.h + MediaQuery.of(context).padding.bottom),
+        ],
+      ),
+    );
+  }
+
+  Expanded _buildTabTitle(
+    BuildContext context, {
+    required String text,
+    required int index,
+  }) {
+    return Expanded(
+      child: Column(
+        spacing: 4.h,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          GestureDetector(
+            onTap: () {
+              _pageController.jumpToPage(index);
+              print(_pageHeight);
+            },
+            child: RichText(
+              text: TextSpan(
+                text: text,
+                style: TextStyles.smallRegular12(context).copyWith(
+                  color: _currentPage != index ? AppColors.grey600 : null,
+                  fontWeight: _currentPage == index ? FontWeight.bold : null,
+                ),
+              ),
+            ),
+          ),
+          AnimatedContainer(
+            height: 2.h,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+            width: _currentPage == index ? 165.w : 20.w,
+            color: _currentPage == index
+                ? AppColors.primary
+                : Colors.transparent,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class RewardCard extends StatefulWidget {
+  const RewardCard({super.key});
+
+  @override
+  State<RewardCard> createState() => _RewardCardState();
+}
+
+class _RewardCardState extends State<RewardCard> with UIToolMixin {
   _loadingState(BuildContext context, RedeemLoadingState state) {
     if (state.type == RedeemType.redeemAirtimeData ||
         state.type == RedeemType.redeemGiftcard) {
@@ -103,274 +245,64 @@ class _RedeemTabState extends State<RedeemTab>
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        // shrinkWrap: true,
-        // padding: EdgeInsets.only(top: 16),
-        // physics: const ClampingScrollPhysics(),
-        children: [
-          SizedBox(height: 20.h),
-          ReferCampaign(transparent: true),
-
-          SizedBox(height: 20.h),
-
-          // 💡 Info Box
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16),
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
-              decoration: BoxDecoration(
-                color: AppColors.white50,
-                borderRadius: BorderRadius.circular(8.r),
+    return BlocListener<RedeemBloc, RedeemState>(
+      listener: (context, state) {
+        if (state is RedeemLoadingState) {
+          _loadingState(context, state);
+        }
+        if (state is RedeemSuccessState) {
+          _successState(context, state);
+        }
+        if (state is RedeemFailureState) {
+          _failureState(context, state);
+        }
+      },
+      child: BlocBuilder<ProfileBloc, ProfileState>(
+        builder: (context, state) {
+          UserProfile profile = state.profile;
+          return GridView.custom(
+            childrenDelegate: SliverChildListDelegate([
+              /* buildRewardCard(
+                            title: "Paypal",
+                            imagePath: "assets/images/slant_visa.png",
+                            coins: "20,000 Coins",
+                            isActive: true,
+                          ),*/
+              buildRewardCard(
+                title: "Airtime",
+                value: 5,
+                imagePath: AssetsPngImages.cash,
+                coins: 5000,
+                isActive: (profile.totalPoints) >= 5000,
               ),
-              child: Row(
-                spacing: 8.w,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Icon(Icons.info_outline, color: AppColors.black, size: 18.sp),
-                  Expanded(
-                    child: Column(
-                      spacing: 8.h,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        RichText(
-                          text: TextSpan(
-                            text: 'Keep engaging to unlock more rewards',
-                            style: TextStyles.normalBold14(context),
-                          ),
-                        ),
-                        TextButton(
-                          style: TextButton.styleFrom(
-                            padding: EdgeInsets.zero,
-                            minimumSize: Size.zero,
-                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                          ),
-                          onPressed: () {},
-                          child: RichText(
-                            text: TextSpan(
-                              text: 'Refer more users to get more spin',
-                              style: TextStyles.smallSemibold12(context)
-                                  .copyWith(
-                                    color: AppColors.primary,
-                                    decoration: TextDecoration.underline,
-                                  ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
+              buildRewardCard(
+                title: "Data",
+                value: 5,
+                imagePath: AssetsPngImages.data,
+                coins: 5000,
+                isActive: (profile.totalPoints) >= 5000,
+                isHot: true,
               ),
+              buildRewardCard(
+                title: "Giftcard",
+                value: 10,
+                imagePath: AssetsPngImages.giftcard,
+                coins: 10000,
+                isActive: (profile.totalPoints) >= 10000,
+                isHot: true,
+              ),
+            ]),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: 16.w,
+              mainAxisSpacing: 16.h,
+              mainAxisExtent: 255.h,
             ),
-          ),
+            physics: NeverScrollableScrollPhysics(),
 
-          const SizedBox(height: 24),
-
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                children: [
-                  Container(
-                    alignment: Alignment.bottomRight,
-                    padding: EdgeInsets.symmetric(horizontal: 16),
-                    child: GestureDetector(
-                      onTap: () {
-                        _pageController.jumpTo(0);
-                        print(_pageHeight);
-                      },
-                      child: Text(
-                        'JACKPOT & GIVEAWAYS',
-                        style: GoogleFonts.manrope(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.black,
-                          letterSpacing: 0.2,
-                        ),
-                      ),
-                    ),
-                  ),
-                  _currentPage == 0
-                      ? Container(
-                          height: 2,
-                          width: 165,
-                          color: Color(0xFF9013FE),
-                        )
-                      : Container(),
-                ],
-              ),
-              Column(
-                children: [
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16),
-                    child: GestureDetector(
-                      onTap: () {
-                        _pageController.jumpToPage(1);
-                        print(_pageHeight);
-                      },
-                      child: Text(
-                        'GIFTS & VIRTUAL CARDS',
-                        style: GoogleFonts.manrope(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.black,
-                          letterSpacing: 0.2,
-                        ),
-                      ),
-                    ),
-                  ),
-                  _currentPage == 1
-                      ? Container(
-                          height: 2,
-                          width: 165,
-                          color: Color(0xFF9013FE),
-                        )
-                      : Container(),
-                ],
-              ),
-            ],
-          ),
-
-          const SizedBox(height: 20),
-
-          // 💰 Jackpot Cards
-          AnimatedContainer(
-            duration: const Duration(milliseconds: 300),
-            curve: Curves.easeInOut,
-            height: _pageHeight,
-            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-            child: PageView(
-              controller: _pageController,
-              // physics: ClampingScrollPhysics(),
-              onPageChanged: (index) {
-                print(index);
-                setState(() {
-                  _currentPage = index;
-                  // 👇 set different heights for different pages
-                  _pageHeight = index == 0
-                      ? 300.h
-                      : MediaQuery.of(context).size.height * 0.7;
-                });
-              },
-              children: [
-                // First tab placeholder
-                BlocBuilder<ProfileBloc, ProfileState>(
-                  builder: (context, state) {
-                    UserProfile profile = state.profile;
-                    return _rewardCard(
-                      icon: Icons.savings,
-                      title: 'Bravoo Jackpot 🏆',
-                      subtitle: SizedBox(
-                        width: 255,
-                        child: RichText(
-                          // textAlign: TextAlign.center,
-                          text: TextSpan(
-                            children: [
-                              TextSpan(
-                                text: 'Your chance to win',
-                                style: GoogleFonts.manrope(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w800,
-                                  color: Color(0xFF2B2B2B),
-                                ),
-                              ),
-                              TextSpan(
-                                text: ' 20,000 coins',
-                                style: GoogleFonts.manrope(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w800,
-                                  color: Color(0xFF9013FE),
-                                ),
-                              ),
-                              TextSpan(
-                                text:
-                                    '  is here. Invite your friends and let the adventure begin!',
-                                style: GoogleFonts.manrope(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w800,
-                                  color: Color(0xFF2B2B2B),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      cost: '100 Coins',
-                      tag: 'Hot',
-                      tagColor: Color(0xFFFE5613),
-                      buttonText: 'Enter Jackpot',
-                      active: (profile.spins ?? 0) > 0,
-                    );
-                  },
-                ),
-
-                // Second tab: Gifts & Virtual Cards
-                BlocListener<RedeemBloc, RedeemState>(
-                  listener: (context, state) {
-                    if (state is RedeemLoadingState) {
-                      _loadingState(context, state);
-                    }
-                    if (state is RedeemSuccessState) {
-                      _successState(context, state);
-                    }
-                    if (state is RedeemFailureState) {
-                      _failureState(context, state);
-                    }
-                  },
-                  child: BlocBuilder<ProfileBloc, ProfileState>(
-                    builder: (context, state) {
-                      UserProfile profile = state.profile;
-                      return GridView.custom(
-                        childrenDelegate: SliverChildListDelegate([
-                          /*buildRewardCard(
-                      title: "Paypal",
-                      imagePath: "assets/images/slant_visa.png",
-                      coins: "20,000 Coins",
-                      isActive: true,
-                    ),*/
-                          buildRewardCard(
-                            title: "Airtime",
-                            value: 5,
-                            imagePath: AssetsPngImages.cash,
-                            coins: 5000,
-                            isActive: (profile.totalPoints ?? 0) >= 5000,
-                          ),
-                          buildRewardCard(
-                            title: "Data",
-                            value: 5,
-                            imagePath: AssetsPngImages.data,
-                            coins: 5000,
-                            isActive: (profile.totalPoints ?? 0) >= 5000,
-                            isHot: true,
-                          ),
-                          buildRewardCard(
-                            title: "Giftcard",
-                            value: 10,
-                            imagePath: AssetsPngImages.giftcard,
-                            coins: 10000,
-                            isActive: (profile.totalPoints ?? 0) >= 10000,
-                            isHot: true,
-                          ),
-                        ]),
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          crossAxisSpacing: 16.w,
-                          mainAxisSpacing: 16.h,
-                          mainAxisExtent: 255.h,
-                        ),
-                        physics: NeverScrollableScrollPhysics(),
-                        padding: EdgeInsets.zero,
-                      );
-                    },
-                  ),
-                ),
-              ],
-            ),
-          ),
-          SizedBox(height: 10),
-        ],
+            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
+          );
+        },
       ),
     );
   }
@@ -472,8 +404,8 @@ class _RedeemTabState extends State<RedeemTab>
                                 RedeemAirtimeData(
                                   rewardType: title.toLowerCase(),
                                   phone: val,
-                                  userName: profile.name ?? "",
-                                  email: profile.email ?? "",
+                                  userName: profile.name,
+                                  email: profile.email,
                                   coins: coins,
                                 ),
                               );
@@ -483,8 +415,8 @@ class _RedeemTabState extends State<RedeemTab>
                               RedeemGiftcard(
                                 rewardType: title.toLowerCase(),
                                 phone: "",
-                                userName: profile.name ?? "",
-                                email: profile.email ?? "",
+                                userName: profile.name,
+                                email: profile.email,
                                 coins: coins,
                               ),
                             );
@@ -581,8 +513,52 @@ class _RedeemTabState extends State<RedeemTab>
       ),
     );
   }
+}
 
-  Widget _rewardCard({
+class JackpotCard extends StatelessWidget {
+  const JackpotCard({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<ProfileBloc, ProfileState>(
+      builder: (context, state) {
+        UserProfile profile = state.profile;
+        return _rewardCard(
+          context,
+          icon: Icons.savings,
+          title: 'Bravoo Jackpot 🏆',
+          subtitle: SizedBox(
+            width: 255.w,
+            child: RichText(
+              textAlign: TextAlign.center,
+              text: TextSpan(
+                children: [
+                  TextSpan(text: 'Your chance to win'),
+                  TextSpan(
+                    text: ' 20,000 coins ',
+                    style: TextStyle(color: AppColors.primary),
+                  ),
+                  TextSpan(
+                    text:
+                        'is here. Invite your friends and let the adventure begin!',
+                  ),
+                ],
+                style: TextStyles.smallBold12(context),
+              ),
+            ),
+          ),
+          cost: '100 Coins',
+          tag: 'Hot',
+          tagColor: AppColors.redBrown,
+          buttonText: 'Enter Jackpot',
+          active: (profile.spins) > 0,
+        );
+      },
+    );
+  }
+
+  Widget _rewardCard(
+    BuildContext context, {
     required IconData icon,
     required String title,
     required Widget subtitle,
@@ -593,121 +569,97 @@ class _RedeemTabState extends State<RedeemTab>
     Color? tagColor,
   }) {
     return Container(
-      height: 200,
-      padding: const EdgeInsets.only(right: 16, left: 16, top: 16),
+      margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.4),
-        borderRadius: BorderRadius.circular(24),
+        color: AppColors.white40,
+        borderRadius: BorderRadius.circular(24.r),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.02),
-            blurRadius: 4,
+            color: AppColors.black05,
+            blurRadius: 4.r,
             spreadRadius: -3,
             offset: const Offset(5, 5),
           ),
         ],
       ),
-      child: SingleChildScrollView(
-        child: Column(
-          // mainAxisSize: MainAxisSize.min,
-          children: [
-            Row(
-              children: [
-                if (tag != null) ...[
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 6,
-                      vertical: 6,
-                    ),
-                    decoration: BoxDecoration(
-                      color: tagColor?.withValues(alpha: 0.15),
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    child: Row(
-                      children: [
-                        const Icon(
-                          Icons.local_fire_department,
-                          color: Color(0xFFFE5613),
-                          size: 14,
-                        ),
-                        const SizedBox(width: 2),
-                        Text(
-                          tag,
-                          style: TextStyle(
-                            color: tagColor,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
-                    ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+
+        children: [
+          Row(
+            children: [
+              if (tag != null) ...[
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 6,
+                    vertical: 6,
                   ),
-                ],
-              ],
-            ),
-            Image.asset("assets/images/flying_coins.png"),
-            const SizedBox(height: 10),
-            Text(
-              title,
-              style: GoogleFonts.manrope(
-                fontSize: 20,
-                fontWeight: FontWeight.w700,
-                color: Colors.black,
-              ),
-            ),
-            const SizedBox(height: 4),
-            subtitle,
-            active
-                ? FlowvaButton.jackpotButton(
-                    name: "Play the Jackot",
-                    color: Colors.white,
-                    apply: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (ctx) => JackpotScreen()),
-                    ),
-                  )
-                : ClipRRect(
-                    borderRadius: BorderRadius.circular(100),
-                    child: FlowvaButton.noneOutlineBlackButton(
-                      name: "Invite your friends",
-                      apply: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (ctx) => InviteAndEarnPage(),
+                  decoration: BoxDecoration(
+                    color: tagColor?.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.local_fire_department,
+                        color: Color(0xFFFE5613),
+                        size: 14,
+                      ),
+                      const SizedBox(width: 2),
+                      Text(
+                        tag,
+                        style: TextStyle(
+                          color: tagColor,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
-                    ),
+                    ],
                   ),
-            Text(
-              "Invite 10+ friends every month to unluck the jackpot",
-              style: GoogleFonts.manrope(
-                fontSize: 12,
-                fontWeight: FontWeight.w700,
-                color: Color(0xFF767676),
-              ),
+                ),
+              ],
+            ],
+          ),
+          Image.asset("assets/images/flying_coins.png"),
+          SizedBox(height: 10.h),
+          RichText(
+            text: TextSpan(
+              text: title,
+              style: TextStyles.titleSemiBold20(context),
             ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _timerBox(String text) {
-    return Container(
-      margin: const EdgeInsets.only(left: 4),
-      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
-      decoration: BoxDecoration(
-        color: Colors.black.withValues(alpha: 0.04),
-        borderRadius: BorderRadius.circular(6),
-        border: Border.all(color: Colors.grey.shade200),
-      ),
-      child: Text(
-        text,
-        style: GoogleFonts.manrope(
-          fontSize: 12,
-          fontWeight: FontWeight.w700,
-          color: Color(0xFF191919),
-        ),
+          ),
+          SizedBox(height: 4.h),
+          subtitle,
+          SizedBox(height: 12.h),
+          IconTextButton(
+            onPressed: () {
+              if (active) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (ctx) => JackpotScreen()),
+                );
+              } else {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (ctx) => InviteAndEarnPage()),
+                );
+              }
+            },
+            height: 54,
+            color: active ? AppColors.primary : AppColors.black,
+            textColor: AppColors.white,
+            text: active ? "Play the Jackpot" : "Invite your friends",
+          ),
+          SizedBox(height: 12.h),
+          RichText(
+            textAlign: TextAlign.center,
+            text: TextSpan(
+              text: "Invite 10+ friends every month to unluck the jackpot",
+              style: TextStyles.smallSemibold12(context, opacity: .7),
+            ),
+          ),
+        ],
       ),
     );
   }

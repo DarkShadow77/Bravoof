@@ -2,11 +2,10 @@ import 'package:flowva/app/view/widgets/button/icon_text_button.dart';
 import 'package:flowva/features/dashboard/nav_bar.dart';
 import 'package:flowva/features/dashboard/profile/presentation/bloc/profile_bloc.dart';
 import 'package:flowva/features/onbaording/data/bloc/user_cubit.dart';
-import 'package:flowva/features/onbaording/data/model/user_profile.dart';
 import 'package:flowva/features/onbaording/widget/first_screen.dart';
 import 'package:flowva/features/onbaording/widget/second_screen.dart';
 import 'package:flowva/features/onbaording/widget/third_screen.dart';
-import 'package:flowva/features/onboarding2/widget/login_bottom_sheet.dart';
+import 'package:flowva/features/onboarding2/widget/auth_modal.dart';
 import 'package:flowva/utility/ui_tool_mix.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -15,6 +14,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../session/session_manager.dart';
 import '../../common/data/constants.dart';
+import '../data/model/user_profile.dart';
 import 'referral_code.dart';
 
 class OnboardingScreen extends StatefulWidget {
@@ -27,13 +27,12 @@ class OnboardingScreen extends StatefulWidget {
 
 class _OnboardingScreenState extends State<OnboardingScreen> with UIToolMixin {
   final PageController _pageController = PageController(initialPage: 0);
+
   ValueNotifier<bool> isSending = ValueNotifier(false);
-  final _formkey = GlobalKey<FormState>();
-  final _email = TextEditingController();
-  final _pass = TextEditingController();
+
+  final _formKey = GlobalKey<FormState>();
+
   int currentPage = 0;
-  bool _isTapped = false;
-  bool isLogin = true;
   late UserCubit userCubit;
 
   @override
@@ -176,9 +175,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with UIToolMixin {
                   setState(() {
                     isSending.value = false;
                   });
-                  if (state.error.contains(
-                    "activity is cancelled by the user",
-                  )) {
+                  if (state.error.contains("cancelled by the user")) {
                   } else {
                     showMessage(
                       state.error,
@@ -196,12 +193,49 @@ class _OnboardingScreenState extends State<OnboardingScreen> with UIToolMixin {
                   height: 56,
                   text: "Get started",
                   onPressed: () async {
-                    setState(() {
-                      _isTapped = true;
-                    });
-
                     _pageController.page == 2
-                        ? showModalBottomSheet(
+                        ? authModal(
+                            apply: (val) async {
+                              if (val["loginMethod"] == "Google") {
+                                userCubit.googleLogin();
+                                return;
+                              } else if (val["loginMethod"] == "Apple") {
+                                userCubit.appleLogin();
+                                return;
+                              }
+                              if (!_formKey.currentState!.validate()) return;
+                              if (val['isLogin']) {
+                                final profile = UserProfile.empty();
+                                userCubit.signIn(
+                                  userProfile: profile.copyWith(
+                                    email: val['email'],
+                                    pass: val['pass'],
+                                  ),
+                                );
+                                return;
+                              }
+                              showModalBottomSheet(
+                                context: context,
+                                isScrollControlled: true,
+                                barrierColor: Colors.transparent,
+                                backgroundColor: Colors.transparent,
+                                shape: const RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.vertical(
+                                    top: Radius.circular(30),
+                                  ),
+                                ),
+                                builder: (_) => ReferralCode(
+                                  data: {
+                                    'email': val['email'],
+                                    'pass': val['pass'],
+                                    "isLogin": val['isLogin'],
+                                  },
+                                ),
+                              );
+                            },
+                            formKey: _formKey,
+                            isSending: isSending,
+                          ) /*showModalBottomSheet(
                             context: context,
                             isScrollControlled: true,
                             barrierColor: Colors.transparent,
@@ -256,24 +290,18 @@ class _OnboardingScreenState extends State<OnboardingScreen> with UIToolMixin {
                               isSending: isSending,
                               isLogin: isLogin,
                             ),
-                          )
+                          )*/
                         : _pageController.nextPage(
                             duration: Duration(milliseconds: 500),
                             curve: Curves.easeInOut,
                           );
-                    Future.delayed(
-                      Duration(milliseconds: 200),
-                      () => setState(() {
-                        _isTapped = false;
-                      }),
-                    );
                   },
                   color: AppColors.black,
                   textColor: AppColors.white,
                 ),
               ),
             ),
-            SizedBox(height: 10 + MediaQuery.of(context).viewPadding.bottom),
+            SizedBox(height: 10.h + MediaQuery.of(context).viewPadding.bottom),
           ],
         ),
       ),

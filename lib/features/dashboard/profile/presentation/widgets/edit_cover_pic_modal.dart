@@ -61,7 +61,7 @@ class _EditCoverPicModalState extends State<EditCoverPicModal>
 
   void _loadingProfileState(BuildContext context, ProfileLoadingState state) {
     if (state.type == ProfileType.updateCoverPic) {
-      outerLoadingDialog(text: 'Updating Cover Pic…', canPop: false);
+      outerLoadingDialog(text: 'Updating Cover Pic…');
     }
   }
 
@@ -69,6 +69,12 @@ class _EditCoverPicModalState extends State<EditCoverPicModal>
     if (state.type == ProfileType.updateCoverPic) {
       if (Get.isDialogOpen ?? false) Get.back();
       if (Get.isBottomSheetOpen ?? false) Get.back();
+      showMessage(
+        state.message,
+        context,
+        color: Colors.white,
+        styleColor: Colors.black,
+      );
     }
   }
 
@@ -128,7 +134,7 @@ class _EditCoverPicModalState extends State<EditCoverPicModal>
                   ),
                 ],
               ),
-              SizedBox(height: 23.h),
+              SizedBox(height: 12.h),
               Row(
                 spacing: 20.w,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -221,7 +227,7 @@ class _EditCoverPicModalState extends State<EditCoverPicModal>
             width: 50.r,
             height: 50.r,
             decoration: BoxDecoration(
-              color: AppColors.grey200,
+              color: AppColors.grey200.withValues(alpha: .5),
               borderRadius: BorderRadius.circular(12.r),
             ),
             child: Center(
@@ -230,6 +236,10 @@ class _EditCoverPicModalState extends State<EditCoverPicModal>
                 width: 24.w,
                 height: 24.h,
                 fit: BoxFit.contain,
+                colorFilter: ColorFilter.mode(
+                  AppColors.primary,
+                  BlendMode.srcIn,
+                ),
               ),
             ),
           ),

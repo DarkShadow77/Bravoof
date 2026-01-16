@@ -126,7 +126,8 @@ class ProfileBloc extends HydratedBloc<ProfileEvent, ProfileState> {
       },
       (user) {
         logger.t("Cover Pic Updated  Successfully");
-        emit(state.copyWith(profile: user));
+
+        add(GetProfileEvent());
         emit(
           ProfileSuccessState(
             type: ProfileType.updateCoverPic,

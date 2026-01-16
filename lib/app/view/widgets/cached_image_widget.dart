@@ -127,6 +127,7 @@ class CachedImageSize extends StatelessWidget {
         border: Border.all(width: borderWidth.w, color: borderColor),
         borderRadius: BorderRadius.circular(borderRadius.r),
       ),
+      child: child,
     );
   }
 }
