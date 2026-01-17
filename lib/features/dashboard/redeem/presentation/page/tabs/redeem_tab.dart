@@ -299,7 +299,6 @@ class _RewardCardState extends State<RewardCard> with UIToolMixin {
               mainAxisExtent: 255.h,
             ),
             physics: NeverScrollableScrollPhysics(),
-
             padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
           );
         },

@@ -85,7 +85,7 @@ class _AskingDialogState extends State<SocialEventDialog> with UIToolMixin {
               builder: (_) => MissionSuccess(
                 title: "Thank you for your submission. ",
                 bodyText:
-                    "Once we confirm it, your reward will be added to your account.",
+                    "Once we confirm it, your reward will be added to your account within 5 days.",
                 b_text: "Back to missions",
               ),
             );

@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:logger/logger.dart';
 import 'package:meta/meta.dart';
 
 import '../../../../../session/session_manager.dart';
@@ -23,7 +24,9 @@ class StreakBloc extends Bloc<StreakEvent, StreakState> {
       StreakLoadingState(type: StreakType.fetchStreak, streak: state.streak),
     );
 
-    final res = await repo.fetchStreak();
+    final res = await repo.fetchStreak(userId: session.userIdVal);
+
+    Logger().d("Fetch Streak Response $res");
 
     res.fold(
       (err) => emit(
@@ -50,7 +53,7 @@ class StreakBloc extends Bloc<StreakEvent, StreakState> {
   Future<void> _checkIn(CheckInEvent event, Emitter emit) async {
     emit(StreakLoadingState(type: StreakType.checkIn, streak: state.streak));
 
-    final res = await repo.checkIn();
+    final res = await repo.checkIn(userId: session.userIdVal);
 
     res.fold(
       (err) => emit(

@@ -1,10 +1,8 @@
-import 'dart:convert';
-
 import 'package:dartz/dartz.dart';
 import 'package:get/get.dart';
-import 'package:logger/logger.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../../../../core/services/api_service.dart';
 import '../redeem_history_model.dart';
 import 'redeem_repository.dart';
 
@@ -47,46 +45,19 @@ class RedeemRepositoryImpl extends RedeemRepository {
     required String email,
     required int coins,
   }) async {
-    try {
-      final res = await supabase.functions.invoke(
-        'redeem_airtime_or_data',
-        body: {
-          'userId': userId,
-          'rewardType': rewardType,
-          'coins': coins,
-          'phone': phone,
-          'name': userName,
-          'email': email,
-        },
-      );
-
-      Logger().d("Redeem Airtime and Data Response $res");
-
-      Logger().d("🟢 Raw function response: ${res.data}");
-      Logger().d("🟢 Response runtimeType: ${res.data.runtimeType}");
-
-      late final Map<String, dynamic> data;
-
-      if (res.data is String) {
-        data = jsonDecode(res.data as String) as Map<String, dynamic>;
-      } else if (res.data is Map<String, dynamic>) {
-        data = res.data;
-      } else {
-        return Left("Unexpected response format: ${res.data.runtimeType}");
-      }
-
-      Logger().d("🟢 Parsed data: $data");
-
-      if (data['success'] != true) {
-        return Left(
-          data['message'] ?? '${rewardType.capitalize} redemption failed',
-        );
-      }
-      return Right("Successfully Redeemed ${rewardType.capitalize}");
-    } catch (e, s) {
-      Logger().e("🔥Redeem '${rewardType.capitalize} crashed E:$e, S:$s");
-      return Left(e.toString());
-    }
+    return ApiService.instance!.invokeEdgeFunction<String>(
+      functionName: 'redeem_airtime_or_data',
+      body: {
+        'userId': userId,
+        'rewardType': rewardType,
+        'coins': coins,
+        'phone': phone,
+        'name': userName,
+        'email': email,
+      },
+      fallbackErrorMessage: '${rewardType.capitalize} redemption failed',
+      onSuccess: (data) => 'Successfully Redeemed ${rewardType.capitalize}',
+    );
   }
 
   Future<Either<String, String>> redeemGiftcard({
@@ -97,48 +68,18 @@ class RedeemRepositoryImpl extends RedeemRepository {
     required String email,
     required int coins,
   }) async {
-    try {
-      final res = await supabase.functions.invoke(
-        'create_giftcard_session',
-        body: {
-          'userId': userId,
-          'rewardType': rewardType,
-          'coins': coins,
-          'phone': phone,
-          'name': userName,
-          'email': email,
-        },
-      );
-
-      Logger().d("🟢 Raw function response: ${res.data}");
-      Logger().d("🟢 Response runtimeType: ${res.data.runtimeType}");
-
-      late final Map<String, dynamic> data;
-
-      if (res.data is String) {
-        data = jsonDecode(res.data as String) as Map<String, dynamic>;
-      } else if (res.data is Map<String, dynamic>) {
-        data = res.data;
-      } else {
-        return Left("Unexpected response format: ${res.data.runtimeType}");
-      }
-
-      Logger().d("🟢 Parsed data: $data");
-
-      if (data['success'] != true) {
-        return Left(data['message'] ?? 'Gift card redemption failed');
-      }
-
-      final redirectUrl = data['redirectUrl'];
-
-      if (redirectUrl == null || redirectUrl is! String) {
-        return Left('Gift card created but redirect URL is missing');
-      }
-
-      return Right(redirectUrl);
-    } catch (e, s) {
-      Logger().e("🔥 redeemGiftcard crashed E:$e, S:$s");
-      return Left(e.toString());
-    }
+    return ApiService.instance!.invokeEdgeFunction<String>(
+      functionName: 'create_giftcard_session',
+      body: {
+        'userId': userId,
+        'rewardType': rewardType,
+        'coins': coins,
+        'phone': phone,
+        'name': userName,
+        'email': email,
+      },
+      fallbackErrorMessage: '${rewardType.capitalize} redemption failed',
+      onSuccess: (data) => data['redirectUrl'],
+    );
   }
 }

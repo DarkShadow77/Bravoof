@@ -16,13 +16,16 @@ class StreakResponse {
   factory StreakResponse.fromJson(Map<String, dynamic> json) {
     return StreakResponse(
       id: json['id'] ?? 0,
-      userId: json['user_id'] ?? '',
-      currentStreak: json['current_streak'] ?? 0,
-      lastClaimedDate: json['last_claimed_date'] != null
-          ? DateTime.parse(json['last_claimed_date'])
+      userId: json['userId'] ?? '',
+      currentStreak: json['currentStreak'] ?? 0,
+      lastClaimedDate: json['lastClaimedDate'] != null
+          ? DateTime.parse(json['lastClaimedDate'])
           : null,
-
-      history: json['history'] ?? [],
+      history:
+          (json['history'] as List<dynamic>?)
+              ?.map((e) => DateTime.parse(e.toString()))
+              .toList() ??
+          [],
     );
   }
 

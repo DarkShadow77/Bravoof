@@ -168,7 +168,7 @@ class _FlowvaHomePageState extends State<FlowvaHomePage> with UIToolMixin {
                                     imageUrl: userProfile.profilePic,
                                     size: 30,
                                     circle: true,
-                                    fit: BoxFit.contain,
+                                    fit: BoxFit.cover,
                                     color: AppColors.grey200,
                                   ),
                                 ),

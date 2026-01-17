@@ -1,9 +1,12 @@
+import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:logger/logger.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../model/api_model.dart';
 
@@ -18,6 +21,90 @@ class ApiService {
   }
 
   Dio dio = Dio();
+
+  final supabase = Supabase.instance.client;
+
+  Future<Either<String, T>> invokeEdgeFunction<T>({
+    required String functionName,
+    required Map<String, dynamic> body,
+    required T Function(dynamic data) onSuccess,
+    String? fallbackErrorMessage,
+  }) async {
+    try {
+      final res = await supabase.functions.invoke(functionName, body: body);
+
+      final ApiResponse apiResponse = ApiResponse();
+
+      Logger().i("$functionName Response ${res.data}");
+      Logger().d("🟢 Response runtimeType: ${res.data.runtimeType}");
+
+      late final Map<String, dynamic> data;
+
+      if (res.data is String) {
+        data = jsonDecode(res.data as String) as Map<String, dynamic>;
+      } else if (res.data is Map<String, dynamic>) {
+        data = res.data;
+      } else {
+        return Left("Unexpected response format: ${res.data.runtimeType}");
+      }
+
+      if (res.status == 200 || res.status == 201) {
+        apiResponse.responseSuccessful = data['success'] ?? true;
+        apiResponse.responseMessage = data['message'] ?? 'Request completed';
+        apiResponse.responseBody = data['data'] ?? 'No Body';
+      } else {
+        apiResponse.responseSuccessful = data['success'] ?? false;
+        apiResponse.responseMessage = data['message'] ?? 'Error encountered';
+        apiResponse.responseBody = data['data'] ?? 'No Body';
+      }
+
+      Logger().i("Response Successful: ${apiResponse.responseSuccessful}");
+      Logger().i("Response Message: ${apiResponse.responseMessage}");
+      Logger().i("Response Body: ${apiResponse.responseBody}");
+
+      if (apiResponse.responseSuccessful != true) {
+        return Left(
+          apiResponse.responseMessage ??
+              fallbackErrorMessage ??
+              'Request failed',
+        );
+      }
+
+      // Convert raw JSON to your type T
+      return Right(onSuccess(data));
+    } catch (e, s) {
+      Logger().e(
+        '🔥 Edge Function "$functionName" crashed',
+        error: e,
+        stackTrace: s,
+      );
+
+      return Left(
+        _extractFunctionError(
+          e,
+          fallbackErrorMessage ?? 'Something went wrong',
+        ),
+      );
+    }
+  }
+
+  String _extractFunctionError(Object e, String fallback) {
+    if (e is FunctionException) {
+      final details = e.details;
+
+      if (details is Map<String, dynamic>) {
+        return details['message'] ?? fallback;
+      }
+
+      if (details is String) {
+        try {
+          return jsonDecode(details)['message'] ?? fallback;
+        } catch (_) {}
+      }
+    }
+
+    return fallback;
+  }
 
   Future<ApiResponse<T>> postRequestHandler<T>(
     String url,

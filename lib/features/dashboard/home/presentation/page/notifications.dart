@@ -7,6 +7,7 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../../core/constants/app_colors.dart';
 import '../bloc/notification_bloc.dart';
@@ -299,6 +300,23 @@ class NotificationCard extends StatelessWidget {
                   ),
                   MarkdownBody(
                     data: notification.message,
+                    onTapLink: (text, href, title) async {
+                      if (href != null) {
+                        final uri = Uri.parse(href);
+                        if (await canLaunchUrl(uri)) {
+                          await launchUrl(
+                            uri,
+                            mode: LaunchMode.externalApplication,
+                          );
+                        }
+                        if (!notification.read)
+                          context.read<NotificationBloc>().add(
+                            MarkNotificationRead(
+                              notificationId: notification.id,
+                            ),
+                          );
+                      }
+                    },
                     styleSheet: MarkdownStyleSheet(
                       p: TextStyles.smallMedium12(
                         context,
