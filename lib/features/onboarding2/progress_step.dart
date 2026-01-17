@@ -228,6 +228,7 @@ class _StepProgressPageState extends State<StepProgressPage>
     SessionManager().isNewUserVal = "YES";
 
     context.read<ProfileBloc>().add(GetProfileEvent());
+    context.read<ProfileBloc>().add(UpdateLocationEvent());
     Navigator.of(context).pushAndRemoveUntil(
       PageTransition(
         type: PageTransitionType.fade,

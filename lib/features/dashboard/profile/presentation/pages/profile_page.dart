@@ -8,6 +8,7 @@ import 'package:flowva/features/onbaording/data/model/user_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -205,6 +206,12 @@ class _ProfilePageState extends State<ProfilePage> {
                                   ),
                                 ),
                               ),
+                              SvgPicture.network(
+                                userProfile.flag,
+                                width: 30.r,
+                                height: 30.r,
+                                fit: BoxFit.cover,
+                              ),
                               Align(
                                 alignment: Alignment.bottomRight,
                                 child: CachedImageRadius(
@@ -235,7 +242,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   text: TextSpan(
-                    text: userProfile.bio ?? '',
+                    text: userProfile.bio,
                     style: TextStyles.smallMedium12(context, opacity: .5),
                   ),
                 ),
@@ -245,10 +252,8 @@ class _ProfilePageState extends State<ProfilePage> {
                   width: 200,
                   padding: EdgeInsets.symmetric(horizontal: 0, vertical: 8),
                   decoration: BoxDecoration(
-                    border: Border.all(
-                      color: Colors.black.withValues(alpha: 0.1),
-                    ),
-                    borderRadius: BorderRadius.circular(50),
+                    border: Border.all(color: AppColors.black10),
+                    borderRadius: BorderRadius.circular(50.r),
                   ),
                   child: ShaderMask(
                     shaderCallback: (bounds) =>
@@ -280,14 +285,14 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                   ),
                 ),
-                 SizedBox(height: 30.h),
+                SizedBox(height: 30.h),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     Column(
                       children: [
                         Text(
-                          formatAmount(userProfile.totalPoints ?? 0),
+                          formatAmount(userProfile.totalPoints),
                           style: GoogleFonts.manrope(
                             fontSize: 16,
                             fontWeight: FontWeight.w700,
@@ -315,7 +320,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     Column(
                       children: [
                         Text(
-                          formatAmount(userProfile.missionsCompleted ?? 0),
+                          formatAmount(userProfile.missionsCompleted),
                           style: GoogleFonts.manrope(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,

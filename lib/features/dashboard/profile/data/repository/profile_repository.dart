@@ -10,4 +10,5 @@ abstract class ProfileRepository {
     File? imageFile,
   });
   Future<Either<String, void>> updateCoverPic({required File imageFile});
+  Future<Either<String, void>> updateLocation();
 }

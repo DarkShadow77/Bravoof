@@ -1,6 +1,12 @@
 part of 'profile_bloc.dart';
 
-enum ProfileType { getProfile, updateProfile, updateCoverPic, logout }
+enum ProfileType {
+  getProfile,
+  updateProfile,
+  updateCoverPic,
+  updateLocation,
+  logout,
+}
 
 @immutable
 class ProfileState {

@@ -29,6 +29,12 @@ class _AppState extends State<App> {
       }
     });
 
+    final profileBloc = context.read<ProfileBloc>();
+
+    if (profileBloc.state.profile.email.isNotEmpty) {
+      profileBloc.add(UpdateLocationEvent());
+    }
+
     // requestNotificationPermission(context);
   }
 
@@ -38,7 +44,7 @@ class _AppState extends State<App> {
       body: BlocBuilder<ProfileBloc, ProfileState>(
         builder: (context, state) {
           UserProfile profile = state.profile;
-          if ((profile.email ?? "").isNotEmpty) {
+          if ((profile.email).isNotEmpty) {
             return BottomNavBar();
           }
           return OnboardingScreen();

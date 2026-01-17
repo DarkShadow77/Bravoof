@@ -22,4 +22,8 @@ class UpdateCoverPicEvent extends ProfileEvent {
   UpdateCoverPicEvent({required this.imageFile});
 }
 
+class UpdateLocationEvent extends ProfileEvent {
+  UpdateLocationEvent();
+}
+
 class LogoutProfileEvent extends ProfileEvent {}

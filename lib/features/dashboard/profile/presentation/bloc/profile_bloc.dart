@@ -19,6 +19,7 @@ class ProfileBloc extends HydratedBloc<ProfileEvent, ProfileState> {
     on<GetProfileEvent>(_onGetProfile);
     on<UpdateProfileEvent>(_onUpdateProfile);
     on<UpdateCoverPicEvent>(_onUpdateCoverPic);
+    on<UpdateLocationEvent>(_onUpdateLocation);
     on<LogoutProfileEvent>(_onLogout);
   }
 
@@ -132,6 +133,45 @@ class ProfileBloc extends HydratedBloc<ProfileEvent, ProfileState> {
           ProfileSuccessState(
             type: ProfileType.updateCoverPic,
             message: "Cover Pic updated successfully",
+            profile: state.profile,
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _onUpdateLocation(
+    UpdateLocationEvent event,
+    Emitter<ProfileState> emit,
+  ) async {
+    emit(
+      ProfileLoadingState(
+        type: ProfileType.updateLocation,
+        profile: state.profile,
+      ),
+    );
+
+    final response = await repo.updateLocation();
+
+    response.fold(
+      (failure) {
+        logger.e("Failed to Update Location");
+        emit(
+          ProfileFailureState(
+            type: ProfileType.updateLocation,
+            message: failure,
+            profile: state.profile,
+          ),
+        );
+      },
+      (user) {
+        logger.t("Location Updated Successfully");
+
+        add(GetProfileEvent());
+        emit(
+          ProfileSuccessState(
+            type: ProfileType.updateLocation,
+            message: "Location updated successfully",
             profile: state.profile,
           ),
         );
