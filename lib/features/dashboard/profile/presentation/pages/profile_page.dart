@@ -8,7 +8,6 @@ import 'package:flowva/features/onbaording/data/model/user_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -206,12 +205,6 @@ class _ProfilePageState extends State<ProfilePage> {
                                   ),
                                 ),
                               ),
-                              SvgPicture.network(
-                                userProfile.flag,
-                                width: 30.r,
-                                height: 30.r,
-                                fit: BoxFit.cover,
-                              ),
                               Align(
                                 alignment: Alignment.bottomRight,
                                 child: CachedImageRadius(
@@ -219,7 +212,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   circle: true,
                                   size: 30,
                                   color: AppColors.grey200,
-                                  fit: BoxFit.cover,
+                                  fit: BoxFit.fill,
                                 ),
                               ),
                             ],

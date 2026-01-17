@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../core/constants/app_colors.dart';
 
@@ -26,29 +27,45 @@ class CachedImageRadius extends StatelessWidget {
     this.fit = BoxFit.cover,
   });
 
+  bool get _isSvg => imageUrl.toLowerCase().endsWith('.svg');
+
   @override
   Widget build(BuildContext context) {
+    return _isSvg ? _buildSvg() : _buildRaster();
+  }
+
+  Widget _buildRaster() {
     return CachedNetworkImage(
       imageUrl: imageUrl,
-      errorWidget: (context, url, error) => _buildPlaceholder(),
       placeholder: (context, url) => _buildPlaceholder(),
-      imageBuilder: (context, imageProvider) {
-        return Container(
-          height: size.h,
-          width: size.w,
-          clipBehavior: Clip.antiAlias,
-          decoration: BoxDecoration(
-            shape: circle ? BoxShape.circle : BoxShape.rectangle,
-            border: Border.all(width: borderWidth.w, color: borderColor),
-            borderRadius: circle ? null : BorderRadius.circular(borderRadius.r),
-            image: DecorationImage(
-              image: imageProvider,
-              alignment: Alignment.center,
-              fit: fit,
-            ),
-          ),
-        );
-      },
+      errorWidget: (context, url, error) => _buildPlaceholder(),
+      imageBuilder: (context, imageProvider) => _buildContainer(
+        child: Image(image: imageProvider, fit: fit),
+      ),
+    );
+  }
+
+  Widget _buildSvg() {
+    return _buildContainer(
+      child: SvgPicture.network(
+        imageUrl,
+        fit: fit,
+        placeholderBuilder: (_) => _buildPlaceholder(),
+      ),
+    );
+  }
+
+  Widget _buildContainer({required Widget child}) {
+    return Container(
+      height: size.h,
+      width: size.w,
+      clipBehavior: Clip.antiAlias,
+      decoration: BoxDecoration(
+        shape: circle ? BoxShape.circle : BoxShape.rectangle,
+        border: Border.all(width: borderWidth.w, color: borderColor),
+        borderRadius: circle ? null : BorderRadius.circular(borderRadius.r),
+      ),
+      child: child,
     );
   }
 
@@ -56,7 +73,6 @@ class CachedImageRadius extends StatelessWidget {
     return Container(
       height: size.h,
       width: size.w,
-      clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
         color: color ?? AppColors.grey,
         shape: circle ? BoxShape.circle : BoxShape.rectangle,
