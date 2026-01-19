@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -6,10 +5,11 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'bravoo_ration_page.dart';
+import '../../../../../utility/in_app_review.dart';
+import '../../../../../utility/ui_tool_mix.dart';
 import 'feed_back.dart';
 
-class HelpPage extends StatelessWidget {
+class HelpPage extends StatelessWidget with UIToolMixin {
   const HelpPage({super.key});
 
   Future<void> openWhatsApp() async {
@@ -17,9 +17,7 @@ class HelpPage extends StatelessWidget {
     final message = 'Hello 👋';
     final encodedMessage = Uri.encodeComponent(message);
 
-    final url = Platform.isIOS
-        ? Uri.parse('https://wa.me/$phoneNumber?text=$encodedMessage')
-        : Uri.parse('whatsapp://send?phone=$phoneNumber&text=$encodedMessage');
+    final url = Uri.parse('https://wa.me/$phoneNumber?text=$encodedMessage');
 
     if (await canLaunchUrl(url)) {
       await launchUrl(url, mode: LaunchMode.externalApplication);
@@ -121,10 +119,31 @@ class HelpPage extends StatelessWidget {
                     size: 20,
                   ),
                   "Leave a Review",
-                  apply: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (ctx) => BravooRatingPage()),
-                  ),
+                  apply: () async {
+                    final success = await requestAppRating();
+
+                    if (success) {
+                      showMessage(
+                        "Thank you for rating our app! 🎉",
+                        context,
+                        color: Colors.green,
+                        styleColor: Colors.white,
+                      );
+                    } else {
+                      showMessage(
+                        "Could not open review dialog. Please rate us manually from the store.",
+                        context,
+                        color: Colors.orange,
+                        styleColor: Colors.black,
+                      );
+                    }
+                    /*Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (ctx) => BravooRatingPage()),
+                    );*/
+
+                    return;
+                  },
                 ),
               ],
             ),

@@ -86,7 +86,6 @@ class CommunityMissionBloc
     final res = await repo.joinMission(
       missionId: event.missionId,
       userId: session.userIdVal,
-      email: event.email,
       imageUrl: event.imageUrl,
     );
 

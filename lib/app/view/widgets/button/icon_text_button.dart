@@ -24,6 +24,8 @@ class IconTextButton extends StatelessWidget {
     this.textSize,
     this.iconSize = 16,
     this.spacing = 8,
+    this.paddingW = 2.5,
+    this.paddingH = 2.5,
     this.buttonState = AppButtonState.idle,
   });
 
@@ -39,6 +41,8 @@ class IconTextButton extends StatelessWidget {
   final Color? innerShadow;
   final double? height;
   final double? textSize;
+  final double paddingW;
+  final double paddingH;
   final double iconSize;
   final double spacing;
   final AppButtonState buttonState;
@@ -52,7 +56,10 @@ class IconTextButton extends StatelessWidget {
       onTap: onPressed,
       child: Container(
         height: buttonHeight,
-        padding: EdgeInsets.symmetric(vertical: 2.5.h, horizontal: 2.5.w),
+        padding: EdgeInsets.symmetric(
+          vertical: paddingH.h,
+          horizontal: paddingW.w,
+        ),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(100.r),
           border: Border.all(

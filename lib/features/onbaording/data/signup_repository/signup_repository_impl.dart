@@ -204,7 +204,6 @@ class SignupRepositoryImpl extends SignupRepository {
       final GoogleSignIn signIn = GoogleSignIn.instance;
 
       // At the start of your app, initialize the GoogleSignIn instance
-
       await signIn.initialize(
         clientId: iosClientId,
         serverClientId: webClientId,

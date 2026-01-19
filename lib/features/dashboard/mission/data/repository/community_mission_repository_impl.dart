@@ -34,7 +34,6 @@ class CommunityMissionRepositoryImpl extends CommunityMissionRepository {
   Future<Either<String, void>> joinMission({
     required int missionId,
     required String userId,
-    required String email,
     required String? imageUrl,
   }) async {
     try {
@@ -51,7 +50,6 @@ class CommunityMissionRepositoryImpl extends CommunityMissionRepository {
         await supabase.from('community_mission_completed').insert({
           'community_mission_id': missionId,
           'user_id': userId,
-          'email': email,
           'evidence_image': imageUrl,
           'status': 'PENDING',
         });
@@ -66,7 +64,6 @@ class CommunityMissionRepositoryImpl extends CommunityMissionRepository {
         await supabase
             .from('community_mission_completed')
             .update({
-              'email': email,
               'evidence_image': imageUrl,
               'status': 'PENDING',
               'updated_at': DateTime.now().toIso8601String(),

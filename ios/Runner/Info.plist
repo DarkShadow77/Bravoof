@@ -29,11 +29,11 @@
 		<key>LSRequiresIPhoneOS</key>
 		<true/>
 		<key>NSCameraUsageDescription</key>
-        <string>Bravoo needs camera access to capture photos and videos for your content</string>
+		<string>Bravoo needs camera access to capture photos and videos for your content</string>
 		<key>NSPhotoLibraryAddUsageDescription</key>
-        <string>Bravoo needs permission to save photos and videos to your photo library</string>
-        <key>NSPhotoLibraryUsageDescription</key>
-        <string>Bravoo needs access to your photo library to select and save photos and videos</string>
+		<string>Bravoo needs permission to save photos and videos to your photo library</string>
+		<key>NSPhotoLibraryUsageDescription</key>
+		<string>Bravoo needs access to your photo library to select and save photos and videos</string>
 		<key>UIApplicationSupportsIndirectInputEvents</key>
 		<true/>
 		<key>UILaunchStoryboardName</key>
@@ -60,12 +60,12 @@
 		<key>UNUserNotificationCenter</key>
 		<true/>
 		<key>LSApplicationQueriesSchemes</key>
-        <array>
-            <string>http</string>
-            <string>https</string>
-        </array>
-        <key>NSUserNotificationUsageDescription</key>
-        <string>We use notifications to keep you updated on missions, rewards, and earnings.</string>
+		<array>
+			<string>http</string>
+			<string>https</string>
+		</array>
+		<key>NSUserNotificationUsageDescription</key>
+		<string>We use notifications to keep you updated on missions, rewards, and earnings.</string>
 		<key>CFBundleURLTypes</key>
 		<array>
 			<dict>

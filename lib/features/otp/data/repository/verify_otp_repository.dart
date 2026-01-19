@@ -1,20 +1,73 @@
+import 'dart:convert';
 import 'dart:developer';
-import 'dart:io';
 
 import 'package:dartz/dartz.dart';
+import 'package:dio/dio.dart';
 import 'package:flowva/features/common/data/constants.dart';
 import 'package:flowva/features/common/model/app_base_response.dart';
 import 'package:flowva/session/session_manager.dart';
-import 'package:path/path.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:logger/logger.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' hide MultipartFile;
+
+import '../../../../core/services/api_service.dart';
 
 class VerifyOtpRepository {
   final supabase = Supabase.instance.client;
-  Future<Either<String, AppBaseResponse>> verifyOtp({String? otp}) async {
+
+  Future<Either<String, AppBaseResponse>> verifyOtp({
+    required String otp,
+  }) async {
+    final currentSession = supabase.auth.currentSession;
+    final user = currentSession?.user;
+
+    var userProfile = await Constants().getUser();
+    final token = currentSession?.accessToken ?? "";
+    final formData = FormData.fromMap({
+      'otp': otp,
+      'profile': jsonEncode({
+        'email': userProfile["email"],
+        'name': userProfile["name"],
+        'goals': userProfile["goals"],
+        'referral_code': userProfile["referral_code"],
+        'pass': userProfile["pass"],
+      }),
+      'image': await MultipartFile.fromFile(
+        userProfile["profile_image"],
+        filename: userProfile["profile_image"].split('/').last,
+      ),
+    });
+    if (user != null) {
+      final response = await ApiService.instance!.postRequest(
+        "functions/v1/verify-register-user",
+        formData,
+        accessToken: token,
+        apiKey: dotenv.env["ANON_KEY"] ?? "",
+      );
+
+      Logger().d("Create User Response $response");
+
+      if (response.responseSuccessful == true) {
+        final data = response.responseBody!;
+
+        SessionManager().userIdVal = data["user_id"];
+        SessionManager().hasAccountVal = true;
+        AppBaseResponse appBaseResponse = AppBaseResponse(status: true);
+        return Right(appBaseResponse);
+      } else {
+        return Left(response.responseMessage ?? "Failed to Update Profile");
+      }
+    }
+
+    return Left("Invalid Sign Up");
+  }
+
+  /* Future<Either<String, AppBaseResponse>> verifyOtp({String? otp}) async {
     try {
       final user = supabase.auth.currentSession?.user;
       var userProfile = await Constants().getUser();
       final fileName = '${basename(userProfile['profile_image'])}';
+
       var res = await supabase.auth.verifyOTP(
         email: userProfile['email'],
         token: otp,
@@ -65,7 +118,7 @@ class VerifyOtpRepository {
     } on AuthException catch (e) {
       return Left(e.message);
     }
-  }
+  }*/
 
   Future<Either<String, void>> resendOtp(String email) async {
     try {
@@ -114,7 +167,7 @@ class VerifyOtpRepository {
           .maybeSingle();
 
       if (res != null) {
-        final response = await supabase.auth.signInWithPassword(
+        await supabase.auth.signInWithPassword(
           email: data['email'],
           password: data['pass']!,
         );

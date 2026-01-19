@@ -1,6 +1,8 @@
 import 'package:flowva/app/styles/text_styles.dart';
 import 'package:flowva/app/view/widgets/button/icon_text_button.dart';
+import 'package:flowva/app/view/widgets/gradient_progress.dart';
 import 'package:flowva/core/constants/fonts.dart';
+import 'package:flowva/features/dashboard/mission/presentation/widget/community_event_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -12,7 +14,6 @@ import '../../../../../utility/ui_tool_mix.dart';
 import '../../data/model/community_mission_model.dart';
 import '../../data/model/mission_status_enum.dart';
 import '../bloc/community_mission_bloc.dart';
-import 'claim_widget.dart';
 
 class CommunityMissionCard extends StatefulWidget {
   const CommunityMissionCard({super.key});
@@ -292,6 +293,12 @@ class _TimeSectionState extends State<_TimeSection> with UIToolMixin {
                       child: Stack(
                         alignment: Alignment.center,
                         children: [
+                          GradientProgress(
+                            height: 23,
+                            progress:
+                                (communityMission?.usersJoined ?? 0) /
+                                (communityMission?.maxUsers ?? 1),
+                          ),
                           ClipRRect(
                             borderRadius: BorderRadius.circular(100.r),
                             child: Container(
@@ -324,7 +331,7 @@ class _TimeSectionState extends State<_TimeSection> with UIToolMixin {
                             textAlign: TextAlign.center,
                             text: TextSpan(
                               text:
-                                  "${communityMission?.usersJoined ?? 0} / 5000 users joined",
+                                  "${communityMission?.usersJoined ?? 0} / ${communityMission?.maxUsers ?? 0} users joined",
                               style: TextStyles.cardRegular10(
                                 context,
                               ).copyWith(fontFamily: AppFonts.baloo),
@@ -363,12 +370,7 @@ class _TimeSectionState extends State<_TimeSection> with UIToolMixin {
               else
                 IconTextButton(
                   onPressed: () {
-                    showDialog(
-                      context: context,
-                      barrierDismissible: true,
-                      barrierColor: Colors.transparent,
-                      builder: (context) => ReclaimMissionPopup(),
-                    );
+                    communityEventDialog(communityMission: communityMission!);
                   },
                   height: 50,
                   color: AppColors.black,

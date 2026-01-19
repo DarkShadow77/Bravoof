@@ -339,7 +339,6 @@ class _ReclaimMissionPopupState extends State<ReclaimMissionPopup>
                                       context,
                                     ).add(
                                       JoinCommunityMission(
-                                        email: emailController.text.trim(),
                                         imageUrl: pickedImage,
                                         missionId: upperState.mission?.id ?? 0,
                                       ),

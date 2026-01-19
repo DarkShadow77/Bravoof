@@ -11,10 +11,12 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
 
+import '../../../../../core/constants/app_colors.dart';
+import '../../../../../utility/ui_tool_mix.dart';
 import '../../../settings/presentation/pages/help_page.dart';
 import '../../../settings/presentation/pages/notifications.dart';
 
-class SettingsPage extends StatelessWidget {
+class SettingsPage extends StatelessWidget with UIToolMixin {
   const SettingsPage({super.key});
 
   Widget buildTile(
@@ -157,8 +159,8 @@ class SettingsPage extends StatelessWidget {
                     MaterialPageRoute(builder: (ctx) => HelpPage()),
                   ),
                 ),
-                const Divider(height: 1, color: Color(0xFFF1F1F1)),
-                buildTile(
+                /*  const Divider(height: 1, color: Color(0xFFF1F1F1)),
+             buildTile(
                   HugeIcon(
                     icon: HugeIcons.strokeRoundedLegalDocument01,
                     strokeWidth: 2,
@@ -173,7 +175,7 @@ class SettingsPage extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 10),*/
                 const Divider(height: 1, color: Color(0xFFF1F1F1)),
                 ListTile(
                   leading: SvgPicture.asset(
@@ -209,13 +211,10 @@ class SettingsPage extends StatelessWidget {
         children: [
           BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
-            child: Container(
-              color: Colors.black.withOpacity(0.5), // Optional dark overlay
-            ),
+            child: Container(color: AppColors.black50),
           ),
           Dialog(
             backgroundColor: Colors.transparent,
-
             insetPadding: EdgeInsets.symmetric(horizontal: 15),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -227,7 +226,6 @@ class SettingsPage extends StatelessWidget {
                   ),
                   padding: const EdgeInsets.only(
                     top: 24.0,
-
                     right: 16,
                     left: 16,
                   ),
@@ -262,12 +260,24 @@ class SettingsPage extends StatelessWidget {
                         color: Colors.black,
                         apply: () {
                           context.read<ProfileBloc>().add(LogoutProfileEvent());
+                          showMessage(
+                            "You've been Logged out",
+                            context,
+                            color: Colors.green,
+                            styleColor: Colors.white,
+                          );
                           Navigator.pushAndRemoveUntil(
                             context,
                             MaterialPageRoute(
                               builder: (_) => OnboardingScreen(),
                             ),
                             (route) => false,
+                          );
+                          showMessage(
+                            "You've been Logged out",
+                            context,
+                            color: Colors.green,
+                            styleColor: Colors.white,
                           );
                         },
                       ),

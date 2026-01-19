@@ -8,7 +8,7 @@ part 'verify_otp_state.dart';
 class VerifyOtpCubit extends Cubit<VerifyOtpState> {
   VerifyOtpCubit() : super(VerifyOtpInitial());
   final verifyOtpRepository = VerifyOtpRepository();
-  void verifyOtp({String? otp}) async {
+  void verifyOtp({required String otp}) async {
     emit(Verifying());
 
     final either = await verifyOtpRepository.verifyOtp(otp: otp);

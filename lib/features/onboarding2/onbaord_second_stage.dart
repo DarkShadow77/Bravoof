@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:flowva/features/common/app_enum.dart';
 import 'package:flowva/features/common/flowva_button.dart';
@@ -14,6 +15,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../../core/constants/app_colors.dart';
 import '../otp/presentation/verify_otp_page.dart';
 import 'data/convert_asset_file.dart';
 import 'data/data.dart';
@@ -313,7 +315,6 @@ class _OnbaordSecondStageState extends State<OnbaordSecondStage>
                             status: true,
                           );
                         if (currentPage == 2) {
-
                           final profile = UserProfile.empty();
                           userCubit.signup(
                             userProfile: profile.copyWith(
@@ -537,6 +538,7 @@ class _OnbaordSecondStageState extends State<OnbaordSecondStage>
                     height: 126,
                     width: 126,
                     decoration: BoxDecoration(
+                      color: AppColors.white50,
                       shape: BoxShape.circle,
                       // borderRadius: BorderRadius.circular(100),
                     ),
@@ -551,18 +553,19 @@ class _OnbaordSecondStageState extends State<OnbaordSecondStage>
                     height: 126,
                     width: 126,
                     decoration: BoxDecoration(
+                      color: AppColors.white50,
                       shape: BoxShape.circle,
                       // borderRadius: BorderRadius.circular(100),
                     ),
                     clipBehavior: Clip.hardEdge,
-                    child: Image.asset(pickedImage!, fit: BoxFit.cover),
+                    child: Image.file(File(pickedImage!), fit: BoxFit.contain),
                   )
                 : Container(
                     height: 126,
                     width: 126,
                     padding: EdgeInsets.all(30),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.5),
+                      color: AppColors.white50,
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(

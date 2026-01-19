@@ -71,13 +71,16 @@ class GrowthMissionBloc extends Bloc<GrowthMissionEvent, GrowthMissionState> {
           missions: state.missions,
         ),
       ),
-      (_) => emit(
-        GrowthMissionSuccessState(
-          type: GrowthMissionType.completeMission,
-          missions: state.missions,
-          message: "Mission completed successfully",
-        ),
-      ),
+      (_) {
+        add(LoadGrowthMission());
+        emit(
+          GrowthMissionSuccessState(
+            type: GrowthMissionType.completeMission,
+            missions: state.missions,
+            message: "Mission completed successfully",
+          ),
+        );
+      },
     );
   }
 }

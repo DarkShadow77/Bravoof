@@ -8,6 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
+import '../../../../../app/view/widgets/button/icon_text_button.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../data/model/mission_status_enum.dart';
 import '../../data/model/social_mission_model.dart';
@@ -31,6 +32,26 @@ class _FollowUsCardState extends State<FollowUsCard> {
     socialMissions = socialBloc.state.missions;
     socialMissionStatus = socialBloc.state.hasJoined;
     super.initState();
+  }
+
+  String getMissionPointRange() {
+    final points = socialMissions
+        .map((p) => p.points)
+        .whereType<int>()
+        .toList();
+
+    if (points.isEmpty) {
+      throw Exception('No point-based missions found');
+    }
+
+    final min = points.reduce((a, b) => a < b ? a : b);
+    final max = points.reduce((a, b) => a > b ? a : b);
+
+    if (min == max) {
+      return min.toString();
+    }
+
+    return "$min - $max";
   }
 
   @override
@@ -105,7 +126,7 @@ class _FollowUsCardState extends State<FollowUsCard> {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           text: TextSpan(
-                            text: "100",
+                            text: getMissionPointRange(),
                             style: TextStyles.cardSemibold10(context),
                           ),
                         ),
@@ -195,58 +216,78 @@ class _SocialCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final joined =
+        (missionStatus == MissionStatus.pending ||
+        missionStatus == MissionStatus.completed);
     // container with rounded corners and subtle background
     return GestureDetector(
       onTap: () {
-        if (!(missionStatus == MissionStatus.completed ||
-            missionStatus == MissionStatus.pending)) {
+        if (!joined) {
           socialEventDialog(socialMission: socialMission);
         }
       },
       child: Container(
         padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 12.w),
         decoration: BoxDecoration(
-          color:
-              (missionStatus == MissionStatus.completed ||
-                  missionStatus == MissionStatus.pending)
-              ? Color(0xFFECD6FF)
-              : Color(0xFFF1F1F1),
+          color: joined ? Color(0xFFECD6FF) : AppColors.black05,
           borderRadius: BorderRadius.circular(16.r),
+          border: Border.all(width: 1.w, color: AppColors.white),
         ),
 
-        child: Column(
-          spacing: 7.h,
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
+        child: Stack(
           children: [
-            CachedImageRadius(
-              imageUrl: socialMission.image,
-              size: 32,
-              circle: true,
-              fit: BoxFit.cover,
+            Column(
+              spacing: 7.h,
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                CachedImageRadius(
+                  imageUrl: socialMission.image,
+                  size: 32,
+                  circle: true,
+                  fit: BoxFit.contain,
+                ),
+                RichText(
+                  maxLines: 1,
+                  textAlign: TextAlign.center,
+                  overflow: TextOverflow.ellipsis,
+                  text: TextSpan(
+                    text: socialMission.title,
+                    style: TextStyles.cardBold10(context),
+                  ),
+                ),
+                joined
+                    ? Image.asset(
+                        AssetsPngImages.check,
+                        width: 14.r,
+                        height: 14.r,
+                        fit: BoxFit.contain,
+                      )
+                    : IconTextButton(
+                        onPressed: () {
+                          if (!joined) {
+                            socialEventDialog(socialMission: socialMission);
+                          }
+                        },
+                        height: 22.5,
+                        textSize: 6.5,
+                        text: "Start Mission",
+                        paddingH: 0,
+                        paddingW: 0,
+                        color: joined ? AppColors.grey300 : AppColors.black,
+                        textColor: AppColors.white,
+                      ),
+              ],
             ),
-            RichText(
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              text: TextSpan(
-                text: socialMission.title,
-                style: TextStyles.cardBold10(context),
+            Align(
+              alignment: Alignment.topRight,
+              child: SvgPicture.asset(
+                AssetsSvgIcons.circleLock,
+                width: 14.r,
+                height: 14.r,
+                fit: BoxFit.contain,
               ),
             ),
-            (missionStatus == MissionStatus.completed ||
-                    missionStatus == MissionStatus.pending)
-                ? Image.asset(
-                    AssetsPngImages.check,
-                    width: 14.r,
-                    height: 14.r,
-                    fit: BoxFit.contain,
-                  )
-                : SvgPicture.asset(
-                    AssetsSvgIcons.circleLock,
-                    width: 14.r,
-                    height: 14.r,
-                    fit: BoxFit.contain,
-                  ),
           ],
         ),
       ),

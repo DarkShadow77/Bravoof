@@ -138,7 +138,7 @@ class _MissionListTitleState extends State<MissionListTitle> with UIToolMixin {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
+      padding: EdgeInsets.only(bottom: 12.h),
       child: MissionTile(
         mission: widget.mission,
         onClaim: () async {
@@ -156,14 +156,7 @@ class _MissionListTitleState extends State<MissionListTitle> with UIToolMixin {
 
               // Mark mission completed for current user
               context.read<GrowthMissionBloc>().add(
-                CompleteGrowthMission(
-                  mission: {
-                    "id": widget.mission.id,
-                    "name": widget.mission.subject,
-                    "reward_title": widget.mission.title,
-                    "points": widget.mission.points,
-                  },
-                ),
+                CompleteGrowthMission(mission: {"id": widget.mission.id}),
               );
 
               setState(() {
@@ -176,15 +169,7 @@ class _MissionListTitleState extends State<MissionListTitle> with UIToolMixin {
               if (success) {
                 // Update mission as completed in Supabase
                 context.read<GrowthMissionBloc>().add(
-                  CompleteGrowthMission(
-                    mission: {
-                      "id": widget.mission.id,
-                      "name": widget.mission.subject,
-                      "reward_title": widget.mission.title,
-                      "points": "0",
-                      "number_of_spins": 1,
-                    },
-                  ),
+                  CompleteGrowthMission(mission: {"id": widget.mission.id}),
                 );
                 setState(() {
                   widget.mission.completed = true;
@@ -343,7 +328,7 @@ class MissionTile extends StatelessWidget {
           ),
           const SizedBox(width: 4),
           Container(
-            padding: EdgeInsets.only(top: 8, right: 8, left: 8),
+            padding: EdgeInsets.only(top: 8, right: 4, left: 4),
             // height: 80,
             width: 88,
             decoration: BoxDecoration(
@@ -372,12 +357,11 @@ class MissionTile extends StatelessWidget {
                     ),
                   ],
                 ),
-
                 // SizedBox(height: 5),
                 // const SizedBox(height: 10),
                 FlowvaButton.purpleButton(
                   color: mission.completed! ? Colors.grey : null,
-                  name: "${mission.subject}",
+                  name: mission.completed! ? "Completed" : "${mission.subject}",
                   apply: onClaim,
                 ),
               ],

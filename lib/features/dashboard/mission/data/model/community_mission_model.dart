@@ -4,10 +4,12 @@ class CommunityMission {
   final DateTime startDate;
   final DateTime endDate;
   final int usersJoined;
+  final int maxUsers;
   final List<MissionInstruction> instructions;
   final DateTime createdAt;
   final bool status;
   final int point;
+  final String instructionTitle;
 
   CommunityMission({
     required this.id,
@@ -15,10 +17,12 @@ class CommunityMission {
     required this.startDate,
     required this.endDate,
     required this.usersJoined,
+    required this.maxUsers,
     required this.instructions,
     required this.createdAt,
     required this.status,
     required this.point,
+    required this.instructionTitle,
   });
 
   factory CommunityMission.fromJson(Map<String, dynamic> json) {
@@ -28,12 +32,14 @@ class CommunityMission {
       startDate: DateTime.parse(json['start_date']),
       endDate: DateTime.parse(json['end_date']),
       usersJoined: json['users_joined'] ?? 0,
+      maxUsers: json['max_users'] ?? 1,
       instructions: (json['instructions'] as List? ?? [])
           .map((e) => MissionInstruction.fromJson(e))
           .toList(),
       createdAt: DateTime.parse(json['created_at']),
       status: json['status'] ?? false,
       point: json['point'] ?? 0,
+      instructionTitle: json['instruction_title'] ?? '',
     );
   }
 
@@ -44,10 +50,12 @@ class CommunityMission {
       'start_date': startDate.toIso8601String(),
       'end_date': endDate.toIso8601String(),
       'users_joined': usersJoined,
+      'max_users': maxUsers,
       'instructions': instructions.map((e) => e.toJson()).toList(),
       'created_at': createdAt.toIso8601String(),
       'status': status,
       'point': point,
+      'instruction_title': instructionTitle,
     };
   }
 }
@@ -61,9 +69,9 @@ class MissionInstruction {
 
   factory MissionInstruction.fromJson(Map<String, dynamic> json) {
     return MissionInstruction(
-      text: json['text'] ?? '',
-      sideImage: json['sideImage'],
-      bottomImage: json['bottomImage'],
+      text: json['text'] ?? "",
+      sideImage: json['sideImage'] ?? "",
+      bottomImage: json['bottomImage'] ?? "",
     );
   }
 
