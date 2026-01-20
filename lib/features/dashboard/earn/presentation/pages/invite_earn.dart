@@ -109,7 +109,7 @@ class _InviteAndEarnPageState extends State<InviteAndEarnPage> {
                   ),
                   children: [
                     Text(
-                      "Everything referrals invites, missions, rewards.",
+                      "Invite your friends and win big on Bravoo",
                       style: GoogleFonts.manrope(
                         color: Color(0xFF767676),
                         fontWeight: FontWeight.w600,
@@ -293,52 +293,7 @@ class _InviteAndEarnPageState extends State<InviteAndEarnPage> {
                                   fontWeight: FontWeight.w400,
                                 ),
                               ),
-                              const SizedBox(height: 8),
-                              GestureDetector(
-                                onTap: () {},
-                                child: RichText(
-                                  text: TextSpan(
-                                    children: [
-                                      TextSpan(
-                                        text: "See ",
-                                        style: GoogleFonts.manrope(
-                                          color: Colors.grey[700],
-                                          decoration: TextDecoration.underline,
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w700,
-                                        ),
-                                      ),
-                                      TextSpan(
-                                        text: "Referral Terms ",
-                                        style: GoogleFonts.manrope(
-                                          color: Colors.black,
-                                          decoration: TextDecoration.underline,
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w700,
-                                        ),
-                                      ),
-                                      TextSpan(
-                                        text: "and ",
-                                        style: GoogleFonts.manrope(
-                                          color: Colors.grey[700],
-                                          decoration: TextDecoration.underline,
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w700,
-                                        ),
-                                      ),
-                                      TextSpan(
-                                        text: "Privacy Policy",
-                                        style: GoogleFonts.manrope(
-                                          color: Colors.black,
-                                          decoration: TextDecoration.underline,
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w700,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
+                              const SizedBox(height: 10),
                             ],
                           ),
                         ),

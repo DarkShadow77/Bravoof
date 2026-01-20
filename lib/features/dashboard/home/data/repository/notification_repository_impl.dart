@@ -8,11 +8,12 @@ import 'notification_repository.dart';
 class NotificationRepositoryImpl extends NotificationRepository {
   final supabase = Supabase.instance.client;
 
-  /// Fetch active community mission
-  Future<Either<String, List<NotificationModel>>> fetchNotifications() async {
+  Future<Either<String, List<NotificationModel>>> fetchNotifications({
+    required String userId,
+  }) async {
     return ApiService.instance!.invokeEdgeFunction<List<NotificationModel>>(
       functionName: 'get-user-notifications',
-      body: {'user_id': supabase.auth.currentUser!.id},
+      body: {'user_id': userId},
       fallbackErrorMessage: 'Failed to Retrieve Notifications',
       onSuccess: (data) {
         final notification = data["data"] as List;
@@ -32,19 +33,23 @@ class NotificationRepositoryImpl extends NotificationRepository {
     );
   }
 
-  Future<Either<String, String>> markAllNotificationAsRead() async {
+  Future<Either<String, String>> markAllNotificationAsRead({
+    required String userId,
+  }) async {
     return ApiService.instance!.invokeEdgeFunction<String>(
       functionName: 'mark-all-notifications-read',
-      body: {'user_id': supabase.auth.currentUser!.id},
+      body: {'user_id': userId},
       fallbackErrorMessage: 'All Notification as Read failed',
       onSuccess: (data) => "Successfully Marked All Notification as Read",
     );
   }
 
-  Future<Either<String, String>> clearNotification() async {
+  Future<Either<String, String>> clearNotification({
+    required String userId,
+  }) async {
     return ApiService.instance!.invokeEdgeFunction<String>(
       functionName: 'clear-user-notifications',
-      body: {'user_id': supabase.auth.currentUser!.id},
+      body: {'user_id': userId},
       fallbackErrorMessage: 'Clear All Notification failed',
       onSuccess: (data) => "Successfully Cleared All Notification",
     );

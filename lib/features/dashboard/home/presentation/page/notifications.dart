@@ -27,6 +27,72 @@ class _NotificationsPageState extends State<NotificationsPage> {
     notificationBloc.add(LoadNotifications());
   }
 
+  DateTime _dateOnly(DateTime d) => DateTime(d.year, d.month, d.day);
+
+  DateTime _startOfWeek(DateTime d) {
+    final day = d.weekday; // Mon = 1
+    return _dateOnly(d.subtract(Duration(days: day - 1)));
+  }
+
+  Map<String, List<NotificationModel>> groupNotifications() {
+    final now = DateTime.now();
+    final today = _dateOnly(now);
+    final yesterday = today.subtract(const Duration(days: 1));
+
+    final thisWeekStart = _startOfWeek(today);
+    final lastWeekStart = thisWeekStart.subtract(const Duration(days: 7));
+    final lastWeekEnd = thisWeekStart.subtract(const Duration(days: 1));
+
+    final thisMonthStart = DateTime(today.year, today.month, 1);
+    final lastMonthStart = DateTime(today.year, today.month - 1, 1);
+    final lastMonthEnd = thisMonthStart.subtract(const Duration(days: 1));
+
+    final Map<String, List<NotificationModel>> grouped = {};
+
+    for (final n in notifications) {
+      final date = _dateOnly(n.createdAt);
+      String key;
+
+      if (date == today) {
+        key = 'Today';
+      } else if (date == yesterday) {
+        key = 'Yesterday';
+      } else if (date.isAfter(thisWeekStart)) {
+        key = 'This Week';
+      } else if (date.isAfter(lastWeekStart) &&
+          date.isBefore(lastWeekEnd.add(const Duration(days: 1)))) {
+        key = 'Last Week';
+      } else if (date.isAfter(thisMonthStart)) {
+        key = 'This Month';
+      } else if (date.isAfter(lastMonthStart) &&
+          date.isBefore(lastMonthEnd.add(const Duration(days: 1)))) {
+        key = 'Last Month';
+      } else {
+        // Fallback to Month / Year
+        final monthName = _monthName(date.month);
+        key = date.year == today.year ? monthName : '$monthName ${date.year}';
+      }
+
+      grouped.putIfAbsent(key, () => []).add(n);
+    }
+
+    return grouped;
+  }
+
+  List<String> orderedKeys(Map<String, List<NotificationModel>> grouped) {
+    final now = DateTime.now();
+
+    final fixed = sectionOrder.where(grouped.containsKey).toList();
+
+    final months = grouped.keys.where((k) => !sectionOrder.contains(k)).toList()
+      ..sort((a, b) {
+        // Optional: custom month sorting if needed
+        return 0;
+      });
+
+    return [...fixed, ...months];
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -85,12 +151,8 @@ class _NotificationsPageState extends State<NotificationsPage> {
         builder: (context, state) {
           notifications = state.notification;
           // Group transactions by month/year
-          final grouped = <String, List<NotificationModel>>{};
-          for (final tx in notifications) {
-            final key =
-                '${_monthName(tx.createdAt.month)} ${tx.createdAt.year}'; // e.g. October 2025
-            grouped.putIfAbsent(key, () => []).add(tx);
-          }
+          final grouped = groupNotifications();
+          final keys = orderedKeys(grouped);
 
           if (grouped.isEmpty)
             return Column(
@@ -130,10 +192,11 @@ class _NotificationsPageState extends State<NotificationsPage> {
               padding: EdgeInsets.symmetric(vertical: 20.h),
               itemCount: grouped.length,
               itemBuilder: (context, index) {
+                final key = keys[index];
                 return _buildNotificationCard(
                   context,
-                  month: grouped.keys.elementAt(index),
-                  notificationList: grouped.values.elementAt(index),
+                  month: key,
+                  notificationList: grouped[key]!,
                 );
               },
               separatorBuilder: (context, index) {
@@ -178,6 +241,15 @@ class _NotificationsPageState extends State<NotificationsPage> {
       ],
     );
   }
+
+  final sectionOrder = [
+    'Today',
+    'Yesterday',
+    'This Week',
+    'Last Week',
+    'This Month',
+    'Last Month',
+  ];
 
   String _monthName(int month) {
     const months = [

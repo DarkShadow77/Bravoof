@@ -3,7 +3,7 @@ import 'dart:ui';
 import 'package:flowva/core/constants/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_linkify/flutter_linkify.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -258,14 +258,13 @@ class _AskingDialogState extends State<FeaturedEventDialog> with UIToolMixin {
                           ? FlowvaButton.blueButton(
                               name: "Mission complete",
                               apply: () {
-                                BlocProvider.of<FeaturedMissionBloc>(
-                                  context,
-                                ).add(
-                                  CompleteFeaturedMission(
-                                    missionId: widget.featuredMission.id,
-                                    imageUrl: pickedImage,
-                                  ),
-                                );
+                                if (pickedImage != null)
+                                  context.read<FeaturedMissionBloc>().add(
+                                    CompleteFeaturedMission(
+                                      missionId: widget.featuredMission.id,
+                                      imageUrl: pickedImage!,
+                                    ),
+                                  );
                               },
                             )
                           : SizedBox(
@@ -314,22 +313,27 @@ class _AskingDialogState extends State<FeaturedEventDialog> with UIToolMixin {
                       color: AppColors.grey300.withValues(alpha: .5),
                     ),
                   ),
-                  child: Linkify(
-                    text: instruction.text,
-                    style: TextStyles.normalSemibold14(context),
-                    linkStyle: TextStyle(
-                      color: AppColors.primary,
-                      decoration: TextDecoration.underline,
-                    ),
-                    onOpen: (link) async {
-                      final uri = Uri.parse(link.url);
-                      if (await canLaunchUrl(uri)) {
-                        await launchUrl(
-                          uri,
-                          mode: LaunchMode.externalApplication,
-                        );
+                  child: MarkdownBody(
+                    data: instruction.text,
+                    onTapLink: (text, href, title) async {
+                      if (href != null) {
+                        final uri = Uri.parse(href);
+                        if (await canLaunchUrl(uri)) {
+                          await launchUrl(
+                            uri,
+                            mode: LaunchMode.externalApplication,
+                          );
+                        }
                       }
                     },
+                    styleSheet: MarkdownStyleSheet(
+                      a: TextStyle(
+                        color: AppColors.primary,
+                        decoration: TextDecoration.underline,
+                      ),
+                      p: TextStyles.normalSemibold14(context),
+                      strong: TextStyles.normalBold14(context),
+                    ),
                   ),
                 ),
                 Padding(
@@ -369,19 +373,24 @@ class _AskingDialogState extends State<FeaturedEventDialog> with UIToolMixin {
                 ),
               ],
             )
-          : Linkify(
-              text: instruction.text,
-              style: TextStyles.normalSemibold14(context),
-              linkStyle: TextStyle(
-                color: AppColors.primary,
-                decoration: TextDecoration.underline,
-              ),
-              onOpen: (link) async {
-                final uri = Uri.parse(link.url);
-                if (await canLaunchUrl(uri)) {
-                  await launchUrl(uri, mode: LaunchMode.externalApplication);
+          : MarkdownBody(
+              data: instruction.text,
+              onTapLink: (text, href, title) async {
+                if (href != null) {
+                  final uri = Uri.parse(href);
+                  if (await canLaunchUrl(uri)) {
+                    await launchUrl(uri, mode: LaunchMode.externalApplication);
+                  }
                 }
               },
+              styleSheet: MarkdownStyleSheet(
+                a: TextStyle(
+                  color: AppColors.primary,
+                  decoration: TextDecoration.underline,
+                ),
+                p: TextStyles.normalSemibold14(context),
+                strong: TextStyles.normalBold14(context),
+              ),
             ),
     );
   }

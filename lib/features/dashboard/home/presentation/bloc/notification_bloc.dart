@@ -1,6 +1,6 @@
 import 'package:bloc/bloc.dart';
-import 'package:logger/logger.dart';
 import 'package:meta/meta.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../data/model/notification_model.dart';
 import '../../data/repository/notification_repository.dart';
@@ -10,6 +10,7 @@ part 'notification_state.dart';
 
 class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
   final NotificationRepository repo;
+  final supabase = Supabase.instance.client;
   NotificationBloc({required this.repo})
     : super(NotificationInitialState(notification: [])) {
     on<LoadNotifications>(_loadNotifications);
@@ -26,9 +27,10 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       ),
     );
 
-    final notificationRes = await repo.fetchNotifications();
+    final notificationRes = await repo.fetchNotifications(
+      userId: supabase.auth.currentUser!.id,
+    );
 
-    Logger().d("Load Notification Response $notificationRes");
     notificationRes.fold(
       (err) => emit(
         NotificationErrorState(
@@ -65,8 +67,6 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       notificationId: event.notificationId,
     );
 
-    Logger().d("Mark Notification Response $res");
-
     res.fold(
       (err) => emit(
         NotificationErrorState(
@@ -99,9 +99,9 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       ),
     );
 
-    final res = await repo.markAllNotificationAsRead();
-
-    Logger().d("Mark All Notification Response $res");
+    final res = await repo.markAllNotificationAsRead(
+      userId: supabase.auth.currentUser!.id,
+    );
 
     res.fold(
       (err) => emit(
@@ -135,9 +135,9 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       ),
     );
 
-    final res = await repo.clearNotification();
-
-    Logger().d("Clear All Notification Response $res");
+    final res = await repo.clearNotification(
+      userId: supabase.auth.currentUser!.id,
+    );
 
     res.fold(
       (err) => emit(

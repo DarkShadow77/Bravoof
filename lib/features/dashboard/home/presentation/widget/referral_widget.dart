@@ -83,13 +83,15 @@ class ReferralWidget extends StatelessWidget {
           ),
         ),
         SizedBox(height: 16.h),
-        RichText(
-          textAlign: TextAlign.center,
-          text: TextSpan(
-            text:
-                'Every friend counts: Get 50 Coins each when your '
-                'friend checks in for the first time.',
-            style: TextStyles.smallSemibold12(context, opacity: .65),
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 24.w),
+          child: RichText(
+            textAlign: TextAlign.center,
+            text: TextSpan(
+              text:
+                  'Every friend counts: Get 1000 coins when you invite 10 friends.',
+              style: TextStyles.smallSemibold12(context, opacity: .65),
+            ),
           ),
         ),
         SizedBox(height: 8.h),

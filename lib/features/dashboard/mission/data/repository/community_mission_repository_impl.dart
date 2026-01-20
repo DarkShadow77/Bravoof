@@ -1,6 +1,10 @@
 import 'package:dartz/dartz.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:dio/dio.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:logger/logger.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' hide MultipartFile;
 
+import '../../../../../core/services/api_service.dart';
 import '../model/community_mission_model.dart';
 import '../model/mission_status_enum.dart';
 import 'community_mission_repository.dart';
@@ -8,91 +12,58 @@ import 'community_mission_repository.dart';
 class CommunityMissionRepositoryImpl extends CommunityMissionRepository {
   final supabase = Supabase.instance.client;
 
-  /// Fetch active community mission
-  Future<Either<String, CommunityMission>> fetchActiveMission() async {
-    try {
-      final res = await supabase
-          .from('community_missions')
-          .select()
-          .eq('status', true)
-          .order('created_at', ascending: true);
+  Future<Either<String, CommunityMission>> fetchCommunityMission() async {
+    return ApiService.instance!.invokeEdgeFunction<CommunityMission>(
+      functionName: 'fetch-community-mission',
+      body: {},
+      fallbackErrorMessage: 'Failed to Fetch Community Mission',
+      onSuccess: (data) => CommunityMission.fromJson(data["data"]),
+    );
+  }
 
-      if (res.isEmpty) {
-        return Left('No active community mission found');
-      }
+  Future<Either<String, void>> completeMission({
+    required int missionId,
+    required String userId,
+    required String imageUrl,
+  }) async {
+    final token =
+        Supabase.instance.client.auth.currentSession?.accessToken ?? "";
+    final formData = FormData.fromMap({
+      'missionId': missionId,
+      'userId': userId,
+      'image': await MultipartFile.fromFile(
+        imageUrl,
+        filename: imageUrl.split('/').last,
+      ),
+    });
 
-      // 🔹 Pick the last mission after ascending sort
-      final latestMission = res.last;
+    final response = await ApiService.instance!.postRequest(
+      "functions/v1/complete-community-mission",
+      formData,
+      accessToken: token,
+      apiKey: dotenv.env["ANON_KEY"] ?? "",
+    );
 
-      return Right(CommunityMission.fromJson(latestMission));
-    } catch (e) {
-      return Left(e.toString());
+    Logger().d("Complete Community Mission Response $response");
+
+    if (response.responseSuccessful == true) {
+      return Right(null);
+    } else {
+      return Left(
+        response.responseMessage ?? "Failed to Complete Community Mission",
+      );
     }
   }
 
-  /// Join / Update mission
-  Future<Either<String, void>> joinMission({
-    required int missionId,
-    required String userId,
-    required String? imageUrl,
-  }) async {
-    try {
-      // Check if user already joined
-      final existing = await supabase
-          .from('community_mission_completed')
-          .select('id')
-          .eq('community_mission_id', missionId)
-          .eq('user_id', userId)
-          .maybeSingle();
-
-      if (existing == null) {
-        // First join
-        await supabase.from('community_mission_completed').insert({
-          'community_mission_id': missionId,
-          'user_id': userId,
-          'evidence_image': imageUrl,
-          'status': 'PENDING',
-        });
-
-        // Increment joined users
-        await supabase.rpc(
-          'increment_community_users',
-          params: {'mission_id': missionId},
-        );
-      } else {
-        // Update existing submission
-        await supabase
-            .from('community_mission_completed')
-            .update({
-              'evidence_image': imageUrl,
-              'status': 'PENDING',
-              'updated_at': DateTime.now().toIso8601String(),
-            })
-            .eq('id', existing['id']);
-      }
-    } catch (e) {
-      return Left(e.toString());
-    }
-
-    return const Right(null);
-  }
-
-  /// Check if user already joined
-  Future<MissionStatus> hasJoined({
+  Future<Either<String, MissionStatus>> hasJoined({
     required int missionId,
     required String userId,
   }) async {
-    final res = await supabase
-        .from('community_mission_completed')
-        .select('status')
-        .eq('community_mission_id', missionId)
-        .eq('user_id', userId)
-        .maybeSingle();
-
-    if (res == null) {
-      return MissionStatus.notJoined;
-    }
-
-    return statusFromDb(res['status'] as String);
+    return ApiService.instance!.invokeEdgeFunction<MissionStatus>(
+      functionName: 'has-joined-community',
+      body: {"missionId": missionId, "userId": userId},
+      fallbackErrorMessage: 'Failed to Fetch Community Status',
+      onSuccess: (data) => statusFromDb(data["data"]["status"] as String),
+    );
   }
 }

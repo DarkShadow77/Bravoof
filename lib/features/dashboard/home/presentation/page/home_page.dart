@@ -139,12 +139,12 @@ class _FlowvaHomePageState extends State<FlowvaHomePage> with UIToolMixin {
                                             ))
                                               Positioned(
                                                 top: 0,
-                                                right: 4.w,
+                                                right: 2.w,
                                                 child: Container(
-                                                  width: 8.w,
-                                                  height: 8.h,
+                                                  width: 12.w,
+                                                  height: 12.h,
                                                   decoration: BoxDecoration(
-                                                    color: AppColors.redBrown,
+                                                    color: AppColors.error,
                                                     shape: BoxShape.circle,
                                                   ),
                                                 ),
@@ -599,7 +599,7 @@ class MissionAwaitWidget extends StatelessWidget {
                             overflow: TextOverflow.ellipsis,
                             text: TextSpan(
                               text:
-                                  "Congratulations on getting to 5000 coins!!",
+                                  "Congratulations on getting to ${formatAmount(profile.totalPoints)} coins!!",
                               style: TextStyles.cardSemibold10(
                                 context,
                               ).copyWith(color: AppColors.grey200),

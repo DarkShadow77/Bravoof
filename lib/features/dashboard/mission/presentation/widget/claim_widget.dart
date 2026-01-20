@@ -335,14 +335,14 @@ class _ReclaimMissionPopupState extends State<ReclaimMissionPopup>
                               ? FlowvaButton.blueButton(
                                   name: "Complete mission",
                                   apply: () {
-                                    BlocProvider.of<CommunityMissionBloc>(
+                                    /*  BlocProvider.of<CommunityMissionBloc>(
                                       context,
                                     ).add(
                                       JoinCommunityMission(
                                         imageUrl: pickedImage,
                                         missionId: upperState.mission?.id ?? 0,
                                       ),
-                                    );
+                                    );*/
                                     /*missionCubit.saveAndUpdateSkillUp({
                                         "title": "Reclaim mission",
                                         "user_id": SessionManager().userIdVal,

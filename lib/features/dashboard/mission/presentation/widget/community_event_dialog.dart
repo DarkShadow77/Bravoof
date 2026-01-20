@@ -254,14 +254,14 @@ class _AskingDialogState extends State<CommunityEventDialog> with UIToolMixin {
                           ? FlowvaButton.blueButton(
                               name: "Mission complete",
                               apply: () {
-                                BlocProvider.of<CommunityMissionBloc>(
-                                  context,
-                                ).add(
-                                  JoinCommunityMission(
-                                    missionId: widget.communityMission.id,
-                                    imageUrl: pickedImage,
-                                  ),
-                                );
+                                if (pickedImage != null) {
+                                  context.read<CommunityMissionBloc>().add(
+                                    JoinCommunityMission(
+                                      missionId: widget.communityMission.id,
+                                      imageUrl: pickedImage!,
+                                    ),
+                                  );
+                                }
                               },
                             )
                           : SizedBox(

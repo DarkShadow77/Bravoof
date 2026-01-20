@@ -13,7 +13,7 @@ class CheckJoinStatus extends CommunityMissionEvent {
 
 class JoinCommunityMission extends CommunityMissionEvent {
   final int missionId;
-  final String? imageUrl;
+  final String imageUrl;
 
   JoinCommunityMission({required this.missionId, required this.imageUrl});
 }

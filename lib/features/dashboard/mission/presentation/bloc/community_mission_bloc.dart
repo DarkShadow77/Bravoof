@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../../../../../session/session_manager.dart';
 import '../../data/model/community_mission_model.dart';
 import '../../data/model/mission_status_enum.dart';
 import '../../data/repository/community_mission_repository.dart';
@@ -12,7 +12,7 @@ part 'community_mission_state.dart';
 class CommunityMissionBloc
     extends Bloc<CommunityMissionEvent, CommunityMissionState> {
   final CommunityMissionRepository repo;
-  SessionManager session = SessionManager();
+  final supabase = Supabase.instance.client;
 
   CommunityMissionBloc({required this.repo})
     : super(
@@ -35,7 +35,7 @@ class CommunityMissionBloc
       ),
     );
 
-    final missionRes = await repo.fetchActiveMission();
+    final missionRes = await repo.fetchCommunityMission();
 
     missionRes.fold(
       (err) => emit(
@@ -65,10 +65,13 @@ class CommunityMissionBloc
     if (state.mission != null) {
       final joined = await repo.hasJoined(
         missionId: state.mission!.id,
-        userId: session.userIdVal,
+        userId: supabase.auth.currentUser!.id,
       );
 
-      emit(state.copWith(hasJoined: joined));
+      joined.fold(
+        (err) => emit(state.copWith(hasJoined: MissionStatus.notJoined)),
+        (data) => emit(state.copWith(hasJoined: data)),
+      );
     } else {
       emit(state.copWith(hasJoined: MissionStatus.notJoined));
     }
@@ -83,9 +86,9 @@ class CommunityMissionBloc
       ),
     );
 
-    final res = await repo.joinMission(
+    final res = await repo.completeMission(
       missionId: event.missionId,
-      userId: session.userIdVal,
+      userId: supabase.auth.currentUser!.id,
       imageUrl: event.imageUrl,
     );
 

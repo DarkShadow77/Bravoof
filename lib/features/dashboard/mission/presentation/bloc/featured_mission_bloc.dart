@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../../../../../session/session_manager.dart';
 import '../../data/model/featured_mission_model.dart';
 import '../../data/model/mission_status_enum.dart';
 import '../../data/repository/featured_mission_repository.dart';
@@ -12,7 +12,7 @@ part 'featured_mission_state.dart';
 class FeaturedMissionBloc
     extends Bloc<FeaturedMissionEvent, FeaturedMissionState> {
   final FeaturedMissionRepository repo;
-  SessionManager session = SessionManager();
+  final supabase = Supabase.instance.client;
 
   FeaturedMissionBloc({required this.repo})
     : super(FeaturedMissionInitial(hasJoined: [], missions: [])) {
@@ -64,15 +64,16 @@ class FeaturedMissionBloc
   ) async {
     final joined = await repo.hasJoined(
       missionId: event.missionId,
-      userId: session.userIdVal,
+      userId: supabase.auth.currentUser!.id,
     );
 
-    // 🔹 Clone list (VERY important)
-    final updatedHasJoined = List<MissionStatus>.from(state.hasJoined);
+    joined.fold((err) {}, (data) {
+      final updatedHasJoined = List<MissionStatus>.from(state.hasJoined);
 
-    updatedHasJoined[event.index] = joined;
+      updatedHasJoined[event.index] = data;
 
-    emit(state.copWith(hasJoined: updatedHasJoined));
+      emit(state.copWith(hasJoined: updatedHasJoined));
+    });
   }
 
   Future<void> _completeMission(
@@ -90,8 +91,7 @@ class FeaturedMissionBloc
 
     final res = await repo.completeMission(
       missionId: event.missionId,
-      userId: session.userIdVal,
-      text: event.text,
+      userId: supabase.auth.currentUser!.id,
       imageUrl: event.imageUrl,
     );
 

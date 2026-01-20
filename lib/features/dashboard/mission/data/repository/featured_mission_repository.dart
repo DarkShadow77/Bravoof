@@ -12,11 +12,10 @@ abstract class FeaturedMissionRepository {
   Future<Either<String, void>> completeMission({
     required int missionId,
     required String userId,
-    required String? text,
-    required String? imageUrl,
+    required String imageUrl,
   });
 
-  Future<MissionStatus> hasJoined({
+  Future<Either<String, MissionStatus>> hasJoined({
     required int missionId,
     required String userId,
   });

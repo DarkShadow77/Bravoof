@@ -7,15 +7,15 @@ import '../model/mission_status_enum.dart';
 abstract class CommunityMissionRepository {
   final supabase = Supabase.instance.client;
 
-  Future<Either<String, CommunityMission>> fetchActiveMission();
+  Future<Either<String, CommunityMission>> fetchCommunityMission();
 
-  Future<Either<String, void>> joinMission({
+  Future<Either<String, void>> completeMission({
     required int missionId,
     required String userId,
-    required String? imageUrl,
+    required String imageUrl,
   });
 
-  Future<MissionStatus> hasJoined({
+  Future<Either<String, MissionStatus>> hasJoined({
     required int missionId,
     required String userId,
   });
