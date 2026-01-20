@@ -1,10 +1,10 @@
-import 'package:flowva/app/styles/text_styles.dart';
-import 'package:flowva/app/view/widgets/button/icon_text_button.dart';
-import 'package:flowva/app/view/widgets/gradient_progress.dart';
-import 'package:flowva/core/constants/app_assets.dart';
-import 'package:flowva/features/common/flowva_colors.dart';
-import 'package:flowva/features/dashboard/earn/presentation/pages/invite_earn.dart';
-import 'package:flowva/features/onbaording/data/model/user_profile.dart';
+import 'package:Bravoo/app/styles/text_styles.dart';
+import 'package:Bravoo/app/view/widgets/button/icon_text_button.dart';
+import 'package:Bravoo/app/view/widgets/gradient_progress.dart';
+import 'package:Bravoo/core/constants/app_assets.dart';
+import 'package:Bravoo/features/common/flowva_colors.dart';
+import 'package:Bravoo/features/dashboard/earn/presentation/pages/invite_earn.dart';
+import 'package:Bravoo/features/onbaording/data/model/user_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -248,14 +248,24 @@ class ReferralCard extends StatelessWidget {
                                 Icon(Icons.link, size: 18.sp, color: kPurple),
                                 Flexible(
                                   child: RichText(
-                                    maxLines: 1,
+                                    maxLines: 2,
                                     overflow: TextOverflow.ellipsis,
                                     text: TextSpan(
-                                      text:
-                                          'https://app.joinbravoo.com?ref=${userProfile.referralCode}',
+                                      children: [
+                                        TextSpan(
+                                          text:
+                                              'https://app.joinbravoo.com?ref=',
+                                        ),
+                                        TextSpan(
+                                          text: userProfile.referralCode,
+                                          style: TextStyle(
+                                            color: AppColors.primary,
+                                          ),
+                                        ),
+                                      ],
                                       style: TextStyles.normalSemibold14(
                                         context,
-                                      ).copyWith(color: AppColors.primary),
+                                      ),
                                     ),
                                   ),
                                 ),

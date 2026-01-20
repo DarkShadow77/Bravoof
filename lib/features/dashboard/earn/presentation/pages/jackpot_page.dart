@@ -1,12 +1,12 @@
 import 'dart:async';
 import 'dart:math';
 
-import 'package:flowva/app/view/widgets/button/icon_text_button.dart';
-import 'package:flowva/core/constants/fonts.dart';
-import 'package:flowva/core/utils/helpers.dart';
-import 'package:flowva/features/common/ui_tool_mixin/ui_tool_mixin.dart';
-import 'package:flowva/features/dashboard/earn/presentation/bloc/jackpot_bloc.dart';
-import 'package:flowva/features/dashboard/earn/presentation/widgets/jackpot_success_dialog.dart';
+import 'package:Bravoo/app/view/widgets/button/icon_text_button.dart';
+import 'package:Bravoo/core/constants/fonts.dart';
+import 'package:Bravoo/core/utils/helpers.dart';
+import 'package:Bravoo/features/common/ui_tool_mixin/ui_tool_mixin.dart';
+import 'package:Bravoo/features/dashboard/earn/presentation/bloc/jackpot_bloc.dart';
+import 'package:Bravoo/features/dashboard/earn/presentation/widgets/jackpot_success_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

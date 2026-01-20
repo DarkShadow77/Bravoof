@@ -1,10 +1,11 @@
 import 'dart:async';
 
 import 'package:app_links/app_links.dart';
-import 'package:flowva/features/dashboard/home/presentation/bloc/home_cubit.dart';
-import 'package:flowva/features/dashboard/redeem/presentation/bloc/redeem_bloc.dart';
-import 'package:flowva/session/session_manager.dart';
-import 'package:flowva/utility/auth_listener.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:Bravoo/features/dashboard/home/presentation/bloc/home_cubit.dart';
+import 'package:Bravoo/features/dashboard/redeem/presentation/bloc/redeem_bloc.dart';
+import 'package:Bravoo/session/session_manager.dart';
+import 'package:Bravoo/utility/auth_listener.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -33,6 +34,7 @@ import 'features/dashboard/mission/presentation/bloc/sponsored_mission_bloc.dart
 import 'features/dashboard/mission/presentation/bloc/streak_bloc.dart';
 import 'features/dashboard/profile/presentation/bloc/profile_bloc.dart';
 import 'features/onbaording/data/bloc/user_cubit.dart';
+import 'firebase_options.dart';
 import 'utility/navigation.dart';
 
 void main() async {
@@ -41,6 +43,8 @@ void main() async {
   FlutterNativeSplash.preserve(
     widgetsBinding: WidgetsFlutterBinding.ensureInitialized(),
   );
+
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   //Initialize dotenv for environment variables
   await dotenv.load(fileName: ".env.development");

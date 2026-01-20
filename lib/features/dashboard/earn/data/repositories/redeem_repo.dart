@@ -1,10 +1,9 @@
 import 'dart:async';
-
-import 'package:dartz/dartz.dart';
 import 'dart:convert';
-import 'package:flowva/session/session_manager.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+
+import 'package:Bravoo/session/session_manager.dart';
 import 'package:http/http.dart' as http;
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 // 2️⃣ Build the Edge Function URL
 final supabaseUrl = String.fromEnvironment(
@@ -36,7 +35,8 @@ class RedeemRepo {
 
       headers: {
         "Content-Type": "application/json",
-        'apikey': "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVyZGVidXhienFpd3FneXpycm15Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA0NDgzMzEsImV4cCI6MjA3NjAyNDMzMX0.sX0a4xtEfHAHeSSCReY-9JUGrHxZwYLe0nYKsbTdRpE",
+        'apikey':
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVyZGVidXhienFpd3FneXpycm15Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA0NDgzMzEsImV4cCI6MjA3NjAyNDMzMX0.sX0a4xtEfHAHeSSCReY-9JUGrHxZwYLe0nYKsbTdRpE",
         'Authorization': '$token',
       },
       body: {'referred_user_id': user!.id, 'referral_code': referralCode},
@@ -135,7 +135,7 @@ class RedeemRepo {
       // 1️⃣ Get the current Supabase session
       final sessionResponse = await supabase.auth.currentSession;
       final session = sessionResponse;
-print(sessionResponse);
+      print(sessionResponse);
       final token = session?.accessToken;
       final userId = userIdOverride ?? session?.user.id;
 

@@ -3,9 +3,9 @@ import 'dart:developer';
 
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
-import 'package:flowva/features/common/data/constants.dart';
-import 'package:flowva/features/common/model/app_base_response.dart';
-import 'package:flowva/session/session_manager.dart';
+import 'package:Bravoo/features/common/data/constants.dart';
+import 'package:Bravoo/features/common/model/app_base_response.dart';
+import 'package:Bravoo/session/session_manager.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:logger/logger.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' hide MultipartFile;

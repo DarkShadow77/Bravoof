@@ -1,7 +1,7 @@
 import 'dart:ui';
 
-import 'package:flowva/app/view/widgets/button/icon_text_button.dart';
-import 'package:flowva/core/constants/app_assets.dart';
+import 'package:Bravoo/app/view/widgets/button/icon_text_button.dart';
+import 'package:Bravoo/core/constants/app_assets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_confetti/flutter_confetti.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

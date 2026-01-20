@@ -1,7 +1,6 @@
-import 'package:flowva/features/common/flowva_button.dart';
+import 'package:Bravoo/features/common/flowva_button.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hugeicons/hugeicons.dart';
 
 class BadgesScreen extends StatelessWidget {
   const BadgesScreen({super.key});
@@ -61,29 +60,35 @@ class BadgesScreen extends StatelessWidget {
                         'Explore Badges',
                         'Earned by trying tools, completing onboarding, discovering categories.',
                       ),
-                      _buildExpandableSection(context,'Growth Badges', ''),
-                      _buildExpandableSection(context,'Community Badges', ''),
-                      _buildExpandableSection(context,'Event Badges', ''),
+                      _buildExpandableSection(context, 'Growth Badges', ''),
+                      _buildExpandableSection(context, 'Community Badges', ''),
+                      _buildExpandableSection(context, 'Event Badges', ''),
 
                       const SizedBox(height: 32),
                       Container(
-                        padding: EdgeInsets.symmetric(vertical: 13,horizontal: 16),
+                        padding: EdgeInsets.symmetric(
+                          vertical: 13,
+                          horizontal: 16,
+                        ),
                         decoration: BoxDecoration(
                           color: Color(0xFFF6E4E6),
                           borderRadius: BorderRadius.circular(100),
-                          border: Border.all(color: Colors.black.withOpacity(0.2),width: 0.5)
-
+                          border: Border.all(
+                            color: Colors.black.withOpacity(0.2),
+                            width: 0.5,
+                          ),
                         ),
-                        child:Center(
-                          child: Text('View missions',
+                        child: Center(
+                          child: Text(
+                            'View missions',
                             style: GoogleFonts.manrope(
                               fontSize: 14,
                               fontWeight: FontWeight.w700,
                               color: Color(0xFF020617),
-                            ),),
-                        ) ,
-                      )
-
+                            ),
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -106,7 +111,7 @@ class BadgesScreen extends StatelessWidget {
             color: Color(0xFF9E9A9A).withOpacity(0.1),
             blurRadius: 25,
             offset: const Offset(0, 6),
-            spreadRadius: 10
+            spreadRadius: 10,
           ),
         ],
       ),
@@ -150,7 +155,11 @@ class BadgesScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildExpandableSection(BuildContext context,String title, String subTitle) {
+  Widget _buildExpandableSection(
+    BuildContext context,
+    String title,
+    String subTitle,
+  ) {
     final badges = [
       {
         'title': 'Tool Tinkerer',
@@ -160,7 +169,7 @@ class BadgesScreen extends StatelessWidget {
       {
         'title': 'Stack Builder',
         'subtitle': 'Created 5 stacks',
-        'icon': Image.asset("assets/images/scientist.png",),
+        'icon': Image.asset("assets/images/scientist.png"),
       },
       {
         'title': 'Stack Builder',
@@ -173,7 +182,7 @@ class BadgesScreen extends StatelessWidget {
       child: ExpansionTile(
         dense: true,
         // trailing:HugeIcon(icon: HugeIcons.strokeRoundedArrowUp01),
-        tilePadding:EdgeInsets.zero,
+        tilePadding: EdgeInsets.zero,
         title: Text(
           title,
           style: GoogleFonts.manrope(
@@ -205,10 +214,10 @@ class BadgesScreen extends StatelessWidget {
             itemBuilder: (context, index) {
               final badge = badges[index];
               return Container(
-                padding: EdgeInsets.only(top: 6,bottom: 6),
+                padding: EdgeInsets.only(top: 6, bottom: 6),
                 decoration: BoxDecoration(
                   color: Colors.white.withOpacity(0.5),
-                  borderRadius: BorderRadius.circular(8)
+                  borderRadius: BorderRadius.circular(8),
                 ),
                 child: Column(
                   children: [
@@ -251,12 +260,12 @@ class BadgesScreen extends StatelessWidget {
             itemBuilder: (context, index) {
               final badge = badges[index];
               return Container(
-                padding: EdgeInsets.only(top: 6,bottom: 6),
+                padding: EdgeInsets.only(top: 6, bottom: 6),
                 decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.5),
-                    borderRadius: BorderRadius.circular(8)
+                  color: Colors.white.withOpacity(0.5),
+                  borderRadius: BorderRadius.circular(8),
                 ),
-                child:Image.asset("assets/images/hiddenReward2.png")
+                child: Image.asset("assets/images/hiddenReward2.png"),
               );
             },
           ),

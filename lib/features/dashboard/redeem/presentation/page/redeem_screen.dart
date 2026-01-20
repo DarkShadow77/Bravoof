@@ -1,7 +1,7 @@
-import 'package:flowva/features/dashboard/home/data/model/campaign_response.dart';
-import 'package:flowva/features/dashboard/home/presentation/bloc/home_cubit.dart';
-import 'package:flowva/features/dashboard/redeem/presentation/page/tabs/history_tab.dart';
-import 'package:flowva/features/dashboard/redeem/presentation/page/tabs/redeem_tab.dart';
+import 'package:Bravoo/features/dashboard/home/data/model/campaign_response.dart';
+import 'package:Bravoo/features/dashboard/home/presentation/bloc/home_cubit.dart';
+import 'package:Bravoo/features/dashboard/redeem/presentation/page/tabs/history_tab.dart';
+import 'package:Bravoo/features/dashboard/redeem/presentation/page/tabs/redeem_tab.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

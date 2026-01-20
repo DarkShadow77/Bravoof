@@ -1,9 +1,9 @@
-import 'package:flowva/features/common/ui_tool_mixin/ui_tool_mixin.dart';
-import 'package:flowva/features/dashboard/earn/data/models/mission_res.dart';
-import 'package:flowva/features/dashboard/earn/presentation/widgets/referr_campaign.dart';
-import 'package:flowva/features/dashboard/home/data/model/campaign_response.dart';
-import 'package:flowva/features/dashboard/home/presentation/bloc/home_cubit.dart';
-import 'package:flowva/session/session_manager.dart';
+import 'package:Bravoo/features/common/ui_tool_mixin/ui_tool_mixin.dart';
+import 'package:Bravoo/features/dashboard/earn/data/models/mission_res.dart';
+import 'package:Bravoo/features/dashboard/earn/presentation/widgets/referr_campaign.dart';
+import 'package:Bravoo/features/dashboard/home/data/model/campaign_response.dart';
+import 'package:Bravoo/features/dashboard/home/presentation/bloc/home_cubit.dart';
+import 'package:Bravoo/session/session_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

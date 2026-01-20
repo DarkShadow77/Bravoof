@@ -2,9 +2,9 @@ import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flowva/features/common/model/app_base_response.dart';
-import 'package:flowva/features/onbaording/data/model/user_profile.dart';
-import 'package:flowva/features/onbaording/data/signup_repository/signup_repository.dart';
+import 'package:Bravoo/features/common/model/app_base_response.dart';
+import 'package:Bravoo/features/onbaording/data/model/user_profile.dart';
+import 'package:Bravoo/features/onbaording/data/signup_repository/signup_repository.dart';
 
 import '../../../../core/di/service_locator.dart';
 

@@ -1,7 +1,7 @@
-import 'package:flowva/app/styles/text_styles.dart';
-import 'package:flowva/core/constants/app_assets.dart';
-import 'package:flowva/core/utils/helpers.dart';
-import 'package:flowva/features/onbaording/data/model/user_profile.dart';
+import 'package:Bravoo/app/styles/text_styles.dart';
+import 'package:Bravoo/core/constants/app_assets.dart';
+import 'package:Bravoo/core/utils/helpers.dart';
+import 'package:Bravoo/features/onbaording/data/model/user_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

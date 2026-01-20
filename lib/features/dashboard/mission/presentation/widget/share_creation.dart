@@ -1,6 +1,6 @@
 import 'dart:ui';
 
-import 'package:flowva/features/common/flowva_button.dart';
+import 'package:Bravoo/features/common/flowva_button.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
@@ -8,7 +8,7 @@ import 'package:image_picker/image_picker.dart';
 
 class ShareCreation extends StatefulWidget {
   Function(dynamic val) apply;
-   ShareCreation({super.key, required this. apply});
+  ShareCreation({super.key, required this.apply});
 
   @override
   State<ShareCreation> createState() => _ShareCreationState();
@@ -132,15 +132,15 @@ class _ShareCreationState extends State<ShareCreation> {
                     const SizedBox(height: 16),
                     pickedImage == null
                         ? GestureDetector(
-                      onTap: ()=>pickImage(ImageSource.gallery),
-                          child: Container(
+                            onTap: () => pickImage(ImageSource.gallery),
+                            child: Container(
                               height: 40,
                               width: 243,
-                          padding: EdgeInsets.symmetric(horizontal: 4),
+                              padding: EdgeInsets.symmetric(horizontal: 4),
                               decoration: BoxDecoration(
                                 color: Color(0xFFF1F1F1),
                                 border: Border.all(color: Color(0xFFE9E9E9)),
-                               borderRadius: BorderRadius.circular(8),
+                                borderRadius: BorderRadius.circular(8),
                                 boxShadow: [
                                   BoxShadow(
                                     color: Colors.black.withOpacity(0.08),
@@ -150,14 +150,17 @@ class _ShareCreationState extends State<ShareCreation> {
                                 ],
                               ),
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Text("Click to upload your image",
+                                  Text(
+                                    "Click to upload your image",
                                     style: GoogleFonts.manrope(
                                       fontSize: 12,
                                       fontWeight: FontWeight.w600,
                                       color: Color(0xFFA5A5A5),
-                                    ),),
+                                    ),
+                                  ),
                                   HugeIcon(
                                     icon: HugeIcons.strokeRoundedImageCrop,
                                     strokeWidth: 1.2,
@@ -166,7 +169,7 @@ class _ShareCreationState extends State<ShareCreation> {
                                 ],
                               ),
                             ),
-                        )
+                          )
                         : Container(
                             height: 80,
                             width: 120,
@@ -184,7 +187,7 @@ class _ShareCreationState extends State<ShareCreation> {
                       child: FlowvaButton.mediumBlack2Button(
                         name: "Submit Mission",
                         fontSize: 14,
-                        apply: ()=>widget.apply(pickedImage),
+                        apply: () => widget.apply(pickedImage),
                       ),
                     ),
                     const SizedBox(height: 16),

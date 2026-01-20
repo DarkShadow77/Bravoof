@@ -1,6 +1,6 @@
 import 'package:bloc/bloc.dart';
-import 'package:flowva/features/common/model/app_base_response.dart';
-import 'package:flowva/features/otp/data/repository/verify_otp_repository.dart';
+import 'package:Bravoo/features/common/model/app_base_response.dart';
+import 'package:Bravoo/features/otp/data/repository/verify_otp_repository.dart';
 import 'package:meta/meta.dart';
 
 part 'verify_otp_state.dart';

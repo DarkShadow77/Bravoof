@@ -1,11 +1,9 @@
-import 'package:flowva/features/common/flowva_button.dart';
-import 'package:flowva/features/common/flowva_text_field.dart';
+import 'package:Bravoo/features/common/flowva_button.dart';
+import 'package:Bravoo/features/common/flowva_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
-
-
 
 class DeliveryAddressScreen extends StatefulWidget {
   const DeliveryAddressScreen({super.key});
@@ -16,10 +14,10 @@ class DeliveryAddressScreen extends StatefulWidget {
 
 class _DeliveryAddressScreenState extends State<DeliveryAddressScreen> {
   final _formKey = GlobalKey<FormState>();
-  final firstName=TextEditingController();
-  final lastName=TextEditingController();
-  final address=TextEditingController();
-  final phoneNumber=TextEditingController();
+  final firstName = TextEditingController();
+  final lastName = TextEditingController();
+  final address = TextEditingController();
+  final phoneNumber = TextEditingController();
 
   final List<String> countries = ['Nigeria', 'Ghana', 'Kenya'];
   final List<String> cities = ['Bwari', 'Kuje', 'Gwagwalada'];
@@ -35,13 +33,13 @@ class _DeliveryAddressScreenState extends State<DeliveryAddressScreen> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         leading: GestureDetector(
-            onTap: ()=>Navigator.pop(context),
-            child: const Icon(Icons.arrow_back, color: Colors.black)),
-        title:  Text('Delivery Address',
-            style: GoogleFonts.dmSans(
-                fontWeight: FontWeight.w600,
-                fontSize: 20
-            )),
+          onTap: () => Navigator.pop(context),
+          child: const Icon(Icons.arrow_back, color: Colors.black),
+        ),
+        title: Text(
+          'Delivery Address',
+          style: GoogleFonts.dmSans(fontWeight: FontWeight.w600, fontSize: 20),
+        ),
         backgroundColor: Colors.white,
         elevation: 0,
         centerTitle: false,
@@ -53,21 +51,20 @@ class _DeliveryAddressScreenState extends State<DeliveryAddressScreen> {
           child: ListView(
             children: [
               // Country/Region
-
               Row(
                 children: [
-                   Text('Country/Region ',
-                      style: GoogleFonts.dmSans(
-                          fontWeight: FontWeight.w500,
-                        fontSize: 12
-                      )),
-                  const Text(' *',
-                      style: TextStyle(color: Color(0xFFFF8687))),
+                  Text(
+                    'Country/Region ',
+                    style: GoogleFonts.dmSans(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 12,
+                    ),
+                  ),
+                  const Text(' *', style: TextStyle(color: Color(0xFFFF8687))),
                 ],
               ),
               const SizedBox(height: 8),
               _buildDropdownField(
-
                 value: selectedCountry,
                 items: countries,
                 onChanged: (val) => setState(() => selectedCountry = val),
@@ -75,16 +72,16 @@ class _DeliveryAddressScreenState extends State<DeliveryAddressScreen> {
               const SizedBox(height: 16),
 
               // First Name
-
               Row(
                 children: [
-                   Text('First name',
-                      style: GoogleFonts.dmSans(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 12
-                      )),
-                  const Text(' *',
-                      style: TextStyle(color: Color(0xFFFF8687))),
+                  Text(
+                    'First name',
+                    style: GoogleFonts.dmSans(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 12,
+                    ),
+                  ),
+                  const Text(' *', style: TextStyle(color: Color(0xFFFF8687))),
                 ],
               ),
               const SizedBox(height: 8),
@@ -94,30 +91,32 @@ class _DeliveryAddressScreenState extends State<DeliveryAddressScreen> {
               // Last Name
               Row(
                 children: [
-                   Text('Last name',
-                       style: GoogleFonts.dmSans(
-                           fontWeight: FontWeight.w500,
-                           fontSize: 12
-                       )),
-                  const Text(' *',
-                      style: TextStyle(color: Color(0xFFFF8687))),
+                  Text(
+                    'Last name',
+                    style: GoogleFonts.dmSans(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 12,
+                    ),
+                  ),
+                  const Text(' *', style: TextStyle(color: Color(0xFFFF8687))),
                 ],
               ),
 
               const SizedBox(height: 8),
-              _buildTextField(name:lastName, hint: 'Martins'),
+              _buildTextField(name: lastName, hint: 'Martins'),
               const SizedBox(height: 16),
 
               // Phone Number
               Row(
                 children: [
-                   Text('Phone number',
-                      style: GoogleFonts.dmSans(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 12
-                      )),
-                  const Text(' *',
-                      style: TextStyle(color: Color(0xFFFF8687))),
+                  Text(
+                    'Phone number',
+                    style: GoogleFonts.dmSans(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 12,
+                    ),
+                  ),
+                  const Text(' *', style: TextStyle(color: Color(0xFFFF8687))),
                 ],
               ),
               const SizedBox(height: 8),
@@ -125,35 +124,36 @@ class _DeliveryAddressScreenState extends State<DeliveryAddressScreen> {
                 onChanged: (phone) {
                   phoneNumber.text = phone!;
                 },
-                validator:(v){
+                validator: (v) {
                   {
-                    if (v.length < 10||v.length>10) {
+                    if (v.length < 10 || v.length > 10) {
                       return 'Invalid Phone Number';
                     } else if (v.isEmpty) {
                       return "Please input phone Number";
                     }
                   }
-                }
+                },
               ),
               const SizedBox(height: 16),
 
               // Delivery address
               Row(
                 children: [
-                  Text('Delivery address',
-                      style: GoogleFonts.dmSans(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 12
-                      )),
-                  const Text(' *',
-                      style: TextStyle(color: Color(0xFFFF8687))),
+                  Text(
+                    'Delivery address',
+                    style: GoogleFonts.dmSans(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 12,
+                    ),
+                  ),
+                  const Text(' *', style: TextStyle(color: Color(0xFFFF8687))),
                 ],
               ),
               const SizedBox(height: 8),
               _buildTextField(
                 name: address,
                 hint:
-                'Flat 05 C9 Off Oladimeji Folorunsho Street, Katampe Road, Mpape, Abuja.',
+                    'Flat 05 C9 Off Oladimeji Folorunsho Street, Katampe Road, Mpape, Abuja.',
                 maxLines: 3,
               ),
               const SizedBox(height: 16),
@@ -161,19 +161,19 @@ class _DeliveryAddressScreenState extends State<DeliveryAddressScreen> {
               // City
               Row(
                 children: [
-                  Text('City',
-                      style: GoogleFonts.dmSans(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 12
-                      )),
-                  const Text(' *',
-                      style: TextStyle(color: Color(0xFFFF8687))),
+                  Text(
+                    'City',
+                    style: GoogleFonts.dmSans(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 12,
+                    ),
+                  ),
+                  const Text(' *', style: TextStyle(color: Color(0xFFFF8687))),
                 ],
               ),
 
               const SizedBox(height: 8),
               _buildDropdownField(
-
                 value: selectedCity,
                 items: cities,
                 onChanged: (val) => setState(() => selectedCity = val),
@@ -183,18 +183,18 @@ class _DeliveryAddressScreenState extends State<DeliveryAddressScreen> {
               // State
               Row(
                 children: [
-                  Text('State',
-                      style: GoogleFonts.dmSans(
-                          fontWeight: FontWeight.w500,
-                          fontSize: 12
-                      )),
-                  const Text(' *',
-                      style: TextStyle(color: Color(0xFFFF8687))),
+                  Text(
+                    'State',
+                    style: GoogleFonts.dmSans(
+                      fontWeight: FontWeight.w500,
+                      fontSize: 12,
+                    ),
+                  ),
+                  const Text(' *', style: TextStyle(color: Color(0xFFFF8687))),
                 ],
               ),
               const SizedBox(height: 8),
               _buildDropdownField(
-
                 value: selectedState,
                 items: states,
                 onChanged: (val) => setState(() => selectedState = val),
@@ -204,9 +204,7 @@ class _DeliveryAddressScreenState extends State<DeliveryAddressScreen> {
               // Confirm button
               SizedBox(
                 width: double.infinity,
-                child: FlowvaButton.blueButton(
-                  name: "Confirm"
-                ),
+                child: FlowvaButton.blueButton(name: "Confirm"),
               ),
             ],
           ),
@@ -235,37 +233,25 @@ class _DeliveryAddressScreenState extends State<DeliveryAddressScreen> {
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(15),
 
-          borderSide: BorderSide(
-            width: 0.5,
-            color: Colors.grey.shade500,
-          ),
+          borderSide: BorderSide(width: 0.5, color: Colors.grey.shade500),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
 
-          borderSide: BorderSide(
-            width: 0.5,
-            color: Colors.grey.shade500,
-          ),
+          borderSide: BorderSide(width: 0.5, color: Colors.grey.shade500),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
 
-          borderSide: BorderSide(
-            width: 0.5,
-            color: Colors.grey.shade500,
-          ),
+          borderSide: BorderSide(width: 0.5, color: Colors.grey.shade500),
         ),
       ),
       maxLines: maxLines,
-      validator: RequiredValidator(
-        errorText: "Email is required",
-      ),
+      validator: RequiredValidator(errorText: "Email is required"),
     );
   }
 
   Widget _buildDropdownField({
-
     required String? value,
     required List<String> items,
     required Function(String?) onChanged,
@@ -276,23 +262,17 @@ class _DeliveryAddressScreenState extends State<DeliveryAddressScreen> {
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
 
-          borderSide: BorderSide(
-            width: 0.5,
-            color: Colors.grey.shade500,
-          ),
+          borderSide: BorderSide(width: 0.5, color: Colors.grey.shade500),
         ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
 
-            borderSide: BorderSide(
-              width: 0.5,
-              color: Colors.grey.shade500,
-            ),
-          )
+          borderSide: BorderSide(width: 0.5, color: Colors.grey.shade500),
+        ),
       ),
       icon: Padding(
         padding: const EdgeInsets.only(right: 8.0),
-        child: HugeIcon(icon: HugeIcons.strokeRoundedArrowDown01,size: 18,),
+        child: HugeIcon(icon: HugeIcons.strokeRoundedArrowDown01, size: 18),
       ),
 
       items: items.map((item) {

@@ -1,9 +1,7 @@
 import 'dart:ui';
 
-import 'package:flowva/features/common/flowva_button.dart';
-import 'package:flowva/features/dashboard/earn/presentation/widgets/delivery_address.dart';
-import 'package:flowva/features/dashboard/earn/presentation/widgets/pedestal_with_product.dart';
-import 'package:flowva/features/dashboard/earn/presentation/widgets/social_media_cards.dart';
+import 'package:Bravoo/features/common/flowva_button.dart';
+import 'package:Bravoo/features/dashboard/earn/presentation/widgets/social_media_cards.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -131,7 +129,7 @@ class _DrawEndPageState extends State<DrawEndPage> {
                           color: const Color(0xFF1E0540).withOpacity(0.06),
                           blurRadius: 2,
                           spreadRadius: 1,
-                          offset: Offset(0, 20)
+                          offset: Offset(0, 20),
                         ),
                       ],
                     ),
@@ -173,24 +171,29 @@ class _DrawEndPageState extends State<DrawEndPage> {
                     child: Column(
                       children: [
                         RichText(
-                          textAlign:TextAlign.center,
+                          textAlign: TextAlign.center,
                           text: TextSpan(
                             style: GoogleFonts.manrope(
                               fontSize: 12,
                               fontWeight: FontWeight.w700,
-                              color: Colors.white.withOpacity(0.42), // default color
+                              color: Colors.white.withOpacity(
+                                0.42,
+                              ), // default color
                             ),
                             children: [
-                              const TextSpan(text: "The Oraimo Opensnap Airpod goes to "),
+                              const TextSpan(
+                                text: "The Oraimo Opensnap Airpod goes to ",
+                              ),
                               TextSpan(
                                 text: "@Amaka!",
                                 style: const TextStyle(
-                                  color: Colors.white, // make @Amaka! pure white
+                                  color:
+                                      Colors.white, // make @Amaka! pure white
                                 ),
                               ),
                               const TextSpan(
                                 text:
-                                " You didn’t win this time, but the next one could be yours.",
+                                    " You didn’t win this time, but the next one could be yours.",
                               ),
                             ],
                           ),
@@ -355,10 +358,7 @@ class _DrawEndPageState extends State<DrawEndPage> {
                       FlowvaButton.greenButton(
                         color: Colors.white,
                         // buttonColor: Color(0xFF008753),
-                        icon: Icon(
-                          Icons.check_circle,
-                          color: Colors.white,
-                        ),
+                        icon: Icon(Icons.check_circle, color: Colors.white),
                         name: "You've Entered",
 
                         apply: () {

@@ -1,6 +1,6 @@
 import 'dart:ui';
 
-import 'package:flowva/features/common/flowva_button.dart';
+import 'package:Bravoo/features/common/flowva_button.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
@@ -9,11 +9,12 @@ class NotificationSettingWidget extends StatefulWidget {
   NotificationSettingWidget({super.key});
 
   @override
-  State<NotificationSettingWidget> createState() => _NotificationSettingWidgetState();
+  State<NotificationSettingWidget> createState() =>
+      _NotificationSettingWidgetState();
 }
 
 class _NotificationSettingWidgetState extends State<NotificationSettingWidget> {
-bool _isSwitched=false;
+  bool _isSwitched = false;
 
   @override
   Widget build(BuildContext context) {
@@ -109,7 +110,10 @@ bool _isSwitched=false;
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: ListTile(
-                                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                                contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 4,
+                                ),
 
                                 title: Text(
                                   "Push notifications",
@@ -118,22 +122,27 @@ bool _isSwitched=false;
                                     fontWeight: FontWeight.w500,
                                     color: Color(0xFF5F5F5F),
                                   ),
-
                                 ),
 
                                 trailing: Switch(
-                                  value: _isSwitched, // Current state of the switch
+                                  value:
+                                      _isSwitched, // Current state of the switch
                                   onChanged: (newValue) {
                                     // Callback function when the switch is toggled
                                     setState(() {
-                                      _isSwitched = newValue; // Update the state
+                                      _isSwitched =
+                                          newValue; // Update the state
                                     });
                                   },
-                                  activeColor: Colors.green, // Color when the switch is ON
-                                  inactiveThumbColor: Colors.white, // Color of the thumb when OFF
-                                  inactiveTrackColor: Colors.grey.shade300, // Color of the track when OFF
+                                  activeColor: Colors
+                                      .green, // Color when the switch is ON
+                                  inactiveThumbColor: Colors
+                                      .white, // Color of the thumb when OFF
+                                  inactiveTrackColor: Colors
+                                      .grey
+                                      .shade300, // Color of the track when OFF
                                 ),
-                                onTap: (){},
+                                onTap: () {},
                               ),
                             ),
                             SizedBox(height: 16),
@@ -145,7 +154,10 @@ bool _isSwitched=false;
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: ListTile(
-                                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                                contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 4,
+                                ),
 
                                 title: Text(
                                   "Email",
@@ -154,20 +166,25 @@ bool _isSwitched=false;
                                     fontWeight: FontWeight.w500,
                                     color: Color(0xFF5F5F5F),
                                   ),
-
                                 ),
 
                                 trailing: Switch(
-                                  value: _isSwitched, // Current state of the switch
+                                  value:
+                                      _isSwitched, // Current state of the switch
                                   onChanged: (newValue) {
                                     // Callback function when the switch is toggled
                                     setState(() {
-                                      _isSwitched = newValue; // Update the state
+                                      _isSwitched =
+                                          newValue; // Update the state
                                     });
                                   },
-                                  activeColor: Colors.green, // Color when the switch is ON
-                                  inactiveThumbColor: Colors.grey, // Color of the thumb when OFF
-                                  inactiveTrackColor: Colors.grey.shade300, // Color of the track when OFF
+                                  activeColor: Colors
+                                      .green, // Color when the switch is ON
+                                  inactiveThumbColor: Colors
+                                      .grey, // Color of the thumb when OFF
+                                  inactiveTrackColor: Colors
+                                      .grey
+                                      .shade300, // Color of the track when OFF
                                 ),
                               ),
                             ),

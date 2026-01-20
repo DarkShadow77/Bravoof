@@ -1,5 +1,5 @@
-import 'package:flowva/features/dashboard/home/presentation/bloc/campaign_cubit.dart';
-import 'package:flowva/features/onbaording/data/bloc/user_cubit.dart';
+import 'package:Bravoo/features/dashboard/home/presentation/bloc/campaign_cubit.dart';
+import 'package:Bravoo/features/onbaording/data/bloc/user_cubit.dart';
 import 'package:get_it/get_it.dart';
 
 import '../../features/dashboard/earn/data/repositories/jackpot_repository.dart';

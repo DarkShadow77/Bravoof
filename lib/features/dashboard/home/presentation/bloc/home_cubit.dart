@@ -1,9 +1,9 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flowva/features/dashboard/home/data/model/campaign_response.dart';
-import 'package:flowva/features/dashboard/home/data/model/spotlight_model.dart';
-import 'package:flowva/features/dashboard/home/data/repository/home_repository.dart';
-import 'package:flowva/features/dashboard/home/data/repository/home_repository_impl.dart';
+import 'package:Bravoo/features/dashboard/home/data/model/campaign_response.dart';
+import 'package:Bravoo/features/dashboard/home/data/model/spotlight_model.dart';
+import 'package:Bravoo/features/dashboard/home/data/repository/home_repository.dart';
+import 'package:Bravoo/features/dashboard/home/data/repository/home_repository_impl.dart';
 import 'package:meta/meta.dart';
 
 import '../../../../../session/session_manager.dart';

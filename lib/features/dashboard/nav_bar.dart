@@ -1,6 +1,6 @@
-import 'package:flowva/core/constants/app_assets.dart';
-import 'package:flowva/features/dashboard/home/presentation/page/home_page.dart';
-import 'package:flowva/features/dashboard/redeem/presentation/page/redeem_screen.dart';
+import 'package:Bravoo/core/constants/app_assets.dart';
+import 'package:Bravoo/features/dashboard/home/presentation/page/home_page.dart';
+import 'package:Bravoo/features/dashboard/redeem/presentation/page/redeem_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

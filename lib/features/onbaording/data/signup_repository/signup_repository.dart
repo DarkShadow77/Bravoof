@@ -1,8 +1,8 @@
 import 'dart:io';
 
 import 'package:dartz/dartz.dart';
-import 'package:flowva/features/common/model/app_base_response.dart';
-import 'package:flowva/features/onbaording/data/model/user_profile.dart';
+import 'package:Bravoo/features/common/model/app_base_response.dart';
+import 'package:Bravoo/features/onbaording/data/model/user_profile.dart';
 
 abstract class SignupRepository {
   Future<Either<String, AppBaseResponse>> signUp({UserProfile userProfile});

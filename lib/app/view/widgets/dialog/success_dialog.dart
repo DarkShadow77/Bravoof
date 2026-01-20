@@ -1,8 +1,5 @@
 import 'dart:ui';
 
-import 'package:flowva/app/view/widgets/button/icon_text_button.dart';
-import 'package:flowva/core/constants/app_assets.dart';
-import 'package:flowva/core/constants/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_confetti/flutter_confetti.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -11,6 +8,9 @@ import 'package:get/get.dart';
 import '../../../../../app/styles/text_styles.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../utility/ui_tool_mix.dart';
+import '../../../../core/constants/app_assets.dart';
+import '../../../../core/constants/fonts.dart';
+import '../button/icon_text_button.dart';
 
 Future<dynamic> successDialog({
   required String title,

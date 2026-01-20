@@ -1,7 +1,7 @@
 import 'dart:developer';
 
 import 'package:dartz/dartz.dart';
-import 'package:flowva/features/onbaording/data/model/user_profile.dart';
+import 'package:Bravoo/features/onbaording/data/model/user_profile.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'campaign_repository.dart';

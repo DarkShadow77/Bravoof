@@ -113,8 +113,8 @@
 //   bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
 // }
 
-import 'package:flowva/features/common/data/constants.dart';
-import 'package:flowva/features/dashboard/nav_bar.dart';
+import 'package:Bravoo/features/common/data/constants.dart';
+import 'package:Bravoo/features/dashboard/nav_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';

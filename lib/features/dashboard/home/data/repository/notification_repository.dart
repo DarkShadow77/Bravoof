@@ -1,5 +1,5 @@
 import 'package:dartz/dartz.dart';
-import 'package:flowva/features/dashboard/home/data/model/notification_model.dart';
+import 'package:Bravoo/features/dashboard/home/data/model/notification_model.dart';
 
 abstract class NotificationRepository {
   Future<Either<String, List<NotificationModel>>> fetchNotifications({

@@ -1,8 +1,8 @@
 import 'dart:ui';
 
-import 'package:flowva/features/common/flowva_button.dart';
-import 'package:flowva/features/dashboard/nav_bar.dart';
-import 'package:flowva/session/session_manager.dart';
+import 'package:Bravoo/features/common/flowva_button.dart';
+import 'package:Bravoo/features/dashboard/nav_bar.dart';
+import 'package:Bravoo/session/session_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_confetti/flutter_confetti.dart';
 import 'package:google_fonts/google_fonts.dart';

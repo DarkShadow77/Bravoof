@@ -1,9 +1,9 @@
 import 'dart:io';
 
-import 'package:flowva/app/view/widgets/cached_image_widget.dart';
-import 'package:flowva/features/dashboard/profile/presentation/widgets/edit_avatar.dart';
-import 'package:flowva/features/onbaording/data/model/user_profile.dart';
-import 'package:flowva/features/onboarding2/data/convert_asset_file.dart';
+import 'package:Bravoo/app/view/widgets/cached_image_widget.dart';
+import 'package:Bravoo/features/dashboard/profile/presentation/widgets/edit_avatar.dart';
+import 'package:Bravoo/features/onbaording/data/model/user_profile.dart';
+import 'package:Bravoo/features/onboarding2/data/convert_asset_file.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

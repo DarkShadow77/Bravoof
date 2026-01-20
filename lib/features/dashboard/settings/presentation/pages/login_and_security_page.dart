@@ -1,7 +1,6 @@
-import 'package:flowva/features/dashboard/settings/presentation/widgets/connected_device_widget.dart';
-import 'package:flowva/features/dashboard/settings/presentation/widgets/create_password.dart';
-import 'package:flowva/features/dashboard/settings/presentation/widgets/deactivate_account.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:Bravoo/features/dashboard/settings/presentation/widgets/connected_device_widget.dart';
+import 'package:Bravoo/features/dashboard/settings/presentation/widgets/create_password.dart';
+import 'package:Bravoo/features/dashboard/settings/presentation/widgets/deactivate_account.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
@@ -24,8 +23,9 @@ class _LoginAndSecurityScreenState extends State<LoginAndSecurityScreen> {
         elevation: 0,
         backgroundColor: Colors.white,
         leading: GestureDetector(
-            onTap: ()=>Navigator.pop(context),
-            child: const Icon(Icons.arrow_back, color: Colors.black)),
+          onTap: () => Navigator.pop(context),
+          child: const Icon(Icons.arrow_back, color: Colors.black),
+        ),
         title: Text(
           "Login and Security",
           style: GoogleFonts.manrope(
@@ -50,18 +50,17 @@ class _LoginAndSecurityScreenState extends State<LoginAndSecurityScreen> {
               size: 18,
               color: Colors.black54,
             ),
-            apply:(){
+            apply: () {
               showModalBottomSheet(
                 context: context,
                 isScrollControlled: true,
                 barrierColor: Colors.transparent,
                 backgroundColor: Colors.transparent,
                 // important for blur
-                builder: (_) =>CreatePasswordWidget()
+                builder: (_) => CreatePasswordWidget(),
               );
-            }
+            },
           ),
-
 
           const SizedBox(height: 16),
 
@@ -75,20 +74,19 @@ class _LoginAndSecurityScreenState extends State<LoginAndSecurityScreen> {
               size: 18,
               color: Colors.black54,
             ),
-              apply:(){
-                showModalBottomSheet(
-                    context: context,
-                    isScrollControlled: true,
-                    barrierColor: Colors.transparent,
-                    backgroundColor: Colors.transparent,
-                    // important for blur
-                    builder: (_) =>ConnectedDeviceWidget()
-                );
-              }
+            apply: () {
+              showModalBottomSheet(
+                context: context,
+                isScrollControlled: true,
+                barrierColor: Colors.transparent,
+                backgroundColor: Colors.transparent,
+                // important for blur
+                builder: (_) => ConnectedDeviceWidget(),
+              );
+            },
           ),
 
           const SizedBox(height: 16),
-
 
           // Account section
           const SectionTitle(title: "Account"),
@@ -127,12 +125,12 @@ class _LoginAndSecurityScreenState extends State<LoginAndSecurityScreen> {
                 TextButton(
                   onPressed: () {
                     showModalBottomSheet(
-                        context: context,
-                        isScrollControlled: true,
-                        barrierColor: Colors.transparent,
-                        backgroundColor: Colors.transparent,
-                        // important for blur
-                        builder: (_) =>DeactivateAccountWidget()
+                      context: context,
+                      isScrollControlled: true,
+                      barrierColor: Colors.transparent,
+                      backgroundColor: Colors.transparent,
+                      // important for blur
+                      builder: (_) => DeactivateAccountWidget(),
                     );
                   },
                   child: Text(
@@ -182,12 +180,13 @@ class CustomTile extends StatelessWidget {
   final Widget? leading;
   Function() apply;
 
-   CustomTile({
+  CustomTile({
     super.key,
     required this.title,
     this.subtitle,
     this.trailing,
-    this.leading, required  this.apply,
+    this.leading,
+    required this.apply,
   });
 
   @override

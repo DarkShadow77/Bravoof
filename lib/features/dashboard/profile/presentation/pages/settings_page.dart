@@ -1,10 +1,10 @@
 import 'dart:ui';
 
-import 'package:flowva/features/common/flowva_button.dart';
-import 'package:flowva/features/dashboard/profile/presentation/bloc/profile_bloc.dart';
-import 'package:flowva/features/dashboard/profile/presentation/widgets/edit_profile.dart';
-import 'package:flowva/features/dashboard/settings/presentation/pages/login_and_security_page.dart';
-import 'package:flowva/features/onbaording/page/onbaording_screen.dart';
+import 'package:Bravoo/features/common/flowva_button.dart';
+import 'package:Bravoo/features/dashboard/profile/presentation/bloc/profile_bloc.dart';
+import 'package:Bravoo/features/dashboard/profile/presentation/widgets/edit_profile.dart';
+import 'package:Bravoo/features/dashboard/settings/presentation/pages/login_and_security_page.dart';
+import 'package:Bravoo/features/onbaording/page/onbaording_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';

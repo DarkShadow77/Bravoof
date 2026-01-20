@@ -1,4 +1,4 @@
-import 'package:flowva/features/common/flowva_button.dart';
+import 'package:Bravoo/features/common/flowva_button.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -79,9 +79,7 @@ class _BravooRatingPageState extends State<BravooRatingPage>
 
     return Scaffold(
       body: Container(
-        decoration: const BoxDecoration(
-         color: Color(0xFFE8D4F8)
-        ),
+        decoration: const BoxDecoration(color: Color(0xFFE8D4F8)),
         child: ListView(
           padding: const EdgeInsets.symmetric(horizontal: 4.0),
           // mainAxisAlignment: MainAxisAlignment.center,
@@ -114,10 +112,7 @@ class _BravooRatingPageState extends State<BravooRatingPage>
                   ),
                 ],
               ),
-              padding: const EdgeInsets.symmetric(
-                horizontal: 10,
-                vertical: 38,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 38),
               child: Column(
                 children: [
                   Container(

@@ -1,9 +1,7 @@
 import 'dart:ui';
 
-import 'package:flowva/features/common/flowva_button.dart';
-import 'package:flowva/features/dashboard/settings/presentation/widgets/connected_device_widget.dart';
-import 'package:flowva/features/dashboard/settings/presentation/widgets/create_password.dart';
-import 'package:flowva/features/dashboard/settings/presentation/widgets/deactivate_account.dart';
+import 'package:Bravoo/features/common/flowva_button.dart';
+import 'package:Bravoo/features/dashboard/settings/presentation/widgets/connected_device_widget.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -13,7 +11,8 @@ class NotificationSettingPage extends StatefulWidget {
   const NotificationSettingPage({Key? key}) : super(key: key);
 
   @override
-  State<NotificationSettingPage> createState() => _NotificationSettingPageState();
+  State<NotificationSettingPage> createState() =>
+      _NotificationSettingPageState();
 }
 
 class _NotificationSettingPageState extends State<NotificationSettingPage> {
@@ -26,8 +25,8 @@ class _NotificationSettingPageState extends State<NotificationSettingPage> {
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.white,
-        leading:GestureDetector(
-          onTap:() =>Navigator.pop(context),
+        leading: GestureDetector(
+          onTap: () => Navigator.pop(context),
           child: const Icon(Icons.arrow_back, color: Colors.black),
         ),
         title: Text(
@@ -48,43 +47,43 @@ class _NotificationSettingPageState extends State<NotificationSettingPage> {
           const SectionTitle(title: "Rewards and missions"),
 
           CustomTile(
-              title: "Suggestions and Offers",
-              subtitle: "On: email and Push",
-              trailing: HugeIcon(
-                icon: HugeIcons.strokeRoundedArrowRight01,
-                size: 18,
-                color: Colors.black54,
-              ),
-              apply:(){
-                showModalBottomSheet(
-                    context: context,
-                    isScrollControlled: true,
-                    barrierColor: Colors.transparent,
-                    backgroundColor: Colors.transparent,
-                    // important for blur
-                    builder: (_) =>NotificationWidget()
-                );
-              }
+            title: "Suggestions and Offers",
+            subtitle: "On: email and Push",
+            trailing: HugeIcon(
+              icon: HugeIcons.strokeRoundedArrowRight01,
+              size: 18,
+              color: Colors.black54,
+            ),
+            apply: () {
+              showModalBottomSheet(
+                context: context,
+                isScrollControlled: true,
+                barrierColor: Colors.transparent,
+                backgroundColor: Colors.transparent,
+                // important for blur
+                builder: (_) => NotificationWidget(),
+              );
+            },
           ),
           const SizedBox(height: 5),
           CustomTile(
-              title: "Offers",
-              subtitle: "On: Email and Push",
-              trailing: HugeIcon(
-                icon: HugeIcons.strokeRoundedArrowRight01,
-                size: 18,
-                color: Colors.black54,
-              ),
-              apply:(){
-                showModalBottomSheet(
-                    context: context,
-                    isScrollControlled: true,
-                    barrierColor: Colors.transparent,
-                    backgroundColor: Colors.transparent,
-                    // important for blur
-                    builder: (_) =>NotificationWidget()
-                );
-              }
+            title: "Offers",
+            subtitle: "On: Email and Push",
+            trailing: HugeIcon(
+              icon: HugeIcons.strokeRoundedArrowRight01,
+              size: 18,
+              color: Colors.black54,
+            ),
+            apply: () {
+              showModalBottomSheet(
+                context: context,
+                isScrollControlled: true,
+                barrierColor: Colors.transparent,
+                backgroundColor: Colors.transparent,
+                // important for blur
+                builder: (_) => NotificationWidget(),
+              );
+            },
           ),
 
           const SizedBox(height: 16),
@@ -92,110 +91,109 @@ class _NotificationSettingPageState extends State<NotificationSettingPage> {
           // Social Accounts
           const SectionTitle(title: "Payment and Payout"),
           CustomTile(
-              title: "Payment",
-              subtitle: "On email and Push ",
-              trailing: HugeIcon(
-                icon: HugeIcons.strokeRoundedArrowRight01,
-                size: 18,
-                color: Colors.black54,
-              ),
-              apply:(){
-                showModalBottomSheet(
-                    context: context,
-                    isScrollControlled: true,
-                    barrierColor: Colors.transparent,
-                    backgroundColor: Colors.transparent,
-                    // important for blur
-                    builder: (_) =>ConnectedDeviceWidget()
-                );
-              }
+            title: "Payment",
+            subtitle: "On email and Push ",
+            trailing: HugeIcon(
+              icon: HugeIcons.strokeRoundedArrowRight01,
+              size: 18,
+              color: Colors.black54,
+            ),
+            apply: () {
+              showModalBottomSheet(
+                context: context,
+                isScrollControlled: true,
+                barrierColor: Colors.transparent,
+                backgroundColor: Colors.transparent,
+                // important for blur
+                builder: (_) => ConnectedDeviceWidget(),
+              );
+            },
           ),
 
           const SizedBox(height: 16),
-
 
           // Account section
           const SectionTitle(title: "Flowva updates"),
           CustomTile(
-              title: "Payment",
-              subtitle: "On email and Push ",
-              trailing: HugeIcon(
-                icon: HugeIcons.strokeRoundedArrowRight01,
-                size: 18,
-                color: Colors.black54,
-              ),
-              apply:(){
-                showModalBottomSheet(
-                    context: context,
-                    isScrollControlled: true,
-                    barrierColor: Colors.transparent,
-                    backgroundColor: Colors.transparent,
-                    // important for blur
-                    builder: (_) =>ConnectedDeviceWidget()
-                );
-              }
+            title: "Payment",
+            subtitle: "On email and Push ",
+            trailing: HugeIcon(
+              icon: HugeIcons.strokeRoundedArrowRight01,
+              size: 18,
+              color: Colors.black54,
+            ),
+            apply: () {
+              showModalBottomSheet(
+                context: context,
+                isScrollControlled: true,
+                barrierColor: Colors.transparent,
+                backgroundColor: Colors.transparent,
+                // important for blur
+                builder: (_) => ConnectedDeviceWidget(),
+              );
+            },
           ),
           const SizedBox(height: 5),
           CustomTile(
-              title: "News and Programs",
-              subtitle: "On email and Push ",
-              trailing: HugeIcon(
-                icon: HugeIcons.strokeRoundedArrowRight01,
-                size: 18,
-                color: Colors.black54,
-              ),
-              apply:(){
-                showModalBottomSheet(
-                    context: context,
-                    isScrollControlled: true,
-                    barrierColor: Colors.transparent,
-                    backgroundColor: Colors.transparent,
-                    // important for blur
-                    builder: (_) =>ConnectedDeviceWidget()
-                );
-              }
+            title: "News and Programs",
+            subtitle: "On email and Push ",
+            trailing: HugeIcon(
+              icon: HugeIcons.strokeRoundedArrowRight01,
+              size: 18,
+              color: Colors.black54,
+            ),
+            apply: () {
+              showModalBottomSheet(
+                context: context,
+                isScrollControlled: true,
+                barrierColor: Colors.transparent,
+                backgroundColor: Colors.transparent,
+                // important for blur
+                builder: (_) => ConnectedDeviceWidget(),
+              );
+            },
           ),
           const SizedBox(height: 5),
           CustomTile(
-              title: "Feedback",
-              subtitle: "On email and Push ",
-              trailing: HugeIcon(
-                icon: HugeIcons.strokeRoundedArrowRight01,
-                size: 18,
-                color: Colors.black54,
-              ),
-              apply:(){
-                showModalBottomSheet(
-                    context: context,
-                    isScrollControlled: true,
-                    barrierColor: Colors.transparent,
-                    backgroundColor: Colors.transparent,
-                    // important for blur
-                    builder: (_) =>ConnectedDeviceWidget()
-                );
-              }
+            title: "Feedback",
+            subtitle: "On email and Push ",
+            trailing: HugeIcon(
+              icon: HugeIcons.strokeRoundedArrowRight01,
+              size: 18,
+              color: Colors.black54,
+            ),
+            apply: () {
+              showModalBottomSheet(
+                context: context,
+                isScrollControlled: true,
+                barrierColor: Colors.transparent,
+                backgroundColor: Colors.transparent,
+                // important for blur
+                builder: (_) => ConnectedDeviceWidget(),
+              );
+            },
           ),
           const SizedBox(height: 16),
           const SectionTitle(title: "Flowva updates"),
           const SizedBox(height: 5),
           CustomTile(
-              title: "Subscription Reminders",
-              subtitle: "On email and Push ",
-              trailing: HugeIcon(
-                icon: HugeIcons.strokeRoundedArrowRight01,
-                size: 18,
-                color: Colors.black54,
-              ),
-              apply:(){
-                showModalBottomSheet(
-                    context: context,
-                    isScrollControlled: true,
-                    barrierColor: Colors.transparent,
-                    backgroundColor: Colors.transparent,
-                    // important for blur
-                    builder: (_) =>ConnectedDeviceWidget()
-                );
-              }
+            title: "Subscription Reminders",
+            subtitle: "On email and Push ",
+            trailing: HugeIcon(
+              icon: HugeIcons.strokeRoundedArrowRight01,
+              size: 18,
+              color: Colors.black54,
+            ),
+            apply: () {
+              showModalBottomSheet(
+                context: context,
+                isScrollControlled: true,
+                barrierColor: Colors.transparent,
+                backgroundColor: Colors.transparent,
+                // important for blur
+                builder: (_) => ConnectedDeviceWidget(),
+              );
+            },
           ),
         ],
       ),
@@ -236,7 +234,8 @@ class CustomTile extends StatelessWidget {
     required this.title,
     this.subtitle,
     this.trailing,
-    this.leading, required  this.apply,
+    this.leading,
+    required this.apply,
   });
 
   @override
@@ -257,9 +256,8 @@ class CustomTile extends StatelessWidget {
             fontWeight: FontWeight.w500,
             color: Color(0xFF5F5F5F),
           ),
-
         ),
-        subtitle:Text(
+        subtitle: Text(
           subtitle!,
           style: GoogleFonts.manrope(
             fontSize: 16,
@@ -282,7 +280,6 @@ class NotificationWidget extends StatefulWidget {
 }
 
 class _NotificationWidgetState extends State<NotificationWidget> {
-
   bool emailEnabled = false;
   bool biometricEnabled = true;
 
@@ -365,13 +362,15 @@ class _NotificationWidgetState extends State<NotificationWidget> {
                     ),
                     SizedBox(height: 30),
                     Container(
-
                       decoration: BoxDecoration(
                         color: Colors.grey.shade100,
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: ListTile(
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 4,
+                        ),
 
                         title: Text(
                           "Push notifications",
@@ -380,21 +379,21 @@ class _NotificationWidgetState extends State<NotificationWidget> {
                             fontWeight: FontWeight.w700,
                             color: Color(0xFF191919),
                           ),
-
                         ),
 
-                        trailing:   Transform.scale(
+                        trailing: Transform.scale(
                           scale: 0.8,
                           child: CupertinoSwitch(
                             value: biometricEnabled,
-                            onChanged: (v) => setState(() => biometricEnabled = v),
-
+                            onChanged: (v) =>
+                                setState(() => biometricEnabled = v),
 
                             activeTrackColor: Color(0xFF9013FE),
-                            inactiveTrackColor: Colors.white,// background when off
+                            inactiveTrackColor:
+                                Colors.white, // background when off
                           ),
                         ),
-                        onTap: (){},
+                        onTap: () {},
                       ),
                     ),
                     SizedBox(height: 16),
@@ -405,7 +404,10 @@ class _NotificationWidgetState extends State<NotificationWidget> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: ListTile(
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 4,
+                        ),
 
                         title: Text(
                           "Email",
@@ -414,29 +416,32 @@ class _NotificationWidgetState extends State<NotificationWidget> {
                             fontWeight: FontWeight.w700,
                             color: Color(0xFF191919),
                           ),
-
                         ),
 
-                        trailing:   Transform.scale(
+                        trailing: Transform.scale(
                           scale: 0.8,
                           child: CupertinoSwitch(
                             value: emailEnabled,
                             onChanged: (v) => setState(() => emailEnabled = v),
 
-
                             activeTrackColor: Color(0xFF9013FE),
-                            inactiveTrackColor: Colors.white,// background when off
-                            trackOutlineColor: WidgetStateProperty.resolveWith<Color?>((Set<WidgetState> states) {
-
-                              if (states.contains(WidgetState.selected)) {
-                                print(states);
-                                return CupertinoColors.black.withOpacity(.88);
-                              }
-                              return null; // Use the default color.
-                            }),// background when off
+                            inactiveTrackColor:
+                                Colors.white, // background when off
+                            trackOutlineColor:
+                                WidgetStateProperty.resolveWith<Color?>((
+                                  Set<WidgetState> states,
+                                ) {
+                                  if (states.contains(WidgetState.selected)) {
+                                    print(states);
+                                    return CupertinoColors.black.withOpacity(
+                                      .88,
+                                    );
+                                  }
+                                  return null; // Use the default color.
+                                }), // background when off
                           ),
                         ),
-                        onTap: (){},
+                        onTap: () {},
                       ),
                     ),
                     SizedBox(height: 20),

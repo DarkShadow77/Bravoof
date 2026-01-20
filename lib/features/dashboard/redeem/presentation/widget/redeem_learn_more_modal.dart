@@ -1,5 +1,5 @@
-import 'package:flowva/app/view/widgets/button/icon_text_button.dart';
-import 'package:flowva/core/constants/fonts.dart';
+import 'package:Bravoo/app/view/widgets/button/icon_text_button.dart';
+import 'package:Bravoo/core/constants/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';

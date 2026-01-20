@@ -1,10 +1,10 @@
-import 'package:flowva/app/view/widgets/cached_image_widget.dart';
-import 'package:flowva/core/constants/app_assets.dart';
-import 'package:flowva/core/utils/helpers.dart';
-import 'package:flowva/features/common/flowva_button.dart';
-import 'package:flowva/features/dashboard/profile/presentation/pages/settings_page.dart';
-import 'package:flowva/features/dashboard/profile/presentation/widgets/edit_profile.dart';
-import 'package:flowva/features/onbaording/data/model/user_profile.dart';
+import 'package:Bravoo/app/view/widgets/cached_image_widget.dart';
+import 'package:Bravoo/core/constants/app_assets.dart';
+import 'package:Bravoo/core/utils/helpers.dart';
+import 'package:Bravoo/features/common/flowva_button.dart';
+import 'package:Bravoo/features/dashboard/profile/presentation/pages/settings_page.dart';
+import 'package:Bravoo/features/dashboard/profile/presentation/widgets/edit_profile.dart';
+import 'package:Bravoo/features/onbaording/data/model/user_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

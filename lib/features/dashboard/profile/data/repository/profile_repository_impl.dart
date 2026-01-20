@@ -5,8 +5,8 @@ import 'dart:io';
 
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
-import 'package:flowva/features/onbaording/data/model/user_profile.dart';
-import 'package:flowva/session/session_manager.dart';
+import 'package:Bravoo/features/onbaording/data/model/user_profile.dart';
+import 'package:Bravoo/session/session_manager.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:logger/logger.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' hide MultipartFile;

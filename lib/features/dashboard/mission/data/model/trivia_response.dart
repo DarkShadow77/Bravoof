@@ -1,13 +1,8 @@
-
-import 'package:flowva/features/onbaording/data/model/user_profile.dart';
-
-class TriviaResponse{
+class TriviaResponse {
   List<Trivia>? trivia;
-  TriviaResponse({
-    this.trivia
-  });
-  TriviaResponse.fromJson(Map<String,dynamic>json){
-    trivia=List<Trivia>.from(json['trivia'].map((e)=>Trivia.fromJson(e)));
+  TriviaResponse({this.trivia});
+  TriviaResponse.fromJson(Map<String, dynamic> json) {
+    trivia = List<Trivia>.from(json['trivia'].map((e) => Trivia.fromJson(e)));
   }
 }
 
@@ -19,7 +14,6 @@ class Trivia {
     this.totalPoints,
     this.userRank,
     this.hasMedal,
-
   });
 
   String? profileImage;
@@ -29,7 +23,7 @@ class Trivia {
   int? userRank;
   bool? hasMedal;
 
-  Trivia.fromJson(Map<String, dynamic>json){
+  Trivia.fromJson(Map<String, dynamic> json) {
     if (json['profile_image'] != null) {
       profileImage = json['profile_image'];
     }
@@ -52,4 +46,3 @@ class Trivia {
     }
   }
 }
-

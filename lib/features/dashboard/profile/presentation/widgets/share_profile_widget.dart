@@ -1,6 +1,6 @@
 import 'dart:ui';
 
-import 'package:flowva/features/common/flowva_button.dart';
+import 'package:Bravoo/features/common/flowva_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -30,10 +30,10 @@ class ShareProfileWidget extends StatelessWidget {
             backgroundColor: Colors.transparent,
             insetPadding: const EdgeInsets.all(10),
             child: Container(
-    padding: const EdgeInsets.symmetric(vertical: 10,horizontal: 16),
+              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(30),
-                color: Colors.white
+                color: Colors.white,
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -55,46 +55,53 @@ class ShareProfileWidget extends StatelessWidget {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-
-                             Text(
+                            Text(
                               "Share",
-                                style: GoogleFonts.manrope(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w600,
-                                  color: Colors.black,
-                                ),
+                              style: GoogleFonts.manrope(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black,
+                              ),
                             ),
                             Container(
-                                padding: EdgeInsets.all(10),
-                                decoration: BoxDecoration(
-                                    color: Color(0xFFF1F1F1),
-                                    borderRadius: BorderRadius.circular(8)
-                                ),
-                                child: HugeIcon(icon: HugeIcons.strokeRoundedArrowDown03,
+                              padding: EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color: Color(0xFFF1F1F1),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: HugeIcon(
+                                icon: HugeIcons.strokeRoundedArrowDown03,
                                 size: 20,
-                                )),
+                              ),
+                            ),
                             Container(
-                                padding: EdgeInsets.all(12),
-                                decoration: BoxDecoration(
-                                    color: Color(0xFFF1F1F1),
-                                    borderRadius: BorderRadius.circular(8)
-                                ),
-                                child: SvgPicture.asset("assets/images/instagram.svg")),
+                              padding: EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: Color(0xFFF1F1F1),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: SvgPicture.asset(
+                                "assets/images/instagram.svg",
+                              ),
+                            ),
                             Container(
-                                padding: EdgeInsets.all(12),
-                                decoration: BoxDecoration(
-                                    color: Color(0xFFF1F1F1),
-                                    borderRadius: BorderRadius.circular(8)
-                                ),
-                                child:  SvgPicture.asset("assets/images/x.svg")),
+                              padding: EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: Color(0xFFF1F1F1),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: SvgPicture.asset("assets/images/x.svg"),
+                            ),
                             Container(
-                                padding: EdgeInsets.all(12),
-                                decoration: BoxDecoration(
-                                    color: Color(0xFFF1F1F1),
-                                    borderRadius: BorderRadius.circular(8)
-                                ),
-                                child: SvgPicture.asset("assets/images/linkedin.svg")),
-
+                              padding: EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: Color(0xFFF1F1F1),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: SvgPicture.asset(
+                                "assets/images/linkedin.svg",
+                              ),
+                            ),
                           ],
                         ),
                       ),
@@ -112,11 +119,9 @@ class ShareProfileWidget extends StatelessWidget {
                         ),
                         child: IconButton(
                           onPressed: () => Navigator.pop(context),
-                          icon: HugeIcon(
-                            icon: HugeIcons.strokeRoundedCancel01,
-                          ),
+                          icon: HugeIcon(icon: HugeIcons.strokeRoundedCancel01),
                         ),
-                      )
+                      ),
                     ],
                   ),
                   // Profile Card
@@ -131,7 +136,7 @@ class ShareProfileWidget extends StatelessWidget {
                           color: Colors.black.withOpacity(0.08),
                           blurRadius: 15,
                           offset: const Offset(0, 5),
-                        )
+                        ),
                       ],
                     ),
                     width: 220,
@@ -142,7 +147,7 @@ class ShareProfileWidget extends StatelessWidget {
                         Stack(
                           children: [
                             ClipRRect(
-                                borderRadius: BorderRadius.circular(20),
+                              borderRadius: BorderRadius.circular(20),
                               child: Image.asset(
                                 "assets/images/person.png", // your profile image
                                 height: 200,
@@ -161,28 +166,27 @@ class ShareProfileWidget extends StatelessWidget {
                                   borderRadius: BorderRadius.circular(20),
                                 ),
                                 child: Center(
-                                  child:Image.asset(
+                                  child: Image.asset(
                                     "assets/images/logo.png",
                                     height: 24,
-                                    width: 34,// your profile image
+                                    width: 34, // your profile image
                                   ),
                                 ),
                               ),
                             ),
                           ],
                         ),
-                         Padding(
-                           padding: const EdgeInsets.all(8.0),
-                           child: Text(
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Text(
                             "James Martins",
                             style: GoogleFonts.manrope(
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
                               color: Colors.black,
                             ),
-                                                   ),
-                         ),
-
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -192,7 +196,10 @@ class ShareProfileWidget extends StatelessWidget {
                   // Icons row
                   Container(
                     width: 250,
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 16),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 16,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(16),
@@ -201,7 +208,7 @@ class ShareProfileWidget extends StatelessWidget {
                           color: Colors.black.withOpacity(0.08),
                           blurRadius: 8,
                           offset: const Offset(0, 3),
-                        )
+                        ),
                       ],
                     ),
                     child: Row(
@@ -217,7 +224,7 @@ class ShareProfileWidget extends StatelessWidget {
 
                   const SizedBox(height: 20),
 
-                   Text(
+                  Text(
                     "Exploring tools for clarity and focus 💡",
                     style: GoogleFonts.manrope(
                       fontSize: 12,
@@ -233,7 +240,7 @@ class ShareProfileWidget extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: List.generate(
                       3,
-                          (index) => Container(
+                      (index) => Container(
                         margin: const EdgeInsets.symmetric(horizontal: 6),
                         height: 45,
                         width: 45,
@@ -247,17 +254,24 @@ class ShareProfileWidget extends StatelessWidget {
                     ),
                   ),
 
-                   Divider(height: 35,thickness: 0.5, color: Colors.black.withOpacity(0.2)),
+                  Divider(
+                    height: 35,
+                    thickness: 0.5,
+                    color: Colors.black.withOpacity(0.2),
+                  ),
 
                   // Copy link button
                   Container(
                     width: 180,
-                    padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 18),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 16,
+                      horizontal: 18,
+                    ),
                     decoration: BoxDecoration(
                       color: const Color(0xFFF2F2F2),
                       borderRadius: BorderRadius.circular(30),
                     ),
-                    child:  Row(
+                    child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
@@ -269,7 +283,7 @@ class ShareProfileWidget extends StatelessWidget {
                           ),
                         ),
                         SizedBox(width: 8),
-                        HugeIcon(icon: HugeIcons.strokeRoundedCopy01,size: 15,)
+                        HugeIcon(icon: HugeIcons.strokeRoundedCopy01, size: 15),
                       ],
                     ),
                   ),

@@ -1,6 +1,6 @@
 import 'dart:ui';
 
-import 'package:flowva/features/common/flowva_button.dart';
+import 'package:Bravoo/features/common/flowva_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -175,7 +175,9 @@ class _ConnectedDeviceWidgetState extends State<ConnectedDeviceWidget> {
                         apply: () {},
                       ),
                     ),
-                     SizedBox(height: 12.h + MediaQuery.of(context).padding.bottom),
+                    SizedBox(
+                      height: 12.h + MediaQuery.of(context).padding.bottom,
+                    ),
                   ],
                 ),
               ),

@@ -50,19 +50,22 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyCCG5MumyzI93m3P5pt86Qjm9HPimRdM2M',
-    appId: '1:429769926765:android:6bcfc8400a3c95e3583764',
-    messagingSenderId: '429769926765',
-    projectId: 'flowva-deeplink',
-    storageBucket: 'flowva-deeplink.firebasestorage.app',
+    apiKey: 'AIzaSyDk3pbbdCo7bUYykjEBQ7zbzylsDa1A2iE',
+    appId: '1:413861787586:android:7bc0d2307028e55c85485b',
+    messagingSenderId: '413861787586',
+    projectId: 'bravoo-481013',
+    storageBucket: 'bravoo-481013.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyAweASiwUVl3CLQph9_tG2qPTmGwNIhinY',
-    appId: '1:429769926765:ios:dc426abced6c7d95583764',
-    messagingSenderId: '429769926765',
-    projectId: 'flowva-deeplink',
-    storageBucket: 'flowva-deeplink.firebasestorage.app',
-    iosBundleId: 'com.flowva.hub',
+    apiKey: 'AIzaSyCTRRZz_e4QPOdSnzgbA1gVn9uc1T83s24',
+    appId: '1:413861787586:ios:54a7c35279aa6f7585485b',
+    messagingSenderId: '413861787586',
+    projectId: 'bravoo-481013',
+    storageBucket: 'bravoo-481013.firebasestorage.app',
+    androidClientId: '413861787586-6fgh6he5n4p1v10c1l4osmc9iekck6fk.apps.googleusercontent.com',
+    iosClientId: '413861787586-g0lkbu9m7nll0mrvm077fs15o9r0aq4q.apps.googleusercontent.com',
+    iosBundleId: 'com.flowvahub.bravoo',
   );
+
 }

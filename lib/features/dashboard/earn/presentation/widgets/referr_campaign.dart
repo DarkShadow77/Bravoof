@@ -1,7 +1,7 @@
-import 'package:flowva/app/styles/text_styles.dart';
-import 'package:flowva/core/constants/fonts.dart';
-import 'package:flowva/features/dashboard/earn/presentation/pages/referral_contest_screen.dart';
-import 'package:flowva/features/dashboard/home/data/model/campaign_response.dart';
+import 'package:Bravoo/app/styles/text_styles.dart';
+import 'package:Bravoo/core/constants/fonts.dart';
+import 'package:Bravoo/features/dashboard/earn/presentation/pages/referral_contest_screen.dart';
+import 'package:Bravoo/features/dashboard/home/data/model/campaign_response.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

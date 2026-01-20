@@ -1,9 +1,9 @@
 // challenge_cards.dart
 // Single-file Flutter example that recreates the provided UI and makes it interactive.
 
+import 'package:Bravoo/app/styles/text_styles.dart';
+import 'package:Bravoo/app/view/widgets/cached_image_widget.dart';
 import 'package:fade_shimmer/fade_shimmer.dart';
-import 'package:flowva/app/styles/text_styles.dart';
-import 'package:flowva/app/view/widgets/cached_image_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -182,9 +182,7 @@ class SkillCard extends StatelessWidget {
                       textAlign: TextAlign.center,
                       text: TextSpan(
                         text: skill.title,
-                        style: TextStyles.bodySemiBold16(
-                          context,
-                        ),
+                        style: TextStyles.bodySemiBold16(context),
                       ),
                     ),
                   ),
