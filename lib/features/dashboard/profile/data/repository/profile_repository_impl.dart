@@ -3,15 +3,16 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
-import 'package:dartz/dartz.dart';
-import 'package:dio/dio.dart';
 import 'package:Bravoo/features/onbaording/data/model/user_profile.dart';
 import 'package:Bravoo/session/session_manager.dart';
+import 'package:dartz/dartz.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:logger/logger.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' hide MultipartFile;
 
 import '../../../../../core/services/api_service.dart';
+import '../../../../../core/services/firebase_messaging_service.dart';
 import 'profile_repository.dart';
 
 class ProfileRepositoryImpl extends ProfileRepository {
@@ -108,6 +109,47 @@ class ProfileRepositoryImpl extends ProfileRepository {
       body: {},
       fallbackErrorMessage: "Failed to Fetch User Location",
       onSuccess: (data) => "Successfully fetched User Location",
+    );
+  }
+
+  Future<Either<String, void>> saveFCMToken() async {
+    final firebase = FirebaseMessagingService.instance();
+    final body = {
+      "fcm_token": await firebase.getFcmToken(),
+      "device_id": await firebase.getDeviceId(),
+      "platform": Platform.isAndroid ? "android" : "ios",
+      "app_version": await firebase.getAppVersion(),
+    };
+    log("Save FCM Token Body $body");
+    return ApiService.instance!.invokeEdgeFunction<void>(
+      functionName: 'save-fcm-token',
+      body: body,
+      fallbackErrorMessage: "Failed to Save FCM Token",
+      onSuccess: (data) => "Successfully Saved FCM Token",
+    );
+  }
+
+  Future<Either<String, void>> deleteFCMToken() async {
+    final firebase = FirebaseMessagingService.instance();
+    return ApiService.instance!.invokeEdgeFunction<void>(
+      functionName: 'delete-fcm-token',
+      body: {"fcm_token": firebase.getFcmToken()},
+      fallbackErrorMessage: "Failed to Delete FCM Token",
+      onSuccess: (data) => "Successfully Deleted FCM Token",
+    );
+  }
+
+  Future<Either<String, void>> sendPushNotification() async {
+    return ApiService.instance!.invokeEdgeFunction<void>(
+      functionName: 'send-push-notification',
+      body: {
+        'userId': supabase.auth.currentUser!.id,
+        'title': 'New Alert',
+        'body': 'Something happened 🔔',
+        'data': {'type': 'transaction', 'id': '123'},
+      },
+      fallbackErrorMessage: "Failed to Send Push Notification",
+      onSuccess: (data) => "Successfully Sent Push Notification",
     );
   }
 }

@@ -1,11 +1,13 @@
 import 'dart:async';
 
-import 'package:app_links/app_links.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'package:Bravoo/core/services/firebase_messaging_service.dart';
+import 'package:Bravoo/core/services/local_notification_service.dart';
 import 'package:Bravoo/features/dashboard/home/presentation/bloc/home_cubit.dart';
 import 'package:Bravoo/features/dashboard/redeem/presentation/bloc/redeem_bloc.dart';
 import 'package:Bravoo/session/session_manager.dart';
 import 'package:Bravoo/utility/auth_listener.dart';
+import 'package:app_links/app_links.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -46,6 +48,13 @@ void main() async {
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
+  final localNotificationService = LocalNotificationService.instance();
+  await localNotificationService.init();
+
+  final firebaseMessagingService = FirebaseMessagingService.instance();
+  await firebaseMessagingService.init(
+    localNotificationService: localNotificationService,
+  );
   //Initialize dotenv for environment variables
   await dotenv.load(fileName: ".env.development");
 

@@ -20,6 +20,9 @@ class ProfileBloc extends HydratedBloc<ProfileEvent, ProfileState> {
     on<UpdateProfileEvent>(_onUpdateProfile);
     on<UpdateCoverPicEvent>(_onUpdateCoverPic);
     on<UpdateLocationEvent>(_onUpdateLocation);
+    on<SaveFCMTokenEvent>(_onSaveFCMToken);
+    on<DeleteFCMTokenEvent>(_onDeleteFCMToken);
+    on<SendNotificationEvent>(_onSendNotification);
     on<LogoutProfileEvent>(_onLogout);
   }
 
@@ -179,10 +182,125 @@ class ProfileBloc extends HydratedBloc<ProfileEvent, ProfileState> {
     );
   }
 
+  Future<void> _onSaveFCMToken(
+    SaveFCMTokenEvent event,
+    Emitter<ProfileState> emit,
+  ) async {
+    emit(
+      ProfileLoadingState(
+        type: ProfileType.saveFcmToken,
+        profile: state.profile,
+      ),
+    );
+
+    final response = await repo.saveFCMToken();
+
+    response.fold(
+      (failure) {
+        logger.e("Failed to Save Fcm Token");
+        emit(
+          ProfileFailureState(
+            type: ProfileType.saveFcmToken,
+            message: failure,
+            profile: state.profile,
+          ),
+        );
+      },
+      (user) {
+        logger.w("Saved FCM Token Successfully");
+
+        emit(
+          ProfileSuccessState(
+            type: ProfileType.saveFcmToken,
+            message: "Saved FCM Token Successfully",
+            profile: state.profile,
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _onDeleteFCMToken(
+    DeleteFCMTokenEvent event,
+    Emitter<ProfileState> emit,
+  ) async {
+    emit(
+      ProfileLoadingState(
+        type: ProfileType.deleteFcmToken,
+        profile: state.profile,
+      ),
+    );
+
+    final response = await repo.deleteFCMToken();
+
+    response.fold(
+      (failure) {
+        logger.e("Failed to Delete Fcm Token");
+        emit(
+          ProfileFailureState(
+            type: ProfileType.deleteFcmToken,
+            message: failure,
+            profile: state.profile,
+          ),
+        );
+      },
+      (user) {
+        logger.w("Deleted FCM Token Successfully");
+
+        emit(
+          ProfileSuccessState(
+            type: ProfileType.deleteFcmToken,
+            message: "Deleted FCM Token Successfully",
+            profile: state.profile,
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _onSendNotification(
+    SendNotificationEvent event,
+    Emitter<ProfileState> emit,
+  ) async {
+    emit(
+      ProfileLoadingState(
+        type: ProfileType.sendNotification,
+        profile: state.profile,
+      ),
+    );
+
+    final response = await repo.sendPushNotification();
+
+    response.fold(
+      (failure) {
+        logger.e("Failed to Send Notification");
+        emit(
+          ProfileFailureState(
+            type: ProfileType.sendNotification,
+            message: failure,
+            profile: state.profile,
+          ),
+        );
+      },
+      (user) {
+        logger.w("Sent Notification Successfully");
+
+        emit(
+          ProfileSuccessState(
+            type: ProfileType.sendNotification,
+            message: "Sent Notification Successfully",
+            profile: state.profile,
+          ),
+        );
+      },
+    );
+  }
+
   Future<void> _onLogout(
     LogoutProfileEvent event,
     Emitter<ProfileState> emit,
   ) async {
+    add(DeleteFCMTokenEvent());
     logger.w("🚪 Logging out user");
 
     // 🔥 Clear persisted state for this bloc

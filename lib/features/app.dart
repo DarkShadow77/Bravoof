@@ -33,6 +33,7 @@ class _AppState extends State<App> {
 
     if (profileBloc.state.profile.email.isNotEmpty) {
       profileBloc.add(UpdateLocationEvent());
+      profileBloc.add(SaveFCMTokenEvent());
     }
 
     // requestNotificationPermission(context);

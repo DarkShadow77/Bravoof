@@ -164,6 +164,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with UIToolMixin {
                   }
                   context.read<ProfileBloc>().add(GetProfileEvent());
                   context.read<ProfileBloc>().add(UpdateLocationEvent());
+                  context.read<ProfileBloc>().add(SaveFCMTokenEvent());
                   SessionManager().firstWelcomeUserVal = "YES";
                   SessionManager().firstTimeUserVal = "YES";
                   Navigator.pop(context);

@@ -1,7 +1,7 @@
 import 'dart:io';
 
-import 'package:dartz/dartz.dart';
 import 'package:Bravoo/features/onbaording/data/model/user_profile.dart';
+import 'package:dartz/dartz.dart';
 
 abstract class ProfileRepository {
   Future<Either<String, UserProfile>> fetchUserProfile();
@@ -11,4 +11,7 @@ abstract class ProfileRepository {
   });
   Future<Either<String, void>> updateCoverPic({required File imageFile});
   Future<Either<String, void>> updateLocation();
+  Future<Either<String, void>> saveFCMToken();
+  Future<Either<String, void>> deleteFCMToken();
+  Future<Either<String, void>> sendPushNotification();
 }

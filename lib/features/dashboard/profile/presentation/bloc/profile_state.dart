@@ -6,6 +6,9 @@ enum ProfileType {
   updateCoverPic,
   updateLocation,
   logout,
+  saveFcmToken,
+  deleteFcmToken,
+  sendNotification,
 }
 
 @immutable

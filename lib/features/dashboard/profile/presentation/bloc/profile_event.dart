@@ -27,3 +27,15 @@ class UpdateLocationEvent extends ProfileEvent {
 }
 
 class LogoutProfileEvent extends ProfileEvent {}
+
+class SaveFCMTokenEvent extends ProfileEvent {
+  const SaveFCMTokenEvent();
+}
+
+class DeleteFCMTokenEvent extends ProfileEvent {
+  const DeleteFCMTokenEvent();
+}
+
+class SendNotificationEvent extends ProfileEvent {
+  const SendNotificationEvent();
+}
