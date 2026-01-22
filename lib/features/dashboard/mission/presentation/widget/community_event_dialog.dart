@@ -75,7 +75,9 @@ class _AskingDialogState extends State<CommunityEventDialog> with UIToolMixin {
           }
           if (state is CommunityMissionError &&
               state.type == CommunityMissionType.joinMission) {
-            if (Get.isDialogOpen ?? false) Get.back();
+            if (Get.isDialogOpen == true) {
+        Navigator.of(context, rootNavigator: true).pop();
+      }
             showMessage(
               state.message,
               context,
@@ -86,8 +88,12 @@ class _AskingDialogState extends State<CommunityEventDialog> with UIToolMixin {
           }
 
           if (state is CommunityMissionJoined) {
-            if (Get.isDialogOpen ?? false) Get.back();
-            if (Get.isDialogOpen ?? false) Get.back();
+            if (Get.isDialogOpen == true) {
+        Navigator.of(context, rootNavigator: true).pop();
+      }
+            if (Get.isDialogOpen == true) {
+        Navigator.of(context, rootNavigator: true).pop();
+      }
             context.read<CommunityMissionBloc>().add(LoadCommunityMission());
 
             showModalBottomSheet(

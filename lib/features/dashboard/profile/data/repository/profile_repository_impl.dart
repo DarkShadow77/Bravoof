@@ -17,13 +17,14 @@ import 'profile_repository.dart';
 
 class ProfileRepositoryImpl extends ProfileRepository {
   final supabase = Supabase.instance.client;
+  final firebase = FirebaseMessagingService.instance();
 
   Future<Either<String, UserProfile>> fetchUserProfile() async {
     try {
       final response = await supabase
           .from('user_profile')
           .select()
-          .eq('user_id', SessionManager().userIdVal)
+          .eq('user_id', supabase.auth.currentUser!.id)
           .single();
 
       UserProfile userProfile = UserProfile.fromJson(response);
@@ -43,8 +44,7 @@ class ProfileRepositoryImpl extends ProfileRepository {
     required UserProfile profile,
     File? imageFile,
   }) async {
-    final token =
-        Supabase.instance.client.auth.currentSession?.accessToken ?? "";
+    final token = supabase.auth.currentSession?.accessToken ?? "";
     final formData = FormData.fromMap({
       'profile': jsonEncode(profile.toJson()),
       if (imageFile != null)
@@ -78,8 +78,7 @@ class ProfileRepositoryImpl extends ProfileRepository {
   }
 
   Future<Either<String, void>> updateCoverPic({required File imageFile}) async {
-    final token =
-        Supabase.instance.client.auth.currentSession?.accessToken ?? "";
+    final token = supabase.auth.currentSession?.accessToken ?? "";
     final formData = FormData.fromMap({
       'cover_pic': await MultipartFile.fromFile(
         imageFile.path,
@@ -113,24 +112,20 @@ class ProfileRepositoryImpl extends ProfileRepository {
   }
 
   Future<Either<String, void>> saveFCMToken() async {
-    final firebase = FirebaseMessagingService.instance();
-    final body = {
-      "fcm_token": await firebase.getFcmToken(),
-      "device_id": await firebase.getDeviceId(),
-      "platform": Platform.isAndroid ? "android" : "ios",
-      "app_version": await firebase.getAppVersion(),
-    };
-    log("Save FCM Token Body $body");
     return ApiService.instance!.invokeEdgeFunction<void>(
       functionName: 'save-fcm-token',
-      body: body,
+      body: {
+        "fcm_token": await firebase.getFcmToken(),
+        "device_id": await firebase.getDeviceId(),
+        "platform": Platform.isAndroid ? "android" : "ios",
+        "app_version": await firebase.getAppVersion(),
+      },
       fallbackErrorMessage: "Failed to Save FCM Token",
       onSuccess: (data) => "Successfully Saved FCM Token",
     );
   }
 
   Future<Either<String, void>> deleteFCMToken() async {
-    final firebase = FirebaseMessagingService.instance();
     return ApiService.instance!.invokeEdgeFunction<void>(
       functionName: 'delete-fcm-token',
       body: {"fcm_token": firebase.getFcmToken()},

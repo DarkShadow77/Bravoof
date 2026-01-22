@@ -1,8 +1,8 @@
 import 'package:bloc/bloc.dart';
 import 'package:logger/logger.dart';
 import 'package:meta/meta.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../../../../../session/session_manager.dart';
 import '../../data/repositories/jackpot_repository.dart';
 
 part 'jackpot_event.dart';
@@ -10,7 +10,8 @@ part 'jackpot_state.dart';
 
 class JackpotBloc extends Bloc<JackpotEvent, JackpotState> {
   final JackpotRepository repo;
-  SessionManager session = SessionManager();
+
+  final supabase = Supabase.instance.client;
 
   JackpotBloc({required this.repo}) : super(JackpotInitialState()) {
     on<SpinJackpotEvent>(_spinJackpot);
@@ -19,7 +20,7 @@ class JackpotBloc extends Bloc<JackpotEvent, JackpotState> {
   Future<void> _spinJackpot(SpinJackpotEvent event, Emitter emit) async {
     emit(JackpotLoadingState());
 
-    final res = await repo.spinJackpot(userId: session.userIdVal);
+    final res = await repo.spinJackpot(userId: supabase.auth.currentUser!.id);
 
     Logger().d("Jackpot Spined: $res");
     res.fold(

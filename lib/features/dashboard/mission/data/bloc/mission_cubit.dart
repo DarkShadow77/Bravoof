@@ -15,64 +15,12 @@ class MissionCubit extends Cubit<MissionState> {
 
   final missionRepository = MissionRepository();
 
-  void fetchSkillUpChallenge() async {
-    // emit(MissionLoading());
-
-    final either = await missionRepository.fetchSkillUpChallenge();
-    print(either);
-    either.fold((failure) => emit(MissionFailed(failure.toString())), (
-      mission,
-    ) {
-      emit(SocialMissionLoaded(mission));
-    });
-  }
-
   void fetchAllUsersReward() async {
     emit(PageLoading());
 
     final either = await missionRepository.fetchAllUsersReward();
     either.fold((failure) => emit(MissionFailed(failure.toString())), (streak) {
       emit(RewardLoaded(streak));
-    });
-  }
-
-  void fetchQuiz() async {
-    // emit(MissionLoading());
-
-    final either = await missionRepository.fetchQuiz();
-    print(either);
-    either.fold((failure) => emit(MissionFailed(failure.toString())), (quiz) {
-      emit(QuizLoaded(quiz));
-    });
-  }
-
-  void fetchQuizCompleted() async {
-    // emit(MissionLoading());
-
-    final either = await missionRepository.fetchQuizCompleted();
-    print(either);
-    either.fold((failure) => emit(MissionFailed(failure.toString())), (quiz) {
-      emit(QuizLoaded(quiz));
-    });
-  }
-
-  void fetchSkillUPTask() async {
-    // emit(MissionLoading());
-
-    final either = await missionRepository.fetchSkillUPTask();
-    print(either);
-    either.fold((failure) => emit(MissionFailed(failure.toString())), (quiz) {
-      emit(SkillUpTaskLoaded(quiz));
-    });
-  }
-
-  void fetchTrivia() async {
-    emit(PageLoading());
-
-    final either = await missionRepository.fetchTrivia();
-    print(either);
-    either.fold((failure) => emit(MissionFailed(failure.toString())), (trivia) {
-      emit(TriviaLoaded(trivia));
     });
   }
 }

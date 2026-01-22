@@ -1,18 +1,19 @@
-import 'package:bloc/bloc.dart';
-import 'package:equatable/equatable.dart';
 import 'package:Bravoo/features/dashboard/home/data/model/campaign_response.dart';
 import 'package:Bravoo/features/dashboard/home/data/model/spotlight_model.dart';
 import 'package:Bravoo/features/dashboard/home/data/repository/home_repository.dart';
 import 'package:Bravoo/features/dashboard/home/data/repository/home_repository_impl.dart';
+import 'package:bloc/bloc.dart';
+import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../../../../../session/session_manager.dart';
 import '../../../../onbaording/data/model/user_profile.dart';
 
 part 'home_state.dart';
 
 class HomeCubit extends Cubit<HomeState> {
   final HomeRepository homeRepository = HomeRepositoryImpl();
+  final supabase = Supabase.instance.client;
   HomeCubit()
     : super(
         HomeInitialState(
@@ -100,7 +101,7 @@ class HomeCubit extends Cubit<HomeState> {
 
   void getUserReferrals() async {
     final res = await homeRepository.getAllUserReferrals(
-      userId: SessionManager().userIdVal,
+      userId: supabase.auth.currentUser!.id,
     );
 
     res.fold((err) => print(err), (list) {

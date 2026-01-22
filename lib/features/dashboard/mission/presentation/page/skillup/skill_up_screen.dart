@@ -54,7 +54,9 @@ class _SkillUpScreenState extends State<SkillUpScreen> with UIToolMixin {
     bool isLast,
   ) {
     if (state.missionId == skill.id && state.stepId == stepId) {
-      if (Get.isDialogOpen ?? false) Get.back();
+      if (Get.isDialogOpen == true) {
+        Navigator.of(context, rootNavigator: true).pop();
+      }
       context.read<SkillUpBloc>().add(LoadSkillUpMission());
       skillUpSuccessDialog(isLast: isLast);
     }
@@ -66,7 +68,9 @@ class _SkillUpScreenState extends State<SkillUpScreen> with UIToolMixin {
     SkillUpStep mission,
   ) {
     if (state.stepId == mission.id) {
-      if (Get.isDialogOpen ?? false) Get.back();
+      if (Get.isDialogOpen == true) {
+        Navigator.of(context, rootNavigator: true).pop();
+      }
       context.read<SkillUpBloc>().add(LoadSkillUpMission());
       Navigator.push(
         context,
@@ -124,7 +128,9 @@ class _SkillUpScreenState extends State<SkillUpScreen> with UIToolMixin {
             state.missionId == skill.id) ||
         (state.type == SkillUpType.unlockSkillUp &&
             state.missionId == stepId)) {
-      if (Get.isDialogOpen ?? false) Get.back();
+      if (Get.isDialogOpen == true) {
+        Navigator.of(context, rootNavigator: true).pop();
+      }
       showMessage(
         state.message,
         context,

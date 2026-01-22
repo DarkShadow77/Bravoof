@@ -1,9 +1,9 @@
-import 'package:bloc/bloc.dart';
 import 'package:Bravoo/features/dashboard/redeem/data/redeem_history_model.dart';
+import 'package:bloc/bloc.dart';
 import 'package:logger/logger.dart';
 import 'package:meta/meta.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../../../../../session/session_manager.dart';
 import '../../data/repository/redeem_repository.dart';
 
 part 'redeem_event.dart';
@@ -11,7 +11,8 @@ part 'redeem_state.dart';
 
 class RedeemBloc extends Bloc<RedeemEvent, RedeemState> {
   final RedeemRepository repo;
-  SessionManager session = SessionManager();
+
+  final supabase = Supabase.instance.client;
 
   RedeemBloc({required this.repo})
     : super(RedeemInitialState(redeemHistory: [])) {
@@ -28,7 +29,9 @@ class RedeemBloc extends Bloc<RedeemEvent, RedeemState> {
       ),
     );
 
-    final redeemRes = await repo.fetchRedeemHistory(userId: session.userIdVal);
+    final redeemRes = await repo.fetchRedeemHistory(
+      userId: supabase.auth.currentUser!.id,
+    );
 
     redeemRes.fold(
       (err) => emit(
@@ -61,7 +64,7 @@ class RedeemBloc extends Bloc<RedeemEvent, RedeemState> {
     );
 
     final res = await repo.redeemAirtimeData(
-      userId: session.userIdVal,
+      userId: supabase.auth.currentUser!.id,
       coins: event.coins,
       phone: event.phone,
       rewardType: event.rewardType,
@@ -98,7 +101,7 @@ class RedeemBloc extends Bloc<RedeemEvent, RedeemState> {
     );
 
     final res = await repo.redeemGiftcard(
-      userId: session.userIdVal,
+      userId: supabase.auth.currentUser!.id,
       coins: event.coins,
       phone: event.phone,
       rewardType: event.rewardType,

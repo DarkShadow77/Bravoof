@@ -1,6 +1,10 @@
 import 'package:dartz/dartz.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:dio/dio.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:logger/logger.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' hide MultipartFile;
 
+import '../../../../../core/services/api_service.dart';
 import '../model/mission_status_enum.dart';
 import '../model/sponsored_mission_model.dart';
 import 'sponsored_mission_repository.dart';
@@ -8,84 +12,60 @@ import 'sponsored_mission_repository.dart';
 class SponsoredMissionRepositoryImpl extends SponsoredMissionRepository {
   final supabase = Supabase.instance.client;
 
-  /// Fetch sponsored mission
   Future<Either<String, List<SponsoredMission>>> fetchSponsoredMission() async {
-    try {
-      final res = await supabase
-          .from('sponsored_missions')
-          .select()
-          .order('id', ascending: true);
-
-      if (res.isEmpty) {
-        return Left('No sponsored mission found');
-      }
-
-      return Right(res.map((e) => SponsoredMission.fromJson(e)).toList());
-    } catch (e) {
-      return Left(e.toString());
-    }
+    return ApiService.instance!.invokeEdgeFunction<List<SponsoredMission>>(
+      functionName: 'fetch-sponsored-missions',
+      body: {},
+      fallbackErrorMessage: 'Failed to Fetch Sponsored Mission',
+      onSuccess: (data) {
+        final mission = data["data"] as List;
+        return mission.map((e) => SponsoredMission.fromJson(e)).toList();
+      },
+    );
   }
 
-  /// Join / Update mission
   Future<Either<String, void>> completeMission({
     required int missionId,
     required String userId,
-    required String? text,
-    required String? imageUrl,
+    required String imageUrl,
   }) async {
-    try {
-      // Check if user already joined
-      final existing = await supabase
-          .from('sponsored_mission_completed')
-          .select('id')
-          .eq('sponsored_mission_id', missionId)
-          .eq('user_id', userId)
-          .maybeSingle();
+    final token = supabase.auth.currentSession?.accessToken ?? "";
+    final formData = FormData.fromMap({
+      'missionId': missionId,
+      'userId': userId,
+      'image': await MultipartFile.fromFile(
+        imageUrl,
+        filename: imageUrl.split('/').last,
+      ),
+    });
 
-      if (existing == null) {
-        // First join
-        await supabase.from('sponsored_mission_completed').insert({
-          'sponsored_mission_id': missionId,
-          'user_id': userId,
-          // 'answer': text,
-          'evidence_image': imageUrl,
-          'status': 'PENDING',
-        });
-      } else {
-        // Update existing submission
-        await supabase
-            .from('sponsored_mission_completed')
-            .update({
-              // 'answer': text,
-              'evidence_image': imageUrl,
-              'status': 'PENDING',
-              'updated_at': DateTime.now().toIso8601String(),
-            })
-            .eq('id', existing['id']);
-      }
-    } catch (e) {
-      return Left(e.toString());
+    final response = await ApiService.instance!.postRequest(
+      "functions/v1/complete-sponsored-mission",
+      formData,
+      accessToken: token,
+      apiKey: dotenv.env["ANON_KEY"] ?? "",
+    );
+
+    Logger().d("Complete Sponsored Mission Response $response");
+
+    if (response.responseSuccessful == true) {
+      return Right(null);
+    } else {
+      return Left(
+        response.responseMessage ?? "Failed to Complete Sponsored Mission",
+      );
     }
-
-    return const Right(null);
   }
 
-  /// Check if user already joined
-  Future<MissionStatus> hasJoined({
+  Future<Either<String, MissionStatus>> hasJoined({
     required int missionId,
     required String userId,
   }) async {
-    final res = await supabase
-        .from('sponsored_mission_completed')
-        .select('status')
-        .eq('sponsored_mission_id', missionId)
-        .eq('user_id', userId)
-        .maybeSingle();
-
-    if (res == null) {
-      return MissionStatus.notJoined;
-    }
-
-    return statusFromDb(res['status'] as String);
+    return ApiService.instance!.invokeEdgeFunction<MissionStatus>(
+      functionName: 'has-joined-sponsored',
+      body: {"missionId": missionId, "userId": userId},
+      fallbackErrorMessage: 'Failed to Fetch Sponsored Status',
+      onSuccess: (data) => statusFromDb(data["data"]["status"] as String),
+    );
   }
 }

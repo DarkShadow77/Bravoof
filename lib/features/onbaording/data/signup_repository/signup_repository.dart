@@ -1,8 +1,6 @@
-import 'dart:io';
-
-import 'package:dartz/dartz.dart';
 import 'package:Bravoo/features/common/model/app_base_response.dart';
 import 'package:Bravoo/features/onbaording/data/model/user_profile.dart';
+import 'package:dartz/dartz.dart';
 
 abstract class SignupRepository {
   Future<Either<String, AppBaseResponse>> signUp({UserProfile userProfile});
@@ -18,7 +16,4 @@ abstract class SignupRepository {
   Future<Either<String, AppBaseResponse>> signIn({UserProfile userProfile});
   Future<Either<String, AppBaseResponse>> googleAuth();
   Future<Either<String, AppBaseResponse>> appleAuth();
-  Future<Either<String, UserProfile>> updateProfile({UserProfile data});
-  Future<Either<String, UserProfile>> fetchUserProfile();
-  Future<Either<String, String>> uploadProfileImage(File imageFile);
 }

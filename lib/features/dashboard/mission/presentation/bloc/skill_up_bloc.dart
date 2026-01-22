@@ -1,9 +1,7 @@
-import 'dart:developer';
-
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../../../../../session/session_manager.dart';
 import '../../data/model/skill_up_mission_model.dart';
 import '../../data/repository/skill_up_repository.dart';
 
@@ -12,7 +10,7 @@ part 'skill_up_state.dart';
 
 class SkillUpBloc extends Bloc<SkillUpEvent, SkillUpState> {
   final SkillUpRepository repo;
-  SessionManager session = SessionManager();
+  final supabase = Supabase.instance.client;
 
   SkillUpBloc({required this.repo}) : super(SkillUpInitial(missions: [])) {
     on<LoadSkillUpMission>(_loadMission);
@@ -21,7 +19,6 @@ class SkillUpBloc extends Bloc<SkillUpEvent, SkillUpState> {
   }
 
   Future<void> _loadMission(LoadSkillUpMission event, Emitter emit) async {
-    log("Skill Up Loading");
     if (state.missions.isEmpty)
       emit(
         SkillUpLoading(
@@ -31,10 +28,9 @@ class SkillUpBloc extends Bloc<SkillUpEvent, SkillUpState> {
       );
 
     final missionRes = await repo.fetchSkillUpMission(
-      userId: session.userIdVal,
+      userId: supabase.auth.currentUser!.id,
     );
 
-    log("Skill Up Missions $missionRes");
     missionRes.fold(
       (err) => emit(
         SkillUpError(
@@ -64,8 +60,7 @@ class SkillUpBloc extends Bloc<SkillUpEvent, SkillUpState> {
     final res = await repo.completeSkillUpStep(
       skillUpMissionId: event.missionId,
       stepId: event.stepId,
-      userId: session.userIdVal,
-      submission: event.text,
+      userId: supabase.auth.currentUser!.id,
       evidenceImage: event.imageUrl,
     );
 
@@ -98,7 +93,7 @@ class SkillUpBloc extends Bloc<SkillUpEvent, SkillUpState> {
     );
 
     final res = await repo.unlockSkillUpStep(
-      userId: session.userIdVal,
+      userId: supabase.auth.currentUser!.id,
       stepId: event.stepId,
       source: event.source,
     );

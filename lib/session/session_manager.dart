@@ -19,7 +19,6 @@ class SessionManager {
   final String firstTimeUser = 'firstTimeUser';
   final String firstWelcomeUser = 'firstWelcomeUser';
   final String isNewUser = 'isNewUser';
-  final String userId = 'userId';
   final String userEmail = 'userEmail';
   final String hasAccount = 'hasAccount';
   final String mission = 'mission';
@@ -51,8 +50,6 @@ class SessionManager {
       sharedPreferences.getString(firstWelcomeUser) ?? "YES";
   set isNewUserVal(String val) => sharedPreferences.setString(isNewUser, val);
   String get isNewUserVal => sharedPreferences.getString(isNewUser) ?? "NO";
-  set userIdVal(String val) => sharedPreferences.setString(userId, val);
-  String get userIdVal => sharedPreferences.getString(userId) ?? "";
   set userEmailval(String val) => sharedPreferences.setString(userEmail, val);
   String get userEmailval => sharedPreferences.getString(userEmail) ?? "";
   set hasAccountVal(bool val) => sharedPreferences.setBool(hasAccount, val);

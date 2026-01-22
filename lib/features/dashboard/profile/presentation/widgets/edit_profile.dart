@@ -50,12 +50,13 @@ class _EditProfilePageState extends State<EditProfilePage> with UIToolMixin {
       if (pickedFile != null) {
         setState(() {
           pickedImage = pickedFile.path;
+          selectedAvatar = null;
         });
 
         context.read<ProfileBloc>().add(
           UpdateProfileEvent(
             profile: userProfile,
-            imageFile: File(await assetToFile(pickedFile.path)),
+            imageFile: File(pickedFile.path),
           ),
         );
       }
@@ -82,6 +83,10 @@ class _EditProfilePageState extends State<EditProfilePage> with UIToolMixin {
         color: Colors.green,
         styleColor: Colors.white,
       );
+      setState(() {
+        selectedAvatar = null;
+        pickedImage = null;
+      });
     }
   }
 
@@ -110,7 +115,6 @@ class _EditProfilePageState extends State<EditProfilePage> with UIToolMixin {
           _failedProfileState(context, state);
         }
       },
-      buildWhen: (p, c) => p.profile != c.profile,
       builder: (context, state) {
         userProfile = state.profile;
         return Scaffold(
@@ -162,19 +166,13 @@ class _EditProfilePageState extends State<EditProfilePage> with UIToolMixin {
                                 fit: BoxFit.cover,
                               )
                             : pickedImage != null
-                            ? Image.asset(pickedImage!, fit: BoxFit.cover)
-                            : userProfile.profilePic != null
-                            ? CachedImageRadius(
-                                imageUrl: userProfile.profilePic ?? "",
+                            ? Image.file(File(pickedImage!), fit: BoxFit.cover)
+                            : CachedImageRadius(
+                                imageUrl: userProfile.profilePic,
                                 circle: true,
                                 size: 120,
                                 fit: BoxFit.cover,
                                 color: AppColors.grey.withValues(alpha: .5),
-                              )
-                            : HugeIcon(
-                                icon: HugeIcons.strokeRoundedUser03,
-                                strokeWidth: 1.2,
-                                size: 18,
                               ),
                       ),
 
@@ -223,7 +221,7 @@ class _EditProfilePageState extends State<EditProfilePage> with UIToolMixin {
                       context,
                       SvgPicture.asset("assets/images/camera-01.svg"),
                       "Camera",
-                      apply: () {
+                      apply: () async {
                         pickImage(ImageSource.camera);
                       },
                     ),
@@ -231,8 +229,8 @@ class _EditProfilePageState extends State<EditProfilePage> with UIToolMixin {
                       context,
                       SvgPicture.asset("assets/images/gallery.svg"),
                       "Gallery",
-                      apply: () {
-                        pickImage(ImageSource.gallery);
+                      apply: () async {
+                        await pickImage(ImageSource.gallery);
                       },
                     ),
                     buildOption(

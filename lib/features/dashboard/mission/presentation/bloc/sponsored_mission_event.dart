@@ -15,8 +15,7 @@ class CheckCompletedStatus extends SponsoredMissionEvent {
 
 class CompleteSponsoredMission extends SponsoredMissionEvent {
   final int missionId;
-  final String? text;
-  final String? imageUrl;
+  final String imageUrl;
 
-  CompleteSponsoredMission({required this.missionId, this.text, this.imageUrl});
+  CompleteSponsoredMission({required this.missionId, required this.imageUrl});
 }

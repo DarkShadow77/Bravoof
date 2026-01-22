@@ -11,8 +11,7 @@ abstract class SkillUpRepository {
     required int skillUpMissionId,
     required int stepId,
     required String userId,
-    String? submission,
-    String? evidenceImage,
+    required String evidenceImage,
   });
 
   Future<Either<String, void>> unlockSkillUpStep({

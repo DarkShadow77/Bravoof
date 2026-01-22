@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../../../../core/services/api_service.dart';
 import '../model/mission_status_enum.dart';
 import '../model/social_mission_model.dart';
 import 'social_mission_repository.dart';
@@ -8,84 +9,40 @@ import 'social_mission_repository.dart';
 class SocialMissionRepositoryImpl extends SocialMissionRepository {
   final supabase = Supabase.instance.client;
 
-  /// Fetch social mission
   Future<Either<String, List<SocialMission>>> fetchSocialMission() async {
-    try {
-      final res = await supabase
-          .from('social_missions')
-          .select()
-          .order('id', ascending: true);
-
-      if (res.isEmpty) {
-        return Left('No social mission found');
-      }
-
-      return Right(res.map((e) => SocialMission.fromJson(e)).toList());
-    } catch (e) {
-      return Left(e.toString());
-    }
+    return ApiService.instance!.invokeEdgeFunction<List<SocialMission>>(
+      functionName: 'fetch-social-missions',
+      body: {},
+      fallbackErrorMessage: 'Failed to Fetch Social Mission',
+      onSuccess: (data) {
+        final mission = data["data"] as List;
+        return mission.map((e) => SocialMission.fromJson(e)).toList();
+      },
+    );
   }
 
-  /// Join / Update mission
   Future<Either<String, void>> completeMission({
     required int missionId,
     required String userId,
-    required String? text,
-    required String? imageUrl,
+    required String text,
   }) async {
-    try {
-      // Check if user already joined
-      final existing = await supabase
-          .from('social_mission_completed')
-          .select('id')
-          .eq('social_mission_id', missionId)
-          .eq('user_id', userId)
-          .maybeSingle();
-
-      if (existing == null) {
-        // First join
-        await supabase.from('social_mission_completed').insert({
-          'social_mission_id': missionId,
-          'user_id': userId,
-          'answer': text,
-          'evidence_image': imageUrl,
-          'status': 'PENDING',
-        });
-      } else {
-        // Update existing submission
-        await supabase
-            .from('social_mission_completed')
-            .update({
-              'answer': text,
-              'evidence_image': imageUrl,
-              'status': 'PENDING',
-              'updated_at': DateTime.now().toIso8601String(),
-            })
-            .eq('id', existing['id']);
-      }
-    } catch (e) {
-      return Left(e.toString());
-    }
-
-    return const Right(null);
+    return ApiService.instance!.invokeEdgeFunction<void>(
+      functionName: 'complete-social-mission',
+      body: {'missionId': missionId, 'userId': userId, 'text': text},
+      fallbackErrorMessage: 'Failed to Complete Social Mission',
+      onSuccess: (data) => "Completed Social Mission",
+    );
   }
 
-  /// Check if user already joined
-  Future<MissionStatus> hasJoined({
+  Future<Either<String, MissionStatus>> hasJoined({
     required int missionId,
     required String userId,
   }) async {
-    final res = await supabase
-        .from('social_mission_completed')
-        .select('status')
-        .eq('social_mission_id', missionId)
-        .eq('user_id', userId)
-        .maybeSingle();
-
-    if (res == null) {
-      return MissionStatus.notJoined;
-    }
-
-    return statusFromDb(res['status'] as String);
+    return ApiService.instance!.invokeEdgeFunction<MissionStatus>(
+      functionName: 'has-joined-social',
+      body: {"missionId": missionId, "userId": userId},
+      fallbackErrorMessage: 'Failed to Fetch Social Status',
+      onSuccess: (data) => statusFromDb(data["data"]["status"] as String),
+    );
   }
 }

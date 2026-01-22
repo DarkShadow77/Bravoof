@@ -47,8 +47,6 @@ class _AdventuresTabState extends State<AdventuresTab> with UIToolMixin {
 
     BlocProvider.of<ProfileBloc>(context).add(GetProfileEvent());
     BlocProvider.of<HomeCubit>(context).fetchCampaigns();
-    missionCubit.fetchSkillUpChallenge();
-
     BlocProvider.of<CommunityMissionBloc>(context).add(LoadCommunityMission());
     BlocProvider.of<CommunityMissionBloc>(context).add(LoadCommunityMission());
     BlocProvider.of<SocialMissionBloc>(context).add(LoadSocialMission());

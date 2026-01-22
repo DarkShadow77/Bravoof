@@ -57,7 +57,9 @@ class _MissionCardState extends State<MissionCard> with UIToolMixin {
 
   _successState(BuildContext context, GrowthMissionSuccessState state) {
     if (state.type == GrowthMissionType.completeMission) {
-      if (Get.isDialogOpen ?? false) Get.back();
+      if (Get.isDialogOpen == true) {
+        Navigator.of(context, rootNavigator: true).pop();
+      }
       context.read<ProfileBloc>().add(GetProfileEvent());
       context.read<GrowthMissionBloc>().add(LoadGrowthMission());
       showModalBottomSheet(
@@ -80,7 +82,9 @@ class _MissionCardState extends State<MissionCard> with UIToolMixin {
 
   _failedState(BuildContext context, GrowthMissionFailureState state) {
     if (state.type == GrowthMissionType.completeMission) {
-      if (Get.isDialogOpen ?? false) Get.back();
+      if (Get.isDialogOpen == true) {
+        Navigator.of(context, rootNavigator: true).pop();
+      }
       showMessage(
         state.message,
         context,

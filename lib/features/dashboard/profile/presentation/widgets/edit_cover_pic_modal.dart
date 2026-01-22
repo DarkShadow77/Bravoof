@@ -67,7 +67,9 @@ class _EditCoverPicModalState extends State<EditCoverPicModal>
 
   void _successProfileState(BuildContext context, ProfileSuccessState state) {
     if (state.type == ProfileType.updateCoverPic) {
-      if (Get.isDialogOpen ?? false) Get.back();
+      if (Get.isDialogOpen == true) {
+        Navigator.of(context, rootNavigator: true).pop();
+      }
       if (Get.isBottomSheetOpen ?? false) Get.back();
       showMessage(
         state.message,
@@ -80,7 +82,9 @@ class _EditCoverPicModalState extends State<EditCoverPicModal>
 
   void _failedProfileState(BuildContext context, ProfileFailureState state) {
     if (state.type == ProfileType.updateCoverPic) {
-      if (Get.isDialogOpen ?? false) Get.back();
+      if (Get.isDialogOpen == true) {
+        Navigator.of(context, rootNavigator: true).pop();
+      }
       showMessage(
         state.message,
         context,

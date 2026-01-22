@@ -3,7 +3,7 @@ import 'dart:ui';
 import 'package:Bravoo/core/constants/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_linkify/flutter_linkify.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:get/get.dart';
@@ -59,7 +59,9 @@ class _AskingDialogState extends State<SocialEventDialog> with UIToolMixin {
           if (state is SocialMissionError &&
               state.type == SocialMissionType.completeMission &&
               state.missionId == widget.socialMission.id) {
-            if (Get.isDialogOpen ?? false) Get.back();
+            if (Get.isDialogOpen == true) {
+              Navigator.of(context, rootNavigator: true).pop();
+            }
             showMessage(
               state.message,
               context,
@@ -71,8 +73,12 @@ class _AskingDialogState extends State<SocialEventDialog> with UIToolMixin {
 
           if (state is SocialMissionJoined &&
               state.missionId == widget.socialMission.id) {
-            if (Get.isDialogOpen ?? false) Get.back();
-            if (Get.isDialogOpen ?? false) Get.back();
+            if (Get.isDialogOpen == true) {
+              Navigator.of(context, rootNavigator: true).pop();
+            }
+            if (Get.isDialogOpen == true) {
+              Navigator.of(context, rootNavigator: true).pop();
+            }
             context.read<SocialMissionBloc>().add(LoadSocialMission());
             showModalBottomSheet(
               context: context,
@@ -292,22 +298,27 @@ class _AskingDialogState extends State<SocialEventDialog> with UIToolMixin {
                       color: AppColors.grey300.withValues(alpha: .5),
                     ),
                   ),
-                  child: Linkify(
-                    text: instruction.text,
-                    style: TextStyles.normalSemibold14(context),
-                    linkStyle: TextStyle(
-                      color: AppColors.primary,
-                      decoration: TextDecoration.underline,
-                    ),
-                    onOpen: (link) async {
-                      final uri = Uri.parse(link.url);
-                      if (await canLaunchUrl(uri)) {
-                        await launchUrl(
-                          uri,
-                          mode: LaunchMode.externalApplication,
-                        );
+                  child: MarkdownBody(
+                    data: instruction.text,
+                    onTapLink: (text, href, title) async {
+                      if (href != null) {
+                        final uri = Uri.parse(href);
+                        if (await canLaunchUrl(uri)) {
+                          await launchUrl(
+                            uri,
+                            mode: LaunchMode.externalApplication,
+                          );
+                        }
                       }
                     },
+                    styleSheet: MarkdownStyleSheet(
+                      a: TextStyle(
+                        color: AppColors.primary,
+                        decoration: TextDecoration.underline,
+                      ),
+                      p: TextStyles.normalSemibold14(context),
+                      strong: TextStyles.normalBold14(context),
+                    ),
                   ),
                 ),
                 Padding(
@@ -329,19 +340,24 @@ class _AskingDialogState extends State<SocialEventDialog> with UIToolMixin {
                 ),
               ],
             )
-          : Linkify(
-              text: instruction.text,
-              style: TextStyles.normalSemibold14(context),
-              linkStyle: TextStyle(
-                color: AppColors.primary,
-                decoration: TextDecoration.underline,
-              ),
-              onOpen: (link) async {
-                final uri = Uri.parse(link.url);
-                if (await canLaunchUrl(uri)) {
-                  await launchUrl(uri, mode: LaunchMode.externalApplication);
+          : MarkdownBody(
+              data: instruction.text,
+              onTapLink: (text, href, title) async {
+                if (href != null) {
+                  final uri = Uri.parse(href);
+                  if (await canLaunchUrl(uri)) {
+                    await launchUrl(uri, mode: LaunchMode.externalApplication);
+                  }
                 }
               },
+              styleSheet: MarkdownStyleSheet(
+                a: TextStyle(
+                  color: AppColors.primary,
+                  decoration: TextDecoration.underline,
+                ),
+                p: TextStyles.normalSemibold14(context),
+                strong: TextStyles.normalBold14(context),
+              ),
             ),
     );
   }

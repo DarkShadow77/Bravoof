@@ -103,7 +103,9 @@ class _StreakCardState extends State<StreakCard> with UIToolMixin {
 
   _successState(BuildContext context, StreakSuccessState state) {
     if (state.type == StreakType.checkIn) {
-      if (Get.isDialogOpen ?? false) Get.back();
+      if (Get.isDialogOpen == true) {
+        Navigator.of(context, rootNavigator: true).pop();
+      }
       context.read<ProfileBloc>().add(GetProfileEvent());
       showModalBottomSheet(
         context: context,
@@ -124,7 +126,9 @@ class _StreakCardState extends State<StreakCard> with UIToolMixin {
 
   _failureState(BuildContext context, StreakFailureState state) {
     if (state.type == StreakType.checkIn) {
-      if (Get.isDialogOpen ?? false) Get.back();
+      if (Get.isDialogOpen == true) {
+        Navigator.of(context, rootNavigator: true).pop();
+      }
       showMessage(
         state.message,
         context,

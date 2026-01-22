@@ -10,14 +10,12 @@ class LoadSkillUpMission extends SkillUpEvent {
 class CompleteSkillUpMission extends SkillUpEvent {
   final int missionId;
   final int stepId;
-  final String? text;
-  final String? imageUrl;
+  final String imageUrl;
 
   CompleteSkillUpMission({
     required this.missionId,
     required this.stepId,
-    this.text,
-    this.imageUrl,
+    required this.imageUrl,
   });
 }
 

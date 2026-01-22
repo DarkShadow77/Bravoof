@@ -188,7 +188,9 @@ class _RewardCardState extends State<RewardCard> with UIToolMixin {
 
   _successState(BuildContext context, RedeemSuccessState state) async {
     if (state.type == RedeemType.redeemAirtimeData) {
-      if (Get.isDialogOpen ?? false) Get.back();
+      if (Get.isDialogOpen == true) {
+        Navigator.of(context, rootNavigator: true).pop();
+      }
       if (Get.isBottomSheetOpen ?? false) Get.back();
       context.read<ProfileBloc>().add(GetProfileEvent());
       context.read<RedeemBloc>().add(LoadRedeemHistory());
@@ -206,7 +208,9 @@ class _RewardCardState extends State<RewardCard> with UIToolMixin {
         mainBtnPressed: () => Get.back(),
       );
     } else if (state.type == RedeemType.redeemGiftcard) {
-      if (Get.isDialogOpen ?? false) Get.back();
+      if (Get.isDialogOpen == true) {
+        Navigator.of(context, rootNavigator: true).pop();
+      }
       if (Get.isBottomSheetOpen ?? false) Get.back();
 
       context.read<ProfileBloc>().add(GetProfileEvent());
@@ -230,7 +234,9 @@ class _RewardCardState extends State<RewardCard> with UIToolMixin {
   _failureState(BuildContext context, RedeemFailureState state) {
     if (state.type == RedeemType.redeemAirtimeData ||
         state.type == RedeemType.redeemGiftcard) {
-      if (Get.isDialogOpen ?? false) Get.back();
+      if (Get.isDialogOpen == true) {
+        Navigator.of(context, rootNavigator: true).pop();
+      }
       context.read<ProfileBloc>().add(GetProfileEvent());
       showMessage(
         state.message,

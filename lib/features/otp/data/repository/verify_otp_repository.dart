@@ -1,11 +1,11 @@
 import 'dart:convert';
 import 'dart:developer';
 
-import 'package:dartz/dartz.dart';
-import 'package:dio/dio.dart';
 import 'package:Bravoo/features/common/data/constants.dart';
 import 'package:Bravoo/features/common/model/app_base_response.dart';
 import 'package:Bravoo/session/session_manager.dart';
+import 'package:dartz/dartz.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:logger/logger.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' hide MultipartFile;
@@ -50,7 +50,6 @@ class VerifyOtpRepository {
       if (response.responseSuccessful == true) {
         final data = response.responseBody!;
 
-        SessionManager().userIdVal = data["user_id"];
         SessionManager().hasAccountVal = true;
         AppBaseResponse appBaseResponse = AppBaseResponse(status: true);
         return Right(appBaseResponse);
@@ -102,7 +101,7 @@ class VerifyOtpRepository {
 
         userProfile['user_id'] = user.id;
         userProfile['profile_image'] = publicUrl;
-        SessionManager().userIdVal = user.id;
+        supabase.auth.currentUser!.id = user.id;
         SessionManager().hasAccountVal = true;
 
         final res = await createProfile(userProfile);

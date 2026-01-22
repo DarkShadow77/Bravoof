@@ -1,3 +1,4 @@
+/*
 import 'package:Bravoo/session/session_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -239,7 +240,7 @@ class _TriviaResultScreenState extends State<TriviaResultScreen>
       margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: entry.userId == SessionManager().userIdVal
+        color: entry.userId == supabase.auth.currentUser!.id
             ? const Color(0xFF9D7BB5)
             : const Color(0xFF8B7A9E),
         borderRadius: BorderRadius.circular(16),
@@ -352,3 +353,4 @@ class LeaderboardEntry {
 
   LeaderboardEntry(this.rank, this.name, this.score, this.hasMedal);
 }
+*/

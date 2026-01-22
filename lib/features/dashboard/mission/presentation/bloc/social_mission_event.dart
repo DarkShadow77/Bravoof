@@ -15,8 +15,7 @@ class CheckCompletedStatus extends SocialMissionEvent {
 
 class CompleteSocialMission extends SocialMissionEvent {
   final int missionId;
-  final String? text;
-  final String? imageUrl;
+  final String text;
 
-  CompleteSocialMission({required this.missionId, this.text, this.imageUrl});
+  CompleteSocialMission({required this.missionId, required this.text});
 }

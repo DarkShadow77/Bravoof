@@ -329,11 +329,6 @@ class _OnbaordSecondStageState extends State<OnbaordSecondStage>
                                   : pickedImage,
                             ),
                           );
-                          // userCubit.uploadProfileImage(
-                          //   selectedAvatar != null
-                          //       ? await assetToFile(selectedToConvert!)
-                          //       : File(pickedImage!),
-                          // );
                         } else {
                           setState(() {
                             _isTapped = true;

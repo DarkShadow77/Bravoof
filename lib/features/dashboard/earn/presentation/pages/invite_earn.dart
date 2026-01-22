@@ -20,13 +20,13 @@ String referralMessage(String code, [bool encode = false]) {
   if (encode) {
     return Uri.encodeComponent(
       'Join me on Bravoo 🚀\n'
-      'Use my referral link:\n'
-      'https://app.joinbravoo.com?ref=$code',
+      'https://www.joinbravoo.com\n'
+      'Use my referral code: $code\n',
     );
   } else {
     return 'Join me on Bravoo 🚀\n'
-        'Use my referral link:\n'
-        'https://app.joinbravoo.com?ref=$code';
+        'https://www.joinbravoo.com\n'
+        'Use my referral code: $code\n';
   }
 }
 

@@ -2,13 +2,11 @@ import 'package:dartz/dartz.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../../core/services/api_service.dart';
-import '../../../../../session/session_manager.dart';
 import '../model/streak_response.dart';
 import 'streak_repository.dart';
 
 class StreakRepositoryImpl extends StreakRepository {
   final supabase = Supabase.instance.client;
-  final sessionManager = SessionManager();
 
   /// Fetch Streaks
   Future<Either<String, StreakResponse>> fetchStreak({

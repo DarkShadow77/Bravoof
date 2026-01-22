@@ -188,7 +188,7 @@ class ReferralCard extends StatelessWidget {
                   );
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text('Referral link copied to clipboard!'),
+                      content: Text('Referral Code copied to clipboard!'),
                       behavior: SnackBarBehavior.floating,
                       duration: const Duration(seconds: 2),
                     ),
@@ -205,7 +205,7 @@ class ReferralCard extends StatelessWidget {
                       children: [
                         RichText(
                           text: TextSpan(
-                            text: 'Your Referral Link',
+                            text: 'Your Referral Code',
                             style: TextStyles.normalSemibold14(context),
                           ),
                         ),
@@ -248,14 +248,13 @@ class ReferralCard extends StatelessWidget {
                                 Icon(Icons.link, size: 18.sp, color: kPurple),
                                 Flexible(
                                   child: RichText(
-                                    maxLines: 2,
+                                    maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                     text: TextSpan(
                                       children: [
-                                        TextSpan(
-                                          text:
-                                              'https://app.joinbravoo.com?ref=',
-                                        ),
+                                        /* TextSpan(
+                                          text: 'https://joinbravoo.com?ref=',
+                                        ),*/
                                         TextSpan(
                                           text: userProfile.referralCode,
                                           style: TextStyle(
@@ -301,7 +300,7 @@ class ReferralCard extends StatelessWidget {
                         onPressed: () => SharePlus.instance.share(
                           ShareParams(
                             text: referralMessage(
-                              userProfile.referralCode ?? "",
+                              userProfile.referralCode,
                             ),
                           ),
                         ),
@@ -356,7 +355,7 @@ class ReferralCard extends StatelessWidget {
                                       children: [
                                         TextSpan(
                                           text:
-                                              "${(((userProfile.referralCount ?? 0) > 10 ? 10 : userProfile.referralCount) ?? 0) * 100}",
+                                              "${(((userProfile.referralCount) > 10 ? 10 : userProfile.referralCount)) * 100}",
                                           style: TextStyles.bodySemiBold16(
                                             context,
                                           ),
@@ -372,7 +371,7 @@ class ReferralCard extends StatelessWidget {
                               ),
                               GradientProgress(
                                 height: 8.h,
-                                progress: (userProfile.referralCount ?? 0) / 10,
+                                progress: (userProfile.referralCount) / 10,
                               ),
                             ],
                           ),

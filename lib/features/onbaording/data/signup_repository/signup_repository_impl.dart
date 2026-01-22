@@ -3,15 +3,14 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
-import 'package:crypto/crypto.dart';
-import 'package:dartz/dartz.dart';
 import 'package:Bravoo/features/common/data/constants.dart';
 import 'package:Bravoo/features/common/model/app_base_response.dart';
 import 'package:Bravoo/features/onbaording/data/model/user_profile.dart';
 import 'package:Bravoo/features/onbaording/data/signup_repository/signup_repository.dart';
 import 'package:Bravoo/session/session_manager.dart';
+import 'package:crypto/crypto.dart';
+import 'package:dartz/dartz.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:path/path.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -107,7 +106,6 @@ class SignupRepositoryImpl extends SignupRepository {
 
       if (response.user != null) {
         print(response.user);
-        SessionManager().userIdVal = response.user!.id;
         AppBaseResponse appBaseResponse = AppBaseResponse(status: true);
         return Right(appBaseResponse);
       } else {
@@ -132,65 +130,6 @@ class SignupRepositoryImpl extends SignupRepository {
       );
     } on AuthException catch (e) {
       return Left(e.message);
-    }
-  }
-
-  Future<Either<String, UserProfile>> updateProfile({UserProfile? data}) async {
-    try {
-      print(data!.toJson());
-      final res = await supabase
-          .from('user_profile')
-          .update(data.toJson())
-          .eq('user_id', SessionManager().userIdVal)
-          .select()
-          .single(); // if you expect only one row
-
-      UserProfile userProfile = UserProfile.fromJson(res);
-      return Right(userProfile);
-    } on AuthException catch (e) {
-      return Left(e.message);
-    }
-  }
-
-  Future<Either<String, UserProfile>> fetchUserProfile() async {
-    try {
-      final response = await supabase
-          .from('user_profile')
-          .select()
-          .eq('user_id', SessionManager().userIdVal)
-          .single();
-      if (response != null) {
-        UserProfile userProfile = UserProfile.fromJson(response);
-
-        SessionManager().jackpotVal = userProfile.spins!;
-        SessionManager().pointsVal = userProfile.totalPoints!;
-        return Right(userProfile);
-      }
-    } catch (e) {
-      return Left(e.toString());
-    }
-  }
-
-  Future<Either<String, String>> uploadProfileImage(File imageFile) async {
-    final fileName = '${basename(imageFile.path)}';
-
-    try {
-      await supabase.storage
-          .from('profile_pic')
-          .upload(
-            '$fileName',
-            imageFile,
-            fileOptions: const FileOptions(upsert: true),
-          );
-
-      // Get the public URL for the image
-      final publicUrl = supabase.storage
-          .from('profile_pic')
-          .getPublicUrl('$fileName');
-      return Right(publicUrl);
-    } catch (e) {
-      print('❌ Upload failed: $e');
-      return Left(e.toString());
     }
   }
 
@@ -268,7 +207,6 @@ class SignupRepositoryImpl extends SignupRepository {
 
       if (check.isNotEmpty) {
         // Existing user → login success
-        SessionManager().userIdVal = user.id;
         SessionManager().hasAccountVal = true;
 
         return Right(AppBaseResponse(status: true));
@@ -383,7 +321,6 @@ class SignupRepositoryImpl extends SignupRepository {
           .eq('user_id', user.id);
 
       if (check.isNotEmpty) {
-        SessionManager().userIdVal = user.id;
         SessionManager().hasAccountVal = true;
         return Right(AppBaseResponse(status: true));
       }

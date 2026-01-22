@@ -1,8 +1,8 @@
 import 'package:bloc/bloc.dart';
 import 'package:logger/logger.dart';
 import 'package:meta/meta.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../../../../../session/session_manager.dart';
 import '../../data/model/streak_response.dart';
 import '../../data/repository/streak_repository.dart';
 
@@ -11,7 +11,7 @@ part 'streak_state.dart';
 
 class StreakBloc extends Bloc<StreakEvent, StreakState> {
   final StreakRepository repo;
-  SessionManager session = SessionManager();
+  final supabase = Supabase.instance.client;
 
   StreakBloc({required this.repo})
     : super(StreakInitialState(streak: StreakResponse.empty())) {
@@ -24,7 +24,7 @@ class StreakBloc extends Bloc<StreakEvent, StreakState> {
       StreakLoadingState(type: StreakType.fetchStreak, streak: state.streak),
     );
 
-    final res = await repo.fetchStreak(userId: session.userIdVal);
+    final res = await repo.fetchStreak(userId: supabase.auth.currentUser!.id);
 
     Logger().d("Fetch Streak Response $res");
 
@@ -53,7 +53,7 @@ class StreakBloc extends Bloc<StreakEvent, StreakState> {
   Future<void> _checkIn(CheckInEvent event, Emitter emit) async {
     emit(StreakLoadingState(type: StreakType.checkIn, streak: state.streak));
 
-    final res = await repo.checkIn(userId: session.userIdVal);
+    final res = await repo.checkIn(userId: supabase.auth.currentUser!.id);
 
     res.fold(
       (err) => emit(

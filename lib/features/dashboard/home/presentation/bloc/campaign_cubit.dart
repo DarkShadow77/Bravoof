@@ -2,8 +2,8 @@ import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../../../../../session/session_manager.dart';
 import '../../../../onbaording/data/model/user_profile.dart';
 import '../../data/repository/campaign_repository.dart';
 
@@ -12,6 +12,8 @@ part 'campaign_state.dart';
 class CampaignCubit extends Cubit<CampaignState> {
   final int campaignId;
   final CampaignRepository campaignRepository;
+
+  final supabase = Supabase.instance.client;
 
   CampaignCubit({required this.campaignId, required this.campaignRepository})
     : super(
@@ -39,7 +41,7 @@ class CampaignCubit extends Cubit<CampaignState> {
 
   void getUserReferralsForCampaign() async {
     final res = await campaignRepository.getUserReferralsForCampaign(
-      userId: SessionManager().userIdVal,
+      userId: supabase.auth.currentUser!.id,
       campaignId: campaignId,
     );
 
@@ -52,7 +54,7 @@ class CampaignCubit extends Cubit<CampaignState> {
   void isUserInCampaign() async {
     final isJoined = await campaignRepository.isUserInCampaign(
       campaignId: campaignId,
-      userId: SessionManager().userIdVal,
+      userId: supabase.auth.currentUser!.id,
     );
 
     if (isJoined) {

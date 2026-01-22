@@ -17,7 +17,7 @@ void setupAuthListener() {
 
     if (check.isNotEmpty) {
       // Existing user
-      SessionManager().userIdVal = user.id;
+      supabase.auth.currentUser!.id = user.id;
       SessionManager().hasAccountVal = true;
 
       navigatorKey.currentState?.pushAndRemoveUntil(
