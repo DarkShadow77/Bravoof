@@ -172,157 +172,127 @@ class _ReferCampaignState extends State<ReferCampaign> {
                         ),
                       ],
                     ),
-                    if (widget.expanded) SizedBox(height: 10.h),
-                    Container(
-                      height: 90,
-
-                      alignment: Alignment.bottomCenter,
-                      child: Stack(
-                        alignment: Alignment.bottomCenter,
-                        clipBehavior: Clip.none,
-                        children: [
-                          // White container
-                          Positioned(
-                            bottom: 40, // lift the white box slightly
-                            child: Container(
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 12.w,
-                                vertical: 6.h,
-                              ),
-                              decoration: BoxDecoration(
-                                color: widget.expanded
-                                    ? null
-                                    : AppColors.white80,
-                                borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(15),
-                                  topRight: Radius.circular(15),
-                                ),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black12,
-                                    blurRadius: 6,
-                                    offset: Offset(0, 2),
-                                  ),
-                                ],
-                              ),
-                              child: Countdown(
-                                controller: _timerController,
-                                seconds: differenceInSeconds,
-                                build: (BuildContext context, double time) {
-                                  List<String> timeList = formattedTime2(time);
-                                  if (widget.expanded) {
-                                    return Row(
-                                      spacing: 4.w,
-                                      mainAxisSize: MainAxisSize.min,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        _timerBox2(timeList[0], "DAYS"),
-                                        timeColon(),
-                                        _timerBox2(timeList[1], "HRS"),
-                                        timeColon(),
-                                        _timerBox2(timeList[2], "MIN"),
-                                        timeColon(),
-                                        _timerBox2(timeList[3], "SEC"),
-                                      ],
-                                    );
-                                  }
-                                  return Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Text(
-                                        'Ends in ',
-                                        style: GoogleFonts.manrope(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w700,
-                                          color: const Color(0xFF191919),
-                                        ),
-                                      ),
-                                      _timerBox('${timeList[0]} days'),
-                                      const Icon(
-                                        Icons.more_vert,
-                                        size: 14,
-                                        color: Colors.black,
-                                      ),
-                                      _timerBox('${timeList[1]}h'),
-                                      const Icon(
-                                        Icons.more_vert,
-                                        size: 14,
-                                        color: Colors.black,
-                                      ),
-                                      _timerBox('${timeList[2]}m'),
-                                      const Icon(
-                                        Icons.more_vert,
-                                        size: 14,
-                                        color: Colors.black,
-                                      ),
-                                      _timerBox('${timeList[3]}s'),
-                                    ],
-                                  );
-                                },
-                              ),
-                            ),
-                          ),
-
-                          // Button overlapping the white box bottom
-                          Positioned(
-                            bottom: 0,
-                            child: GestureDetector(
-                              //ReferralContestScreen() //DrawEndPage()
-                              onTap: () {
-                                if (differenceInSeconds == 0) {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (ctx) => DrawEndPage(),
-                                    ),
-                                  );
-                                } else {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) =>
-                                          BlocProvider<CampaignCubit>(
-                                            create: (_) => sl<CampaignCubit>(
-                                              param1: campaign.last.id ?? 0,
-                                            ),
-                                            child: ReferralContestScreen(
-                                              campaignEndDate:
-                                                  campaign
-                                                      .last
-                                                      .campaignEndDate ??
-                                                  DateTime.now(),
-                                            ),
-                                          ),
-                                    ),
-                                  );
-                                }
-                              },
-                              child: Container(
-                                padding: EdgeInsets.all(12),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(50),
-                                ),
-                                width: 320,
-
-                                child: Center(
-                                  child: Text(
-                                    'Join the draw',
-                                    style: GoogleFonts.manrope(
-                                      fontWeight: FontWeight.w700,
-                                      color: Color(0xFF2B2B2B),
-                                      fontSize: 16,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
+                    if (widget.expanded) ...[
+                      RichText(
+                        text: TextSpan(
+                          text:
+                              'Invite 2 friends to qualify. All qualifiers entered in the draw gets 50 coins each.',
+                          style: TextStyles.smallBold12(
+                            context,
+                          ).copyWith(color: AppColors.white),
+                        ),
                       ),
+                      SizedBox(height: 5.h),
+                    ],
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 12.w,
+                            vertical: 6.h,
+                          ),
+                          decoration: BoxDecoration(
+                            color: widget.expanded ? null : AppColors.white80,
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(15),
+                              topRight: Radius.circular(15),
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black12,
+                                blurRadius: 6,
+                                offset: Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: Countdown(
+                            controller: _timerController,
+                            seconds: differenceInSeconds,
+                            build: (BuildContext context, double time) {
+                              List<String> timeList = formattedTime2(time);
+                              if (widget.expanded) {
+                                return Row(
+                                  spacing: 4.w,
+                                  mainAxisSize: MainAxisSize.min,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    _timerBox2(timeList[0], "DAYS"),
+                                    timeColon(),
+                                    _timerBox2(timeList[1], "HRS"),
+                                    timeColon(),
+                                    _timerBox2(timeList[2], "MIN"),
+                                    timeColon(),
+                                    _timerBox2(timeList[3], "SEC"),
+                                  ],
+                                );
+                              }
+                              return Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    'Ends in ',
+                                    style: GoogleFonts.manrope(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w700,
+                                      color: const Color(0xFF191919),
+                                    ),
+                                  ),
+                                  _timerBox('${timeList[0]} days'),
+                                  const Icon(
+                                    Icons.more_vert,
+                                    size: 14,
+                                    color: Colors.black,
+                                  ),
+                                  _timerBox('${timeList[1]}h'),
+                                  const Icon(
+                                    Icons.more_vert,
+                                    size: 14,
+                                    color: Colors.black,
+                                  ),
+                                  _timerBox('${timeList[2]}m'),
+                                  const Icon(
+                                    Icons.more_vert,
+                                    size: 14,
+                                    color: Colors.black,
+                                  ),
+                                  _timerBox('${timeList[3]}s'),
+                                ],
+                              );
+                            },
+                          ),
+                        ),
+                        IconTextButton(
+                          height: 54,
+                          onPressed: () {
+                            if (differenceInSeconds == 0) {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (ctx) => DrawEndPage(),
+                                ),
+                              );
+                            } else {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => BlocProvider<CampaignCubit>(
+                                    create: (_) => sl<CampaignCubit>(
+                                      param1: campaign.last.id,
+                                    ),
+                                    child: ReferralContestScreen(
+                                      campaignEndDate:
+                                          campaign.last.campaignEndDate,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }
+                          },
+                          text: "Join the Draw",
+                        ),
+                      ],
                     ),
                     if (widget.expanded) ...[
                       IconTextButton(
