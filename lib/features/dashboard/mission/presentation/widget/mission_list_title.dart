@@ -149,7 +149,7 @@ class _MissionListTitleState extends State<MissionListTitle> with UIToolMixin {
           if (widget.mission.completed == false) {
             if (widget.mission.subject!.toLowerCase() == "watch") {
               final Uri _url = Uri.parse(
-                'https://www.youtube.com/watch?v=s7NG1PZaRCE',
+                'https://youtu.be/YfO64IU32S8?si=_wbVRiw0xM0FJD8b',
               );
               if (!await launchUrl(
                 _url,

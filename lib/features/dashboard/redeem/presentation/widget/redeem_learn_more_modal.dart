@@ -89,7 +89,7 @@ class _RedeemLearnMoreModalState extends State<RedeemLearnMoreModal> {
             IconTextButton(
               color: AppColors.black,
               textColor: AppColors.white,
-              onPressed: () => Get.back(),
+              onPressed: () => Navigator.of(context, rootNavigator: true).pop(),
               text: "Close",
             ),
             SizedBox(height: 20.h + MediaQuery.of(context).padding.bottom),

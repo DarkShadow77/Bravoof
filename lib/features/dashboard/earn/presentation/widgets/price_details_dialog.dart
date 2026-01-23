@@ -54,7 +54,8 @@ class _PriceDetailsDialogState extends State<PriceDetailsDialog> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   IconButton(
-                    onPressed: () => Get.back(),
+                    onPressed: () =>
+                        Navigator.of(context, rootNavigator: true).pop(),
                     icon: Icon(
                       Icons.cancel_outlined,
                       size: 20.sp,
@@ -219,7 +220,7 @@ class _PriceDetailsDialogState extends State<PriceDetailsDialog> {
                             child: _ConfirmationButton(
                               key: ValueKey<bool>(false),
                               onPressed: () {
-                                Get.back();
+                                Navigator.of(context, rootNavigator: true).pop()();
                               },
                               mainButton: false,
                               loading: false,
@@ -299,7 +300,7 @@ class _PriceDetailsDialogState extends State<PriceDetailsDialog> {
                                   Expanded(
                                     child: _ConfirmationButton(
                                       onPressed: () {
-                                        Get.back();
+                                        Navigator.of(context, rootNavigator: true).pop()();
                                       },
                                       mainButton: false,
                                       loading: false,
@@ -329,7 +330,7 @@ class _PriceDetailsDialogState extends State<PriceDetailsDialog> {
                                         color: Colors.transparent,
                                         child: InkWell(
                                           onTap: () {
-                                            Get.back();
+                                            Navigator.of(context, rootNavigator: true).pop()();
                                           },
                                           child: Ink(
                                             height: 32.h,

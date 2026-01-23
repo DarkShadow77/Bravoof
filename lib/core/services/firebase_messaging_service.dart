@@ -58,9 +58,28 @@ class FirebaseMessagingService {
   }
 
   Future<String?> getFcmToken() async {
-    final token = await FirebaseMessaging.instance.getToken();
-    debugPrint("Push notifications token: $token");
-    return token;
+    try {
+      // Android 13+ requires explicit permission
+      NotificationSettings settings = await FirebaseMessaging.instance
+          .requestPermission();
+
+      if (settings.authorizationStatus != AuthorizationStatus.authorized &&
+          settings.authorizationStatus != AuthorizationStatus.provisional) {
+        debugPrint("❌ Push notification permission not granted");
+        return null;
+      }
+
+      // Small delay helps avoid SERVICE_NOT_AVAILABLE on cold start
+      await Future.delayed(const Duration(seconds: 1));
+
+      final token = await FirebaseMessaging.instance.getToken();
+      debugPrint("✅ Push notifications token: $token");
+
+      return token;
+    } catch (e) {
+      debugPrint("⚠️ Failed to get FCM token: $e");
+      return null;
+    }
   }
 
   Future<String> getDeviceId() async {

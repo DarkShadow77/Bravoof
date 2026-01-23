@@ -80,7 +80,8 @@ class _UnlockSkillUpMissionModalState extends State<UnlockSkillUpMissionModal> {
                     border: Border.all(width: 0.2, color: AppColors.black60),
                   ),
                   child: GestureDetector(
-                    onTap: () => Get.back(),
+                    onTap: () =>
+                        Navigator.of(context, rootNavigator: true).pop(),
                     behavior: HitTestBehavior.opaque,
                     child: HugeIcon(
                       icon: HugeIcons.strokeRoundedCancel01,

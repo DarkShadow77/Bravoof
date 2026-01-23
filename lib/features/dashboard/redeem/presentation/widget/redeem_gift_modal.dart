@@ -1,6 +1,6 @@
+import 'package:Bravoo/app/view/widgets/button/icon_text_button.dart';
 import 'package:country_state_city/models/country.dart';
 import 'package:country_state_city/utils/country_utils.dart';
-import 'package:Bravoo/app/view/widgets/button/icon_text_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:form_field_validator/form_field_validator.dart';
@@ -125,7 +125,8 @@ class _RedeemGiftModalState extends State<RedeemGiftModal> {
                     border: Border.all(width: 0.2, color: AppColors.black60),
                   ),
                   child: GestureDetector(
-                    onTap: () => Get.back(),
+                    onTap: () =>
+                        Navigator.of(context, rootNavigator: true).pop(),
                     behavior: HitTestBehavior.opaque,
                     child: HugeIcon(
                       icon: HugeIcons.strokeRoundedCancel01,

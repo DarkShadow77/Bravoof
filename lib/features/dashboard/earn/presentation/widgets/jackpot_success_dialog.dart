@@ -40,7 +40,7 @@ class _AskingDialogState extends State<JackpotSuccessDialog> {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Future.delayed((Duration(seconds: 1)), () {
-        if (Get.isDialogOpen == true) Get.back();
+        if (Get.isDialogOpen == true) Navigator.of(context, rootNavigator: true).pop()();
       });
     });
   }

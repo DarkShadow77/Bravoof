@@ -1,11 +1,8 @@
 # flutter pub run flutter_launcher_icons
 flutter_native_splash:
-  android: false
-  ios: true
-
   color: "#111111"
   image: assets/logo/transparent_logo.png
 
   android_12:
-    color: "#111111"
     image: assets/logo/foreground.png
+    icon_background_color: "#111111"

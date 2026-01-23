@@ -13,7 +13,7 @@ class LocalNotificationService {
   late FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin;
 
   final _androidInitializationSettings = const AndroidInitializationSettings(
-    "@mipmap/ic_launcher",
+    "ic_notification",
   );
 
   //IOS-specific initialization settings with permission requests
@@ -87,6 +87,7 @@ class LocalNotificationService {
       channelDescription: _androidChannel.description,
       importance: Importance.max,
       priority: Priority.high,
+      icon: 'ic_notification',
     );
 
     //IOS-specific notification details

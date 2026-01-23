@@ -1,6 +1,7 @@
 import 'package:Bravoo/app/styles/text_styles.dart';
 import 'package:Bravoo/core/constants/app_assets.dart';
 import 'package:Bravoo/features/dashboard/home/data/model/notification_model.dart';
+import 'package:Bravoo/features/dashboard/profile/presentation/bloc/profile_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';

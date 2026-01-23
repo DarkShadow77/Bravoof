@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:logger/logger.dart';
 import 'package:meta/meta.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../onbaording/data/model/user_profile.dart';
 import '../../data/repository/profile_repository.dart';
@@ -300,17 +301,23 @@ class ProfileBloc extends HydratedBloc<ProfileEvent, ProfileState> {
     LogoutProfileEvent event,
     Emitter<ProfileState> emit,
   ) async {
-    add(DeleteFCMTokenEvent());
     logger.w("🚪 Logging out user");
 
-    // 🔥 Clear persisted state for this bloc
-    await clear();
+    try {
+      // 🔕 Remove FCM token from backend
+      add(DeleteFCMTokenEvent());
 
-    emit(
-      ProfileInitialState(
-        profile: UserProfile.empty(), // empty profile
-      ),
-    );
+      // 🟢 Supabase logout
+      await Supabase.instance.client.auth.signOut();
+      logger.i("🟢 Supabase signed out");
+
+      // 🧹 Clear persisted bloc state
+      await clear();
+
+      emit(ProfileInitialState(profile: UserProfile.empty()));
+    } catch (e, stack) {
+      logger.e("❌ Logout failed", error: e, stackTrace: stack);
+    }
   }
 
   // 🔹 HydratedBloc methods

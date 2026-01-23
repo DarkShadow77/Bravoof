@@ -104,7 +104,7 @@ class _CountryStateModalState extends State<CountryStateModal> {
                 ),
                 GestureDetector(
                   onTap: () {
-                    Get.back();
+                    Navigator.of(context, rootNavigator: true).pop();
                   },
                   behavior: HitTestBehavior.opaque,
                   child: Icon(
@@ -150,7 +150,7 @@ class _CountryStateModalState extends State<CountryStateModal> {
                         return GestureDetector(
                           onTap: () {
                             widget.onPressed(data);
-                            Get.back();
+                            Navigator.of(context, rootNavigator: true).pop();
                           },
                           behavior: HitTestBehavior.opaque,
                           child: Container(

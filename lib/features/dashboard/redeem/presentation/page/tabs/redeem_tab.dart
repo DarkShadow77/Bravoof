@@ -191,7 +191,8 @@ class _RewardCardState extends State<RewardCard> with UIToolMixin {
       if (Get.isDialogOpen == true) {
         Navigator.of(context, rootNavigator: true).pop();
       }
-      if (Get.isBottomSheetOpen ?? false) Get.back();
+      if (Get.isBottomSheetOpen ?? false)
+        Navigator.of(context, rootNavigator: true).pop();
       context.read<ProfileBloc>().add(GetProfileEvent());
       context.read<RedeemBloc>().add(LoadRedeemHistory());
       showMessage(
@@ -205,13 +206,14 @@ class _RewardCardState extends State<RewardCard> with UIToolMixin {
         subTitle:
             "Your Bravoo coins just turned into something real. Nicely done!",
         mainBtnText: "Close",
-        mainBtnPressed: () => Get.back(),
+        mainBtnPressed: () => Navigator.of(context, rootNavigator: true).pop(),
       );
     } else if (state.type == RedeemType.redeemGiftcard) {
       if (Get.isDialogOpen == true) {
         Navigator.of(context, rootNavigator: true).pop();
       }
-      if (Get.isBottomSheetOpen ?? false) Get.back();
+      if (Get.isBottomSheetOpen ?? false)
+        Navigator.of(context, rootNavigator: true).pop();
 
       context.read<ProfileBloc>().add(GetProfileEvent());
 
