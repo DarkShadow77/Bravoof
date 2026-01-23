@@ -162,6 +162,13 @@ class FirebaseMessagingService {
     );
     // TODO: Add navigation or specific handling based on message data
   }
+
+  Future<bool> areNotificationsEnabled() async {
+    final settings = await FirebaseMessaging.instance.getNotificationSettings();
+
+    return settings.authorizationStatus == AuthorizationStatus.authorized ||
+        settings.authorizationStatus == AuthorizationStatus.provisional;
+  }
 }
 
 //Background message handler (must be top-level function or static)

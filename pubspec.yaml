@@ -95,6 +95,7 @@ dependencies:
   device_info_plus: ^12.3.0
   uuid: ^4.5.2
   shared_preferences: ^2.5.4
+  app_settings: ^7.0.0
 
 
 dev_dependencies:

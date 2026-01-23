@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../../../core/constants/app_colors.dart';
 import '../../../../../utility/in_app_review.dart';
 import '../../../../../utility/ui_tool_mix.dart';
 import 'feed_back.dart';
@@ -175,9 +176,7 @@ class _HelpWidgetState extends State<HelpWidget> {
       children: [
         BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
-          child: Container(
-            color: Colors.black.withOpacity(0.5), // Optional dark overlay
-          ),
+          child: Container(color: AppColors.black50),
         ),
         DraggableScrollableSheet(
           initialChildSize: 0.42,
@@ -257,6 +256,7 @@ class _HelpWidgetState extends State<HelpWidget> {
                               setState(() {
                                 selectedOption = items[i]["label"];
                               });
+                              Navigator.pop(context);
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(

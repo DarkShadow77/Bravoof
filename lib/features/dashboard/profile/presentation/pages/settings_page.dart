@@ -14,7 +14,7 @@ import 'package:hugeicons/hugeicons.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../utility/ui_tool_mix.dart';
 import '../../../settings/presentation/pages/help_page.dart';
-import '../../../settings/presentation/pages/notifications.dart';
+import '../../../settings/presentation/pages/notification_settings_page.dart';
 
 class SettingsPage extends StatelessWidget with UIToolMixin {
   const SettingsPage({super.key});

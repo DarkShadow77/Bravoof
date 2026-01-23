@@ -34,6 +34,7 @@ import 'features/dashboard/mission/presentation/bloc/skill_up_bloc.dart';
 import 'features/dashboard/mission/presentation/bloc/social_mission_bloc.dart';
 import 'features/dashboard/mission/presentation/bloc/sponsored_mission_bloc.dart';
 import 'features/dashboard/mission/presentation/bloc/streak_bloc.dart';
+import 'features/dashboard/profile/presentation/bloc/feedback_bloc.dart';
 import 'features/dashboard/profile/presentation/bloc/profile_bloc.dart';
 import 'features/onbaording/data/bloc/user_cubit.dart';
 import 'firebase_options.dart';
@@ -135,6 +136,7 @@ class _MyAppState extends State<MyApp> {
         BlocProvider(create: (_) => sl<RedeemBloc>()),
         BlocProvider(create: (_) => sl<JackpotBloc>()),
         BlocProvider(create: (_) => sl<NotificationBloc>()),
+        BlocProvider(create: (_) => sl<FeedbackBloc>()),
       ],
       child: ScreenUtilInit(
         designSize: const Size(375, 815),

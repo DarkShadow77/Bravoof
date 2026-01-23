@@ -34,8 +34,11 @@ import '../../features/dashboard/mission/presentation/bloc/skill_up_bloc.dart';
 import '../../features/dashboard/mission/presentation/bloc/social_mission_bloc.dart';
 import '../../features/dashboard/mission/presentation/bloc/sponsored_mission_bloc.dart';
 import '../../features/dashboard/mission/presentation/bloc/streak_bloc.dart';
+import '../../features/dashboard/profile/data/repository/feedback_repository.dart';
+import '../../features/dashboard/profile/data/repository/feedback_repository_impl.dart';
 import '../../features/dashboard/profile/data/repository/profile_repository.dart';
 import '../../features/dashboard/profile/data/repository/profile_repository_impl.dart';
+import '../../features/dashboard/profile/presentation/bloc/feedback_bloc.dart';
 import '../../features/dashboard/profile/presentation/bloc/profile_bloc.dart';
 import '../../features/dashboard/redeem/data/repository/redeem_repository.dart';
 import '../../features/dashboard/redeem/data/repository/reward_repository_impl.dart';
@@ -72,6 +75,7 @@ Future<void> initDI() async {
   sl.registerLazySingleton<NotificationRepository>(
     () => NotificationRepositoryImpl(),
   );
+  sl.registerLazySingleton<FeedbackRepository>(() => FeedbackRepositoryImpl());
 
   //Blocs
   sl.registerSingleton<UserCubit>(UserCubit());
@@ -104,5 +108,8 @@ Future<void> initDI() async {
   sl.registerSingleton<JackpotBloc>(JackpotBloc(repo: sl<JackpotRepository>()));
   sl.registerSingleton<NotificationBloc>(
     NotificationBloc(repo: sl<NotificationRepository>()),
+  );
+  sl.registerSingleton<FeedbackBloc>(
+    FeedbackBloc(repo: sl<FeedbackRepository>()),
   );
 }

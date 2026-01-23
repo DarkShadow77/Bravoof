@@ -19,3 +19,16 @@ class MarkAllNotificationRead extends NotificationEvent {
 class ClearNotification extends NotificationEvent {
   ClearNotification();
 }
+
+class FetchNotificationPreferences extends NotificationEvent {
+  FetchNotificationPreferences();
+}
+
+class SaveNotificationPreferences extends NotificationEvent {
+  final bool rewardsEnabled;
+  final bool offersEnabled;
+  SaveNotificationPreferences({
+    required this.rewardsEnabled,
+    required this.offersEnabled,
+  });
+}

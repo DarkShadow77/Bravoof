@@ -1,5 +1,5 @@
-import 'package:dartz/dartz.dart';
 import 'package:Bravoo/features/dashboard/home/data/model/notification_model.dart';
+import 'package:dartz/dartz.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../../core/services/api_service.dart';
@@ -52,6 +52,30 @@ class NotificationRepositoryImpl extends NotificationRepository {
       body: {'user_id': userId},
       fallbackErrorMessage: 'Clear All Notification failed',
       onSuccess: (data) => "Successfully Cleared All Notification",
+    );
+  }
+
+  Future<Either<String, Map<String, dynamic>>>
+  fetchNotificationPreferences() async {
+    return ApiService.instance!.invokeEdgeFunction<Map<String, dynamic>>(
+      functionName: 'fetch-notification-preferences',
+      body: {},
+      fallbackErrorMessage: 'Failed to Fetched Notification Preferences',
+      onSuccess: (data) {
+        return data["data"];
+      },
+    );
+  }
+
+  Future<Either<String, String>> saveNotificationPreferences({
+    required bool rewardsEnabled,
+    required bool offersEnabled,
+  }) async {
+    return ApiService.instance!.invokeEdgeFunction<String>(
+      functionName: 'save-notification-preferences',
+      body: {'rewardsEnabled': rewardsEnabled, 'offersEnabled': offersEnabled},
+      fallbackErrorMessage: 'Failed to Save Notification Preferences',
+      onSuccess: (data) => "Successfully Save Notification Preferences",
     );
   }
 }
