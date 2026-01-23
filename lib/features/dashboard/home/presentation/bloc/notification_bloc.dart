@@ -268,15 +268,18 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
         ),
       ),
 
-      (success) => emit(
-        NotificationSuccessState(
-          type: NotificationType.saveNotificationPreferences,
-          message: success,
-          notification: state.notification,
-          rewardEnabled: state.rewardEnabled,
-          offerEnabled: state.offerEnabled,
-        ),
-      ),
+      (success) {
+        add(FetchNotificationPreferences());
+        emit(
+          NotificationSuccessState(
+            type: NotificationType.saveNotificationPreferences,
+            message: success,
+            notification: state.notification,
+            rewardEnabled: state.rewardEnabled,
+            offerEnabled: state.offerEnabled,
+          ),
+        );
+      },
     );
   }
 }
