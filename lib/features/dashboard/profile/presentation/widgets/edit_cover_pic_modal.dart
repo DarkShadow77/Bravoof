@@ -70,7 +70,8 @@ class _EditCoverPicModalState extends State<EditCoverPicModal>
       if (Get.isDialogOpen == true) {
         Navigator.of(context, rootNavigator: true).pop();
       }
-      if (Get.isBottomSheetOpen ?? false) Navigator.of(context, rootNavigator: true).pop()();
+      if (Get.isBottomSheetOpen ?? false)
+        Navigator.of(context, rootNavigator: true).pop();
       showMessage(
         state.message,
         context,
@@ -165,7 +166,8 @@ class _EditCoverPicModalState extends State<EditCoverPicModal>
                       border: Border.all(width: 0.2, color: AppColors.black60),
                     ),
                     child: GestureDetector(
-                      onTap: () => Navigator.of(context, rootNavigator: true).pop()(),
+                      onTap: () =>
+                          Navigator.of(context, rootNavigator: true).pop(),
                       behavior: HitTestBehavior.opaque,
                       child: HugeIcon(
                         icon: HugeIcons.strokeRoundedCancel01,

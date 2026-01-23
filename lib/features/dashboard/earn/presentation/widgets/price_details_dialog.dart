@@ -220,7 +220,7 @@ class _PriceDetailsDialogState extends State<PriceDetailsDialog> {
                             child: _ConfirmationButton(
                               key: ValueKey<bool>(false),
                               onPressed: () {
-                                Navigator.of(context, rootNavigator: true).pop()();
+                                Navigator.of(context, rootNavigator: true).pop();
                               },
                               mainButton: false,
                               loading: false,
@@ -300,7 +300,7 @@ class _PriceDetailsDialogState extends State<PriceDetailsDialog> {
                                   Expanded(
                                     child: _ConfirmationButton(
                                       onPressed: () {
-                                        Navigator.of(context, rootNavigator: true).pop()();
+                                        Navigator.of(context, rootNavigator: true).pop();
                                       },
                                       mainButton: false,
                                       loading: false,
@@ -330,7 +330,7 @@ class _PriceDetailsDialogState extends State<PriceDetailsDialog> {
                                         color: Colors.transparent,
                                         child: InkWell(
                                           onTap: () {
-                                            Navigator.of(context, rootNavigator: true).pop()();
+                                            Navigator.of(context, rootNavigator: true).pop();
                                           },
                                           child: Ink(
                                             height: 32.h,
