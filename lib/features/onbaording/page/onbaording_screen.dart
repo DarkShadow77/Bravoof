@@ -178,7 +178,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with UIToolMixin {
                     isSending.value = false;
                   });
                   final error = state.error.toLowerCase();
-                  if (error.contains("cancelled by the user") ||
+                  if (error.contains("cancelled by") ||
                       error.contains("the user canceled") ||
                       error.contains("authorizationerrorcode.canceled")) {
                   } else {

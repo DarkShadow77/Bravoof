@@ -569,7 +569,6 @@ class _NotificationWidgetState extends State<NotificationWidget>
                                 offersEnabled: offersEnabled,
                               ),
                             );
-                            Navigator.pop(context);
                           },
                         ),
                       ),

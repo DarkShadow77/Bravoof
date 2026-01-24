@@ -45,8 +45,15 @@ class _AppState extends State<App> {
   Widget build(BuildContext context) {
     final session = Supabase.instance.client.auth.currentSession;
 
-    return Scaffold(
-      body: session != null ? BottomNavBar() : OnboardingScreen(),
+    return BlocBuilder<ProfileBloc, ProfileState>(
+      builder: (context, state) {
+        final profileId = state.profile.userId;
+        final completed =
+            session != null &&
+            profileId.isNotEmpty &&
+            session.user.id == profileId;
+        return Scaffold(body: completed ? BottomNavBar() : OnboardingScreen());
+      },
     );
   }
 }

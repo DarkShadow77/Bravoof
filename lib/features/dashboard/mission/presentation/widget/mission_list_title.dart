@@ -6,7 +6,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../../app/view/widgets/cached_image_widget.dart';
-import '../../../../../app/view/widgets/loading/outer_loading.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../utility/in_app_review.dart';
 import '../../../../../utility/ui_tool_mix.dart';
@@ -50,9 +49,9 @@ class _MissionCardState extends State<MissionCard> with UIToolMixin {
   }
 
   _loadingState(BuildContext context, GrowthMissionLoadingState state) {
-    if (state.type == GrowthMissionType.completeMission) {
+    /*if (state.type == GrowthMissionType.completeMission) {
       outerLoadingDialog(text: "Completing Mission");
-    }
+    }*/
   }
 
   _successState(BuildContext context, GrowthMissionSuccessState state) {
@@ -149,7 +148,7 @@ class _MissionListTitleState extends State<MissionListTitle> with UIToolMixin {
           if (widget.mission.completed == false) {
             if (widget.mission.subject!.toLowerCase() == "watch") {
               final Uri _url = Uri.parse(
-                'https://youtu.be/YfO64IU32S8?si=_wbVRiw0xM0FJD8b',
+                'https://youtu.be/wrbAeHp0mbg?si=_Ppu4rXVtM7dUBl0',
               );
               if (!await launchUrl(
                 _url,
