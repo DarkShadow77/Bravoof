@@ -3,7 +3,6 @@ import 'dart:ui';
 import 'package:Bravoo/features/common/flowva_button.dart';
 import 'package:Bravoo/features/dashboard/profile/presentation/bloc/profile_bloc.dart';
 import 'package:Bravoo/features/dashboard/profile/presentation/widgets/edit_profile.dart';
-import 'package:Bravoo/features/dashboard/settings/presentation/pages/login_and_security_page.dart';
 import 'package:Bravoo/features/onbaording/page/onbaording_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -95,7 +94,7 @@ class SettingsPage extends StatelessWidget with UIToolMixin {
                   ),
                 ),
 
-                const Divider(height: 1, color: Color(0xFFF1F1F1)),
+                /* const Divider(height: 1, color: Color(0xFFF1F1F1)),
                 buildTile(
                   HugeIcon(
                     icon: HugeIcons.strokeRoundedUserShield01,
@@ -110,7 +109,7 @@ class SettingsPage extends StatelessWidget with UIToolMixin {
                       builder: (ctx) => LoginAndSecurityScreen(),
                     ),
                   ),
-                ),
+                ),*/
                 // const Divider(height: 1, color: Color(0xFFF1F1F1)),
                 // buildTile(
                 //   HugeIcon(icon: HugeIcons.strokeRoundedSquareLock01,color: Color(0xFF191919),strokeWidth: 2, size: 20),
