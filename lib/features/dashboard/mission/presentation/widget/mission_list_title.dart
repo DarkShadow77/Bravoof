@@ -1,15 +1,16 @@
+import 'package:Bravoo/app/view/widgets/dialog/success_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../../app/view/widgets/cached_image_widget.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../utility/in_app_review.dart';
 import '../../../../../utility/ui_tool_mix.dart';
-import '../../../../common/custom_success.dart';
 import '../../../../common/flowva_button.dart';
 import '../../../../dashboard/earn/data/models/mission_res.dart';
 import '../../../../dashboard/earn/presentation/pages/invite_earn.dart'
@@ -59,21 +60,20 @@ class _MissionCardState extends State<MissionCard> with UIToolMixin {
       if (Get.isDialogOpen == true) {
         Navigator.of(context, rootNavigator: true).pop();
       }
-      context.read<ProfileBloc>().add(GetProfileEvent());
+      final profileBloc = context.read<ProfileBloc>();
+      profileBloc.add(GetProfileEvent());
       context.read<GrowthMissionBloc>().add(LoadGrowthMission());
-      showModalBottomSheet(
-        context: context,
-        isScrollControlled: true,
-        barrierColor: Colors.transparent,
-        backgroundColor: Colors.transparent,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
-        ),
-        builder: (_) => CustomSuccess(
-          title: "Mission complete!",
-          bodyText: "You’ve earned a reward 💜",
-          b_text1: "💜️ Bravoo? Tell the world ",
-          b_text2: "Explore more missions",
+
+      successDialog(
+        title: "Mission complete!",
+        subTitle: "You’ve earned a reward 💜",
+        mainBtnText: "Explore more missions",
+        subBtnText: "💜️ Bravoo? Tell the world ",
+        mainBtnPressed: () => Navigator.of(context, rootNavigator: true).pop(),
+        subBtnPressed: () => SharePlus.instance.share(
+          ShareParams(
+            text: referralMessage(profileBloc.state.profile.referralCode),
+          ),
         ),
       );
     }
@@ -145,7 +145,7 @@ class _MissionListTitleState extends State<MissionListTitle> with UIToolMixin {
       child: MissionTile(
         mission: widget.mission,
         onClaim: () async {
-          if (widget.mission.completed == false) {
+          if (widget.mission.completed != true) {
             if (widget.mission.subject!.toLowerCase() == "watch") {
               final Uri _url = Uri.parse(
                 'https://youtu.be/wrbAeHp0mbg?si=_Ppu4rXVtM7dUBl0',
@@ -167,30 +167,20 @@ class _MissionListTitleState extends State<MissionListTitle> with UIToolMixin {
                 widget.mission.progress = 100;
               });
             } else if (widget.mission.subject!.toLowerCase() == "rate us") {
-              final success = await requestAppRating();
+              await requestAppRating();
 
-              if (success) {
-                // Update mission as completed in Supabase
-                context.read<GrowthMissionBloc>().add(
-                  CompleteGrowthMission(mission: {"id": widget.mission.id}),
-                );
-                setState(() {
-                  widget.mission.completed = true;
-                });
-                showMessage(
-                  "Thank you for rating our app! 🎉",
-                  context,
-                  color: Colors.green,
-                  styleColor: Colors.white,
-                );
-              } else {
-                showMessage(
-                  "Could not open review dialog. Please rate us manually from the store.",
-                  context,
-                  color: Colors.orange,
-                  styleColor: Colors.black,
-                );
-              }
+              context.read<GrowthMissionBloc>().add(
+                CompleteGrowthMission(mission: {"id": widget.mission.id}),
+              );
+              setState(() {
+                widget.mission.completed = true;
+              });
+              showMessage(
+                "Thanks for supporting us! ⭐",
+                context,
+                color: Colors.green,
+                styleColor: Colors.white,
+              );
             } else if (widget.mission.subject!.toLowerCase() == "invite") {
               Navigator.push(
                 context,

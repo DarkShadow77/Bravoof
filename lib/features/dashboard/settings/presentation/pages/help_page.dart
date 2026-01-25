@@ -121,23 +121,15 @@ class HelpPage extends StatelessWidget with UIToolMixin {
                   ),
                   "Leave a Review",
                   apply: () async {
-                    final success = await requestAppRating();
+                    await requestAppRating();
 
-                    if (success) {
-                      showMessage(
-                        "Thank you for rating our app! 🎉",
-                        context,
-                        color: Colors.green,
-                        styleColor: Colors.white,
-                      );
-                    } else {
-                      showMessage(
-                        "Could not open review dialog. Please rate us manually from the store.",
-                        context,
-                        color: Colors.orange,
-                        styleColor: Colors.black,
-                      );
-                    }
+                    showMessage(
+                      "Thank you for rating our app! 🎉",
+                      context,
+                      color: Colors.green,
+                      styleColor: Colors.white,
+                    );
+
                     /*Navigator.push(
                       context,
                       MaterialPageRoute(builder: (ctx) => BravooRatingPage()),

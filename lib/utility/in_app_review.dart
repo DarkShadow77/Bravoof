@@ -1,13 +1,16 @@
 import 'package:in_app_review/in_app_review.dart';
 
-Future<bool> requestAppRating() async {
-  final InAppReview inAppReview = InAppReview.instance;
+Future<void> requestAppRating() async {
+  final inAppReview = InAppReview.instance;
 
-  // Check if the store review feature is available
   if (await inAppReview.isAvailable()) {
     await inAppReview.requestReview();
-    return true; // user likely saw the prompt
+
+    // Optional fallback
+    Future.delayed(const Duration(seconds: 1), () {
+      inAppReview.openStoreListing();
+    });
   } else {
-    return false; // store review not available
+    await inAppReview.openStoreListing();
   }
 }

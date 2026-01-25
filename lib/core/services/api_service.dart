@@ -207,18 +207,25 @@ class ApiService {
     String? accessToken,
     String? apiKey,
     CancelToken? cancelToken,
+
+    customUrl = false,
   }) async {
     final ApiResponse apiResponse = ApiResponse();
 
-    Logger().i("Request Path ${dotenv.env["BASE_URL"]}$url");
+    final fullUrl = customUrl ? url : "${dotenv.env["BASE_URL"]}$url";
+
+    Logger().i("Request Path $fullUrl");
     Logger().i("Request body $body");
 
     try {
       // Set headers locally for this request
       final Map<String, String> headers = {
-        'Authorization': 'Bearer $accessToken',
-        'Cookie': 'auth=$accessToken',
+        if (accessToken != null && accessToken.isNotEmpty)
+          'Authorization': 'Bearer $accessToken',
+        if (accessToken != null && accessToken.isNotEmpty)
+          'Cookie': 'auth=$accessToken',
         'x-api-key': "$apiKey",
+        'apikey': "$apiKey",
       };
 
       final requestOptions =
@@ -227,7 +234,7 @@ class ApiService {
       Logger().i("Authorization: $accessToken");
 
       final res = await dio.post(
-        "${dotenv.env["BASE_URL"]}$url",
+        fullUrl,
         data: body,
         options: requestOptions,
         cancelToken: cancelToken,

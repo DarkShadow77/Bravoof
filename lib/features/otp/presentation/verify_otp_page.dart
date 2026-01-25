@@ -4,6 +4,7 @@ import 'package:Bravoo/core/constants/fonts.dart';
 import 'package:Bravoo/features/common/app_enum.dart';
 import 'package:Bravoo/features/common/flowva_button.dart';
 import 'package:Bravoo/features/common/ui_tool_mixin/ui_tool_mixin.dart';
+import 'package:Bravoo/features/onbaording/page/onbaording_screen.dart';
 import 'package:Bravoo/features/onboarding2/progress_step.dart';
 import 'package:Bravoo/features/otp/data/bloc/verify_otp_cubit.dart';
 import 'package:flutter/gestures.dart';
@@ -154,6 +155,15 @@ class _VerifyOtpPageState extends State<VerifyOtpPage> with UIToolMixin {
                       styleColor: Colors.black,
                       status: true,
                     );
+                    if (state.err == "Failed to sign in with password") {
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => OnboardingScreen(),
+                        ),
+                        (route) => false,
+                      );
+                    }
                   }
                 },
                 builder: (context, state) {
@@ -165,7 +175,7 @@ class _VerifyOtpPageState extends State<VerifyOtpPage> with UIToolMixin {
                         buttonState: val
                             ? AppButtonState.loading
                             : AppButtonState.idle,
-                        apply: () {
+                        apply: () async {
                           verifyOtpCubit.verifyOtp(otp: _pinController.text);
                         },
                       );
