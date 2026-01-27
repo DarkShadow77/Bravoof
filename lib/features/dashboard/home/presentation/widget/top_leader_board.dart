@@ -1,23 +1,23 @@
+import 'package:Bravoo/app/view/widgets/cached_image_widget.dart';
 import 'package:Bravoo/features/common/flowva_button.dart';
+import 'package:Bravoo/features/dashboard/home/data/model/leaderboard_response_model.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../../../mission/data/model/rewards_summary_response.dart';
+import '../../../../../core/constants/app_colors.dart';
 import '../page/leaderboard_screen.dart';
 
-class TopLeaderBoard extends StatelessWidget {
-  List<RewardsSummary> rewardsSummary = [];
-  TopLeaderBoard({required this.rewardsSummary, super.key});
+class TopLeaderboard extends StatelessWidget {
+  final List<LeaderboardModel> leaderboard;
+  TopLeaderboard({required this.leaderboard, super.key});
 
   @override
   Widget build(BuildContext context) {
-    rewardsSummary.sort(
-      (a, b) => b.totalPointRedeemed!.compareTo(a.totalPointRedeemed!),
-    );
+    leaderboard.sort((a, b) => b.totalEarned.compareTo(a.totalEarned));
 
-    final first = rewardsSummary[0];
-    final second = rewardsSummary.length > 1 ? rewardsSummary[1] : null;
-    final third = rewardsSummary.length > 2 ? rewardsSummary[2] : null;
+    final first = leaderboard[0];
+    final second = leaderboard.length > 1 ? leaderboard[1] : null;
+    final third = leaderboard.length > 2 ? leaderboard[2] : null;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Container(
@@ -66,11 +66,12 @@ class TopLeaderBoard extends StatelessWidget {
                         height: 80,
                         child: Stack(
                           children: [
-                            CircleAvatar(
-                              radius: 35,
-                              backgroundImage: NetworkImage(
-                                second!.userProfile!.profilePic!,
-                              ),
+                            CachedImageRadius(
+                              imageUrl: second!.profileImage,
+                              size: 70,
+                              circle: true,
+                              color: AppColors.grey200,
+                              fit: BoxFit.cover,
                             ),
                             Positioned(
                               top: 2,
@@ -80,11 +81,9 @@ class TopLeaderBoard extends StatelessWidget {
                                 width: 20,
                                 height: 20,
                                 decoration: BoxDecoration(
-                                  color: Color(0xFFFF8687).withOpacity(0.54),
+                                  color: AppColors.redBrown50,
                                   borderRadius: BorderRadius.circular(100),
-                                  border: Border.all(
-                                    color: Colors.white.withOpacity(0.5),
-                                  ),
+                                  border: Border.all(color: AppColors.white50),
                                 ),
                                 child: Center(
                                   child: Text(
@@ -103,7 +102,7 @@ class TopLeaderBoard extends StatelessWidget {
                       ),
                       // SizedBox(height: 8),
                       Text(
-                        second.userProfile!.name.toString(),
+                        second.name,
                         style: GoogleFonts.manrope(
                           color: Colors.white,
                           fontWeight: FontWeight.w600,
@@ -116,7 +115,7 @@ class TopLeaderBoard extends StatelessWidget {
                           vertical: 6,
                         ),
                         decoration: BoxDecoration(
-                          color: Colors.black.withOpacity(0.04),
+                          color: AppColors.black05,
                           borderRadius: BorderRadius.circular(30),
                         ),
                         child: Row(
@@ -125,7 +124,7 @@ class TopLeaderBoard extends StatelessWidget {
                             Image.asset("assets/images/one_50.png", height: 14),
                             const SizedBox(width: 6),
                             Text(
-                              second.totalPointRedeemed.toString(),
+                              second.totalEarned.toString(),
                               style: GoogleFonts.manrope(
                                 fontWeight: FontWeight.w700,
                                 fontSize: 10,
@@ -144,11 +143,12 @@ class TopLeaderBoard extends StatelessWidget {
                         height: 80,
                         child: Stack(
                           children: [
-                            CircleAvatar(
-                              radius: 40,
-                              backgroundImage: NetworkImage(
-                                first.userProfile!.profilePic!,
-                              ),
+                            CachedImageRadius(
+                              imageUrl: first.profileImage,
+                              size: 80,
+                              circle: true,
+                              color: AppColors.grey200,
+                              fit: BoxFit.cover,
                             ),
                             Positioned(
                               top: 2,
@@ -158,11 +158,9 @@ class TopLeaderBoard extends StatelessWidget {
                                 width: 20,
                                 height: 20,
                                 decoration: BoxDecoration(
-                                  color: Color(0xFFFAC60A).withOpacity(0.54),
+                                  color: AppColors.orange50,
                                   borderRadius: BorderRadius.circular(100),
-                                  border: Border.all(
-                                    color: Colors.white.withOpacity(0.5),
-                                  ),
+                                  border: Border.all(color: AppColors.white50),
                                 ),
                                 child: Center(
                                   child: Text(
@@ -181,7 +179,7 @@ class TopLeaderBoard extends StatelessWidget {
                       ),
                       SizedBox(height: 20),
                       Text(
-                        first.userProfile!.name.toString(),
+                        first.name.toString(),
                         style: GoogleFonts.manrope(
                           color: Colors.white,
                           fontWeight: FontWeight.w600,
@@ -194,7 +192,7 @@ class TopLeaderBoard extends StatelessWidget {
                           vertical: 6,
                         ),
                         decoration: BoxDecoration(
-                          color: Colors.black.withOpacity(0.04),
+                          color: AppColors.black05,
                           borderRadius: BorderRadius.circular(30),
                           // boxShadow: [
                           //   BoxShadow(
@@ -209,7 +207,7 @@ class TopLeaderBoard extends StatelessWidget {
                             Image.asset("assets/images/one_50.png", height: 12),
                             const SizedBox(width: 6),
                             Text(
-                              first.totalPointRedeemed.toString(),
+                              first.totalEarned.toString(),
                               style: GoogleFonts.manrope(
                                 fontWeight: FontWeight.w700,
                                 fontSize: 10,
@@ -230,11 +228,12 @@ class TopLeaderBoard extends StatelessWidget {
                         height: 80,
                         child: Stack(
                           children: [
-                            CircleAvatar(
-                              radius: 35,
-                              backgroundImage: NetworkImage(
-                                third!.userProfile!.profilePic!,
-                              ),
+                            CachedImageRadius(
+                              imageUrl: third!.profileImage,
+                              size: 70,
+                              circle: true,
+                              color: AppColors.grey200,
+                              fit: BoxFit.cover,
                             ),
                             Positioned(
                               top: 2,
@@ -244,11 +243,11 @@ class TopLeaderBoard extends StatelessWidget {
                                 width: 20,
                                 height: 20,
                                 decoration: BoxDecoration(
-                                  color: Color(0xFF72410A).withOpacity(0.54),
+                                  color: Color(
+                                    0xFF72410A,
+                                  ).withValues(alpha: 0.54),
                                   borderRadius: BorderRadius.circular(100),
-                                  border: Border.all(
-                                    color: Colors.white.withOpacity(0.5),
-                                  ),
+                                  border: Border.all(color: AppColors.white50),
                                 ),
                                 child: Center(
                                   child: Text(
@@ -265,9 +264,8 @@ class TopLeaderBoard extends StatelessWidget {
                           ],
                         ),
                       ),
-
                       Text(
-                        third.userProfile!.name.toString(),
+                        third.name.toString(),
                         style: GoogleFonts.manrope(
                           color: Colors.white,
                           fontWeight: FontWeight.w600,
@@ -280,7 +278,7 @@ class TopLeaderBoard extends StatelessWidget {
                           vertical: 6,
                         ),
                         decoration: BoxDecoration(
-                          color: Colors.black.withOpacity(0.04),
+                          color: AppColors.black05,
                           borderRadius: BorderRadius.circular(30),
                           // boxShadow: [
                           //   BoxShadow(
@@ -295,7 +293,7 @@ class TopLeaderBoard extends StatelessWidget {
                             Image.asset("assets/images/one_50.png", height: 12),
                             const SizedBox(width: 6),
                             Text(
-                              third.totalPointRedeemed.toString(),
+                              third.totalEarned.toString(),
                               style: GoogleFonts.manrope(
                                 fontWeight: FontWeight.w700,
                                 fontSize: 10,
@@ -324,10 +322,7 @@ class TopLeaderBoard extends StatelessWidget {
               name: 'See Leaderboard',
               apply: () => Navigator.push(
                 context,
-                MaterialPageRoute(
-                  builder: (ctx) =>
-                      LeaderboardScreen(leaderboardList: rewardsSummary),
-                ),
+                MaterialPageRoute(builder: (ctx) => LeaderboardScreen()),
               ),
             ),
           ],

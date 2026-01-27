@@ -123,8 +123,7 @@ class HistoryTab extends StatelessWidget {
             return Expanded(
               child: StatusCard(
                 icon: AssetsPngImages.one50,
-                value:
-                    "${formatAmount(profile.totalPoints ?? 0, compact: true)}",
+                value: "${formatAmount(profile.totalEarned, compact: true)}",
                 label: 'Total \nEarned',
               ),
             );

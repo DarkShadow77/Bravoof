@@ -1,4 +1,5 @@
 import 'package:Bravoo/core/constants/app_assets.dart';
+import 'package:Bravoo/core/constants/app_colors.dart';
 import 'package:Bravoo/features/dashboard/home/presentation/page/home_page.dart';
 import 'package:Bravoo/features/dashboard/redeem/presentation/page/redeem_screen.dart';
 import 'package:flutter/material.dart';
@@ -9,18 +10,9 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../session/session_manager.dart';
 import '../onboarding2/widget/reward.dart';
-import 'home/presentation/bloc/notification_bloc.dart';
+import 'home/presentation/bloc/home_cubit.dart';
 import 'home/presentation/widget/show_welcome_message.dart';
-import 'mission/presentation/bloc/community_mission_bloc.dart';
-import 'mission/presentation/bloc/featured_mission_bloc.dart';
-import 'mission/presentation/bloc/growth_mission_bloc.dart';
-import 'mission/presentation/bloc/skill_up_bloc.dart';
-import 'mission/presentation/bloc/social_mission_bloc.dart';
-import 'mission/presentation/bloc/sponsored_mission_bloc.dart';
-import 'mission/presentation/bloc/streak_bloc.dart';
 import 'mission/presentation/page/mission_page.dart';
-import 'profile/presentation/bloc/profile_bloc.dart';
-import 'redeem/presentation/bloc/redeem_bloc.dart';
 
 class BottomNavBar extends StatefulWidget {
   BottomNavBar({this.index = 0, super.key, this.missionIndex});
@@ -70,7 +62,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
   }
 
   _fetchDetails() {
-    context.read<ProfileBloc>().add(GetProfileEvent());
+    /*context.read<ProfileBloc>().add(GetProfileEvent());
     context.read<CommunityMissionBloc>().add(LoadCommunityMission());
     context.read<SocialMissionBloc>().add(LoadSocialMission());
     context.read<FeaturedMissionBloc>().add(LoadFeaturedMission());
@@ -79,7 +71,15 @@ class _BottomNavBarState extends State<BottomNavBar> {
     context.read<SkillUpBloc>().add(LoadSkillUpMission());
     context.read<StreakBloc>().add(LoadStreaksEvent());
     context.read<RedeemBloc>().add(LoadRedeemHistory());
-    context.read<NotificationBloc>().add(LoadNotifications());
+    context.read<NotificationBloc>().add(LoadNotifications());*/
+
+    if (currentIndex == 0) {
+      /*  context.read<HomeCubit>().fetchCampaigns();
+      context.read<HomeCubit>().fetchSpotlight();
+      context.read<HomeCubit>().fetchQuote();*/
+      context.read<HomeCubit>().fetchLeaderboard();
+      // context.read<HomeCubit>().getUserReferrals();
+    }
   }
 
   @override
@@ -100,10 +100,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
         bottomNavigationBar: Container(
           decoration: BoxDecoration(
             border: Border(
-              top: BorderSide(
-                color: Color(0xFFA5A5A5).withOpacity(0.3), // Outline color
-                width: 0.5, // Thickness
-              ),
+              top: BorderSide(color: AppColors.grey100, width: 1.r),
             ),
           ),
           child: BottomNavigationBar(

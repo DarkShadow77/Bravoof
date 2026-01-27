@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LocalNotificationService {
   //Private constructor for singleton pattern
@@ -74,12 +75,32 @@ class LocalNotificationService {
     _isFlutterLocalNotificationInitialized = true;
   }
 
+  Future<int> _incrementBadgeCount() async {
+    final prefs = await SharedPreferences.getInstance();
+    final current = prefs.getInt('badge_count') ?? 0;
+    final updated = current + 1;
+    await prefs.setInt('badge_count', updated);
+    return updated;
+  }
+
+  Future<void> clearBadge() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('badge_count', 0);
+
+    final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+        FlutterLocalNotificationsPlugin();
+
+    await flutterLocalNotificationsPlugin.cancelAll();
+  }
+
   //Show a local notification with the given title, body, and payload
   Future<void> showNotification(
     String? title,
     String? body,
     String? payload,
   ) async {
+    final badgeCount = await _incrementBadgeCount();
+
     //Android-specific notification details
     AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
       _androidChannel.id,
@@ -91,7 +112,7 @@ class LocalNotificationService {
     );
 
     //IOS-specific notification details
-    const iosDetails = DarwinNotificationDetails();
+    final iosDetails = DarwinNotificationDetails(badgeNumber: badgeCount);
 
     //Combine platform-specific details
     final notificationDetails = NotificationDetails(

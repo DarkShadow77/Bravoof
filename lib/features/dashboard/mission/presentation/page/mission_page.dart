@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../home/presentation/bloc/home_cubit.dart';
 import '../../../profile/presentation/bloc/profile_bloc.dart';
 import '../../../redeem/presentation/bloc/redeem_bloc.dart';
 import '../bloc/community_mission_bloc.dart';
@@ -53,6 +54,8 @@ class _MissionPageState extends State<MissionPage> {
     context.read<SkillUpBloc>().add(LoadSkillUpMission());
     context.read<StreakBloc>().add(LoadStreaksEvent());
     context.read<RedeemBloc>().add(LoadRedeemHistory());
+    BlocProvider.of<HomeCubit>(context).fetchCampaigns();
+    BlocProvider.of<HomeCubit>(context).fetchCampaigns();
   }
 
   @override

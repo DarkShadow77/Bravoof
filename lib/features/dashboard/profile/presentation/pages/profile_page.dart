@@ -14,6 +14,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../../app/styles/text_styles.dart';
 import '../../../../../core/constants/app_colors.dart';
+import '../../../home/presentation/bloc/home_cubit.dart';
 import '../../../home/presentation/widget/referral_widget.dart';
 import '../bloc/profile_bloc.dart';
 import '../widgets/edit_cover_pic_modal.dart';
@@ -242,8 +243,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 SizedBox(height: 25.h),
                 Container(
                   // width: double.infinity,
-                  width: 200,
-                  padding: EdgeInsets.symmetric(horizontal: 0, vertical: 8),
+                  padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8),
                   decoration: BoxDecoration(
                     border: Border.all(color: AppColors.black10),
                     borderRadius: BorderRadius.circular(50.r),
@@ -260,15 +260,21 @@ class _ProfilePageState extends State<ProfilePage> {
                       mainAxisSize: MainAxisSize.min,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Flexible(
-                          child: Text(
-                            "Top 24 on Leaderboard",
-                            style: GoogleFonts.manrope(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w700,
-                              color: Color(0xFF9013FE),
-                            ),
-                          ),
+                        BlocBuilder<HomeCubit, HomeState>(
+                          builder: (context, state) {
+                            final currentRank = state.leaderboard.currentUser;
+                            final rank = currentRank.rank;
+                            return Flexible(
+                              child: Text(
+                                "Top $rank on Leaderboard",
+                                style: GoogleFonts.manrope(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w700,
+                                  color: Color(0xFF9013FE),
+                                ),
+                              ),
+                            );
+                          },
                         ),
                         HugeIcon(
                           icon: HugeIcons.strokeRoundedArrowUpRight03,

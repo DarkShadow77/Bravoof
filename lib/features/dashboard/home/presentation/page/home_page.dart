@@ -4,7 +4,6 @@ import 'package:Bravoo/app/view/widgets/gradient_progress.dart';
 import 'package:Bravoo/core/constants/app_assets.dart';
 import 'package:Bravoo/core/utils/helpers.dart';
 import 'package:Bravoo/features/common/ui_tool_mixin/ui_tool_mixin.dart';
-import 'package:Bravoo/features/dashboard/home/presentation/bloc/home_cubit.dart';
 import 'package:Bravoo/features/dashboard/profile/presentation/bloc/profile_bloc.dart';
 import 'package:Bravoo/features/dashboard/profile/presentation/pages/profile_page.dart';
 import 'package:Bravoo/features/onbaording/data/model/user_profile.dart';
@@ -18,9 +17,9 @@ import 'package:hugeicons/hugeicons.dart';
 
 import '../../../../../core/constants/app_colors.dart';
 import '../../../mission/data/bloc/mission_cubit.dart';
-import '../../../mission/data/model/rewards_summary_response.dart';
 import '../../../mission/presentation/widget/mission_list_title.dart';
 import '../../../nav_bar.dart';
+import '../bloc/home_cubit.dart';
 import '../bloc/notification_bloc.dart';
 import '../widget/referral_widget.dart';
 import '../widget/tool_card.dart';
@@ -39,16 +38,10 @@ class _FlowvaHomePageState extends State<FlowvaHomePage> with UIToolMixin {
   final sessionManager = SessionManager();
   UserProfile userProfile = UserProfile.empty();
   late ProfileBloc profileBloc;
-  List<RewardsSummary> rewardsSummary = [];
 
   @override
   void initState() {
     super.initState();
-    missionCubit = MissionCubit();
-    BlocProvider.of<HomeCubit>(context).fetchCampaigns();
-    BlocProvider.of<HomeCubit>(context).fetchSpotlight();
-    missionCubit.fetchAllUsersReward();
-
     profileBloc = context.read<ProfileBloc>();
     userProfile = profileBloc.state.profile;
     profileBloc.add(GetProfileEvent());
@@ -57,390 +50,372 @@ class _FlowvaHomePageState extends State<FlowvaHomePage> with UIToolMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: MultiBlocProvider(
-        providers: [
-          BlocListener<MissionCubit, MissionState>(
-            bloc: missionCubit,
-            listener: (context, state) {
-              if (state is RewardLoaded) {
-                rewardsSummary = state.rewardsSummaryResponse.rewardsSummary!;
-                print(rewardsSummary);
-                setState(() {});
-              }
-            },
-          ),
-        ],
-        child: BlocBuilder<ProfileBloc, ProfileState>(
-          builder: (context, state) {
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              setState(() {
-                userProfile = state.profile;
-              });
+      backgroundColor: AppColors.white,
+      body: BlocBuilder<ProfileBloc, ProfileState>(
+        builder: (context, state) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            setState(() {
+              userProfile = state.profile;
             });
-            return Container(
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage("assets/images/home_page_b.png"),
-                  fit: BoxFit.fill,
-                ),
+          });
+          return Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage("assets/images/home_page_b.png"),
+                fit: BoxFit.fill,
               ),
-              child: Stack(
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(height: MediaQuery.of(context).padding.top),
-                      // Greeting Row
-                      Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 16.w,
-                          vertical: 10.h,
-                        ),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            RichText(
-                              text: TextSpan(
-                                text: "Hey, ${userProfile.name}!",
-                                style: TextStyles.titleSemiBold20(context),
-                              ),
+            ),
+            child: Stack(
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: MediaQuery.of(context).padding.top),
+                    // Greeting Row
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 16.w,
+                        vertical: 10.h,
+                      ),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          RichText(
+                            text: TextSpan(
+                              text: "Hey, ${userProfile.name}!",
+                              style: TextStyles.titleSemiBold20(context),
                             ),
-                            Row(
-                              spacing: 14.w,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                BlocBuilder<
-                                  NotificationBloc,
-                                  NotificationState
-                                >(
-                                  builder: (context, state) {
-                                    final noti = state.notification;
-                                    return GestureDetector(
-                                      onTap: () => Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (ctx) => NotificationsPage(),
-                                        ),
+                          ),
+                          Row(
+                            spacing: 14.w,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              BlocBuilder<NotificationBloc, NotificationState>(
+                                builder: (context, state) {
+                                  final noti = state.notification;
+                                  return GestureDetector(
+                                    onTap: () => Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (ctx) => NotificationsPage(),
                                       ),
-                                      child: Container(
-                                        width: 28.w,
-                                        height: 28.h,
-                                        child: Stack(
-                                          children: [
-                                            HugeIcon(
-                                              icon: HugeIcons
-                                                  .strokeRoundedNotification01,
-                                              size: 28.sp,
+                                    ),
+                                    child: Container(
+                                      width: 28.w,
+                                      height: 28.h,
+                                      child: Stack(
+                                        children: [
+                                          HugeIcon(
+                                            icon: HugeIcons
+                                                .strokeRoundedNotification01,
+                                            size: 28.sp,
+                                          ),
+                                          if (noti.any((e) => e.read == false))
+                                            Positioned(
+                                              top: 0,
+                                              right: 2.w,
+                                              child: Container(
+                                                width: 12.w,
+                                                height: 12.h,
+                                                decoration: BoxDecoration(
+                                                  color: AppColors.error,
+                                                  shape: BoxShape.circle,
+                                                ),
+                                              ),
                                             ),
-                                            if (noti.any(
-                                              (e) => e.read == false,
-                                            ))
-                                              Positioned(
-                                                top: 0,
-                                                right: 2.w,
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => ProfilePage(),
+                                    ),
+                                  );
+                                },
+                                child: CachedImageRadius(
+                                  imageUrl: userProfile.profilePic,
+                                  size: 30,
+                                  circle: true,
+                                  fit: BoxFit.cover,
+                                  color: AppColors.grey200,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    Expanded(
+                      child: SingleChildScrollView(
+                        padding: EdgeInsets.only(top: 0),
+                        physics: const BouncingScrollPhysics(),
+                        child: Column(
+                          children: [
+                            SizedBox(height: 18.h),
+                            if (SessionManager().firstTimeUserVal == "YES") ...[
+                              InviteFriendContainer(
+                                onTap: () {
+                                  setState(() {
+                                    SessionManager().firstTimeUserVal = "NO";
+                                  });
+                                },
+                              ),
+                              SizedBox(height: 16.h),
+                            ],
+                            ToolCardCarousel(),
+                            SizedBox(height: 20.h),
+                            MissionAwaitWidget(),
+                            SizedBox(height: 20.h),
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 16.w),
+                              child: Container(
+                                padding: EdgeInsets.symmetric(horizontal: 15),
+                                decoration: BoxDecoration(
+                                  color: Colors.white54,
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                child: Column(
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          "Growth Missions",
+                                          style: GoogleFonts.baloo2(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          height: 70,
+                                          child: Stack(
+                                            children: [
+                                              GestureDetector(
+                                                onTap: () {
+                                                  Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                      builder: (_) =>
+                                                          BottomNavBar(
+                                                            index: 1,
+                                                            missionIndex: 1,
+                                                          ),
+                                                    ),
+                                                  );
+                                                },
                                                 child: Container(
-                                                  width: 12.w,
-                                                  height: 12.h,
+                                                  margin: EdgeInsets.only(
+                                                    top: 20,
+                                                  ),
+                                                  padding: EdgeInsets.symmetric(
+                                                    horizontal: 12,
+                                                    vertical: 9,
+                                                  ),
                                                   decoration: BoxDecoration(
-                                                    color: AppColors.error,
-                                                    shape: BoxShape.circle,
+                                                    color: Color(0xFFF6E4E6),
+                                                    border: Border.all(
+                                                      color: Color(0xFFE9E9E9),
+                                                    ),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                          28,
+                                                        ),
+                                                  ),
+                                                  child: Text(
+                                                    "See more",
+                                                    style: GoogleFonts.manrope(
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      color: Color(0xFF020617),
+                                                      fontSize: 14,
+                                                    ),
                                                   ),
                                                 ),
                                               ),
-                                          ],
+                                              // Positioned(
+                                              //   top: 15,
+                                              //   right: 0,
+                                              //
+                                              //   child: CircleAvatar(
+                                              //     radius: 10,
+                                              //     backgroundColor: Color(
+                                              //       0xFFB60000,
+                                              //     ),
+                                              //     child: Text(
+                                              //       missions.skip(3).toList().length.toString(),
+                                              //       style: GoogleFonts.baloo2(
+                                              //         fontSize: 14,
+                                              //         fontWeight:
+                                              //             FontWeight.w700,
+                                              //         color: Colors.white,
+                                              //       ),
+                                              //     ),
+                                              //   ),
+                                              // ),
+                                            ],
+                                          ),
                                         ),
-                                      ),
-                                    );
-                                  },
+                                      ],
+                                    ),
+                                    const SizedBox(height: 16),
+                                    MissionCard(isFull: false),
+                                  ],
                                 ),
-                                GestureDetector(
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => ProfilePage(),
-                                      ),
-                                    );
-                                  },
-                                  child: CachedImageRadius(
-                                    imageUrl: userProfile.profilePic,
-                                    size: 30,
-                                    circle: true,
-                                    fit: BoxFit.cover,
-                                    color: AppColors.grey200,
-                                  ),
-                                ),
-                              ],
+                              ),
                             ),
+                            SizedBox(height: 20.h),
+                            BlocBuilder<HomeCubit, HomeState>(
+                              builder: (context, state) {
+                                final leaderboard =
+                                    state.leaderboard.leaderboard;
+                                if (leaderboard.isNotEmpty &&
+                                    leaderboard.length > 2)
+                                  return TopLeaderboard(
+                                    leaderboard: leaderboard,
+                                  );
+                                else
+                                  return SizedBox.shrink();
+                              },
+                            ),
+
+                            SizedBox(height: 20.h),
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 16.w),
+                              child: ReferralWidget(),
+                            ),
+                            SizedBox(height: 20.h),
                           ],
                         ),
                       ),
-
-                      Expanded(
-                        child: SingleChildScrollView(
-                          padding: EdgeInsets.only(top: 0),
-                          physics: const BouncingScrollPhysics(),
-                          child: Column(
-                            children: [
-                              SizedBox(height: 18.h),
-                              if (SessionManager().firstTimeUserVal ==
-                                  "YES") ...[
-                                InviteFriendContainer(
-                                  onTap: () {
-                                    setState(() {
-                                      SessionManager().firstTimeUserVal = "NO";
-                                    });
-                                  },
-                                ),
-                                SizedBox(height: 16.h),
-                              ],
-                              ToolCardCarousel(),
-                              SizedBox(height: 20.h),
-                              MissionAwaitWidget(),
-                              SizedBox(height: 20.h),
-                              Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 16.w),
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(horizontal: 15),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white54,
-                                    borderRadius: BorderRadius.circular(16),
-                                  ),
-                                  child: Column(
-                                    children: [
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            "Growth Missions",
-                                            style: GoogleFonts.baloo2(
-                                              fontSize: 20,
-                                              fontWeight: FontWeight.w700,
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            height: 70,
-                                            child: Stack(
-                                              children: [
-                                                GestureDetector(
-                                                  onTap: () {
-                                                    Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                        builder: (_) =>
-                                                            BottomNavBar(
-                                                              index: 1,
-                                                              missionIndex: 1,
-                                                            ),
-                                                      ),
-                                                    );
-                                                  },
-                                                  child: Container(
-                                                    margin: EdgeInsets.only(
-                                                      top: 20,
-                                                    ),
-                                                    padding:
-                                                        EdgeInsets.symmetric(
-                                                          horizontal: 12,
-                                                          vertical: 9,
-                                                        ),
-                                                    decoration: BoxDecoration(
-                                                      color: Color(0xFFF6E4E6),
-                                                      border: Border.all(
-                                                        color: Color(
-                                                          0xFFE9E9E9,
-                                                        ),
-                                                      ),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                            28,
-                                                          ),
-                                                    ),
-                                                    child: Text(
-                                                      "See more",
-                                                      style:
-                                                          GoogleFonts.manrope(
-                                                            fontWeight:
-                                                                FontWeight.w600,
-                                                            color: Color(
-                                                              0xFF020617,
-                                                            ),
-                                                            fontSize: 14,
-                                                          ),
-                                                    ),
-                                                  ),
-                                                ),
-                                                // Positioned(
-                                                //   top: 15,
-                                                //   right: 0,
-                                                //
-                                                //   child: CircleAvatar(
-                                                //     radius: 10,
-                                                //     backgroundColor: Color(
-                                                //       0xFFB60000,
-                                                //     ),
-                                                //     child: Text(
-                                                //       missions.skip(3).toList().length.toString(),
-                                                //       style: GoogleFonts.baloo2(
-                                                //         fontSize: 14,
-                                                //         fontWeight:
-                                                //             FontWeight.w700,
-                                                //         color: Colors.white,
-                                                //       ),
-                                                //     ),
-                                                //   ),
-                                                // ),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      const SizedBox(height: 16),
-                                      MissionCard(isFull: false),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              SizedBox(height: 20.h),
-                              rewardsSummary.isNotEmpty &&
-                                      rewardsSummary.length > 2
-                                  ? TopLeaderBoard(
-                                      rewardsSummary: rewardsSummary,
-                                    )
-                                  : Container(),
-                              SizedBox(height: 20.h),
-                              Padding(
-                                padding: EdgeInsets.symmetric(horizontal: 16.w),
-                                child: ReferralWidget(),
-                              ),
-                              SizedBox(height: 20.h),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  // Positioned(
-                  //   left: 20,
-                  //   right: 0,
-                  //   bottom:
-                  //       0, // same base as the button so glow sits behind it
-                  //   child: Center(
-                  //     child: SizedBox(
-                  //       width: 100,
-                  //       height: 60,
-                  //       child: Stack(
-                  //         alignment: Alignment.center,
-                  //         children: [
-                  //           // Purple soft central glow
-                  //           Container(
-                  //             width: 100,
-                  //             height: 40,
-                  //             decoration: BoxDecoration(
-                  //               color: Colors.transparent,
-                  //               borderRadius: BorderRadius.circular(60),
-                  //               boxShadow: [
-                  //                 BoxShadow(
-                  //                   color: const Color(
-                  //                     0xFF7367F0,
-                  //                   ).withOpacity(0.5),
-                  //                   blurRadius: 20,
-                  //                   spreadRadius: 6,
-                  //                 ),
-                  //               ],
-                  //             ),
-                  //           ),
-                  //
-                  //           // Red/pink subtle offset glow (left side)
-                  //           Positioned(
-                  //             left: 0,
-                  //             right: 20,
-                  //             child: Container(
-                  //               width: 120,
-                  //               height: 60,
-                  //               decoration: BoxDecoration(
-                  //                 color: Colors.transparent,
-                  //                 borderRadius: BorderRadius.circular(60),
-                  //                 boxShadow: [
-                  //                   BoxShadow(
-                  //                     color: const Color(
-                  //                       0xFFFF8A80,
-                  //                     ).withOpacity(0.5),
-                  //                     blurRadius: 60,
-                  //                     spreadRadius: 10,
-                  //                   ),
-                  //                 ],
-                  //               ),
-                  //             ),
-                  //           ),
-                  //         ],
-                  //       ),
-                  //     ),
-                  //   ),
-                  // ),
-                  //
-                  // // The floating Focus button (on top of the glow)
-                  // Positioned(
-                  //   left: 0,
-                  //   right: 0,
-                  //   bottom: 10,
-                  //   child: GestureDetector(
-                  //     onTap: () {
-                  //       Navigator.push(
-                  //         context,
-                  //         MaterialPageRoute(
-                  //           builder: (ctx) => FocusTimerPage(),
-                  //         ),
-                  //       );
-                  //     },
-                  //     child: Center(
-                  //       child: Container(
-                  //         width: 104,
-                  //         height: 41,
-                  //         padding: const EdgeInsets.symmetric(
-                  //           horizontal: 12,
-                  //           vertical: 12,
-                  //         ),
-                  //         decoration: BoxDecoration(
-                  //           color: Colors.white,
-                  //           borderRadius: BorderRadius.circular(16),
-                  //           boxShadow: [
-                  //             BoxShadow(
-                  //               color: Colors.black.withOpacity(0.12),
-                  //               blurRadius: 10,
-                  //               offset: const Offset(0, 4),
-                  //             ),
-                  //           ],
-                  //         ),
-                  //         child: Row(
-                  //           mainAxisSize: MainAxisSize.min,
-                  //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  //           children: [
-                  //             Text(
-                  //               "Focus",
-                  //               style: GoogleFonts.manrope(
-                  //                 fontSize: 14,
-                  //                 fontWeight: FontWeight.w500,
-                  //                 color: Color(0xFF191919),
-                  //               ),
-                  //             ),
-                  //             SizedBox(width: 8),
-                  //             // Icon(Icons.graphic_eq, size: 18),
-                  //             Icon(Icons.graphic_eq, size: 18),
-                  //           ],
-                  //         ),
-                  //       ),
-                  //     ),
-                  //   ),
-                  // ),
-                ],
-              ),
-            );
-          },
-        ),
+                    ),
+                  ],
+                ),
+                // Positioned(
+                //   left: 20,
+                //   right: 0,
+                //   bottom:
+                //       0, // same base as the button so glow sits behind it
+                //   child: Center(
+                //     child: SizedBox(
+                //       width: 100,
+                //       height: 60,
+                //       child: Stack(
+                //         alignment: Alignment.center,
+                //         children: [
+                //           // Purple soft central glow
+                //           Container(
+                //             width: 100,
+                //             height: 40,
+                //             decoration: BoxDecoration(
+                //               color: Colors.transparent,
+                //               borderRadius: BorderRadius.circular(60),
+                //               boxShadow: [
+                //                 BoxShadow(
+                //                   color: const Color(
+                //                     0xFF7367F0,
+                //                   ).withOpacity(0.5),
+                //                   blurRadius: 20,
+                //                   spreadRadius: 6,
+                //                 ),
+                //               ],
+                //             ),
+                //           ),
+                //
+                //           // Red/pink subtle offset glow (left side)
+                //           Positioned(
+                //             left: 0,
+                //             right: 20,
+                //             child: Container(
+                //               width: 120,
+                //               height: 60,
+                //               decoration: BoxDecoration(
+                //                 color: Colors.transparent,
+                //                 borderRadius: BorderRadius.circular(60),
+                //                 boxShadow: [
+                //                   BoxShadow(
+                //                     color: const Color(
+                //                       0xFFFF8A80,
+                //                     ).withOpacity(0.5),
+                //                     blurRadius: 60,
+                //                     spreadRadius: 10,
+                //                   ),
+                //                 ],
+                //               ),
+                //             ),
+                //           ),
+                //         ],
+                //       ),
+                //     ),
+                //   ),
+                // ),
+                //
+                // // The floating Focus button (on top of the glow)
+                // Positioned(
+                //   left: 0,
+                //   right: 0,
+                //   bottom: 10,
+                //   child: GestureDetector(
+                //     onTap: () {
+                //       Navigator.push(
+                //         context,
+                //         MaterialPageRoute(
+                //           builder: (ctx) => FocusTimerPage(),
+                //         ),
+                //       );
+                //     },
+                //     child: Center(
+                //       child: Container(
+                //         width: 104,
+                //         height: 41,
+                //         padding: const EdgeInsets.symmetric(
+                //           horizontal: 12,
+                //           vertical: 12,
+                //         ),
+                //         decoration: BoxDecoration(
+                //           color: Colors.white,
+                //           borderRadius: BorderRadius.circular(16),
+                //           boxShadow: [
+                //             BoxShadow(
+                //               color: Colors.black.withOpacity(0.12),
+                //               blurRadius: 10,
+                //               offset: const Offset(0, 4),
+                //             ),
+                //           ],
+                //         ),
+                //         child: Row(
+                //           mainAxisSize: MainAxisSize.min,
+                //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //           children: [
+                //             Text(
+                //               "Focus",
+                //               style: GoogleFonts.manrope(
+                //                 fontSize: 14,
+                //                 fontWeight: FontWeight.w500,
+                //                 color: Color(0xFF191919),
+                //               ),
+                //             ),
+                //             SizedBox(width: 8),
+                //             // Icon(Icons.graphic_eq, size: 18),
+                //             Icon(Icons.graphic_eq, size: 18),
+                //           ],
+                //         ),
+                //       ),
+                //     ),
+                //   ),
+                // ),
+              ],
+            ),
+          );
+        },
       ),
     );
   }

@@ -1,8 +1,10 @@
 import 'package:Bravoo/app/styles/text_styles.dart';
 import 'package:Bravoo/app/view/widgets/cached_image_widget.dart';
 import 'package:Bravoo/core/constants/app_assets.dart';
+import 'package:Bravoo/core/constants/fonts.dart';
 import 'package:Bravoo/features/dashboard/home/data/model/spotlight_model.dart';
 import 'package:Bravoo/features/dashboard/home/presentation/bloc/home_cubit.dart';
+import 'package:fade_shimmer/fade_shimmer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_confetti/flutter_confetti.dart';
@@ -152,32 +154,88 @@ class _ToolCardCarouselState extends State<ToolCardCarousel> {
   }
 }
 
-class QuoteCard extends StatelessWidget {
+class QuoteCard extends StatefulWidget {
   const QuoteCard({super.key});
 
   @override
+  State<QuoteCard> createState() => _QuoteCardState();
+}
+
+class _QuoteCardState extends State<QuoteCard> {
+  String quote = "";
+
+  @override
+  void initState() {
+    super.initState();
+    quote = context.read<HomeCubit>().state.quote;
+    context.read<HomeCubit>().fetchQuote();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 16.w),
-      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(24.r),
-        image: DecorationImage(
-          image: AssetImage(AssetsPngImages.quoteBg),
-          fit: BoxFit.cover,
-        ),
-      ),
-      child: Center(
-        child: RichText(
-          textAlign: TextAlign.center,
-          text: TextSpan(
-            text:
-                "“Progress isn’t always loud, sometimes it’s "
-                "just steady. Your pace is enough.“",
-            style: TextStyles.titleSemiBold20(context),
+    return BlocBuilder<HomeCubit, HomeState>(
+      builder: (context, state) {
+        quote = state.quote;
+        bool loading =
+            state is HomeLoadingState && state.type == HomeType.getQuote;
+        return Container(
+          margin: EdgeInsets.symmetric(horizontal: 16.w),
+          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(24.r),
+            image: DecorationImage(
+              image: AssetImage(AssetsPngImages.quoteBg),
+              fit: BoxFit.cover,
+            ),
           ),
-        ),
-      ),
+          child: Column(
+            spacing: 14.h,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              if (loading && quote.isEmpty) ...[
+                FadeShimmer(
+                  width: 250.w,
+                  height: 16.h,
+                  radius: 12.r,
+                  baseColor: AppColors.grey200,
+                  highlightColor: AppColors.grey100,
+                ),
+                FadeShimmer(
+                  width: 150.w,
+                  height: 16.h,
+                  radius: 12.r,
+                  baseColor: AppColors.grey200,
+                  highlightColor: AppColors.grey100,
+                ),
+              ] else if (quote.isEmpty)
+                RichText(
+                  textAlign: TextAlign.center,
+                  text: TextSpan(
+                    text:
+                        "“Progress isn’t always loud, sometimes it’s "
+                        "just steady. Your pace is enough.“",
+                    style: TextStyles.titleSemiBold20(context).copyWith(
+                      fontFamily: AppFonts.baloo2,
+                      fontStyle: FontStyle.italic,
+                    ),
+                  ),
+                )
+              else
+                RichText(
+                  textAlign: TextAlign.center,
+                  text: TextSpan(
+                    text: "“$quote“",
+                    style: TextStyles.titleSemiBold20(context).copyWith(
+                      fontFamily: AppFonts.baloo2,
+                      fontStyle: FontStyle.italic,
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

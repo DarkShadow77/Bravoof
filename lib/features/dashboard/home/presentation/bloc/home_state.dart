@@ -1,40 +1,62 @@
 part of 'home_cubit.dart';
 
-enum HomeType { getCampaign, getSpotlight, getReferrals }
+enum HomeType {
+  getCampaign,
+  getSpotlight,
+  getQuote,
+  getReferrals,
+  getLeaderboard,
+}
 
 @immutable
 class HomeState extends Equatable {
   final List<CampaignModel> campaign;
   final SpotlightModel spotlight;
+  final String quote;
   final List<UserProfile> referrals;
+  final LeaderboardResponseModel leaderboard;
 
   HomeState({
     required this.campaign,
     required this.spotlight,
+    required this.quote,
     required this.referrals,
+    required this.leaderboard,
   });
 
   HomeState copyWith({
     List<CampaignModel>? campaign,
     SpotlightModel? spotlight,
+    String? quote,
     List<UserProfile>? referrals,
+    LeaderboardResponseModel? leaderboard,
   }) {
     return HomeState(
       campaign: campaign ?? this.campaign,
       spotlight: spotlight ?? this.spotlight,
+      quote: quote ?? this.quote,
       referrals: referrals ?? this.referrals,
+      leaderboard: leaderboard ?? this.leaderboard,
     );
   }
 
   @override
-  List<Object?> get props => [campaign, spotlight, referrals];
+  List<Object?> get props => [
+    campaign,
+    spotlight,
+    quote,
+    referrals,
+    leaderboard,
+  ];
 }
 
 final class HomeInitialState extends HomeState {
   HomeInitialState({
     required super.campaign,
     required super.spotlight,
+    required super.quote,
     required super.referrals,
+    required super.leaderboard,
   });
 
   @override
@@ -47,7 +69,9 @@ final class HomeLoadingState extends HomeState {
     required this.type,
     required super.campaign,
     required super.spotlight,
+    required super.quote,
     required super.referrals,
+    required super.leaderboard,
   });
 
   @override
@@ -62,7 +86,9 @@ final class HomeSuccessState extends HomeState {
     required this.message,
     required super.campaign,
     required super.spotlight,
+    required super.quote,
     required super.referrals,
+    required super.leaderboard,
   });
 
   @override
@@ -77,7 +103,9 @@ final class HomeFailureState extends HomeState {
     required this.message,
     required super.campaign,
     required super.spotlight,
+    required super.quote,
     required super.referrals,
+    required super.leaderboard,
   });
 
   @override

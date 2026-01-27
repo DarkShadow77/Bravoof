@@ -7,14 +7,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
 
+import '../../../../../../core/constants/app_colors.dart';
 import '../../../../earn/presentation/widgets/leaderboard_widget.dart';
+import '../../../../home/presentation/bloc/home_cubit.dart';
 import '../../../../home/presentation/widget/referral_widget.dart';
 import '../../../../nav_bar.dart';
-import '../../../data/bloc/mission_cubit.dart';
-import '../../../data/model/rewards_summary_response.dart';
-import '../../bloc/featured_mission_bloc.dart';
-import '../../bloc/social_mission_bloc.dart';
-import '../../bloc/streak_bloc.dart';
 import '../../widget/streak_card.dart';
 import '../../widget/total_points_card.dart';
 
@@ -27,143 +24,119 @@ class EarnOverviewScreen extends StatefulWidget {
 
 class _EarnOverviewScreenState extends State<EarnOverviewScreen>
     with UIToolMixin {
-  late MissionCubit missionCubit;
-  List<RewardsSummary> rewardsSummary = [];
-
   @override
   void initState() {
     super.initState();
-    missionCubit = MissionCubit();
-    missionCubit.fetchAllUsersReward();
-    BlocProvider.of<StreakBloc>(context).add(LoadStreaksEvent());
-    BlocProvider.of<SocialMissionBloc>(context).add(LoadSocialMission());
-    BlocProvider.of<FeaturedMissionBloc>(context).add(LoadFeaturedMission());
   }
-
-  bool init = true;
 
   @override
   Widget build(BuildContext context) {
-    return MultiBlocListener(
-      listeners: [
-        BlocListener<MissionCubit, MissionState>(
-          bloc: missionCubit,
-          listener: (context, state) {
-            print(state);
-            if (state is RewardLoaded) {
-              rewardsSummary = state.rewardsSummaryResponse.rewardsSummary!;
-              setState(() {});
-            }
-
-            if (state is MissionFailed) {
-              setState(() {
-                init = false;
-              });
-            }
-          },
-        ),
-      ],
-      child: SingleChildScrollView(
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
-        child: Column(
-          children: [
-            // Flowva Points Earned Card
-            TotalPointsCard(),
-            SizedBox(height: 20.h),
-            // Missions Card
-            GestureDetector(
-              onTap: () {
-                Navigator.push(
+    return SingleChildScrollView(
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+      child: Column(
+        children: [
+          // Flowva Points Earned Card
+          TotalPointsCard(),
+          SizedBox(height: 20.h),
+          // Missions Card
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => BottomNavBar(index: 1, missionIndex: 1),
+                ),
+              );
+            },
+            behavior: HitTestBehavior.opaque,
+            child: _missionCard(),
+          ),
+          SizedBox(height: 20.h),
+          // Streak Section
+          StreakCard(),
+          SizedBox(height: 20.h),
+          // Badges Section
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                "Badges",
+                style: GoogleFonts.manrope(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+              GestureDetector(
+                onTap: () => Navigator.push(
                   context,
-                  MaterialPageRoute(
-                    builder: (_) => BottomNavBar(index: 1, missionIndex: 1),
+                  MaterialPageRoute(builder: (ctx) => BadgesScreen()),
+                ),
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                  decoration: BoxDecoration(
+                    color: AppColors.white50,
+                    borderRadius: BorderRadius.circular(50),
+                    border: Border.all(color: Color(0xFFE9E9E9)),
                   ),
-                );
-              },
-              behavior: HitTestBehavior.opaque,
-              child: _missionCard(),
-            ),
-            SizedBox(height: 20.h),
-            // Streak Section
-            StreakCard(),
-            SizedBox(height: 20.h),
-            // Badges Section
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  child: Text(
+                    "See more",
+                    style: GoogleFonts.manrope(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF191919),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+
+          SizedBox(
+            height: 80,
+            child: ListView(
+              scrollDirection: Axis.horizontal,
               children: [
-                Text(
-                  "Badges",
-                  style: GoogleFonts.manrope(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                  ),
+                Image.asset(
+                  "assets/images/reward_scholar.png",
+                  fit: BoxFit.fitHeight,
                 ),
-                GestureDetector(
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (ctx) => BadgesScreen()),
-                  ),
-                  child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.5),
-                      borderRadius: BorderRadius.circular(50),
-                      border: Border.all(color: Color(0xFFE9E9E9)),
-                    ),
-                    child: Text(
-                      "See more",
-                      style: GoogleFonts.manrope(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xFF191919),
-                      ),
-                    ),
-                  ),
+                Image.asset(
+                  "assets/images/reward_sci.png",
+                  fit: BoxFit.fitHeight,
                 ),
+                Image.asset("assets/images/hidden_reward.png", height: 50),
+                Image.asset("assets/images/hidden_reward.png", height: 50),
+                Image.asset("assets/images/hidden_reward.png", height: 50),
               ],
             ),
-            const SizedBox(height: 12),
-
-            SizedBox(
-              height: 80,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: [
-                  Image.asset(
-                    "assets/images/reward_scholar.png",
-                    fit: BoxFit.fitHeight,
-                  ),
-                  Image.asset(
-                    "assets/images/reward_sci.png",
-                    fit: BoxFit.fitHeight,
-                  ),
-                  Image.asset("assets/images/hidden_reward.png", height: 50),
-                  Image.asset("assets/images/hidden_reward.png", height: 50),
-                  Image.asset("assets/images/hidden_reward.png", height: 50),
-                ],
+          ),
+          const SizedBox(height: 20),
+          Center(
+            child: Text(
+              "Your badges tell your story.",
+              style: GoogleFonts.manrope(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+                color: Color(0xFFA5A5A5),
               ),
             ),
-            const SizedBox(height: 20),
-            Center(
-              child: Text(
-                "Your badges tell your story.",
-                style: GoogleFonts.manrope(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: Color(0xFFA5A5A5),
-                ),
-              ),
-            ),
-            SizedBox(height: 20.h),
-            // Referral card
-            ReferralCard(),
-            SizedBox(height: 20.h),
-            rewardsSummary.isNotEmpty && rewardsSummary.length > 2
-                ? LeaderboardPage(rewardsSummary: rewardsSummary)
-                : Container(),
-            SizedBox(height: 20.h),
-          ],
-        ),
+          ),
+          SizedBox(height: 20.h),
+          // Referral card
+          ReferralCard(),
+          SizedBox(height: 20.h),
+          BlocBuilder<HomeCubit, HomeState>(
+            builder: (context, state) {
+              final leaderboard = state.leaderboard.leaderboard;
+              if (leaderboard.isNotEmpty && leaderboard.length > 2)
+                return LeaderboardPage();
+              else
+                return SizedBox.shrink();
+            },
+          ),
+          SizedBox(height: 20.h),
+        ],
       ),
     );
   }

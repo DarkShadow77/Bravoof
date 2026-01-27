@@ -14,6 +14,8 @@ class UserProfile {
   String referrerName;
   int referralCount;
   int totalPoints;
+  int totalEarned;
+  int totalSpent;
   int basePoints;
   int currentStreak;
   bool isBanned;
@@ -43,6 +45,8 @@ class UserProfile {
     required this.referrerName,
     required this.profilePic,
     required this.totalPoints,
+    required this.totalEarned,
+    required this.totalSpent,
     required this.missionsCompleted,
     required this.basePoints,
     required this.referralCount,
@@ -76,6 +80,8 @@ class UserProfile {
       referrerName: '',
       profilePic: '',
       totalPoints: 0,
+      totalEarned: 0,
+      totalSpent: 0,
       missionsCompleted: 0,
       basePoints: 1,
       referralCount: 0,
@@ -109,6 +115,8 @@ class UserProfile {
     String? referrerName,
     String? profilePic,
     int? totalPoints,
+    int? totalEarned,
+    int? totalSpent,
     int? missionsCompleted,
     int? basePoints,
     int? referralCount,
@@ -141,6 +149,8 @@ class UserProfile {
       referrerName: referrerName ?? this.referrerName,
       profilePic: profilePic ?? this.profilePic,
       totalPoints: totalPoints ?? this.totalPoints,
+      totalEarned: totalEarned ?? this.totalEarned,
+      totalSpent: totalSpent ?? this.totalSpent,
       missionsCompleted: missionsCompleted ?? this.missionsCompleted,
       basePoints: basePoints ?? this.basePoints,
       referralCount: referralCount ?? this.referralCount,
@@ -181,6 +191,8 @@ class UserProfile {
       referrerName: json['referrer_name'] ?? '',
       referralCount: json['referral_count'] ?? 0,
       totalPoints: json['total_points'] ?? 0,
+      totalEarned: json['total_earned'] ?? 0,
+      totalSpent: json['total_spent'] ?? 0,
       basePoints: json['base_point'] ?? 1,
       currentStreak: json['current_streak'] ?? 0,
       isBanned: json['is_banned'] ?? false,
