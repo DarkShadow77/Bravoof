@@ -78,6 +78,7 @@ class AppColors {
   static Color get black15 => black.withValues(alpha: .15);
   static Color get black10 => black.withValues(alpha: .10);
   static Color get black05 => black.withValues(alpha: .05);
+  static Color get black03 => black.withValues(alpha: .03);
 
   //State-Colors ---White
   static const Color white = Color(0xFFFFFFFF);
@@ -99,7 +100,7 @@ class AppColors {
   static Color get white03 => white.withValues(alpha: .03);
 
   //State-Colors ---Error
-  static const Color error = Color(0xFFDC0D18);
+  static const Color error = Color(0xFFB60000);
   static Color get error70 => error.withValues(alpha: .70);
   static Color get error50 => error.withValues(alpha: .50);
   static Color get error39 => error.withValues(alpha: .39);

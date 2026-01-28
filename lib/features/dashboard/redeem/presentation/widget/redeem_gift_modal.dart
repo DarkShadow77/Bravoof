@@ -23,6 +23,8 @@ Future redeemGiftModal({
     ignoreSafeArea: true,
     isDismissible: true,
     enableDrag: true,
+    backgroundColor: Colors.transparent,
+    barrierColor: Colors.transparent,
     enterBottomSheetDuration: const Duration(milliseconds: 200),
     exitBottomSheetDuration: const Duration(milliseconds: 200),
     RedeemGiftModal(onPressed: onPressed, showPhone: showPhone),

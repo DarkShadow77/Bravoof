@@ -13,7 +13,9 @@ part 'profile_state.dart';
 
 class ProfileBloc extends HydratedBloc<ProfileEvent, ProfileState> {
   final ProfileRepository repo;
+
   Logger logger = Logger();
+  final supabase = Supabase.instance.client;
 
   ProfileBloc({required this.repo})
     : super(ProfileInitialState(profile: UserProfile.empty())) {
@@ -21,6 +23,7 @@ class ProfileBloc extends HydratedBloc<ProfileEvent, ProfileState> {
     on<UpdateProfileEvent>(_onUpdateProfile);
     on<UpdateCoverPicEvent>(_onUpdateCoverPic);
     on<UpdateLocationEvent>(_onUpdateLocation);
+    on<DeleteAccountEvent>(_onDeleteAccount);
     on<SaveFCMTokenEvent>(_onSaveFCMToken);
     on<DeleteFCMTokenEvent>(_onDeleteFCMToken);
     on<SendNotificationEvent>(_onSendNotification);
@@ -176,6 +179,46 @@ class ProfileBloc extends HydratedBloc<ProfileEvent, ProfileState> {
           ProfileSuccessState(
             type: ProfileType.updateLocation,
             message: "Location updated successfully",
+            profile: state.profile,
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _onDeleteAccount(
+    DeleteAccountEvent event,
+    Emitter<ProfileState> emit,
+  ) async {
+    emit(
+      ProfileLoadingState(
+        type: ProfileType.deleteAccount,
+        profile: state.profile,
+      ),
+    );
+
+    final response = await repo.deleteAccount(
+      userId: supabase.auth.currentUser!.id,
+      reason: event.reason,
+    );
+
+    response.fold(
+      (failure) {
+        logger.e("Failed to Delete Account");
+        emit(
+          ProfileFailureState(
+            type: ProfileType.deleteAccount,
+            message: failure,
+            profile: state.profile,
+          ),
+        );
+      },
+      (user) {
+        logger.t(user);
+        emit(
+          ProfileSuccessState(
+            type: ProfileType.deleteAccount,
+            message: user,
             profile: state.profile,
           ),
         );

@@ -1,4 +1,4 @@
-import 'dart:ui';
+import 'dart:io';
 
 import 'package:Bravoo/app/view/widgets/button/icon_text_button.dart';
 import 'package:Bravoo/core/constants/app_assets.dart';
@@ -65,212 +65,195 @@ class _AuthModalState extends State<AuthModal> with UIToolMixin {
 
   @override
   Widget build(BuildContext ctx) {
-    return Stack(
-      children: [
-        BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 10.r, sigmaY: 10.r),
-          child: Container(color: AppColors.black50),
-        ),
-        Align(
-          alignment: Alignment.bottomCenter,
-          child: ShowModalSheet(
-            maxHeight: 700.h,
-
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.w),
-              child: Form(
-                key: widget.formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    SizedBox(height: 10.h),
-                    Row(
-                      spacing: 20.w,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          height: 6.h,
-                          width: 60.w,
-                          decoration: BoxDecoration(
-                            color: AppColors.grey300,
-                            borderRadius: BorderRadius.circular(24.r),
-                          ),
-                        ),
-                      ],
+    return ShowModalSheet(
+      maxHeight: 700.h,
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 16.w),
+        child: Form(
+          key: widget.formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(height: 10.h),
+              Row(
+                spacing: 20.w,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    height: 6.h,
+                    width: 60.w,
+                    decoration: BoxDecoration(
+                      color: AppColors.grey300,
+                      borderRadius: BorderRadius.circular(24.r),
                     ),
-                    SizedBox(height: 20.h),
-                    RichText(
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      text: TextSpan(
-                        text: "Continue to ${isLogin ? "log in" : "sign up"}",
-                        style: TextStyles.titleMedium20(context),
-                      ),
-                    ),
-                    SizedBox(height: 4.h),
-                    RichText(
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      text: TextSpan(
-                        text: "Let’s get you started.",
-                        style: TextStyles.normalRegular14(
-                          context,
-                          opacity: .65,
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 20.h),
-                    AppTextFeild(
-                      controller: email,
-                      hintText: "Email address",
-                      validator: MultiValidator([
-                        RequiredValidator(errorText: "Email is required"),
-                        EmailValidator(errorText: "Invalid email address"),
-                      ]).call,
-                    ),
-                    SizedBox(height: 8.h),
-                    AppPassword(pass: pass, hintText: 'Password'),
-
-                    SizedBox(height: 8.h),
-                    ValueListenableBuilder(
-                      valueListenable: widget.isSending,
-                      builder: (context, val, _) {
-                        return IconTextButton(
-                          onPressed: () => widget.apply({
-                            "isLogin": isLogin,
-                            "email": email.text.trim(),
-                            "pass": pass.text.trim(),
-                          }),
-                          height: 56.h,
-                          text: "Continue",
-                          color: AppColors.black,
-                          textColor: AppColors.white,
-                          buttonState: val
-                              ? AppButtonState.loading
-                              : AppButtonState.idle,
-                        );
-                      },
-                    ),
-                    SizedBox(height: 10.h),
-                    if (isLogin) ...[
-                      GestureDetector(
-                        onTap: () {
-                          showModalBottomSheet(
-                            context: context,
-                            isScrollControlled: true,
-                            barrierColor: Colors.transparent,
-                            backgroundColor: Colors.transparent,
-                            shape: const RoundedRectangleBorder(
-                              borderRadius: BorderRadius.vertical(
-                                top: Radius.circular(30),
-                              ),
-                            ),
-                            builder: (_) => ForgotPassword(),
-                          );
-                        },
-                        child: Align(
-                          alignment: Alignment.topRight,
-                          child: RichText(
-                            text: TextSpan(
-                              text: "Forgot your password?",
-                              style: TextStyles.normalMedium14(
-                                context,
-                              ).copyWith(color: AppColors.primary),
-                            ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(height: 20.h),
-                    ],
-                    Row(
-                      spacing: 8.w,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Expanded(
-                          child: Divider(height: 1.h, color: AppColors.grey200),
-                        ),
-                        RichText(
-                          text: TextSpan(
-                            text: "OR",
-                            style: TextStyles.smallMedium12(
-                              context,
-                              opacity: .65,
-                            ),
-                          ),
-                        ),
-                        Expanded(
-                          child: Divider(height: 1.h, color: AppColors.grey200),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 16.h),
-                    IconTextButton(
-                      onPressed: () => widget.apply({"loginMethod": "Google"}),
-                      height: 56.h,
-                      spacing: 30,
-                      iconSize: 20,
-                      text: "Continue with Google",
-                      icon: AssetsSvgIcons.google,
-                    ),
-                    SizedBox(height: 8.h),
-                    IconTextButton(
-                      onPressed: () => widget.apply({"loginMethod": "Apple"}),
-                      height: 56.h,
-                      spacing: 30,
-                      iconSize: 20,
-                      text: "Continue with Apple",
-                      icon: AssetsSvgIcons.apple,
-                    ),
-                    SizedBox(height: 22.h),
-                    RichText(
-                      textAlign: TextAlign.center,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      text: TextSpan(
-                        children: [
-                          TextSpan(
-                            text: isLogin
-                                ? "Don't have an account? "
-                                : "Already have an account? ",
-                          ),
-                          TextSpan(
-                            text: isLogin ? "Sign up" : "Login",
-                            style: TextStyle(
-                              color: AppColors.primary,
-                              fontWeight: FontWeight.bold,
-                            ),
-                            recognizer: TapGestureRecognizer()
-                              ..onTap = () {
-                                setState(() {
-                                  isLogin = !isLogin;
-                                });
-                              },
-                          ),
-                        ],
-                        style: TextStyles.normalRegular14(context, opacity: .5),
-                      ),
-                    ),
-                    SizedBox(height: 8.h),
-                    RichText(
-                      textAlign: TextAlign.center,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      text: TextSpan(
-                        text: "By continuing you agree to the Rules and Policy",
-                        style: TextStyles.normalRegular14(context, opacity: .5),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 20.h + MediaQuery.of(context).viewPadding.bottom,
-                    ),
-                  ],
+                  ),
+                ],
+              ),
+              SizedBox(height: 20.h),
+              RichText(
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                text: TextSpan(
+                  text: "Continue to ${isLogin ? "log in" : "sign up"}",
+                  style: TextStyles.titleMedium20(context),
                 ),
               ),
-            ),
+              SizedBox(height: 4.h),
+              RichText(
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                text: TextSpan(
+                  text: "Let’s get you started.",
+                  style: TextStyles.normalRegular14(context, opacity: .65),
+                ),
+              ),
+              SizedBox(height: 20.h),
+              AppTextFeild(
+                controller: email,
+                hintText: "Email address",
+                validator: MultiValidator([
+                  RequiredValidator(errorText: "Email is required"),
+                  EmailValidator(errorText: "Invalid email address"),
+                ]).call,
+              ),
+              SizedBox(height: 8.h),
+              AppPassword(pass: pass, hintText: 'Password'),
+              SizedBox(height: 8.h),
+              ValueListenableBuilder(
+                valueListenable: widget.isSending,
+                builder: (context, val, _) {
+                  return IconTextButton(
+                    onPressed: () => widget.apply({
+                      "isLogin": isLogin,
+                      "email": email.text.trim(),
+                      "pass": pass.text.trim(),
+                    }),
+                    height: 56.h,
+                    text: "Continue",
+                    color: AppColors.black,
+                    textColor: AppColors.white,
+                    buttonState: val
+                        ? AppButtonState.loading
+                        : AppButtonState.idle,
+                  );
+                },
+              ),
+              SizedBox(height: 10.h),
+              if (isLogin) ...[
+                GestureDetector(
+                  onTap: () {
+                    showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: true,
+                      barrierColor: Colors.transparent,
+                      backgroundColor: Colors.transparent,
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.vertical(
+                          top: Radius.circular(30),
+                        ),
+                      ),
+                      builder: (_) => ForgotPassword(),
+                    );
+                  },
+                  child: Align(
+                    alignment: Alignment.topRight,
+                    child: RichText(
+                      text: TextSpan(
+                        text: "Forgot your password?",
+                        style: TextStyles.normalMedium14(
+                          context,
+                        ).copyWith(color: AppColors.primary),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 20.h),
+              ],
+              Row(
+                spacing: 8.w,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Expanded(
+                    child: Divider(height: 1.h, color: AppColors.grey200),
+                  ),
+                  RichText(
+                    text: TextSpan(
+                      text: "OR",
+                      style: TextStyles.smallMedium12(context, opacity: .65),
+                    ),
+                  ),
+                  Expanded(
+                    child: Divider(height: 1.h, color: AppColors.grey200),
+                  ),
+                ],
+              ),
+              SizedBox(height: 16.h),
+              IconTextButton(
+                onPressed: () => widget.apply({"loginMethod": "Google"}),
+                height: 56.h,
+                spacing: 30,
+                iconSize: 20,
+                text: "Continue with Google",
+                icon: AssetsSvgIcons.google,
+              ),
+              if (Platform.isIOS) ...[
+                SizedBox(height: 8.h),
+                IconTextButton(
+                  onPressed: () => widget.apply({"loginMethod": "Apple"}),
+                  height: 56.h,
+                  spacing: 30,
+                  iconSize: 20,
+                  text: "Continue with Apple",
+                  icon: AssetsSvgIcons.apple,
+                ),
+              ],
+              SizedBox(height: 22.h),
+              RichText(
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                      text: isLogin
+                          ? "Don't have an account? "
+                          : "Already have an account? ",
+                    ),
+                    TextSpan(
+                      text: isLogin ? "Sign up" : "Login",
+                      style: TextStyle(
+                        color: AppColors.primary,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () {
+                          setState(() {
+                            isLogin = !isLogin;
+                          });
+                        },
+                    ),
+                  ],
+                  style: TextStyles.normalRegular14(context, opacity: .5),
+                ),
+              ),
+              SizedBox(height: 8.h),
+              RichText(
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                text: TextSpan(
+                  text: "By continuing you agree to the Rules and Policy",
+                  style: TextStyles.normalRegular14(context, opacity: .5),
+                ),
+              ),
+              SizedBox(
+                height: 20.h + MediaQuery.of(context).viewPadding.bottom,
+              ),
+            ],
           ),
         ),
-      ],
+      ),
     );
   }
 }

@@ -122,6 +122,7 @@ class _ReferralContestScreenState extends State<ReferralContestScreen> {
                         Container(
                           clipBehavior: Clip.antiAlias,
                           margin: EdgeInsets.only(top: 194.h),
+                          padding: EdgeInsets.symmetric(horizontal: 16.w),
                           decoration: BoxDecoration(
                             color: AppColors.white.withValues(alpha: .08),
                             borderRadius: BorderRadius.circular(16.r),
@@ -137,7 +138,7 @@ class _ReferralContestScreenState extends State<ReferralContestScreen> {
                               TimerWidget(
                                 campaignEndDate: widget.campaignEndDate,
                               ),
-                              SizedBox(height: 24.h),
+                              SizedBox(height: 44.h),
                               Image.asset(
                                 AssetsPngImages.speaker,
                                 width: 36.5.w,
@@ -148,7 +149,7 @@ class _ReferralContestScreenState extends State<ReferralContestScreen> {
                               RichText(
                                 textAlign: TextAlign.center,
                                 text: TextSpan(
-                                  text: "QUALIFICATION RULE",
+                                  text: "CONTEST RULES",
                                   style: TextStyles.bodyRegular16(context)
                                       .copyWith(
                                         fontFamily: AppFonts.baloo,
@@ -161,7 +162,10 @@ class _ReferralContestScreenState extends State<ReferralContestScreen> {
                                 textAlign: TextAlign.center,
                                 text: TextSpan(
                                   text:
-                                      "Invite at least 2 friends who sign up\nthrough your link to qualify.",
+                                      "i). Invite at least two friends to join Bravoo to qualify. \n"
+                                      "ii). All qualified entrants receive 50 coins. \n"
+                                      "iii).One winner receives AirPods and 500 coins. \n"
+                                      "iv). The contest is hosted solely by Bravoo and not affiliated with Apple.",
                                   style: TextStyles.smallSemibold12(context)
                                       .copyWith(
                                         color: AppColors.white.withValues(
@@ -548,7 +552,7 @@ class _ReferralContainerState extends State<ReferralContainer> {
           ],
           child: Container(
             width: double.infinity,
-            margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 20.h),
+            margin: EdgeInsets.symmetric(vertical: 20.h),
             padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
             decoration: BoxDecoration(
               color: AppColors.white.withValues(alpha: .2),
@@ -593,34 +597,12 @@ class _ReferralContainerState extends State<ReferralContainer> {
                     onPressed: () => priceDetailsDialog(
                       campaignEndDate: widget.campaignEndDate,
                     ),
-
                     text: "See Prize Details",
                     color: AppColors.white.withValues(alpha: .16),
                     textColor: AppColors.white,
                   ),
                 ],
 
-                // FlowvaButton.greenButton(
-                //         color: Colors.white,
-                //         // buttonColor: Color(0xFF008753),
-                //         icon: Icon(
-                //           Icons.check_circle,
-                //           color: Colors.white,
-                //         ),
-                //         name: "Invite Friends Now",
-                //         apply: () {
-                //           setState(() {
-                //             onClick = false;
-                //           });
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(
-                //     builder: (ctx) =>
-                //         DeliveryAddressScreen(),
-                //   ),
-                // );
-                // },
-                // ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -650,7 +632,7 @@ class _ReferralContainerState extends State<ReferralContainer> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 CachedImageRadius(
-                                  imageUrl: user.profilePic ?? "",
+                                  imageUrl: user.profilePic,
                                   size: 24.r,
                                   circle: true,
                                   color: AppColors.white10,
@@ -832,21 +814,21 @@ class _ReferralContainerState extends State<ReferralContainer> {
                       child: SocialBox(
                         icon: AssetsPngImages.whatsapp,
                         subTitle: "Whatsapp",
-                        onTap: () => shareToWhatsApp(userProfile.referralCode!),
+                        onTap: () => shareToWhatsApp(userProfile.referralCode),
                       ),
                     ),
                     Expanded(
                       child: SocialBox(
                         icon: AssetsPngImages.x,
                         subTitle: "X(Twitter)",
-                        onTap: () => shareToX(userProfile.referralCode!),
+                        onTap: () => shareToX(userProfile.referralCode),
                       ),
                     ),
                     Expanded(
                       child: SocialBox(
                         icon: AssetsPngImages.linkedIn,
                         subTitle: "LinkedIn",
-                        onTap: () => shareToLinkedIn(userProfile.referralCode!),
+                        onTap: () => shareToLinkedIn(userProfile.referralCode),
                       ),
                     ),
                   ],

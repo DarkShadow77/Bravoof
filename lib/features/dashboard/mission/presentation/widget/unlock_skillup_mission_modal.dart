@@ -18,6 +18,8 @@ Future unlockSkillUpMissionModal({
     ignoreSafeArea: true,
     isDismissible: true,
     enableDrag: true,
+    backgroundColor: Colors.transparent,
+    barrierColor: Colors.transparent,
     enterBottomSheetDuration: const Duration(milliseconds: 200),
     exitBottomSheetDuration: const Duration(milliseconds: 200),
     UnlockSkillUpMissionModal(onCoin: onCoin, onVideo: onVideo),

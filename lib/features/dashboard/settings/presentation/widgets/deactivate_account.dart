@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 import 'package:Bravoo/features/common/flowva_button.dart';
-import 'package:Bravoo/features/dashboard/settings/presentation/pages/deactivation_page.dart';
+import 'package:Bravoo/features/dashboard/settings/presentation/pages/deactivate_account_page.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
@@ -179,7 +179,8 @@ class _DeactivateAccountWidgetState extends State<DeactivateAccountWidget> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (ctx) => DeactivationPage(),
+                              builder: (ctx) =>
+                                  DeactivateAccountPage(reason: ""),
                             ),
                           );
                         },

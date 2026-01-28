@@ -111,6 +111,18 @@ class ProfileRepositoryImpl extends ProfileRepository {
     );
   }
 
+  Future<Either<String, String>> deleteAccount({
+    required String userId,
+    required String reason,
+  }) async {
+    return ApiService.instance!.invokeEdgeFunction<String>(
+      functionName: 'user-delete-account',
+      body: {"userId": userId, "reason": reason},
+      fallbackErrorMessage: "Failed to Delete User Account",
+      onSuccess: (data) => "Account deleted successfully",
+    );
+  }
+
   Future<Either<String, void>> saveFCMToken() async {
     return ApiService.instance!.invokeEdgeFunction<void>(
       functionName: 'save-fcm-token',

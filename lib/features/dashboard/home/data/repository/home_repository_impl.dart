@@ -5,6 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../../core/services/api_service.dart';
 import '../../../../onbaording/data/model/user_profile.dart';
 import '../model/leaderboard_response_model.dart';
+import '../model/quote_model.dart';
 import '../model/spotlight_model.dart';
 import 'home_repository.dart';
 
@@ -32,12 +33,12 @@ class HomeRepositoryImpl extends HomeRepository {
     );
   }
 
-  Future<Either<String, String>> fetchQuote() async {
-    return ApiService.instance!.invokeEdgeFunction<String>(
+  Future<Either<String, QuoteModel>> fetchQuote() async {
+    return ApiService.instance!.invokeEdgeFunction<QuoteModel>(
       functionName: 'fetch-quote',
       body: {},
       fallbackErrorMessage: 'Failed to Retrieve Quote',
-      onSuccess: (data) => data["data"]["quote"],
+      onSuccess: (data) => QuoteModel.fromJson(data["data"]),
     );
   }
 

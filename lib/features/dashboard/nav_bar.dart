@@ -75,9 +75,9 @@ class _BottomNavBarState extends State<BottomNavBar> {
 
     if (currentIndex == 0) {
       /*  context.read<HomeCubit>().fetchCampaigns();
-      context.read<HomeCubit>().fetchSpotlight();
-      context.read<HomeCubit>().fetchQuote();*/
-      context.read<HomeCubit>().fetchLeaderboard();
+      context.read<HomeCubit>().fetchSpotlight();*/
+      context.read<HomeCubit>().fetchQuote();
+      // context.read<HomeCubit>().fetchLeaderboard();
       // context.read<HomeCubit>().getUserReferrals();
     }
   }
@@ -87,7 +87,6 @@ class _BottomNavBarState extends State<BottomNavBar> {
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Scaffold(
-        //,DiscoverScreen(),LibraryScreen(),
         body: IndexedStack(
           index: currentIndex,
           children: [

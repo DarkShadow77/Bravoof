@@ -5,6 +5,7 @@ enum ProfileType {
   updateProfile,
   updateCoverPic,
   updateLocation,
+  deleteAccount,
   logout,
   saveFcmToken,
   deleteFcmToken,

@@ -11,6 +11,10 @@ abstract class ProfileRepository {
   });
   Future<Either<String, void>> updateCoverPic({required File imageFile});
   Future<Either<String, void>> updateLocation();
+  Future<Either<String, String>> deleteAccount({
+    required String userId,
+    required String reason,
+  });
   Future<Either<String, void>> saveFCMToken();
   Future<Either<String, void>> deleteFCMToken();
   Future<Either<String, void>> sendPushNotification();

@@ -129,7 +129,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     children: [
                       CachedImageSize(
                         imageUrl: userProfile.coverPic,
-                        fit: BoxFit.fill,
+                        fit: BoxFit.cover,
                         width: double.infinity,
                         height: 140.h,
                         borderRadius: 12,
@@ -232,6 +232,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     style: TextStyles.bodySemiBold16(context),
                   ),
                 ),
+                SizedBox(height: 5.h),
                 RichText(
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
@@ -240,7 +241,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     style: TextStyles.smallMedium12(context, opacity: .5),
                   ),
                 ),
-                SizedBox(height: 25.h),
+                SizedBox(height: 15.h),
                 Container(
                   // width: double.infinity,
                   padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8),

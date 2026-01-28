@@ -13,6 +13,8 @@ import 'package:hugeicons/hugeicons.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../utility/ui_tool_mix.dart';
 import '../../../settings/presentation/pages/help_page.dart';
+import '../../../settings/presentation/pages/legal_page.dart';
+import '../../../settings/presentation/pages/login_and_security_page.dart';
 import '../../../settings/presentation/pages/notification_settings_page.dart';
 
 class SettingsPage extends StatelessWidget with UIToolMixin {
@@ -94,7 +96,7 @@ class SettingsPage extends StatelessWidget with UIToolMixin {
                   ),
                 ),
 
-                /* const Divider(height: 1, color: Color(0xFFF1F1F1)),
+                const Divider(height: 1, color: Color(0xFFF1F1F1)),
                 buildTile(
                   HugeIcon(
                     icon: HugeIcons.strokeRoundedUserShield01,
@@ -109,7 +111,7 @@ class SettingsPage extends StatelessWidget with UIToolMixin {
                       builder: (ctx) => LoginAndSecurityScreen(),
                     ),
                   ),
-                ),*/
+                ),
                 // const Divider(height: 1, color: Color(0xFFF1F1F1)),
                 // buildTile(
                 //   HugeIcon(icon: HugeIcons.strokeRoundedSquareLock01,color: Color(0xFF191919),strokeWidth: 2, size: 20),
@@ -158,8 +160,8 @@ class SettingsPage extends StatelessWidget with UIToolMixin {
                     MaterialPageRoute(builder: (ctx) => HelpPage()),
                   ),
                 ),
-                /*  const Divider(height: 1, color: Color(0xFFF1F1F1)),
-             buildTile(
+                const Divider(height: 1, color: Color(0xFFF1F1F1)),
+                buildTile(
                   HugeIcon(
                     icon: HugeIcons.strokeRoundedLegalDocument01,
                     strokeWidth: 2,
@@ -169,12 +171,9 @@ class SettingsPage extends StatelessWidget with UIToolMixin {
                   "Legal and Terms",
                   apply: () => Navigator.push(
                     context,
-                    MaterialPageRoute(
-                      builder: (ctx) => LoginAndSecurityScreen(),
-                    ),
+                    MaterialPageRoute(builder: (ctx) => LegalPage()),
                   ),
                 ),
-                const SizedBox(height: 10),*/
                 const Divider(height: 1, color: Color(0xFFF1F1F1)),
                 ListTile(
                   leading: SvgPicture.asset(
@@ -259,12 +258,6 @@ class SettingsPage extends StatelessWidget with UIToolMixin {
                         color: Colors.black,
                         apply: () {
                           context.read<ProfileBloc>().add(LogoutProfileEvent());
-                          showMessage(
-                            "You've been Logged out",
-                            context,
-                            color: Colors.green,
-                            styleColor: Colors.white,
-                          );
                           Navigator.pushAndRemoveUntil(
                             context,
                             MaterialPageRoute(

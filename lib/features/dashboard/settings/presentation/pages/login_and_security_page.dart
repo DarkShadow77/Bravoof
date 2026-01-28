@@ -1,9 +1,7 @@
-import 'package:Bravoo/features/dashboard/settings/presentation/widgets/connected_device_widget.dart';
-import 'package:Bravoo/features/dashboard/settings/presentation/widgets/create_password.dart';
-import 'package:Bravoo/features/dashboard/settings/presentation/widgets/deactivate_account.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:hugeicons/hugeicons.dart';
+
+import '../widgets/deactivate_account_modal.dart';
 
 class LoginAndSecurityScreen extends StatefulWidget {
   const LoginAndSecurityScreen({Key? key}) : super(key: key);
@@ -40,7 +38,7 @@ class _LoginAndSecurityScreenState extends State<LoginAndSecurityScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         children: [
           // Logging in section
-          const SectionTitle(title: "Logging in"),
+          /*const SectionTitle(title: "Logging in"),
 
           CustomTile(
             title: "Password",
@@ -86,7 +84,7 @@ class _LoginAndSecurityScreenState extends State<LoginAndSecurityScreen> {
             },
           ),
 
-          const SizedBox(height: 16),
+          const SizedBox(height: 16),*/
 
           // Account section
           const SectionTitle(title: "Account"),
@@ -124,14 +122,7 @@ class _LoginAndSecurityScreenState extends State<LoginAndSecurityScreen> {
                 ),
                 TextButton(
                   onPressed: () {
-                    showModalBottomSheet(
-                      context: context,
-                      isScrollControlled: true,
-                      barrierColor: Colors.transparent,
-                      backgroundColor: Colors.transparent,
-                      // important for blur
-                      builder: (_) => DeactivateAccountWidget(),
-                    );
+                    deactivateAccountModal();
                   },
                   child: Text(
                     "Deactivate",
@@ -178,7 +169,7 @@ class CustomTile extends StatelessWidget {
   final String? subtitle;
   final Widget? trailing;
   final Widget? leading;
-  Function() apply;
+  final Function() apply;
 
   CustomTile({
     super.key,

@@ -9,6 +9,7 @@ import 'package:meta/meta.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../onbaording/data/model/user_profile.dart';
+import '../../data/model/quote_model.dart';
 
 part 'home_state.dart';
 
@@ -21,7 +22,7 @@ class HomeCubit extends Cubit<HomeState> {
           campaign: [],
           spotlight: SpotlightModel.empty(),
           referrals: [],
-          quote: "",
+          quote: QuoteModel.empty(),
           leaderboard: LeaderboardResponseModel.empty(),
         ),
       );
@@ -115,17 +116,16 @@ class HomeCubit extends Cubit<HomeState> {
   }
 
   void fetchQuote() async {
-    if (state.quote.isEmpty)
-      emit(
-        HomeLoadingState(
-          type: HomeType.getQuote,
-          campaign: state.campaign,
-          spotlight: state.spotlight,
-          quote: state.quote,
-          referrals: state.referrals,
-          leaderboard: state.leaderboard,
-        ),
-      );
+    emit(
+      HomeLoadingState(
+        type: HomeType.getQuote,
+        campaign: state.campaign,
+        spotlight: state.spotlight,
+        quote: state.quote,
+        referrals: state.referrals,
+        leaderboard: state.leaderboard,
+      ),
+    );
 
     final either = await homeRepository.fetchQuote();
 
@@ -146,7 +146,7 @@ class HomeCubit extends Cubit<HomeState> {
         emit(
           HomeSuccessState(
             type: HomeType.getQuote,
-            message: "Spotlight Got Successfully",
+            message: "Quotes Got Successfully",
             campaign: state.campaign,
             quote: quote,
             spotlight: state.spotlight,

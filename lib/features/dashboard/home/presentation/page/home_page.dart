@@ -16,7 +16,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
 
 import '../../../../../core/constants/app_colors.dart';
-import '../../../mission/data/bloc/mission_cubit.dart';
 import '../../../mission/presentation/widget/mission_list_title.dart';
 import '../../../nav_bar.dart';
 import '../bloc/home_cubit.dart';
@@ -34,7 +33,6 @@ class FlowvaHomePage extends StatefulWidget {
 }
 
 class _FlowvaHomePageState extends State<FlowvaHomePage> with UIToolMixin {
-  late MissionCubit missionCubit;
   final sessionManager = SessionManager();
   UserProfile userProfile = UserProfile.empty();
   late ProfileBloc profileBloc;
@@ -241,26 +239,6 @@ class _FlowvaHomePageState extends State<FlowvaHomePage> with UIToolMixin {
                                                   ),
                                                 ),
                                               ),
-                                              // Positioned(
-                                              //   top: 15,
-                                              //   right: 0,
-                                              //
-                                              //   child: CircleAvatar(
-                                              //     radius: 10,
-                                              //     backgroundColor: Color(
-                                              //       0xFFB60000,
-                                              //     ),
-                                              //     child: Text(
-                                              //       missions.skip(3).toList().length.toString(),
-                                              //       style: GoogleFonts.baloo2(
-                                              //         fontSize: 14,
-                                              //         fontWeight:
-                                              //             FontWeight.w700,
-                                              //         color: Colors.white,
-                                              //       ),
-                                              //     ),
-                                              //   ),
-                                              // ),
                                             ],
                                           ),
                                         ),
@@ -299,119 +277,6 @@ class _FlowvaHomePageState extends State<FlowvaHomePage> with UIToolMixin {
                     ),
                   ],
                 ),
-                // Positioned(
-                //   left: 20,
-                //   right: 0,
-                //   bottom:
-                //       0, // same base as the button so glow sits behind it
-                //   child: Center(
-                //     child: SizedBox(
-                //       width: 100,
-                //       height: 60,
-                //       child: Stack(
-                //         alignment: Alignment.center,
-                //         children: [
-                //           // Purple soft central glow
-                //           Container(
-                //             width: 100,
-                //             height: 40,
-                //             decoration: BoxDecoration(
-                //               color: Colors.transparent,
-                //               borderRadius: BorderRadius.circular(60),
-                //               boxShadow: [
-                //                 BoxShadow(
-                //                   color: const Color(
-                //                     0xFF7367F0,
-                //                   ).withOpacity(0.5),
-                //                   blurRadius: 20,
-                //                   spreadRadius: 6,
-                //                 ),
-                //               ],
-                //             ),
-                //           ),
-                //
-                //           // Red/pink subtle offset glow (left side)
-                //           Positioned(
-                //             left: 0,
-                //             right: 20,
-                //             child: Container(
-                //               width: 120,
-                //               height: 60,
-                //               decoration: BoxDecoration(
-                //                 color: Colors.transparent,
-                //                 borderRadius: BorderRadius.circular(60),
-                //                 boxShadow: [
-                //                   BoxShadow(
-                //                     color: const Color(
-                //                       0xFFFF8A80,
-                //                     ).withOpacity(0.5),
-                //                     blurRadius: 60,
-                //                     spreadRadius: 10,
-                //                   ),
-                //                 ],
-                //               ),
-                //             ),
-                //           ),
-                //         ],
-                //       ),
-                //     ),
-                //   ),
-                // ),
-                //
-                // // The floating Focus button (on top of the glow)
-                // Positioned(
-                //   left: 0,
-                //   right: 0,
-                //   bottom: 10,
-                //   child: GestureDetector(
-                //     onTap: () {
-                //       Navigator.push(
-                //         context,
-                //         MaterialPageRoute(
-                //           builder: (ctx) => FocusTimerPage(),
-                //         ),
-                //       );
-                //     },
-                //     child: Center(
-                //       child: Container(
-                //         width: 104,
-                //         height: 41,
-                //         padding: const EdgeInsets.symmetric(
-                //           horizontal: 12,
-                //           vertical: 12,
-                //         ),
-                //         decoration: BoxDecoration(
-                //           color: Colors.white,
-                //           borderRadius: BorderRadius.circular(16),
-                //           boxShadow: [
-                //             BoxShadow(
-                //               color: Colors.black.withOpacity(0.12),
-                //               blurRadius: 10,
-                //               offset: const Offset(0, 4),
-                //             ),
-                //           ],
-                //         ),
-                //         child: Row(
-                //           mainAxisSize: MainAxisSize.min,
-                //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                //           children: [
-                //             Text(
-                //               "Focus",
-                //               style: GoogleFonts.manrope(
-                //                 fontSize: 14,
-                //                 fontWeight: FontWeight.w500,
-                //                 color: Color(0xFF191919),
-                //               ),
-                //             ),
-                //             SizedBox(width: 8),
-                //             // Icon(Icons.graphic_eq, size: 18),
-                //             Icon(Icons.graphic_eq, size: 18),
-                //           ],
-                //         ),
-                //       ),
-                //     ),
-                //   ),
-                // ),
               ],
             ),
           );
@@ -467,7 +332,8 @@ class InviteFriendContainer extends StatelessWidget {
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             text: TextSpan(
-              text: "Get 1000 coins when you bring in your first 10 friends.",
+              text:
+                  "Get ${formatAmount(1000)} coins when you bring in your first 10 friends.",
               style: TextStyles.smallMedium12(
                 context,
               ).copyWith(color: AppColors.grey550),

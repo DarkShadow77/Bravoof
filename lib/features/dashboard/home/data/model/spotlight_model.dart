@@ -1,5 +1,6 @@
 class SpotlightModel {
   final int id;
+  final String title;
   final String name;
   final String image;
   final int missionsCompleted;
@@ -9,6 +10,7 @@ class SpotlightModel {
 
   SpotlightModel({
     required this.id,
+    required this.title,
     required this.name,
     required this.image,
     required this.missionsCompleted,
@@ -20,6 +22,7 @@ class SpotlightModel {
   factory SpotlightModel.fromJson(Map<String, dynamic> json) {
     return SpotlightModel(
       id: json['id'] ?? 0,
+      title: json['title'] ?? '',
       name: json['name'] ?? '',
       image: json['image'] ?? '',
       missionsCompleted: json['missions_completed'] ?? 0,
@@ -32,6 +35,7 @@ class SpotlightModel {
   factory SpotlightModel.empty() {
     return SpotlightModel(
       id: 0,
+      title: '',
       name: '',
       image: '',
       missionsCompleted: 0,

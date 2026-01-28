@@ -26,6 +26,11 @@ class UpdateLocationEvent extends ProfileEvent {
   UpdateLocationEvent();
 }
 
+class DeleteAccountEvent extends ProfileEvent {
+  final String reason;
+  const DeleteAccountEvent({required this.reason});
+}
+
 class LogoutProfileEvent extends ProfileEvent {}
 
 class SaveFCMTokenEvent extends ProfileEvent {

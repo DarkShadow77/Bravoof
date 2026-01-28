@@ -12,7 +12,7 @@ enum HomeType {
 class HomeState extends Equatable {
   final List<CampaignModel> campaign;
   final SpotlightModel spotlight;
-  final String quote;
+  final QuoteModel quote;
   final List<UserProfile> referrals;
   final LeaderboardResponseModel leaderboard;
 
@@ -27,7 +27,7 @@ class HomeState extends Equatable {
   HomeState copyWith({
     List<CampaignModel>? campaign,
     SpotlightModel? spotlight,
-    String? quote,
+    QuoteModel? quote,
     List<UserProfile>? referrals,
     LeaderboardResponseModel? leaderboard,
   }) {
