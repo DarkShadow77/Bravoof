@@ -8,6 +8,7 @@ class LoadRedeemHistory extends RedeemEvent {}
 class RedeemAirtimeData extends RedeemEvent {
   final String rewardType;
   final String phone;
+  final String network;
   final String userName;
   final String email;
   final int coins;
@@ -15,6 +16,7 @@ class RedeemAirtimeData extends RedeemEvent {
   RedeemAirtimeData({
     required this.rewardType,
     required this.phone,
+    required this.network,
     required this.userName,
     required this.email,
     required this.coins,

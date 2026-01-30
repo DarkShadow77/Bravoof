@@ -41,15 +41,6 @@ class _AdventuresTabState extends State<AdventuresTab> with UIToolMixin {
     super.dispose();
   }
 
-  /*missions.forEach((e) {
-  if (e.completed!) {
-  setState(() {
-  sum += 1;
-  });
-  }
-  });
-  print(sum);*/
-
   @override
   Widget build(BuildContext context) {
     return Container(

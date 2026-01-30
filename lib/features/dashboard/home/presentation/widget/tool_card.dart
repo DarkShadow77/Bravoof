@@ -15,6 +15,7 @@ import '../../../../../app/view/widgets/button/icon_text_button.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/utils/helpers.dart';
 import '../../../earn/presentation/widgets/referr_campaign.dart';
+import '../../../mission/presentation/page/tabs/skill_up_tab.dart';
 
 class ToolCardCarousel extends StatefulWidget {
   ToolCardCarousel({Key? key}) : super(key: key);
@@ -237,6 +238,7 @@ class _QuoteCardState extends State<QuoteCard> {
                           style: TextStyles.titleSemiBold20(context).copyWith(
                             fontFamily: AppFonts.baloo2,
                             fontStyle: FontStyle.italic,
+                            color: hexToColor("#000000"),
                           ),
                         ),
                       )
@@ -248,6 +250,7 @@ class _QuoteCardState extends State<QuoteCard> {
                           style: TextStyles.titleSemiBold20(context).copyWith(
                             fontFamily: AppFonts.baloo2,
                             fontStyle: FontStyle.italic,
+                            color: hexToColor(quotes.textColor),
                           ),
                         ),
                       ),

@@ -40,6 +40,7 @@ class RedeemRepositoryImpl extends RedeemRepository {
   Future<Either<String, String>> redeemAirtimeData({
     required String rewardType,
     required String phone,
+    required String network,
     required String userId,
     required String userName,
     required String email,
@@ -52,6 +53,7 @@ class RedeemRepositoryImpl extends RedeemRepository {
         'rewardType': rewardType,
         'coins': coins,
         'phone': phone,
+        'network': network,
         'name': userName,
         'email': email,
       },

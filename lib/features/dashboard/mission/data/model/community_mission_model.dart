@@ -38,7 +38,7 @@ class CommunityMission {
           .toList(),
       createdAt: DateTime.parse(json['created_at']),
       status: json['status'] ?? false,
-      point: json['point'] ?? 0,
+      point: json['points'] ?? 0,
       instructionTitle: json['instruction_title'] ?? '',
     );
   }
@@ -54,7 +54,7 @@ class CommunityMission {
       'instructions': instructions.map((e) => e.toJson()).toList(),
       'created_at': createdAt.toIso8601String(),
       'status': status,
-      'point': point,
+      'points': point,
       'instruction_title': instructionTitle,
     };
   }

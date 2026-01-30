@@ -10,6 +10,7 @@ import 'package:timer_count_down/timer_controller.dart';
 import 'package:timer_count_down/timer_count_down.dart';
 
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../../core/utils/helpers.dart';
 import '../../../../../utility/ui_tool_mix.dart';
 import '../../data/model/community_mission_model.dart';
 import '../../data/model/mission_status_enum.dart';
@@ -184,7 +185,9 @@ class _TopSection extends StatelessWidget {
                             ),
                             RichText(
                               text: TextSpan(
-                                text: "250,000",
+                                text: formatAmount(
+                                  communityMission?.point ?? 0,
+                                ),
                                 style: TextStyles.smallBold12(context).copyWith(
                                   color: AppColors.primary,
                                   fontFamily: AppFonts.baloo2,

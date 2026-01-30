@@ -13,6 +13,7 @@ abstract class RedeemRepository {
   Future<Either<String, String>> redeemAirtimeData({
     required String rewardType,
     required String phone,
+    required String network,
     required String userId,
     required String userName,
     required String email,

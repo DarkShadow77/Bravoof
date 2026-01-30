@@ -135,6 +135,13 @@ class FirebaseMessagingService {
       sound: true,
     );
 
+    await FirebaseMessaging.instance
+        .setForegroundNotificationPresentationOptions(
+          alert: true,
+          badge: true,
+          sound: true,
+        );
+
     //Log tge user's permission decision
 
     debugPrint("User granted permission: ${result.authorizationStatus}");

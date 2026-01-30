@@ -15,7 +15,7 @@ import '../../../../../core/constants/fonts.dart';
 import '../../../../common/flowva_text_field.dart';
 
 Future redeemGiftModal({
-  required Function(String?) onPressed,
+  required Function(String?, String?) onPressed,
   required bool showPhone,
 }) {
   return Get.bottomSheet(
@@ -38,7 +38,7 @@ class RedeemGiftModal extends StatefulWidget {
     required this.showPhone,
   });
 
-  final Function(String?) onPressed;
+  final Function(String?, String?) onPressed;
   final bool showPhone;
 
   @override
@@ -47,8 +47,10 @@ class RedeemGiftModal extends StatefulWidget {
 
 class _RedeemGiftModalState extends State<RedeemGiftModal> {
   TextEditingController _phoneController = TextEditingController();
+  TextEditingController _networkController = TextEditingController();
 
   bool _isPhoneValid = false;
+  bool _isNetworkValid = false;
 
   List<Country> countriesList = [];
   Country country = Country(
@@ -81,16 +83,21 @@ class _RedeemGiftModalState extends State<RedeemGiftModal> {
 
   Future<void> _validateForm() async {
     String phone = _phoneController.text.trim();
+    String network = _networkController.text.trim();
 
     setState(() {
       _isPhoneValid = GetUtils.isPhoneNumber(phone);
+      _isNetworkValid = network.isNotEmpty;
     });
   }
 
   @override
   Widget build(BuildContext ctx) {
+    final canProceed = widget.showPhone
+        ? _isPhoneValid && _isNetworkValid
+        : true;
+
     return ShowModalSheet(
-      maxHeight: 400.h,
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 52.w),
         child: Column(
@@ -161,6 +168,18 @@ class _RedeemGiftModalState extends State<RedeemGiftModal> {
             SizedBox(height: 36.h),
             if (widget.showPhone) ...[
               AppTextFeild(
+                controller: _networkController,
+                hintText: "Enter your Network Provider",
+                textInputType: TextInputType.text,
+                validator: MultiValidator([
+                  RequiredValidator(errorText: "Network Provider is required"),
+                ]).call,
+                onChanged: (val) {
+                  _validateForm();
+                },
+              ),
+              SizedBox(height: 10.h),
+              AppTextFeild(
                 controller: _phoneController,
                 hintText: "Enter your phone number",
                 textInputType: TextInputType.number,
@@ -214,72 +233,24 @@ class _RedeemGiftModalState extends State<RedeemGiftModal> {
                       ),
                     ),
                   ),
-                ) /*suffixIcon: SizedBox(
-                  width: 50.w,
-                  child: GestureDetector(
-                    onTap: () {
-                      getCountries();
-                      countryStateModal(
-                        title: "Country",
-                        isPhone: true,
-                        onPressed: (value) {
-                          setState(() => country = value);
-                          _validateForm();
-                        },
-                        list: countriesList,
-                      );
-                    },
-                    behavior: HitTestBehavior.opaque,
-                    child: Row(
-                      spacing: 5.w,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        RichText(
-                          textAlign: TextAlign.center,
-                          text: TextSpan(
-                            text: country.flag,
-                            style: TextStyles.titleSemiBold20(context),
-                          ),
-                        ),
-                        RichText(
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          text: TextSpan(
-                            text:
-                                "${country.phoneCode.toString().startsWith("+") ? "" : "+"} ${country.phoneCode}",
-                            style: TextStyles.normalSemibold14(context),
-                          ),
-                        ),
-                        Container(
-                          height: double.infinity,
-                          width: 1.w,
-                          color: AppColors.black50,
-                          margin: EdgeInsets.symmetric(vertical: 5.h),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),*/,
+                ),
               ),
-              SizedBox(height: 36.h),
+              SizedBox(height: 16.h),
             ],
-            (!widget.showPhone || _isPhoneValid)
-                ? IconTextButton(
-                    color: AppColors.black,
-                    textColor: AppColors.white,
-                    onPressed: () => widget.onPressed(
+            IconTextButton(
+              color: canProceed ? AppColors.black : AppColors.grey300,
+              textColor: AppColors.white,
+              onPressed: () {
+                if (canProceed) {
+                  final phone =
                       "${country.phoneCode.toString().startsWith("+") ? "" : "+"}"
                       "${country.phoneCode}"
-                      "${_phoneController.text.trim()}",
-                    ),
-                    text: "Confirm redemption ✅",
-                  )
-                : IconTextButton(
-                    color: AppColors.grey300,
-                    textColor: AppColors.white,
-                    onPressed: () {},
-                    text: "Confirm redemption ✅",
-                  ),
+                      "${_phoneController.text.trim()}";
+                  widget.onPressed(phone, _networkController.text.trim());
+                }
+              },
+              text: "Confirm redemption ✅",
+            ),
             SizedBox(height: 20.h + MediaQuery.of(context).padding.bottom),
           ],
         ),

@@ -67,6 +67,7 @@ class RedeemBloc extends Bloc<RedeemEvent, RedeemState> {
       userId: supabase.auth.currentUser!.id,
       coins: event.coins,
       phone: event.phone,
+      network: event.network,
       rewardType: event.rewardType,
       userName: event.userName,
       email: event.email,

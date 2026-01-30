@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -64,6 +66,12 @@ class LocalNotificationService {
       },
     );
 
+    await _flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+          IOSFlutterLocalNotificationsPlugin
+        >()
+        ?.requestPermissions(alert: true, badge: true, sound: true);
+
     //Create Android Notification channel
     await _flutterLocalNotificationsPlugin
         .resolvePlatformSpecificImplementation<
@@ -87,10 +95,9 @@ class LocalNotificationService {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt('badge_count', 0);
 
-    final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-        FlutterLocalNotificationsPlugin();
-
-    await flutterLocalNotificationsPlugin.cancelAll();
+    if (Platform.isIOS) {
+      await _flutterLocalNotificationsPlugin.cancelAll();
+    }
   }
 
   //Show a local notification with the given title, body, and payload

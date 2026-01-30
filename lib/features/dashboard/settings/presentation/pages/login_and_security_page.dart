@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../widgets/deactivate_account_modal.dart';
+import '../widgets/delete_account_modal.dart';
 
 class LoginAndSecurityScreen extends StatefulWidget {
   const LoginAndSecurityScreen({Key? key}) : super(key: key);
@@ -102,7 +102,7 @@ class _LoginAndSecurityScreenState extends State<LoginAndSecurityScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Deactivate your account",
+                      "Delete your account",
                       style: GoogleFonts.manrope(
                         fontSize: 16,
                         fontWeight: FontWeight.w700,
@@ -125,7 +125,7 @@ class _LoginAndSecurityScreenState extends State<LoginAndSecurityScreen> {
                     deactivateAccountModal();
                   },
                   child: Text(
-                    "Deactivate",
+                    "Delete",
                     style: GoogleFonts.manrope(
                       fontSize: 14,
                       fontWeight: FontWeight.w700,

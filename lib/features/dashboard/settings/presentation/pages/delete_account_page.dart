@@ -12,16 +12,16 @@ import '../../../../../utility/ui_tool_mix.dart';
 import '../../../../onbaording/page/onbaording_screen.dart';
 import '../../../profile/presentation/bloc/profile_bloc.dart';
 
-class DeactivateAccountPage extends StatefulWidget {
-  const DeactivateAccountPage({super.key, required this.reason});
+class DeleteAccountPage extends StatefulWidget {
+  const DeleteAccountPage({super.key, required this.reason});
 
   final String reason;
 
   @override
-  State<DeactivateAccountPage> createState() => _DeactivateAccountPageState();
+  State<DeleteAccountPage> createState() => _DeleteAccountPageState();
 }
 
-class _DeactivateAccountPageState extends State<DeactivateAccountPage>
+class _DeleteAccountPageState extends State<DeleteAccountPage>
     with UIToolMixin {
   void _loadingProfileState(BuildContext context, ProfileLoadingState state) {
     if (state.type == ProfileType.deleteAccount) {
@@ -89,7 +89,7 @@ class _DeactivateAccountPageState extends State<DeactivateAccountPage>
           centerTitle: true,
           title: RichText(
             text: TextSpan(
-              text: "Deactivate account?",
+              text: "Delete account?",
               style: TextStyles.titleSemiBold20(context),
             ),
           ),
@@ -153,7 +153,7 @@ class _DeactivateAccountPageState extends State<DeactivateAccountPage>
                     DeleteAccountEvent(reason: widget.reason),
                   );
                 },
-                text: "Deactivate Account",
+                text: "Delete Account",
               ),
               SizedBox(height: 10.h + MediaQuery.of(context).padding.bottom),
             ],

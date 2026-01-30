@@ -123,6 +123,22 @@ class ProfileRepositoryImpl extends ProfileRepository {
     );
   }
 
+  Future<Either<String, String>> logUserLoginActivity({
+    required String eventType,
+  }) async {
+    return ApiService.instance!.invokeEdgeFunction<String>(
+      functionName: 'log-user-login-activity',
+      body: {
+        "platform": Platform.isAndroid ? "android" : "ios",
+        "event_type": eventType,
+        "device_id": await firebase.getDeviceId(),
+        "app_version": await firebase.getAppVersion(),
+      },
+      fallbackErrorMessage: "Failed to Log User Login Activity",
+      onSuccess: (data) => "logged User Login Activity successfully",
+    );
+  }
+
   Future<Either<String, void>> saveFCMToken() async {
     return ApiService.instance!.invokeEdgeFunction<void>(
       functionName: 'save-fcm-token',

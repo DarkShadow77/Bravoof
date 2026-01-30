@@ -24,6 +24,7 @@ class ProfileBloc extends HydratedBloc<ProfileEvent, ProfileState> {
     on<UpdateCoverPicEvent>(_onUpdateCoverPic);
     on<UpdateLocationEvent>(_onUpdateLocation);
     on<DeleteAccountEvent>(_onDeleteAccount);
+    on<LogUserLoginActivityEvent>(_onLogUserLoginActivity);
     on<SaveFCMTokenEvent>(_onSaveFCMToken);
     on<DeleteFCMTokenEvent>(_onDeleteFCMToken);
     on<SendNotificationEvent>(_onSendNotification);
@@ -223,6 +224,39 @@ class ProfileBloc extends HydratedBloc<ProfileEvent, ProfileState> {
           ),
         );
       },
+    );
+  }
+
+  Future<void> _onLogUserLoginActivity(
+    LogUserLoginActivityEvent event,
+    Emitter<ProfileState> emit,
+  ) async {
+    emit(
+      ProfileLoadingState(
+        type: ProfileType.logUserLoginActivity,
+        profile: state.profile,
+      ),
+    );
+
+    final response = await repo.logUserLoginActivity(
+      eventType: event.eventType,
+    );
+
+    response.fold(
+      (failure) => emit(
+        ProfileFailureState(
+          type: ProfileType.logUserLoginActivity,
+          message: failure,
+          profile: state.profile,
+        ),
+      ),
+      (user) => emit(
+        ProfileSuccessState(
+          type: ProfileType.logUserLoginActivity,
+          message: user,
+          profile: state.profile,
+        ),
+      ),
     );
   }
 

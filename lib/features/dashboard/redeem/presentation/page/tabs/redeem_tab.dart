@@ -400,17 +400,18 @@ class _RewardCardState extends State<RewardCard> with UIToolMixin {
                     if (isActive)
                       redeemGiftModal(
                         showPhone: ["Airtime", "Data"].contains(title),
-                        onPressed: (val) {
+                        onPressed: (phone, network) {
                           final profile = context
                               .read<ProfileBloc>()
                               .state
                               .profile;
                           if (["Airtime", "Data"].contains(title)) {
-                            if (val != null) {
+                            if (phone != null && network != null) {
                               context.read<RedeemBloc>().add(
                                 RedeemAirtimeData(
                                   rewardType: title.toLowerCase(),
-                                  phone: val,
+                                  phone: phone,
+                                  network: network,
                                   userName: profile.name,
                                   email: profile.email,
                                   coins: coins,

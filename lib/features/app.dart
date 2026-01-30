@@ -20,6 +20,13 @@ class _AppState extends State<App> {
   void initState() {
     super.initState();
 
+    final profileBloc = context.read<ProfileBloc>();
+
+    final session = Supabase.instance.client.auth.currentSession;
+    if (session != null) {
+      profileBloc.add(LogUserLoginActivityEvent(eventType: "app_open"));
+    }
+
     Supabase.instance.client.auth.onAuthStateChange.listen((data) {
       final event = data.event;
 
@@ -28,10 +35,10 @@ class _AppState extends State<App> {
       }
 
       if (event == AuthChangeEvent.signedIn) {
-        final profileBloc = context.read<ProfileBloc>();
         profileBloc.add(GetProfileEvent());
         profileBloc.add(UpdateLocationEvent());
         profileBloc.add(SaveFCMTokenEvent());
+        profileBloc.add(LogUserLoginActivityEvent(eventType: "login"));
         setState(() {});
       }
 

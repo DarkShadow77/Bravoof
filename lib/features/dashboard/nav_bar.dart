@@ -74,11 +74,11 @@ class _BottomNavBarState extends State<BottomNavBar> {
     context.read<NotificationBloc>().add(LoadNotifications());*/
 
     if (currentIndex == 0) {
-      /*  context.read<HomeCubit>().fetchCampaigns();
+      /* context.read<HomeCubit>().fetchCampaigns();
       context.read<HomeCubit>().fetchSpotlight();*/
       context.read<HomeCubit>().fetchQuote();
-      // context.read<HomeCubit>().fetchLeaderboard();
-      // context.read<HomeCubit>().getUserReferrals();
+      /*context.read<HomeCubit>().fetchLeaderboard();
+      context.read<HomeCubit>().getUserReferrals();*/
     }
   }
 

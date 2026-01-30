@@ -9,7 +9,7 @@ import '../../../../../app/styles/text_styles.dart';
 import '../../../../../app/view/widgets/bottom_modals/show_modal_sheet.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../common/flowva_text_field.dart';
-import '../pages/deactivate_account_page.dart';
+import '../pages/delete_account_page.dart';
 
 Future deactivateAccountModal() {
   return Get.bottomSheet(
@@ -40,7 +40,7 @@ class _DeactivateAccountModalState extends State<DeactivateAccountModal> {
   final items = [
     {"label": "I have safety or privacy concerns"},
     {"label": "I don’t need it anymore "},
-    {"label": "I cant comply to Flowva’s term of rule"},
+    {"label": "I cant comply to Bravoo’s term of rule"},
     {"label": "Other"},
   ];
 
@@ -82,7 +82,7 @@ class _DeactivateAccountModalState extends State<DeactivateAccountModal> {
                 Expanded(
                   child: RichText(
                     text: TextSpan(
-                      text: "What prompted you to deactivate?",
+                      text: "What prompted you to Delete you Account?",
                       style: TextStyles.titleSemiBold20(context),
                     ),
                   ),
@@ -200,12 +200,12 @@ class _DeactivateAccountModalState extends State<DeactivateAccountModal> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (ctx) => DeactivateAccountPage(reason: reason),
+                      builder: (ctx) => DeleteAccountPage(reason: reason),
                     ),
                   );
                 }
               },
-              text: "Deactivate Account",
+              text: "Delete Account",
             ),
             SizedBox(height: 20.h + MediaQuery.of(context).padding.bottom),
           ],

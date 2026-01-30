@@ -15,6 +15,9 @@ abstract class ProfileRepository {
     required String userId,
     required String reason,
   });
+  Future<Either<String, String>> logUserLoginActivity({
+    required String eventType,
+  });
   Future<Either<String, void>> saveFCMToken();
   Future<Either<String, void>> deleteFCMToken();
   Future<Either<String, void>> sendPushNotification();
