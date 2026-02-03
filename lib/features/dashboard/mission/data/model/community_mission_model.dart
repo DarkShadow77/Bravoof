@@ -1,26 +1,26 @@
 class CommunityMission {
   final int id;
   final String title;
+  final String image;
   final DateTime startDate;
   final DateTime endDate;
   final int usersJoined;
   final int maxUsers;
   final List<MissionInstruction> instructions;
   final DateTime createdAt;
-  final bool status;
   final int point;
   final String instructionTitle;
 
   CommunityMission({
     required this.id,
     required this.title,
+    required this.image,
     required this.startDate,
     required this.endDate,
     required this.usersJoined,
     required this.maxUsers,
     required this.instructions,
     required this.createdAt,
-    required this.status,
     required this.point,
     required this.instructionTitle,
   });
@@ -29,6 +29,7 @@ class CommunityMission {
     return CommunityMission(
       id: json['id'],
       title: json['title'] ?? '',
+      image: json['image'] ?? '',
       startDate: DateTime.parse(json['start_date']),
       endDate: DateTime.parse(json['end_date']),
       usersJoined: json['users_joined'] ?? 0,
@@ -37,7 +38,6 @@ class CommunityMission {
           .map((e) => MissionInstruction.fromJson(e))
           .toList(),
       createdAt: DateTime.parse(json['created_at']),
-      status: json['status'] ?? false,
       point: json['points'] ?? 0,
       instructionTitle: json['instruction_title'] ?? '',
     );
@@ -47,13 +47,13 @@ class CommunityMission {
     return {
       'id': id,
       'title': title,
+      'image': image,
       'start_date': startDate.toIso8601String(),
       'end_date': endDate.toIso8601String(),
       'users_joined': usersJoined,
       'max_users': maxUsers,
       'instructions': instructions.map((e) => e.toJson()).toList(),
       'created_at': createdAt.toIso8601String(),
-      'status': status,
       'points': point,
       'instruction_title': instructionTitle,
     };

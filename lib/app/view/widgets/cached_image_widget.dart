@@ -73,6 +73,7 @@ class CachedImageRadius extends StatelessWidget {
     return Container(
       height: size.h,
       width: size.w,
+      clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
         color: color ?? AppColors.grey,
         shape: circle ? BoxShape.circle : BoxShape.rectangle,

@@ -1,19 +1,33 @@
 # flutter pub run flutter_launcher_icons
 flutter_launcher_icons:
 
+  # Default icon
   image_path: "assets/logo/icon.png"
 
   android: "launcher_icon"
-  # image_path_android: "assets/icon/icon.png"
+  ios: true
+
   min_sdk_android: 21 # android min sdk min:16, default 21
   adaptive_icon_background: "assets/logo/background.png"
   adaptive_icon_foreground: "assets/logo/foreground.png"
   adaptive_icon_monochrome: "assets/logo/monochrome.png"
   adaptive_icon_foreground_inset: 0
-
-  ios: true
-  #   image_path_ios: "assets/icon/icon.png"n
-  remove_alpha_ios: true
+    
+#    # Purple Background variant
+#    - image_path: "assets/logo/icon_purple_bg.png"
+#      android: "ic_launcher_purple_bg"
+#
+#    # Purple Text variant
+#    - image_path: "assets/logo/icon_purple_txt.png"
+#      android: "ic_launcher_purple_txt"
+#
+#    # Black Text variant
+#    - image_path: "assets/logo/icon_black_txt.png"
+#      android: "ic_launcher_black_txt"
+#
+#    # Mixed Background variant
+#    - image_path: "assets/logo/icon_mix_bg.png"
+#      android: "ic_launcher_mix_bg"
 
 #  web:
 #    generate: true

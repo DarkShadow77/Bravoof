@@ -46,6 +46,7 @@ class _AdventuresTabState extends State<AdventuresTab> with UIToolMixin {
     return Container(
       // color: const Color(0xFFF8F4FF),
       child: SingleChildScrollView(
+        physics: ClampingScrollPhysics(),
         padding: EdgeInsets.symmetric(vertical: 16.h),
         child: Column(
           children: [

@@ -70,6 +70,7 @@ class _SkillUpPageState extends State<SkillUpPage> {
                   state.type == SkillUpType.fetchMission;
               return Flexible(
                 child: GridView.builder(
+                  physics: ClampingScrollPhysics(),
                   padding: EdgeInsets.symmetric(vertical: 25.h),
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2,

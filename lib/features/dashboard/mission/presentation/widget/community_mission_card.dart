@@ -1,5 +1,6 @@
 import 'package:Bravoo/app/styles/text_styles.dart';
 import 'package:Bravoo/app/view/widgets/button/icon_text_button.dart';
+import 'package:Bravoo/app/view/widgets/cached_image_widget.dart';
 import 'package:Bravoo/app/view/widgets/gradient_progress.dart';
 import 'package:Bravoo/core/constants/fonts.dart';
 import 'package:Bravoo/features/dashboard/mission/presentation/widget/community_event_dialog.dart';
@@ -124,7 +125,7 @@ class _TopSection extends StatelessWidget {
         children: [
           RichText(
             text: TextSpan(
-              text: "Community Missions",
+              text: "Community Mission",
               style: TextStyles.bigTitleBold24(context).copyWith(
                 fontFamily: AppFonts.baloo2,
                 color: Color(0xFF70403E),
@@ -143,19 +144,13 @@ class _TopSection extends StatelessWidget {
               spacing: 10.w,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Container(
-                  height: 83.h,
-                  width: 83.w,
-                  padding: EdgeInsets.symmetric(vertical: 4.h, horizontal: 4.w),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(8.r),
-                  ),
-                  child: Center(
-                    child: Image.asset('assets/images/reclaim_rec.png'),
-                  ),
+                CachedImageRadius(
+                  imageUrl: communityMission?.image ?? "",
+                  size: 83,
+                  fit: BoxFit.cover,
+                  color: AppColors.white,
+                  borderRadius: 12,
                 ),
-
                 Expanded(
                   child: Container(
                     height: 83.h,

@@ -32,6 +32,7 @@ class _EarnOverviewScreenState extends State<EarnOverviewScreen>
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
+      physics: ClampingScrollPhysics(),
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
       child: Column(
         children: [

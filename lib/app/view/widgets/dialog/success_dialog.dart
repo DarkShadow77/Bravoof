@@ -24,7 +24,6 @@ Future<dynamic> successDialog({
   return Get.dialog(
     name: "success_dialog",
     barrierColor: Colors.transparent,
-
     barrierDismissible: true,
     SuccessDialog(
       title: title,
