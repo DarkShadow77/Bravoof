@@ -26,7 +26,7 @@ class RedeemScreen extends StatefulWidget {
 }
 
 class _RedeemScreenState extends State<RedeemScreen> {
-  List<CampaignModel> campaign = [];
+  List<CampaignResponseModel> campaign = [];
   var tab = ["Redeem", "History"];
   final _pageController = PageController(initialPage: 0);
   int currentPage = 0;

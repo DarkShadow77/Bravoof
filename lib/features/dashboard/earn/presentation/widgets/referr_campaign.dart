@@ -1,4 +1,5 @@
 import 'package:Bravoo/app/styles/text_styles.dart';
+import 'package:Bravoo/app/view/widgets/cached_image_widget.dart';
 import 'package:Bravoo/core/constants/fonts.dart';
 import 'package:Bravoo/features/dashboard/earn/presentation/pages/referral_contest_screen.dart';
 import 'package:Bravoo/features/dashboard/home/data/model/campaign_response.dart';
@@ -39,7 +40,8 @@ class _ReferCampaignState extends State<ReferCampaign> {
   );
   int differenceInSeconds = 0;
 
-  List<CampaignModel> campaign = [];
+  List<CampaignResponseModel> campaignList = [];
+  CampaignResponseModel campaign = CampaignResponseModel.empty();
 
   late HomeCubit homeCubit;
 
@@ -47,11 +49,11 @@ class _ReferCampaignState extends State<ReferCampaign> {
   void initState() {
     super.initState();
     homeCubit = HomeCubit();
-    campaign = homeCubit.state.campaign;
+    campaignList = homeCubit.state.campaign;
 
-    if (campaign.isNotEmpty) {
+    if (campaignList.isNotEmpty) {
       final now = DateTime.now().toUtc();
-      differenceInSeconds = campaign.last.campaignEndDate
+      differenceInSeconds = campaign.campaignEndDate
           .difference(now)
           .inSeconds
           .clamp(0, double.infinity)
@@ -78,12 +80,14 @@ class _ReferCampaignState extends State<ReferCampaign> {
   Widget build(BuildContext context) {
     return BlocBuilder<HomeCubit, HomeState>(
       builder: (context, state) {
-        campaign = state.campaign;
+        campaignList = state.campaign;
 
-        if (campaign.isEmpty) return SizedBox.shrink();
+        if (campaignList.isEmpty) return SizedBox.shrink();
+
+        campaign = campaignList.last;
 
         final now = DateTime.now().toUtc();
-        differenceInSeconds = campaign.last.campaignEndDate
+        differenceInSeconds = campaign.campaignEndDate
             .difference(now)
             .inSeconds
             .clamp(0, double.infinity)
@@ -121,7 +125,7 @@ class _ReferCampaignState extends State<ReferCampaign> {
                         SizedBox(width: 8.w),
                         RichText(
                           text: TextSpan(
-                            text: campaign.last.name.toString(),
+                            text: campaign.name.toString(),
                             style: TextStyles.smallBold12(context).copyWith(
                               color: widget.transparent
                                   ? null
@@ -138,7 +142,7 @@ class _ReferCampaignState extends State<ReferCampaign> {
                         Expanded(
                           child: RichText(
                             text: TextSpan(
-                              text: campaign.last.title.toString(),
+                              text: campaign.title.toString(),
                               style: TextStyles.bigTitleBold24(context)
                                   .copyWith(
                                     fontSize: 22.sp,
@@ -163,9 +167,12 @@ class _ReferCampaignState extends State<ReferCampaign> {
                               backgroundColor: widget.transparent
                                   ? AppColors.redBrown20
                                   : Color(0xFFDEC4FF),
-                              child: Image.network(
-                                campaign.last.url.toString(),
-                                fit: BoxFit.cover,
+                              child: CachedImageSize(
+                                imageUrl: campaign.url,
+                                width: 45,
+                                height: 45,
+                                fit: BoxFit.contain,
+                                color: Colors.transparent,
                               ),
                             ),
                           ),
@@ -278,12 +285,10 @@ class _ReferCampaignState extends State<ReferCampaign> {
                                 context,
                                 MaterialPageRoute(
                                   builder: (_) => BlocProvider<CampaignCubit>(
-                                    create: (_) => sl<CampaignCubit>(
-                                      param1: campaign.last.id,
-                                    ),
+                                    create: (_) =>
+                                        sl<CampaignCubit>(param1: campaign.id),
                                     child: ReferralContestScreen(
-                                      campaignEndDate:
-                                          campaign.last.campaignEndDate,
+                                      campaign: campaign,
                                     ),
                                   ),
                                 ),
@@ -298,7 +303,7 @@ class _ReferCampaignState extends State<ReferCampaign> {
                       IconTextButton(
                         height: 54,
                         onPressed: () => priceDetailsDialog(
-                          campaignEndDate: campaign.last.campaignEndDate,
+                          campaignEndDate: campaign.campaignEndDate,
                         ),
                         text: "See Prize Details",
                         color: AppColors.white.withValues(alpha: .16),
@@ -332,8 +337,8 @@ class _ReferCampaignState extends State<ReferCampaign> {
                                 vertical: 4,
                               ),
                               decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.3),
-                                borderRadius: BorderRadius.circular(50),
+                                color: AppColors.white30,
+                                borderRadius: BorderRadius.circular(50.r),
                               ),
                               child: Row(
                                 children: [
@@ -401,15 +406,15 @@ class _ReferCampaignState extends State<ReferCampaign> {
   /// --- Helper Widgets
   Widget _timerBox2(String value, String label) {
     return Container(
-      width: 55,
-      height: 55,
+      width: 55.w,
+      height: 55.h,
       padding: EdgeInsets.only(bottom: 5, top: 5),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
-        color: Colors.white.withOpacity(0.1),
+        color: AppColors.white10,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.12),
+            color: AppColors.black10,
             offset: const Offset(0, 4),
             blurRadius: 15,
           ),
@@ -417,7 +422,6 @@ class _ReferCampaignState extends State<ReferCampaign> {
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
-
         mainAxisAlignment: MainAxisAlignment.center,
         // crossAxisAlignment: CrossAxisAlignment.center,
         children: [

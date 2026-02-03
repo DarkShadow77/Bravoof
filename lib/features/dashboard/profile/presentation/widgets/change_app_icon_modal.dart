@@ -307,7 +307,7 @@ class ChangeAppIconConfirmationDialog extends StatelessWidget {
                       textAlign: TextAlign.center,
                       text: TextSpan(
                         text:
-                            "The app will briefly restart after changing the icon.",
+                            "The app may briefly restart to apply the new icon.",
                         style: TextStyles.smallMedium12(context),
                       ),
                     ),

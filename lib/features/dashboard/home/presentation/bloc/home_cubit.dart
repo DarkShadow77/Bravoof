@@ -9,6 +9,7 @@ import 'package:meta/meta.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../onbaording/data/model/user_profile.dart';
+import '../../data/model/dynamic_carousel_model.dart';
 import '../../data/model/quote_model.dart';
 
 part 'home_state.dart';
@@ -20,6 +21,7 @@ class HomeCubit extends Cubit<HomeState> {
     : super(
         HomeInitialState(
           campaign: [],
+          extraCard: [],
           spotlight: SpotlightModel.empty(),
           referrals: [],
           quote: QuoteModel.empty(),
@@ -33,6 +35,7 @@ class HomeCubit extends Cubit<HomeState> {
         HomeLoadingState(
           type: HomeType.getCampaign,
           campaign: state.campaign,
+          extraCard: state.extraCard,
           spotlight: state.spotlight,
           quote: state.quote,
           referrals: state.referrals,
@@ -48,6 +51,7 @@ class HomeCubit extends Cubit<HomeState> {
           type: HomeType.getCampaign,
           message: failure.toString(),
           campaign: state.campaign,
+          extraCard: state.extraCard,
           spotlight: state.spotlight,
           quote: state.quote,
           referrals: state.referrals,
@@ -61,6 +65,53 @@ class HomeCubit extends Cubit<HomeState> {
             type: HomeType.getCampaign,
             message: "Campaign Got Successfully",
             campaign: campaign,
+            extraCard: state.extraCard,
+            spotlight: state.spotlight,
+            quote: state.quote,
+            referrals: state.referrals,
+            leaderboard: state.leaderboard,
+          ),
+        );
+      },
+    );
+  }
+
+  void fetchExtraHomeCard() async {
+    emit(
+      HomeLoadingState(
+        type: HomeType.getExtraCard,
+        campaign: state.campaign,
+        extraCard: state.extraCard,
+        spotlight: state.spotlight,
+        quote: state.quote,
+        referrals: state.referrals,
+        leaderboard: state.leaderboard,
+      ),
+    );
+
+    final either = await homeRepository.fetchExtraHomeCard();
+
+    either.fold(
+      (failure) => emit(
+        HomeFailureState(
+          type: HomeType.getExtraCard,
+          message: failure.toString(),
+          campaign: state.campaign,
+          extraCard: state.extraCard,
+          spotlight: state.spotlight,
+          quote: state.quote,
+          referrals: state.referrals,
+          leaderboard: state.leaderboard,
+        ),
+      ),
+      (extraCard) {
+        emit(state.copyWith(extraCard: extraCard));
+        emit(
+          HomeSuccessState(
+            type: HomeType.getExtraCard,
+            message: "Home Extra Card Got Successfully",
+            campaign: state.campaign,
+            extraCard: extraCard,
             spotlight: state.spotlight,
             quote: state.quote,
             referrals: state.referrals,
@@ -77,6 +128,7 @@ class HomeCubit extends Cubit<HomeState> {
         HomeLoadingState(
           type: HomeType.getSpotlight,
           campaign: state.campaign,
+          extraCard: state.extraCard,
           spotlight: state.spotlight,
           quote: state.quote,
           referrals: state.referrals,
@@ -92,6 +144,7 @@ class HomeCubit extends Cubit<HomeState> {
           type: HomeType.getSpotlight,
           message: failure.toString(),
           campaign: state.campaign,
+          extraCard: state.extraCard,
           spotlight: state.spotlight,
           quote: state.quote,
           referrals: state.referrals,
@@ -105,6 +158,7 @@ class HomeCubit extends Cubit<HomeState> {
             type: HomeType.getSpotlight,
             message: "Spotlight Got Successfully",
             campaign: state.campaign,
+            extraCard: state.extraCard,
             spotlight: spotlight,
             quote: state.quote,
             referrals: state.referrals,
@@ -120,6 +174,7 @@ class HomeCubit extends Cubit<HomeState> {
       HomeLoadingState(
         type: HomeType.getQuote,
         campaign: state.campaign,
+        extraCard: state.extraCard,
         spotlight: state.spotlight,
         quote: state.quote,
         referrals: state.referrals,
@@ -135,6 +190,7 @@ class HomeCubit extends Cubit<HomeState> {
           type: HomeType.getQuote,
           message: failure.toString(),
           campaign: state.campaign,
+          extraCard: state.extraCard,
           spotlight: state.spotlight,
           quote: state.quote,
           referrals: state.referrals,
@@ -148,6 +204,7 @@ class HomeCubit extends Cubit<HomeState> {
             type: HomeType.getQuote,
             message: "Quotes Got Successfully",
             campaign: state.campaign,
+            extraCard: state.extraCard,
             quote: quote,
             spotlight: state.spotlight,
             referrals: state.referrals,
@@ -174,6 +231,7 @@ class HomeCubit extends Cubit<HomeState> {
       HomeLoadingState(
         type: HomeType.getLeaderboard,
         campaign: state.campaign,
+        extraCard: state.extraCard,
         spotlight: state.spotlight,
         quote: state.quote,
         referrals: state.referrals,
@@ -191,6 +249,7 @@ class HomeCubit extends Cubit<HomeState> {
           type: HomeType.getLeaderboard,
           message: failure.toString(),
           campaign: state.campaign,
+          extraCard: state.extraCard,
           spotlight: state.spotlight,
           quote: state.quote,
           referrals: state.referrals,
@@ -204,6 +263,7 @@ class HomeCubit extends Cubit<HomeState> {
             type: HomeType.getLeaderboard,
             message: "Leaderboard Got Successfully",
             campaign: state.campaign,
+            extraCard: state.extraCard,
             quote: state.quote,
             spotlight: state.spotlight,
             referrals: state.referrals,

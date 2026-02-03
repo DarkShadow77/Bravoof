@@ -16,6 +16,7 @@ import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/utils/helpers.dart';
 import '../../../earn/presentation/widgets/referr_campaign.dart';
 import '../../../mission/presentation/page/tabs/skill_up_tab.dart';
+import '../../data/model/dynamic_carousel_model.dart';
 
 class ToolCardCarousel extends StatefulWidget {
   ToolCardCarousel({Key? key}) : super(key: key);
@@ -48,111 +49,142 @@ class _ToolCardCarouselState extends State<ToolCardCarousel> {
   }
 
   _fetchDetails() {
-    BlocProvider.of<HomeCubit>(context).fetchCampaigns();
-    BlocProvider.of<HomeCubit>(context).fetchSpotlight();
+    context.read<HomeCubit>().fetchCampaigns();
+    context.read<HomeCubit>().fetchSpotlight();
+    context.read<HomeCubit>().fetchExtraHomeCard();
+    context.read<HomeCubit>().fetchQuote();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        // PageView of cards
-        Container(
-          height: 240.h,
-          child: Center(
-            child: PageView.builder(
-              padEnds: true,
-              controller: _pageController,
-              physics: BouncingScrollPhysics(),
-              allowImplicitScrolling: true,
-              scrollDirection: Axis.horizontal,
-              itemCount: carousel.length,
-              onPageChanged: (index) {
-                _fetchDetails();
-                setState(() {
-                  currentPage = index;
-                });
-              },
-              itemBuilder: (context, index) {
-                double scaleFactor = .8;
-                double height = 230.h;
-                Matrix4 matrix = Matrix4.identity();
+    return BlocBuilder<HomeCubit, HomeState>(
+      builder: (context, state) {
+        // Build carousel dynamically based on state
+        final carouselWidgets = _buildCarouselItems(state);
 
-                if (index == _currentPage.floor()) {
-                  var currScale =
-                      1 - (_currentPage - index) * (1 - scaleFactor);
-                  var currTrans = height * (1 - currScale) / 2;
-                  matrix = Matrix4.diagonal3Values(1.0, currScale, 1.0)
-                    ..setTranslationRaw(0, currTrans, 0);
-                } else if (index == _currentPage.floor() + 1) {
-                  var currScale =
-                      scaleFactor +
-                      (_currentPage - index + 1) * (1 - scaleFactor);
+        return Column(
+          children: [
+            // PageView of cards
+            Container(
+              height: 240.h,
+              child: Center(
+                child: PageView.builder(
+                  padEnds: true,
+                  controller: _pageController,
+                  physics: BouncingScrollPhysics(),
+                  allowImplicitScrolling: true,
+                  scrollDirection: Axis.horizontal,
+                  itemCount: carouselWidgets.length,
+                  onPageChanged: (index) {
+                    _fetchDetails();
+                    setState(() {
+                      currentPage = index;
+                    });
+                  },
+                  itemBuilder: (context, index) {
+                    double scaleFactor = .8;
+                    double height = 230.h;
+                    Matrix4 matrix = Matrix4.identity();
 
-                  var currTrans = height * (1 - currScale) / 2;
-                  matrix = Matrix4.diagonal3Values(1.0, currScale, 1.0)
-                    ..setTranslationRaw(0, currTrans, 0);
-                } else if (index == _currentPage.floor() - 1) {
-                  var currScale =
-                      1 - (_currentPage - index) * (1 - scaleFactor);
-                  var currTrans = height * (1 - currScale) / 2;
-                  matrix = Matrix4.diagonal3Values(1.0, currScale, 1.0)
-                    ..setTranslationRaw(0, currTrans, 0);
-                } else {
-                  var currScale = .8;
-                  matrix = Matrix4.diagonal3Values(1.0, currScale, 1.0)
-                    ..setTranslationRaw(0, height * (1 - scaleFactor) / 2, 0);
-                }
-                return Transform(
-                  transform: matrix,
-                  child: Container(child: _buildToolCard(index)),
-                );
-              },
-            ),
-          ),
-        ),
-        SizedBox(height: 12.h),
-        // Page Indicator
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: List.generate(
-            carousel.length,
-            (index) => GestureDetector(
-              onTap: () {
-                _pageController.animateToPage(
-                  index,
-                  duration: const Duration(milliseconds: 300),
-                  curve: Curves.easeInOut,
-                );
-              },
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 300),
-                margin: EdgeInsets.symmetric(horizontal: 2.w),
-                width: index == currentPage ? 18.w : 6.w,
-                height: 6.h,
-                decoration: BoxDecoration(
-                  color: index == currentPage
-                      ? AppColors.darkPrimary
-                      : AppColors.darkPrimary20,
-                  borderRadius: BorderRadius.circular(6.r),
+                    if (index == _currentPage.floor()) {
+                      var currScale =
+                          1 - (_currentPage - index) * (1 - scaleFactor);
+                      var currTrans = height * (1 - currScale) / 2;
+                      matrix = Matrix4.diagonal3Values(1.0, currScale, 1.0)
+                        ..setTranslationRaw(0, currTrans, 0);
+                    } else if (index == _currentPage.floor() + 1) {
+                      var currScale =
+                          scaleFactor +
+                          (_currentPage - index + 1) * (1 - scaleFactor);
+
+                      var currTrans = height * (1 - currScale) / 2;
+                      matrix = Matrix4.diagonal3Values(1.0, currScale, 1.0)
+                        ..setTranslationRaw(0, currTrans, 0);
+                    } else if (index == _currentPage.floor() - 1) {
+                      var currScale =
+                          1 - (_currentPage - index) * (1 - scaleFactor);
+                      var currTrans = height * (1 - currScale) / 2;
+                      matrix = Matrix4.diagonal3Values(1.0, currScale, 1.0)
+                        ..setTranslationRaw(0, currTrans, 0);
+                    } else {
+                      var currScale = .8;
+                      matrix = Matrix4.diagonal3Values(1.0, currScale, 1.0)
+                        ..setTranslationRaw(
+                          0,
+                          height * (1 - scaleFactor) / 2,
+                          0,
+                        );
+                    }
+                    return Transform(
+                      transform: matrix,
+                      child: Container(
+                        width: double.infinity,
+                        child: carouselWidgets[index],
+                      ),
+                    );
+                  },
                 ),
               ),
             ),
-          ),
-        ),
-      ],
+            SizedBox(height: 12.h),
+            // Page Indicator
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: List.generate(
+                carouselWidgets.length,
+                (index) => GestureDetector(
+                  onTap: () {
+                    _pageController.animateToPage(
+                      index,
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeInOut,
+                    );
+                  },
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 300),
+                    margin: EdgeInsets.symmetric(horizontal: 2.w),
+                    width: index == currentPage ? 18.w : 6.w,
+                    height: 6.h,
+                    decoration: BoxDecoration(
+                      color: index == currentPage
+                          ? AppColors.darkPrimary
+                          : AppColors.darkPrimary20,
+                      borderRadius: BorderRadius.circular(6.r),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 
-  List<Widget> get carousel => [ReferCampaign(), SpotlightCard(), QuoteCard()];
+  List<Widget> _buildCarouselItems(HomeState state) {
+    List<Widget> items = [];
 
-  Widget _buildToolCard(int index) {
-    return Container(
-      // height: 240,
-      width: double.infinity,
-      child: carousel[index],
-    );
+    if (state.campaign.isNotEmpty) {
+      items.add(ReferCampaign());
+    }
+
+    if (state.spotlight.name.isNotEmpty) {
+      items.add(SpotlightCard());
+    }
+
+    final dynamicCarouselItems = state.extraCard;
+
+    if (dynamicCarouselItems.isNotEmpty) {
+      // Add each backend item as a separate carousel slide
+      for (var item in dynamicCarouselItems) {
+        items.add(DynamicCarouselCard(item: item));
+      }
+    }
+
+    items.add(QuoteCard());
+
+    return items;
   }
 }
 
@@ -261,6 +293,28 @@ class _QuoteCardState extends State<QuoteCard> {
           ),
         );
       },
+    );
+  }
+}
+
+class DynamicCarouselCard extends StatelessWidget {
+  const DynamicCarouselCard({super.key, required this.item});
+
+  final DynamicCarouselModel item;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      clipBehavior: Clip.antiAlias,
+      margin: EdgeInsets.symmetric(horizontal: 16.w),
+      decoration: BoxDecoration(borderRadius: BorderRadius.circular(24.r)),
+      child: CachedImageSize(
+        imageUrl: item.image,
+        width: double.infinity,
+        height: double.infinity,
+        color: AppColors.grey100,
+        fit: BoxFit.cover,
+      ),
     );
   }
 }

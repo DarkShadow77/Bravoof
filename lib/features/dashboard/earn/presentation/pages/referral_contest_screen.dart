@@ -23,29 +23,32 @@ import '../../../../../core/constants/app_assets.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/fonts.dart';
 import '../../../../onbaording/data/model/user_profile.dart';
+import '../../../home/data/model/campaign_response.dart';
 import '../../../home/presentation/bloc/campaign_cubit.dart';
 import '../../../profile/presentation/bloc/profile_bloc.dart';
 import '../widgets/price_details_dialog.dart';
 import 'invite_earn.dart';
 
 class ReferralContestScreen extends StatefulWidget {
-  const ReferralContestScreen({super.key, required this.campaignEndDate});
+  const ReferralContestScreen({super.key, required this.campaign});
 
-  final DateTime campaignEndDate;
+  final CampaignResponseModel campaign;
 
   @override
   State<ReferralContestScreen> createState() => _ReferralContestScreenState();
 }
 
 class _ReferralContestScreenState extends State<ReferralContestScreen> {
+  CampaignResponseModel campaign = CampaignResponseModel.empty();
   @override
   void initState() {
+    campaign = widget.campaign;
     super.initState();
 
-    log("Date Time ${widget.campaignEndDate}");
-    BlocProvider.of<CampaignCubit>(context).getTotalCampaignParticipants();
-    BlocProvider.of<CampaignCubit>(context).getUserReferralsForCampaign();
-    BlocProvider.of<CampaignCubit>(context).isUserInCampaign();
+    log("Date Time ${campaign.campaignEndDate}");
+    context.read<CampaignCubit>().getTotalCampaignParticipants();
+    context.read<CampaignCubit>().getUserReferralsForCampaign();
+    context.read<CampaignCubit>().isUserInCampaign();
   }
 
   @override
@@ -86,7 +89,7 @@ class _ReferralContestScreenState extends State<ReferralContestScreen> {
                   RichText(
                     textAlign: TextAlign.center,
                     text: TextSpan(
-                      text: "Enter to win the Oraimo\nOpenSnap!",
+                      text: campaign.innerTitle,
                       style: TextStyles.bigTitleRegular24(context).copyWith(
                         fontFamily: AppFonts.baloo,
                         height: 1.sp,
@@ -111,10 +114,11 @@ class _ReferralContestScreenState extends State<ReferralContestScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Image.asset(
-                              AssetsPngImages.product,
+                            CachedImageSize(
+                              imageUrl: campaign.url,
                               width: 152.w,
-                              height: 130.h,
+                              height: 120.h,
+                              color: Colors.transparent,
                               fit: BoxFit.contain,
                             ),
                           ],
@@ -136,7 +140,7 @@ class _ReferralContestScreenState extends State<ReferralContestScreen> {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               TimerWidget(
-                                campaignEndDate: widget.campaignEndDate,
+                                campaignEndDate: campaign.campaignEndDate,
                               ),
                               SizedBox(height: 44.h),
                               Image.asset(
@@ -158,6 +162,28 @@ class _ReferralContestScreenState extends State<ReferralContestScreen> {
                                 ),
                               ),
                               SizedBox(height: 4.h),
+                              ListView.builder(
+                                shrinkWrap: true,
+                                physics: NeverScrollableScrollPhysics(),
+                                padding: EdgeInsets.zero,
+                                itemCount: campaign.instructions.length,
+                                itemBuilder: (context, index) {
+                                  final instruction =
+                                      campaign.instructions[index];
+                                  return RichText(
+                                    textAlign: TextAlign.center,
+                                    text: TextSpan(
+                                      text: instruction,
+                                      style: TextStyles.smallSemibold12(context)
+                                          .copyWith(
+                                            color: AppColors.white.withValues(
+                                              alpha: .7,
+                                            ),
+                                          ),
+                                    ),
+                                  );
+                                },
+                              ),
                               RichText(
                                 textAlign: TextAlign.center,
                                 text: TextSpan(
@@ -175,7 +201,7 @@ class _ReferralContestScreenState extends State<ReferralContestScreen> {
                                 ),
                               ),
                               ReferralContainer(
-                                campaignEndDate: widget.campaignEndDate,
+                                campaignEndDate: campaign.campaignEndDate,
                               ),
                             ],
                           ),

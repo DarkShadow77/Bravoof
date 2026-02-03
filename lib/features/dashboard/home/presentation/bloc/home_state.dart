@@ -3,6 +3,7 @@ part of 'home_cubit.dart';
 enum HomeType {
   getCampaign,
   getSpotlight,
+  getExtraCard,
   getQuote,
   getReferrals,
   getLeaderboard,
@@ -10,7 +11,8 @@ enum HomeType {
 
 @immutable
 class HomeState extends Equatable {
-  final List<CampaignModel> campaign;
+  final List<CampaignResponseModel> campaign;
+  final List<DynamicCarouselModel> extraCard;
   final SpotlightModel spotlight;
   final QuoteModel quote;
   final List<UserProfile> referrals;
@@ -18,6 +20,7 @@ class HomeState extends Equatable {
 
   HomeState({
     required this.campaign,
+    required this.extraCard,
     required this.spotlight,
     required this.quote,
     required this.referrals,
@@ -25,7 +28,8 @@ class HomeState extends Equatable {
   });
 
   HomeState copyWith({
-    List<CampaignModel>? campaign,
+    List<CampaignResponseModel>? campaign,
+    List<DynamicCarouselModel>? extraCard,
     SpotlightModel? spotlight,
     QuoteModel? quote,
     List<UserProfile>? referrals,
@@ -33,6 +37,7 @@ class HomeState extends Equatable {
   }) {
     return HomeState(
       campaign: campaign ?? this.campaign,
+      extraCard: extraCard ?? this.extraCard,
       spotlight: spotlight ?? this.spotlight,
       quote: quote ?? this.quote,
       referrals: referrals ?? this.referrals,
@@ -43,6 +48,7 @@ class HomeState extends Equatable {
   @override
   List<Object?> get props => [
     campaign,
+    extraCard,
     spotlight,
     quote,
     referrals,
@@ -53,6 +59,7 @@ class HomeState extends Equatable {
 final class HomeInitialState extends HomeState {
   HomeInitialState({
     required super.campaign,
+    required super.extraCard,
     required super.spotlight,
     required super.quote,
     required super.referrals,
@@ -68,6 +75,7 @@ final class HomeLoadingState extends HomeState {
   HomeLoadingState({
     required this.type,
     required super.campaign,
+    required super.extraCard,
     required super.spotlight,
     required super.quote,
     required super.referrals,
@@ -85,6 +93,7 @@ final class HomeSuccessState extends HomeState {
     required this.type,
     required this.message,
     required super.campaign,
+    required super.extraCard,
     required super.spotlight,
     required super.quote,
     required super.referrals,
@@ -102,6 +111,7 @@ final class HomeFailureState extends HomeState {
     required this.type,
     required this.message,
     required super.campaign,
+    required super.extraCard,
     required super.spotlight,
     required super.quote,
     required super.referrals,
