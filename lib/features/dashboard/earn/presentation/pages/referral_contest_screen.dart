@@ -184,25 +184,7 @@ class _ReferralContestScreenState extends State<ReferralContestScreen> {
                                   );
                                 },
                               ),
-                              RichText(
-                                textAlign: TextAlign.center,
-                                text: TextSpan(
-                                  text:
-                                      "i). Invite at least two friends to join Bravoo to qualify. \n"
-                                      "ii). All qualified entrants receive 50 coins. \n"
-                                      "iii).One winner receives AirPods and 500 coins. \n"
-                                      "iv). The contest is hosted solely by Bravoo and not affiliated with Apple.",
-                                  style: TextStyles.smallSemibold12(context)
-                                      .copyWith(
-                                        color: AppColors.white.withValues(
-                                          alpha: .7,
-                                        ),
-                                      ),
-                                ),
-                              ),
-                              ReferralContainer(
-                                campaignEndDate: campaign.campaignEndDate,
-                              ),
+                              ReferralContainer(campaign: campaign),
                             ],
                           ),
                         ),
@@ -480,9 +462,9 @@ class CountdownBox extends StatelessWidget {
 }
 
 class ReferralContainer extends StatefulWidget {
-  const ReferralContainer({super.key, required this.campaignEndDate});
+  const ReferralContainer({super.key, required this.campaign});
 
-  final DateTime campaignEndDate;
+  final CampaignResponseModel campaign;
 
   @override
   State<ReferralContainer> createState() => _ReferralContainerState();
@@ -620,9 +602,8 @@ class _ReferralContainerState extends State<ReferralContainer> {
                     icon: AssetsSvgIcons.userAdd,
                   ),
                   IconTextButton(
-                    onPressed: () => priceDetailsDialog(
-                      campaignEndDate: widget.campaignEndDate,
-                    ),
+                    onPressed: () =>
+                        priceDetailsDialog(campaign: widget.campaign),
                     text: "See Prize Details",
                     color: AppColors.white.withValues(alpha: .16),
                     textColor: AppColors.white,
@@ -977,7 +958,7 @@ class WinnerDialog extends StatelessWidget {
       children: [
         BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
-          child: Container(color: Colors.black.withOpacity(0.2)),
+          child: Container(color: AppColors.black25),
         ),
         Dialog(
           backgroundColor: Colors.transparent,
@@ -1033,7 +1014,7 @@ class WinnerDialog extends StatelessWidget {
                         Shadow(
                           offset: const Offset(2, 2),
                           blurRadius: 6,
-                          color: Colors.black.withOpacity(0.2),
+                          color: AppColors.black20,
                         ),
                       ],
                     ),

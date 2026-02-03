@@ -1,7 +1,9 @@
 import 'dart:ui';
 
+import 'package:Bravoo/app/view/widgets/cached_image_widget.dart';
 import 'package:Bravoo/core/constants/app_assets.dart';
 import 'package:Bravoo/core/constants/fonts.dart';
+import 'package:Bravoo/features/dashboard/home/data/model/campaign_response.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -12,18 +14,20 @@ import 'package:intl/intl.dart';
 import '../../../../../app/styles/text_styles.dart';
 import '../../../../../core/constants/app_colors.dart';
 
-Future<dynamic> priceDetailsDialog({required DateTime campaignEndDate}) async {
+Future<dynamic> priceDetailsDialog({
+  required CampaignResponseModel campaign,
+}) async {
   return Get.dialog(
     name: "price_details_dialog",
     barrierDismissible: true,
-    PriceDetailsDialog(campaignEndDate: campaignEndDate),
+    PriceDetailsDialog(campaign: campaign),
   );
 }
 
 class PriceDetailsDialog extends StatefulWidget {
-  const PriceDetailsDialog({super.key, required this.campaignEndDate});
+  const PriceDetailsDialog({super.key, required this.campaign});
 
-  final DateTime campaignEndDate;
+  final CampaignResponseModel campaign;
 
   @override
   State<PriceDetailsDialog> createState() => _PriceDetailsDialogState();
@@ -93,8 +97,11 @@ class _PriceDetailsDialogState extends State<PriceDetailsDialog> {
                       height: 189.h,
                       child: Transform.scale(
                         scale: 1.5,
-                        child: Image.asset(
-                          AssetsPngImages.product,
+                        child: CachedImageSize(
+                          imageUrl: widget.campaign.url,
+                          width: 159.w,
+                          height: 189.h,
+                          color: Colors.transparent,
                           fit: BoxFit.contain,
                         ),
                       ),
@@ -124,17 +131,7 @@ class _PriceDetailsDialogState extends State<PriceDetailsDialog> {
                     RichText(
                       textAlign: TextAlign.center,
                       text: TextSpan(
-                        text: "Oraimo Opensnap Airpod  loud &\ndurable.",
-                        style: TextStyles.normalBold14(
-                          context,
-                        ).copyWith(color: AppColors.white85),
-                      ),
-                    ),
-                    SizedBox(height: 20.h),
-                    RichText(
-                      textAlign: TextAlign.center,
-                      text: TextSpan(
-                        text: "50 Coin for all qualified entrants.",
+                        text: widget.campaign.prizeDetails,
                         style: TextStyles.normalBold14(
                           context,
                         ).copyWith(color: AppColors.white85),
@@ -145,7 +142,7 @@ class _PriceDetailsDialogState extends State<PriceDetailsDialog> {
                       textAlign: TextAlign.center,
                       text: TextSpan(
                         text:
-                            "Draw Date: ${formatDate(widget.campaignEndDate.toString())}",
+                            "Draw Date: ${formatDate(widget.campaign.campaignEndDate.toString())}",
                         style: TextStyles.normalBold14(
                           context,
                         ).copyWith(color: AppColors.white85),
