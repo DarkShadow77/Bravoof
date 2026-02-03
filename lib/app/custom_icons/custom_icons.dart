@@ -55,44 +55,40 @@ sealed class CustomIcon extends AppIcon {
   }
 }
 
-/// A final class representing the purple custom icon.
 final class MixBgIcon extends CustomIcon {
   MixBgIcon()
     : super(
-        iOSIcon: 'MixBg',
+        iOSIcon: 'AppIconMixBg',
         androidIcon: 'MainActivityMixBg',
         previewPath: 'assets/logo/icon_mix_bg.png',
         isDefaultIcon: false,
       );
 }
 
-/// A final class representing the purple custom icon.
 final class BlackTxtIcon extends CustomIcon {
   BlackTxtIcon()
     : super(
-        iOSIcon: 'BlackTxt',
+        iOSIcon: 'AppIconBlackTxt',
         androidIcon: 'MainActivityBlackTxt',
         previewPath: 'assets/logo/icon_black_txt.png',
         isDefaultIcon: false,
       );
 }
 
-/// A final class representing the purple custom icon.
 final class PurpleTxtIcon extends CustomIcon {
   PurpleTxtIcon()
     : super(
-        iOSIcon: 'PurpleTxt',
+        iOSIcon: 'AppIconPurpleTxt',
         androidIcon: 'MainActivityPurpleTxt',
         previewPath: 'assets/logo/icon_purple_txt.png',
         isDefaultIcon: false,
       );
 }
 
-/// A final class representing the purple custom icon.
 final class PurpleBgIcon extends CustomIcon {
   PurpleBgIcon()
     : super(
-        iOSIcon: 'PurpleBg',
+        iOSIcon: 'AppIconPurpleBg',
         androidIcon: 'MainActivityPurpleBg',
         previewPath: 'assets/logo/icon_purple_bg.png',
         isDefaultIcon: false,

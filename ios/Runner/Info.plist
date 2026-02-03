@@ -92,37 +92,8 @@
                     <string>AppIcon</string>
                 </array>
             </dict>
-            <key>CFBundleAlternateIcons</key>
-            <dict>
-                <key>PurpleBg</key>
-                <dict>
-                    <key>CFBundleIconFiles</key>
-                    <array>
-                        <string>AppIconPurpleBg</string>
-                    </array>
-                </dict>
-                <key>MixBg</key>
-                <dict>
-                    <key>CFBundleIconFiles</key>
-                    <array>
-                        <string>AppIconMixBg</string>
-                    </array>
-                </dict>
-                <key>PurpleTxt</key>
-                <dict>
-                    <key>CFBundleIconFiles</key>
-                    <array>
-                        <string>AppIconPurpleTxt</string>
-                    </array>
-                </dict>
-                <key>BlackTxt</key>
-                <dict>
-                    <key>CFBundleIconFiles</key>
-                    <array>
-                        <string>AppIconBlackTxt</string>
-                    </array>
-                </dict>
-            </dict>
         </dict>
 	</dict>
 </plist>
+
+
