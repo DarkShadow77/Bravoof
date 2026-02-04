@@ -75,6 +75,7 @@ class AppColors {
   static Color get black40 => black.withValues(alpha: .40);
   static Color get black25 => black.withValues(alpha: .25);
   static Color get black29 => black.withValues(alpha: .29);
+  static Color get black20 => black.withValues(alpha: .20);
   static Color get black15 => black.withValues(alpha: .15);
   static Color get black10 => black.withValues(alpha: .10);
   static Color get black05 => black.withValues(alpha: .05);

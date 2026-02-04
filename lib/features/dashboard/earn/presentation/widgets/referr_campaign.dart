@@ -302,9 +302,7 @@ class _ReferCampaignState extends State<ReferCampaign> {
                     if (widget.expanded) ...[
                       IconTextButton(
                         height: 54,
-                        onPressed: () => priceDetailsDialog(
-                          campaignEndDate: campaign.campaignEndDate,
-                        ),
+                        onPressed: () => priceDetailsDialog(campaign: campaign),
                         text: "See Prize Details",
                         color: AppColors.white.withValues(alpha: .16),
                         textColor: AppColors.white,
