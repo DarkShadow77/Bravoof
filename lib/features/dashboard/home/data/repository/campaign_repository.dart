@@ -12,8 +12,30 @@ abstract class CampaignRepository {
     required int campaignId,
   });
 
-  Future<bool> isUserInCampaign({
+  Future<Either<String, bool>> isUserInCampaign({
     required int campaignId,
     required String userId,
+  });
+
+  Future<Either<String, bool>> hasUserClaimedReward({
+    required int campaignId,
+    required String userId,
+  });
+
+  Future<Either<String, String>> claimParticipantReward({
+    required String userId,
+    required int campaignId,
+  });
+
+  Future<Either<String, String>> claimWinnerReward({
+    required String userId,
+    required int campaignId,
+    required String firstName,
+    required String lastName,
+    required String phoneNumber,
+    required String country,
+    required String deliveryAddress,
+    required String city,
+    required String state,
   });
 }

@@ -13,9 +13,8 @@ import 'package:timer_count_down/timer_count_down.dart';
 import '../../../../../app/view/widgets/button/icon_text_button.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/di/service_locator.dart';
-import '../../../home/presentation/bloc/campaign_cubit.dart';
+import '../../../home/presentation/bloc/campaign_bloc.dart';
 import '../../../home/presentation/bloc/home_cubit.dart';
-import 'draw_end_page.dart';
 import 'price_details_dialog.dart';
 
 class ReferCampaign extends StatefulWidget {
@@ -273,27 +272,18 @@ class _ReferCampaignState extends State<ReferCampaign> {
                         IconTextButton(
                           height: 54,
                           onPressed: () {
-                            if (differenceInSeconds == 0) {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (ctx) => DrawEndPage(),
-                                ),
-                              );
-                            } else {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => BlocProvider<CampaignCubit>(
-                                    create: (_) =>
-                                        sl<CampaignCubit>(param1: campaign.id),
-                                    child: ReferralContestScreen(
-                                      campaign: campaign,
-                                    ),
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => BlocProvider<CampaignBloc>(
+                                  create: (_) =>
+                                      sl<CampaignBloc>(param1: campaign.id),
+                                  child: ReferralContestScreen(
+                                    campaign: campaign,
                                   ),
                                 ),
-                              );
-                            }
+                              ),
+                            );
                           },
                           text: "Join the Draw",
                         ),

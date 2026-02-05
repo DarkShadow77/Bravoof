@@ -1,32 +1,41 @@
-part of 'campaign_cubit.dart';
+part of 'campaign_bloc.dart';
 
-enum CampaignType { getCampaign, updateCampaign }
+enum CampaignType { claimReward, claimWinnerReward }
 
 class CampaignState extends Equatable {
   final int totalParticipants;
   final List<UserProfile> referrals;
   final bool isUserInCampaign;
+  final bool hasClaimed;
 
-  CampaignState({
+  const CampaignState({
     required this.totalParticipants,
     required this.referrals,
     required this.isUserInCampaign,
+    required this.hasClaimed,
   });
 
   CampaignState copyWith({
     int? totalParticipants,
     List<UserProfile>? referrals,
     bool? isUserInCampaign,
+    bool? hasClaimed,
   }) {
     return CampaignState(
       totalParticipants: totalParticipants ?? this.totalParticipants,
       referrals: referrals ?? this.referrals,
       isUserInCampaign: isUserInCampaign ?? this.isUserInCampaign,
+      hasClaimed: hasClaimed ?? this.hasClaimed,
     );
   }
 
   @override
-  List<Object?> get props => [totalParticipants, referrals, isUserInCampaign];
+  List<Object?> get props => [
+    totalParticipants,
+    referrals,
+    isUserInCampaign,
+    hasClaimed,
+  ];
 }
 
 final class CampaignInitialState extends CampaignState {
@@ -34,6 +43,7 @@ final class CampaignInitialState extends CampaignState {
     required super.totalParticipants,
     required super.referrals,
     required super.isUserInCampaign,
+    required super.hasClaimed,
   });
 
   @override
@@ -43,12 +53,14 @@ final class CampaignInitialState extends CampaignState {
 class CampaignLoadingState extends CampaignState {
   final CampaignType type;
 
-  CampaignLoadingState({
+  const CampaignLoadingState({
     required this.type,
     required super.totalParticipants,
     required super.referrals,
     required super.isUserInCampaign,
+    required super.hasClaimed,
   });
+
   @override
   List<Object?> get props => [type];
 }
@@ -58,14 +70,16 @@ class CampaignSuccessState extends CampaignState {
   final String message;
   final String? data;
 
-  CampaignSuccessState({
+  const CampaignSuccessState({
     required this.type,
     required this.message,
     this.data,
     required super.totalParticipants,
     required super.referrals,
     required super.isUserInCampaign,
+    required super.hasClaimed,
   });
+
   @override
   List<Object?> get props => [type, message, data];
 }
@@ -74,13 +88,15 @@ class CampaignFailureState extends CampaignState {
   final CampaignType type;
   final String message;
 
-  CampaignFailureState({
+  const CampaignFailureState({
     required this.type,
     required this.message,
     required super.totalParticipants,
     required super.referrals,
     required super.isUserInCampaign,
+    required super.hasClaimed,
   });
+
   @override
   List<Object?> get props => [type, message];
 }

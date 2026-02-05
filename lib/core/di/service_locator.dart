@@ -1,4 +1,3 @@
-import 'package:Bravoo/features/dashboard/home/presentation/bloc/campaign_cubit.dart';
 import 'package:Bravoo/features/onbaording/data/bloc/user_cubit.dart';
 import 'package:get_it/get_it.dart';
 
@@ -11,6 +10,7 @@ import '../../features/dashboard/home/data/repository/home_repository.dart';
 import '../../features/dashboard/home/data/repository/home_repository_impl.dart';
 import '../../features/dashboard/home/data/repository/notification_repository.dart';
 import '../../features/dashboard/home/data/repository/notification_repository_impl.dart';
+import '../../features/dashboard/home/presentation/bloc/campaign_bloc.dart';
 import '../../features/dashboard/home/presentation/bloc/home_cubit.dart';
 import '../../features/dashboard/home/presentation/bloc/notification_bloc.dart';
 import '../../features/dashboard/mission/data/repository/community_mission_repository.dart';
@@ -79,11 +79,9 @@ Future<void> initDI() async {
 
   //Blocs
   sl.registerSingleton<UserCubit>(UserCubit());
-  sl.registerFactoryParam<CampaignCubit, int, void>(
-    (campaignId, _) => CampaignCubit(
-      campaignId: campaignId,
-      campaignRepository: sl<CampaignRepository>(),
-    ),
+  sl.registerFactoryParam<CampaignBloc, int, void>(
+    (campaignId, _) =>
+        CampaignBloc(campaignId: campaignId, repo: sl<CampaignRepository>()),
   );
   sl.registerSingleton<HomeCubit>(HomeCubit());
   sl.registerSingleton<CommunityMissionBloc>(

@@ -3,28 +3,33 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:Bravoo/app/view/widgets/button/icon_text_button.dart';
+import 'package:Bravoo/app/view/widgets/dialog/success_dialog.dart';
 import 'package:Bravoo/features/common/flowva_button.dart';
+import 'package:Bravoo/features/dashboard/home/presentation/bloc/campaign_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:inner_shadow_container/inner_shadow_container.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:timer_count_down/timer_controller.dart';
 import 'package:timer_count_down/timer_count_down.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../../app/styles/text_styles.dart';
 import '../../../../../app/view/widgets/cached_image_widget.dart';
+import '../../../../../app/view/widgets/loading/outer_loading.dart';
 import '../../../../../core/constants/app_assets.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/fonts.dart';
+import '../../../../../utility/ui_tool_mix.dart';
 import '../../../../onbaording/data/model/user_profile.dart';
 import '../../../home/data/model/campaign_response.dart';
-import '../../../home/presentation/bloc/campaign_cubit.dart';
 import '../../../profile/presentation/bloc/profile_bloc.dart';
 import '../widgets/price_details_dialog.dart';
 import 'invite_earn.dart';
@@ -38,50 +43,111 @@ class ReferralContestScreen extends StatefulWidget {
   State<ReferralContestScreen> createState() => _ReferralContestScreenState();
 }
 
-class _ReferralContestScreenState extends State<ReferralContestScreen> {
+class _ReferralContestScreenState extends State<ReferralContestScreen>
+    with UIToolMixin {
   CampaignResponseModel campaign = CampaignResponseModel.empty();
+  final supabase = Supabase.instance.client;
+
   @override
   void initState() {
     campaign = widget.campaign;
     super.initState();
 
     log("Date Time ${campaign.campaignEndDate}");
-    context.read<CampaignCubit>().getTotalCampaignParticipants();
-    context.read<CampaignCubit>().getUserReferralsForCampaign();
-    context.read<CampaignCubit>().isUserInCampaign();
+    context.read<CampaignBloc>().add(LoadTotalCampaignParticipants());
+    context.read<CampaignBloc>().add(LoadUserReferralsForCampaign());
+    context.read<CampaignBloc>().add(IsUserInCampaign());
+    context.read<CampaignBloc>().add(HasUserClaimedReward());
+  }
+
+  _loadingState(BuildContext context, CampaignLoadingState state) {
+    if (state.type == CampaignType.claimReward) {
+      outerLoadingDialog(text: "Claiming Reward");
+    }
+  }
+
+  _successState(BuildContext context, CampaignSuccessState state) {
+    if (state.type == CampaignType.claimReward) {
+      if (Get.isDialogOpen == true) {
+        Navigator.of(context, rootNavigator: true).pop();
+      }
+      context.read<ProfileBloc>().add(GetProfileEvent());
+      successDialog(
+        title: "Reward claimed successfully",
+        subTitle:
+            "You have successfully participated in a campaign and received your reward",
+        mainBtnText: "Done",
+        mainBtnPressed: () {},
+      );
+    }
+  }
+
+  _failureState(BuildContext context, CampaignFailureState state) {
+    if (state.type == CampaignType.claimReward) {
+      if (Get.isDialogOpen == true) {
+        Navigator.of(context, rootNavigator: true).pop();
+      }
+      showMessage(
+        state.message,
+        context,
+        color: Colors.white,
+        styleColor: Colors.black,
+        iconColor: Colors.red,
+        status: true,
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.purple,
-      extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        leading: IconButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          icon: Icon(
-            Icons.arrow_back_rounded,
-            size: 16.sp,
-            color: AppColors.white,
+    final hasEnded = campaign.campaignEndDate.isBefore(DateTime.now());
+    final isWinner = campaign.winnerUserId == supabase.auth.currentUser!.id;
+    final color = hasEnded
+        ? isWinner
+              ? AppColors.purple
+              : Color(0xff2F1C48)
+        : AppColors.purple;
+    return BlocListener<CampaignBloc, CampaignState>(
+      listener: (context, state) {
+        if (state is CampaignLoadingState) {
+          _loadingState(context, state);
+        }
+        if (state is CampaignSuccessState) {
+          _successState(context, state);
+        }
+        if (state is CampaignFailureState) {
+          _failureState(context, state);
+        }
+      },
+
+      child: Scaffold(
+        backgroundColor: color,
+        extendBodyBehindAppBar: true,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          leading: IconButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            icon: Icon(
+              Icons.arrow_back_rounded,
+              size: 16.sp,
+              color: AppColors.white,
+            ),
           ),
         ),
-      ),
-      body: SingleChildScrollView(
-        physics: BouncingScrollPhysics(),
-        child: Stack(
-          children: [
-            Image.asset(
-              AssetsPngImages.homeBg,
-              fit: BoxFit.cover,
-              height: 440.h + MediaQuery.of(context).padding.top,
-              width: double.infinity,
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.w),
-              child: Column(
+        body: SingleChildScrollView(
+          physics: BouncingScrollPhysics(),
+          child: Stack(
+            children: [
+              if (!hasEnded || (hasEnded && isWinner))
+                Image.asset(
+                  AssetsPngImages.homeBg,
+                  fit: BoxFit.cover,
+                  height: 440.h + MediaQuery.of(context).padding.top,
+                  width: double.infinity,
+                ),
+              Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -111,24 +177,89 @@ class _ReferralContestScreenState extends State<ReferralContestScreen> {
                             fit: BoxFit.contain,
                           ),
                         ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            CachedImageSize(
-                              imageUrl: campaign.url,
-                              width: 152.w,
-                              height: 120.h,
-                              color: Colors.transparent,
+                        if (hasEnded && isWinner)
+                          Positioned(
+                            left: 100.w,
+                            right: 0.w,
+                            top: 55.h,
+                            child: Image.asset(
+                              AssetsPngImages.one50,
+                              width: 72.w,
+                              height: 72.h,
                               fit: BoxFit.contain,
                             ),
-                          ],
+                          ),
+                        Positioned(
+                          left: 0,
+                          right: 0,
+                          top: 15.h,
+                          child: CachedImageSize(
+                            imageUrl: campaign.url,
+                            width: 142.w,
+                            height: 110.h,
+                            color: Colors.transparent,
+                            fit: BoxFit.contain,
+                          ),
                         ),
+                        if (hasEnded) ...[
+                          Positioned(
+                            left: 0,
+                            right: 0,
+                            top: 150.h,
+                            child: Image.asset(
+                              AssetsPngImages.campaignEndBg,
+                              height: 130.h,
+                              width: double.infinity,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                          if (isWinner) ...[
+                            Positioned(
+                              left: 0,
+                              right: 120.w,
+                              top: 30.h,
+                              child: CachedImageRadius(
+                                imageUrl: campaign.winnerProfileImage,
+                                size: 94,
+                                circle: true,
+                                color: Colors.transparent,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                            Positioned(
+                              left: 0,
+                              right: 0,
+                              top: 70.h,
+                              child: Image.asset(
+                                AssetsPngImages.campaignWinner,
+                                width: 200.w,
+                                height: 116.h,
+                                fit: BoxFit.contain,
+                              ),
+                            ),
+                          ] else
+                            Positioned(
+                              left: 0,
+                              right: 0,
+                              top: 100.h,
+                              child: Image.asset(
+                                AssetsPngImages.campaignEnd,
+                                width: 228.w,
+                                height: 82.h,
+                                fit: BoxFit.contain,
+                              ),
+                            ),
+                        ],
                         Container(
                           clipBehavior: Clip.antiAlias,
-                          margin: EdgeInsets.only(top: 194.h),
-                          padding: EdgeInsets.symmetric(horizontal: 16.w),
+                          margin: EdgeInsets.only(
+                            top: 194.h,
+                            left: 16.w,
+                            right: 16.w,
+                          ),
+                          padding: EdgeInsets.symmetric(vertical: 16.h),
                           decoration: BoxDecoration(
-                            color: AppColors.white.withValues(alpha: .08),
+                            color: color,
                             borderRadius: BorderRadius.circular(16.r),
                             border: Border.all(
                               width: 1.w,
@@ -139,52 +270,153 @@ class _ReferralContestScreenState extends State<ReferralContestScreen> {
                             mainAxisSize: MainAxisSize.min,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              TimerWidget(
-                                campaignEndDate: campaign.campaignEndDate,
-                              ),
-                              SizedBox(height: 44.h),
-                              Image.asset(
-                                AssetsPngImages.speaker,
-                                width: 36.5.w,
-                                height: 40.h,
-                                fit: BoxFit.contain,
-                              ),
-                              SizedBox(height: 14.h),
-                              RichText(
-                                textAlign: TextAlign.center,
-                                text: TextSpan(
-                                  text: "CONTEST RULES",
-                                  style: TextStyles.bodyRegular16(context)
-                                      .copyWith(
-                                        fontFamily: AppFonts.baloo,
-                                        color: AppColors.white,
-                                      ),
-                                ),
-                              ),
-                              SizedBox(height: 4.h),
-                              ListView.builder(
-                                shrinkWrap: true,
-                                physics: NeverScrollableScrollPhysics(),
-                                padding: EdgeInsets.zero,
-                                itemCount: campaign.instructions.length,
-                                itemBuilder: (context, index) {
-                                  final instruction =
-                                      campaign.instructions[index];
-                                  return RichText(
-                                    textAlign: TextAlign.center,
-                                    text: TextSpan(
-                                      text: instruction,
-                                      style: TextStyles.smallSemibold12(context)
-                                          .copyWith(
-                                            color: AppColors.white.withValues(
-                                              alpha: .7,
+                              if (hasEnded)
+                                Padding(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 16.w,
+                                  ),
+                                  child: Column(
+                                    spacing: 16.h,
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      if (campaign.winnerUserId.isNotEmpty) ...[
+                                        if (!isWinner)
+                                          RichText(
+                                            textAlign: TextAlign.center,
+                                            text: TextSpan(
+                                              children: [
+                                                TextSpan(
+                                                  text:
+                                                      "The Oraimo Opensnap Airpod goes to ",
+                                                ),
+                                                TextSpan(
+                                                  text:
+                                                      "@${campaign.winnerName}",
+                                                  style: TextStyle(
+                                                    color: AppColors.white,
+                                                    fontWeight: FontWeight.w800,
+                                                  ),
+                                                ),
+                                                TextSpan(
+                                                  text:
+                                                      " You didn’t win this time, but the next one could be yours.",
+                                                ),
+                                              ],
+                                              style:
+                                                  TextStyles.smallBold12(
+                                                    context,
+                                                  ).copyWith(
+                                                    color: AppColors.white65,
+                                                  ),
                                             ),
                                           ),
-                                    ),
-                                  );
-                                },
+                                        BlocBuilder<
+                                          CampaignBloc,
+                                          CampaignState
+                                        >(
+                                          builder: (context, state) {
+                                            if (!state.isUserInCampaign)
+                                              return Container();
+                                            return IconTextButton(
+                                              height: 52,
+                                              color: state.hasClaimed
+                                                  ? AppColors.grey300
+                                                  : Color(0xff642020),
+                                              textColor: AppColors.white,
+                                              borderColor: state.hasClaimed
+                                                  ? AppColors.white50
+                                                  : AppColors.white,
+                                              onPressed: () {
+                                                if (!state.hasClaimed) {
+                                                  if (isWinner) {
+                                                    // context.read<CampaignCubit>().claimReward();
+                                                  } else {
+                                                    context
+                                                        .read<CampaignBloc>()
+                                                        .add(
+                                                          ClaimParticipantReward(),
+                                                        );
+                                                  }
+                                                } else {
+                                                  showMessage(
+                                                    "Reward Already Claimed",
+                                                    context,
+                                                    color: Colors.green,
+                                                    styleColor: Colors.black,
+                                                  );
+                                                }
+                                              },
+                                              text: isWinner
+                                                  ? "Claim Reward"
+                                                  : "Collect Your Coin",
+                                            );
+                                          },
+                                        ),
+                                      ],
+                                    ],
+                                  ),
+                                ),
+                              TimerWidget(
+                                campaignEndDate: campaign.campaignEndDate,
+                                hasEnded: hasEnded,
+                                isWinner: isWinner,
                               ),
-                              ReferralContainer(campaign: campaign),
+                              Container(
+                                color: AppColors.white.withValues(alpha: .08),
+                                padding: EdgeInsets.symmetric(horizontal: 16.w),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    SizedBox(height: 44.h),
+                                    Image.asset(
+                                      AssetsPngImages.speaker,
+                                      width: 36.5.w,
+                                      height: 40.h,
+                                      fit: BoxFit.contain,
+                                    ),
+                                    SizedBox(height: 14.h),
+                                    RichText(
+                                      textAlign: TextAlign.center,
+                                      text: TextSpan(
+                                        text: "CONTEST RULES",
+                                        style: TextStyles.bodyRegular16(context)
+                                            .copyWith(
+                                              fontFamily: AppFonts.baloo,
+                                              color: AppColors.white,
+                                            ),
+                                      ),
+                                    ),
+                                    SizedBox(height: 4.h),
+                                    ListView.builder(
+                                      shrinkWrap: true,
+                                      physics: NeverScrollableScrollPhysics(),
+                                      padding: EdgeInsets.zero,
+                                      itemCount: campaign.instructions.length,
+                                      itemBuilder: (context, index) {
+                                        final instruction =
+                                            campaign.instructions[index];
+                                        return RichText(
+                                          textAlign: TextAlign.center,
+                                          text: TextSpan(
+                                            text: instruction,
+                                            style:
+                                                TextStyles.smallSemibold12(
+                                                  context,
+                                                ).copyWith(
+                                                  color: AppColors.white
+                                                      .withValues(alpha: .7),
+                                                ),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                    ReferralContainer(campaign: campaign),
+                                  ],
+                                ),
+                              ),
                             ],
                           ),
                         ),
@@ -196,8 +428,8 @@ class _ReferralContestScreenState extends State<ReferralContestScreen> {
                   ),
                 ],
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -205,8 +437,15 @@ class _ReferralContestScreenState extends State<ReferralContestScreen> {
 }
 
 class TimerWidget extends StatefulWidget {
-  const TimerWidget({super.key, required this.campaignEndDate});
+  const TimerWidget({
+    super.key,
+    required this.hasEnded,
+    required this.isWinner,
+    required this.campaignEndDate,
+  });
 
+  final bool hasEnded;
+  final bool isWinner;
   final DateTime campaignEndDate;
 
   @override
@@ -229,6 +468,7 @@ class _TimerWidgetState extends State<TimerWidget> {
         .inSeconds
         .clamp(0, double.infinity)
         .toInt();
+    WinnerDialog();
   }
 
   List<String> formattedTime2(double time) {
@@ -250,43 +490,16 @@ class _TimerWidgetState extends State<TimerWidget> {
     return Container(
       height: 156.h,
       width: double.infinity,
-      decoration: BoxDecoration(
-        color: AppColors.purple,
-        border: Border.all(
-          width: 1.w,
-          color: AppColors.white.withValues(alpha: .04),
-        ),
-        boxShadow: [
-          BoxShadow(
-            offset: Offset(0, 1),
-            blurRadius: 3.r,
-            color: Color(0xffAAA7A7).withValues(alpha: .1),
-          ),
-          BoxShadow(
-            offset: Offset(0, 5),
-            blurRadius: 5.r,
-            color: Color(0xffAAA7A7).withValues(alpha: .09),
-          ),
-          BoxShadow(
-            offset: Offset(0, 12),
-            blurRadius: 7.r,
-            color: Color(0xffAAA7A7).withValues(alpha: .05),
-          ),
-          BoxShadow(
-            offset: Offset(0, 21),
-            blurRadius: 8.r,
-            color: Color(0xffAAA7A7).withValues(alpha: .01),
-          ),
-        ],
-      ),
+
       child: Stack(
         children: [
-          Image.asset(
-            AssetsPngImages.productTimerBg,
-            width: double.infinity,
-            height: double.infinity,
-            fit: BoxFit.cover,
-          ),
+          if (!widget.hasEnded || (widget.hasEnded && widget.isWinner))
+            Image.asset(
+              AssetsPngImages.productTimerBg,
+              width: double.infinity,
+              height: double.infinity,
+              fit: BoxFit.cover,
+            ),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
             child: Column(
@@ -366,11 +579,7 @@ class _TimerWidgetState extends State<TimerWidget> {
                       ],
                     );
                   },
-                  onFinished: () {
-                    setState(() {
-                      _timerController.restart();
-                    });
-                  },
+                  onFinished: () {},
                 ),
                 Expanded(
                   child: InnerShadowContainer(
@@ -384,7 +593,7 @@ class _TimerWidgetState extends State<TimerWidget> {
                         borderRadius: BorderRadius.circular(100.r),
                       ),
                       child: Center(
-                        child: BlocBuilder<CampaignCubit, CampaignState>(
+                        child: BlocBuilder<CampaignBloc, CampaignState>(
                           builder: (context, state) {
                             return RichText(
                               text: TextSpan(
@@ -542,7 +751,7 @@ class _ReferralContainerState extends State<ReferralContainer> {
   @override
   Widget build(BuildContext context) {
     final displayCount = referredUsers.length > 5 ? 5 : referredUsers.length;
-    return BlocBuilder<CampaignCubit, CampaignState>(
+    return BlocBuilder<CampaignBloc, CampaignState>(
       builder: (context, state) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           setState(() => referredUsers = state.referrals);

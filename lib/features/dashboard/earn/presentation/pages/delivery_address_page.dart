@@ -5,8 +5,12 @@ import 'package:form_field_validator/form_field_validator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
 
+import '../../../home/data/model/campaign_response.dart';
+
 class DeliveryAddressScreen extends StatefulWidget {
-  const DeliveryAddressScreen({super.key});
+  const DeliveryAddressScreen({super.key, required this.campaign});
+
+  final CampaignResponseModel campaign;
 
   @override
   State<DeliveryAddressScreen> createState() => _DeliveryAddressScreenState();
