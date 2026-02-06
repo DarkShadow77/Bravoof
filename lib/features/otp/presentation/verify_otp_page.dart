@@ -49,6 +49,12 @@ class _VerifyOtpPageState extends State<VerifyOtpPage> with UIToolMixin {
       ),
     );
     return Scaffold(
+      backgroundColor: Colors.transparent,
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        surfaceTintColor: Colors.transparent,
+      ),
       body: Container(
         decoration: const BoxDecoration(
           image: DecorationImage(
@@ -57,11 +63,15 @@ class _VerifyOtpPageState extends State<VerifyOtpPage> with UIToolMixin {
           ),
         ),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          padding: EdgeInsets.symmetric(horizontal: 16.w),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: 100.h),
+              SizedBox(
+                height:
+                    10.h + MediaQuery.of(context).padding.top + kToolbarHeight,
+              ),
+
               RichText(
                 text: TextSpan(
                   text: "Check your email",
