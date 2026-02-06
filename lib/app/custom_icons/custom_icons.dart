@@ -2,6 +2,9 @@ import 'package:flutter_app_icon_changer/flutter_app_icon_changer.dart';
 
 /// A class containing static instances of custom icons.
 class CustomIcons {
+  /// The blue background icon instance.
+  static final blueBgIcon = BlueBgIcon();
+
   /// The mix background icon instance.
   static final mixBgIcon = MixBgIcon();
 
@@ -24,6 +27,7 @@ class CustomIcons {
     CustomIcons.blackTxtIcon,
     CustomIcons.purpleTxtIcon,
     CustomIcons.mixBgIcon,
+    CustomIcons.blueBgIcon,
   ];
 }
 
@@ -53,6 +57,16 @@ sealed class CustomIcon extends AppIcon {
       orElse: () => CustomIcons.defaultIcon,
     );
   }
+}
+
+final class BlueBgIcon extends CustomIcon {
+  BlueBgIcon()
+    : super(
+        iOSIcon: 'AppIconBlueBg',
+        androidIcon: 'MainActivityBlueBg',
+        previewPath: 'assets/logo/icon_blue_bg.png',
+        isDefaultIcon: false,
+      );
 }
 
 final class MixBgIcon extends CustomIcon {

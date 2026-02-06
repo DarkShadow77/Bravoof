@@ -5,6 +5,7 @@ import 'dart:ui';
 import 'package:Bravoo/app/view/widgets/button/icon_text_button.dart';
 import 'package:Bravoo/app/view/widgets/dialog/success_dialog.dart';
 import 'package:Bravoo/features/common/flowva_button.dart';
+import 'package:Bravoo/features/dashboard/earn/presentation/pages/delivery_address_page.dart';
 import 'package:Bravoo/features/dashboard/home/presentation/bloc/campaign_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -27,9 +28,11 @@ import '../../../../../app/view/widgets/loading/outer_loading.dart';
 import '../../../../../core/constants/app_assets.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/fonts.dart';
+import '../../../../../core/di/service_locator.dart';
 import '../../../../../utility/ui_tool_mix.dart';
 import '../../../../onbaording/data/model/user_profile.dart';
 import '../../../home/data/model/campaign_response.dart';
+import '../../../nav_bar.dart';
 import '../../../profile/presentation/bloc/profile_bloc.dart';
 import '../widgets/price_details_dialog.dart';
 import 'invite_earn.dart';
@@ -77,7 +80,15 @@ class _ReferralContestScreenState extends State<ReferralContestScreen>
         subTitle:
             "You have successfully participated in a campaign and received your reward",
         mainBtnText: "Done",
-        mainBtnPressed: () {},
+        mainBtnPressed: () {
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+              builder: (_) => BottomNavBar(index: 0, missionIndex: 0),
+            ),
+            (route) => false,
+          );
+        },
       );
     }
   }
@@ -119,7 +130,6 @@ class _ReferralContestScreenState extends State<ReferralContestScreen>
           _failureState(context, state);
         }
       },
-
       child: Scaffold(
         backgroundColor: color,
         extendBodyBehindAppBar: true,
@@ -215,15 +225,14 @@ class _ReferralContestScreenState extends State<ReferralContestScreen>
                           ),
                           if (isWinner) ...[
                             Positioned(
-                              left: 0,
-                              right: 120.w,
+                              left: 70.w,
                               top: 30.h,
                               child: CachedImageRadius(
                                 imageUrl: campaign.winnerProfileImage,
                                 size: 94,
                                 circle: true,
-                                color: Colors.transparent,
                                 fit: BoxFit.cover,
+                                color: Colors.transparent,
                               ),
                             ),
                             Positioned(
@@ -271,92 +280,9 @@ class _ReferralContestScreenState extends State<ReferralContestScreen>
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               if (hasEnded)
-                                Padding(
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: 16.w,
-                                  ),
-                                  child: Column(
-                                    spacing: 16.h,
-                                    mainAxisSize: MainAxisSize.min,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      if (campaign.winnerUserId.isNotEmpty) ...[
-                                        if (!isWinner)
-                                          RichText(
-                                            textAlign: TextAlign.center,
-                                            text: TextSpan(
-                                              children: [
-                                                TextSpan(
-                                                  text:
-                                                      "The Oraimo Opensnap Airpod goes to ",
-                                                ),
-                                                TextSpan(
-                                                  text:
-                                                      "@${campaign.winnerName}",
-                                                  style: TextStyle(
-                                                    color: AppColors.white,
-                                                    fontWeight: FontWeight.w800,
-                                                  ),
-                                                ),
-                                                TextSpan(
-                                                  text:
-                                                      " You didn’t win this time, but the next one could be yours.",
-                                                ),
-                                              ],
-                                              style:
-                                                  TextStyles.smallBold12(
-                                                    context,
-                                                  ).copyWith(
-                                                    color: AppColors.white65,
-                                                  ),
-                                            ),
-                                          ),
-                                        BlocBuilder<
-                                          CampaignBloc,
-                                          CampaignState
-                                        >(
-                                          builder: (context, state) {
-                                            if (!state.isUserInCampaign)
-                                              return Container();
-                                            return IconTextButton(
-                                              height: 52,
-                                              color: state.hasClaimed
-                                                  ? AppColors.grey300
-                                                  : Color(0xff642020),
-                                              textColor: AppColors.white,
-                                              borderColor: state.hasClaimed
-                                                  ? AppColors.white50
-                                                  : AppColors.white,
-                                              onPressed: () {
-                                                if (!state.hasClaimed) {
-                                                  if (isWinner) {
-                                                    // context.read<CampaignCubit>().claimReward();
-                                                  } else {
-                                                    context
-                                                        .read<CampaignBloc>()
-                                                        .add(
-                                                          ClaimParticipantReward(),
-                                                        );
-                                                  }
-                                                } else {
-                                                  showMessage(
-                                                    "Reward Already Claimed",
-                                                    context,
-                                                    color: Colors.green,
-                                                    styleColor: Colors.black,
-                                                  );
-                                                }
-                                              },
-                                              text: isWinner
-                                                  ? "Claim Reward"
-                                                  : "Collect Your Coin",
-                                            );
-                                          },
-                                        ),
-                                      ],
-                                    ],
-                                  ),
+                                HasEndedWidget(
+                                  campaign: campaign,
+                                  isWinner: isWinner,
                                 ),
                               TimerWidget(
                                 campaignEndDate: campaign.campaignEndDate,
@@ -431,6 +357,105 @@ class _ReferralContestScreenState extends State<ReferralContestScreen>
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+class HasEndedWidget extends StatefulWidget {
+  const HasEndedWidget({
+    super.key,
+    required this.campaign,
+    required this.isWinner,
+  });
+
+  final bool isWinner;
+  final CampaignResponseModel campaign;
+  @override
+  State<HasEndedWidget> createState() => _HasEndedWidgetState();
+}
+
+class _HasEndedWidgetState extends State<HasEndedWidget> with UIToolMixin {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: 16.w),
+      child: Column(
+        spacing: 16.h,
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          if (widget.campaign.winnerUserId.isNotEmpty) ...[
+            if (!widget.isWinner)
+              RichText(
+                textAlign: TextAlign.center,
+                text: TextSpan(
+                  children: [
+                    TextSpan(text: "The Oraimo Opensnap Airpod goes to "),
+                    TextSpan(
+                      text: "@${widget.campaign.winnerName}",
+                      style: TextStyle(
+                        color: AppColors.white,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                    TextSpan(
+                      text:
+                          " You didn’t win this time, but the next one could be yours.",
+                    ),
+                  ],
+                  style: TextStyles.smallBold12(
+                    context,
+                  ).copyWith(color: AppColors.white65),
+                ),
+              ),
+            BlocBuilder<CampaignBloc, CampaignState>(
+              builder: (context, state) {
+                if (!state.isUserInCampaign) return Container();
+                return IconTextButton(
+                  height: 52,
+                  color: state.hasClaimed
+                      ? AppColors.grey300
+                      : Color(0xff642020),
+                  textColor: AppColors.white,
+                  borderColor: state.hasClaimed
+                      ? AppColors.white50
+                      : AppColors.white,
+                  onPressed: () {
+                    if (!state.hasClaimed) {
+                      if (widget.isWinner) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => BlocProvider<CampaignBloc>(
+                              create: (_) =>
+                                  sl<CampaignBloc>(param1: widget.campaign.id),
+                              child: DeliveryAddressScreen(
+                                campaign: widget.campaign,
+                              ),
+                            ),
+                          ),
+                        );
+                      } else {
+                        context.read<CampaignBloc>().add(
+                          ClaimParticipantReward(),
+                        );
+                      }
+                    } else {
+                      showMessage(
+                        "Reward Already Claimed",
+                        context,
+                        color: Colors.green,
+                        styleColor: Colors.black,
+                      );
+                    }
+                  },
+                  text: widget.isWinner ? "Claim Reward" : "Collect Your Coin",
+                );
+              },
+            ),
+          ],
+        ],
       ),
     );
   }

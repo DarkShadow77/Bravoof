@@ -47,11 +47,11 @@
 		<key>LSRequiresIPhoneOS</key>
 		<true/>
 		<key>NSCameraUsageDescription</key>
-        <string>Bravoo uses the camera so you can take photos and record videos directly in the app.</string>
-        <key>NSPhotoLibraryAddUsageDescription</key>
-        <string>Bravoo needs access to save photos and videos you create or download to your photo library.</string>
-        <key>NSPhotoLibraryUsageDescription</key>
-        <string>Bravoo needs access to your photo library so you can choose existing photos and videos to upload or share.</string>
+		<string>Bravoo uses the camera so you can take photos and record videos directly in the app.</string>
+		<key>NSPhotoLibraryAddUsageDescription</key>
+		<string>Bravoo needs access to save photos and videos you create or download to your photo library.</string>
+		<key>NSPhotoLibraryUsageDescription</key>
+		<string>Bravoo needs access to your photo library so you can choose existing photos and videos to upload or share.</string>
 		<key>NSUserNotificationAlertStyle</key>
 		<string>alert</string>
 		<key>NSUserNotificationUsageDescription</key>
@@ -84,16 +84,14 @@
 		<key>UNUserNotificationCenter</key>
 		<true/>
 		<key>CFBundleIcons</key>
-        <dict>
-            <key>CFBundlePrimaryIcon</key>
-            <dict>
-                <key>CFBundleIconFiles</key>
-                <array>
-                    <string>AppIcon</string>
-                </array>
-            </dict>
-        </dict>
+		<dict>
+			<key>CFBundlePrimaryIcon</key>
+			<dict>
+				<key>CFBundleIconFiles</key>
+				<array>
+					<string>AppIcon</string>
+				</array>
+			</dict>
+		</dict>
 	</dict>
 </plist>
-
-

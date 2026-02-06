@@ -28,6 +28,10 @@ flutter_launcher_icons:
 #    # Mixed Background variant
 #    - image_path: "assets/logo/icon_mix_bg.png"
 #      android: "ic_launcher_mix_bg"
+#
+#    # Blue Background variant
+#    - image_path: "assets/logo/icon_blue_bg.png"
+#      android: "ic_launcher_blue_bg"
 
 #  web:
 #    generate: true

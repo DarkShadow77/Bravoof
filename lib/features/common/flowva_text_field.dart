@@ -14,18 +14,22 @@ class AppTextFeild extends StatelessWidget {
     this.maxLength,
     this.focusNode,
     this.enable = true,
+    this.readOnly = false,
     this.maxLines = 1,
     this.textInputType = TextInputType.text,
     this.onChanged,
+    this.onTap,
   });
   final String? hintText;
   final int? maxLength;
   final int? maxLines;
   final bool enable;
+  final bool readOnly;
   final Widget? prefixIcon;
   final FocusNode? focusNode;
   final TextInputType textInputType;
   final ValueChanged? onChanged;
+  final Function()? onTap;
   final FormFieldValidator<String>? validator;
   final TextEditingController? controller;
 
@@ -38,6 +42,9 @@ class AppTextFeild extends StatelessWidget {
       keyboardType: textInputType,
       maxLength: maxLength,
       maxLines: maxLines,
+      onTap: onTap,
+      enabled: enable,
+      readOnly: readOnly,
       decoration: InputDecoration(
         hintText: hintText,
         hintStyle: TextStyles.normalRegular14(context, opacity: .5),

@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:Bravoo/features/common/app_enum.dart';
+import 'package:Bravoo/features/common/data/constants.dart';
 import 'package:Bravoo/features/common/flowva_button.dart';
 import 'package:Bravoo/features/common/ui_tool_mixin/ui_tool_mixin.dart';
 import 'package:Bravoo/features/onbaording/data/bloc/user_cubit.dart';
@@ -9,6 +10,7 @@ import 'package:Bravoo/features/onbaording/data/model/user_profile.dart';
 import 'package:Bravoo/session/session_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -47,6 +49,7 @@ class _OnbaordSecondStageState extends State<OnbaordSecondStage>
   final username = TextEditingController();
   final _pageController = PageController(initialPage: 0);
   final ImagePicker _picker = ImagePicker();
+  UserProfile profile = UserProfile.empty();
   String? pickedImage;
   int currentPage = 0;
   String? selectedToConvert;
@@ -114,6 +117,8 @@ class _OnbaordSecondStageState extends State<OnbaordSecondStage>
     });
     userCubit = UserCubit();
     super.initState();
+
+    intiData();
   }
 
   @override
@@ -121,6 +126,11 @@ class _OnbaordSecondStageState extends State<OnbaordSecondStage>
     _pageController.dispose();
     username.dispose();
     super.dispose();
+  }
+
+  intiData() async {
+    profile = UserProfile.fromJson(await Constants().getUser());
+    username.text = profile.name;
   }
 
   @override
@@ -305,30 +315,32 @@ class _OnbaordSecondStageState extends State<OnbaordSecondStage>
                             iconColor: Colors.red,
                             status: true,
                           );
-                        if (currentPage == 2 && selectedToConvert == null)
-                          return showMessage(
-                            "Add or select an image to continue",
-                            context,
-                            color: Colors.white,
-                            styleColor: Colors.black,
-                            iconColor: Colors.red,
-                            status: true,
-                          );
                         if (currentPage == 2) {
-                          final profile = UserProfile.empty();
-                          userCubit.signup(
-                            userProfile: profile.copyWith(
-                              name: username.text,
-                              email: widget.data!['email'],
-                              referralCode: widget.data!['referral_code'],
-                              pass: widget.data!['pass'],
-                              isLogin: widget.data!['isLogin'],
-                              goals: goals,
-                              profilePic: selectedAvatar != null
-                                  ? await assetToFile(selectedToConvert!)
-                                  : pickedImage,
-                            ),
-                          );
+                          if (selectedToConvert == null && pickedImage == null)
+                            return showMessage(
+                              "Add or select an image to continue",
+                              context,
+                              color: Colors.white,
+                              styleColor: Colors.black,
+                              iconColor: Colors.red,
+                              status: true,
+                            );
+                          else {
+                            final profile = UserProfile.empty();
+                            userCubit.signup(
+                              userProfile: profile.copyWith(
+                                name: username.text,
+                                email: widget.data!['email'],
+                                referralCode: widget.data!['referral_code'],
+                                pass: widget.data!['pass'],
+                                isLogin: widget.data!['isLogin'],
+                                goals: goals,
+                                profilePic: selectedAvatar != null
+                                    ? await assetToFile(selectedToConvert!)
+                                    : pickedImage,
+                              ),
+                            );
+                          }
                         } else {
                           setState(() {
                             _isTapped = true;
@@ -526,12 +538,11 @@ class _OnbaordSecondStageState extends State<OnbaordSecondStage>
               style: GoogleFonts.manrope(fontSize: 14, color: Colors.black54),
             ),
             const SizedBox(height: 32),
-
             // Profile placeholder
             selectedAvatar != null
                 ? Container(
-                    height: 126,
-                    width: 126,
+                    height: 126.r,
+                    width: 126.r,
                     decoration: BoxDecoration(
                       color: AppColors.white50,
                       shape: BoxShape.circle,
@@ -545,19 +556,19 @@ class _OnbaordSecondStageState extends State<OnbaordSecondStage>
                   )
                 : pickedImage != null
                 ? Container(
-                    height: 126,
-                    width: 126,
+                    height: 126.r,
+                    width: 126.r,
+                    clipBehavior: Clip.antiAlias,
                     decoration: BoxDecoration(
                       color: AppColors.white50,
                       shape: BoxShape.circle,
                       // borderRadius: BorderRadius.circular(100),
                     ),
-                    clipBehavior: Clip.hardEdge,
                     child: Image.file(File(pickedImage!), fit: BoxFit.contain),
                   )
                 : Container(
-                    height: 126,
-                    width: 126,
+                    height: 126.r,
+                    width: 126.r,
                     padding: EdgeInsets.all(30),
                     decoration: BoxDecoration(
                       color: AppColors.white50,

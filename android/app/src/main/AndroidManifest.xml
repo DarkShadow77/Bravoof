@@ -1,4 +1,5 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.flowvahub.bravoo">
 
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
@@ -72,6 +73,20 @@
             android:exported="true"
             android:icon="@mipmap/ic_launcher_purple_bg"
             android:roundIcon="@mipmap/ic_launcher_purple_bg"
+            android:targetActivity=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+
+        <!-- Blue Background icon -->
+        <activity-alias
+            android:name=".MainActivityBlueBg"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_blue_bg"
+            android:roundIcon="@mipmap/ic_launcher_blue_bg"
             android:targetActivity=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
