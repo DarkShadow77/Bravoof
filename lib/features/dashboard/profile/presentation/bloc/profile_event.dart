@@ -36,6 +36,11 @@ class LogUserLoginActivityEvent extends ProfileEvent {
   const LogUserLoginActivityEvent({required this.eventType});
 }
 
+class LogUserLogoActivityEvent extends ProfileEvent {
+  final String logoString;
+  const LogUserLogoActivityEvent({required this.logoString});
+}
+
 class LogoutProfileEvent extends ProfileEvent {}
 
 class SaveFCMTokenEvent extends ProfileEvent {

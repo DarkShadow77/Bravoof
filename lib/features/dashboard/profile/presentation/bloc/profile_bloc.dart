@@ -25,6 +25,7 @@ class ProfileBloc extends HydratedBloc<ProfileEvent, ProfileState> {
     on<UpdateLocationEvent>(_onUpdateLocation);
     on<DeleteAccountEvent>(_onDeleteAccount);
     on<LogUserLoginActivityEvent>(_onLogUserLoginActivity);
+    on<LogUserLogoActivityEvent>(_onLogUserLogoActivity);
     on<SaveFCMTokenEvent>(_onSaveFCMToken);
     on<DeleteFCMTokenEvent>(_onDeleteFCMToken);
     on<SendNotificationEvent>(_onSendNotification);
@@ -253,6 +254,40 @@ class ProfileBloc extends HydratedBloc<ProfileEvent, ProfileState> {
       (user) => emit(
         ProfileSuccessState(
           type: ProfileType.logUserLoginActivity,
+          message: user,
+          profile: state.profile,
+        ),
+      ),
+    );
+  }
+
+  Future<void> _onLogUserLogoActivity(
+    LogUserLogoActivityEvent event,
+    Emitter<ProfileState> emit,
+  ) async {
+    emit(
+      ProfileLoadingState(
+        type: ProfileType.logUserLogoActivity,
+        profile: state.profile,
+      ),
+    );
+
+    final response = await repo.logUserLogoActivity(
+      userId: supabase.auth.currentUser!.id,
+      logoString: event.logoString,
+    );
+
+    response.fold(
+      (failure) => emit(
+        ProfileFailureState(
+          type: ProfileType.logUserLogoActivity,
+          message: failure,
+          profile: state.profile,
+        ),
+      ),
+      (user) => emit(
+        ProfileSuccessState(
+          type: ProfileType.logUserLogoActivity,
           message: user,
           profile: state.profile,
         ),

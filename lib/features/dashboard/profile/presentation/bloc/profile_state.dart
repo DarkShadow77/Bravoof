@@ -7,6 +7,7 @@ enum ProfileType {
   updateLocation,
   deleteAccount,
   logUserLoginActivity,
+  logUserLogoActivity,
   logout,
   saveFcmToken,
   deleteFcmToken,

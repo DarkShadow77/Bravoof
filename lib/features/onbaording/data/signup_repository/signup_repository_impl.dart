@@ -234,6 +234,8 @@ class SignupRepositoryImpl extends SignupRepository {
   Future<Either<String, AppBaseResponse>> appleAuth() async {
     try {
       AuthResponse? response;
+      String? capturedName;
+
       if (Platform.isIOS || Platform.isMacOS) {
         final rawNonce = supabase.auth.generateRawNonce();
         final hashedNonce = sha256.convert(utf8.encode(rawNonce)).toString();
@@ -249,6 +251,12 @@ class SignupRepositoryImpl extends SignupRepository {
 
         final idToken = credential.identityToken;
         final appleEmail = credential.email;
+
+        if (credential.givenName != null || credential.familyName != null) {
+          final firstName = credential.givenName ?? '';
+          final lastName = credential.familyName ?? '';
+          capturedName = '$firstName $lastName'.trim();
+        }
 
         if (idToken == null) {
           return Left("Unable to retrieve Apple identity token");
@@ -327,8 +335,10 @@ class SignupRepositoryImpl extends SignupRepository {
 
       // 6. NEW USER: mimic your Google/Email onboarding
       final name =
+          capturedName ??
           user.userMetadata?['full_name'] ??
           user.userMetadata?['name'] ??
+          user.email?.split('@').first ??
           'Apple User';
 
       final tempProfile = {

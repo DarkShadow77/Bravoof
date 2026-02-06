@@ -1,9 +1,11 @@
 import 'dart:ui';
 
 import 'package:Bravoo/app/view/widgets/button/icon_text_button.dart';
+import 'package:Bravoo/features/dashboard/profile/presentation/bloc/profile_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_app_icon_changer/flutter_app_icon_changer.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
@@ -73,6 +75,9 @@ class _ChangeAppIconModalState extends State<ChangeAppIconModal>
     final currentIcon = icon.currentIcon;
 
     try {
+      context.read<ProfileBloc>().add(
+        LogUserLogoActivityEvent(logoString: icon.logoName),
+      );
       await _flutterAppIconChangerPlugin.changeIcon(currentIcon);
       setState(() {
         _currentIcon = icon;

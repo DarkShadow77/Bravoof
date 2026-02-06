@@ -139,6 +139,22 @@ class ProfileRepositoryImpl extends ProfileRepository {
     );
   }
 
+  Future<Either<String, String>> logUserLogoActivity({
+    required String userId,
+    required String logoString,
+  }) async {
+    return ApiService.instance!.invokeEdgeFunction<String>(
+      functionName: 'save-user-logo-activity',
+      body: {
+        'userId': userId,
+        "platform": Platform.isAndroid ? "android" : "ios",
+        "logoName": logoString,
+      },
+      fallbackErrorMessage: "Failed to Log User Logo Activity",
+      onSuccess: (data) => "logged User Logo Activity successfully",
+    );
+  }
+
   Future<Either<String, void>> saveFCMToken() async {
     return ApiService.instance!.invokeEdgeFunction<void>(
       functionName: 'save-fcm-token',

@@ -285,7 +285,9 @@ class _ReferCampaignState extends State<ReferCampaign> {
                               ),
                             );
                           },
-                          text: "Join the Draw",
+                          text: differenceInSeconds <= 0
+                              ? "Draw Ended (See Winner)"
+                              : "Join the Draw",
                         ),
                       ],
                     ),

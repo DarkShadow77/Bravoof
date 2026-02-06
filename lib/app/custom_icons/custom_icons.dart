@@ -37,9 +37,11 @@ class CustomIcons {
 sealed class CustomIcon extends AppIcon {
   /// The file path to the preview image of the icon.
   final String previewPath;
+  final String logoName;
 
   CustomIcon({
     required this.previewPath,
+    required this.logoName,
     required super.iOSIcon,
     required super.androidIcon,
     required super.isDefaultIcon,
@@ -62,6 +64,7 @@ sealed class CustomIcon extends AppIcon {
 final class BlueBgIcon extends CustomIcon {
   BlueBgIcon()
     : super(
+        logoName: "BlueBg",
         iOSIcon: 'AppIconBlueBg',
         androidIcon: 'MainActivityBlueBg',
         previewPath: 'assets/logo/icon_blue_bg.png',
@@ -72,6 +75,7 @@ final class BlueBgIcon extends CustomIcon {
 final class MixBgIcon extends CustomIcon {
   MixBgIcon()
     : super(
+        logoName: "MixBg",
         iOSIcon: 'AppIconMixBg',
         androidIcon: 'MainActivityMixBg',
         previewPath: 'assets/logo/icon_mix_bg.png',
@@ -82,6 +86,7 @@ final class MixBgIcon extends CustomIcon {
 final class BlackTxtIcon extends CustomIcon {
   BlackTxtIcon()
     : super(
+        logoName: "BlackTxt",
         iOSIcon: 'AppIconBlackTxt',
         androidIcon: 'MainActivityBlackTxt',
         previewPath: 'assets/logo/icon_black_txt.png',
@@ -92,6 +97,7 @@ final class BlackTxtIcon extends CustomIcon {
 final class PurpleTxtIcon extends CustomIcon {
   PurpleTxtIcon()
     : super(
+        logoName: "PurpleTxt",
         iOSIcon: 'AppIconPurpleTxt',
         androidIcon: 'MainActivityPurpleTxt',
         previewPath: 'assets/logo/icon_purple_txt.png',
@@ -102,6 +108,7 @@ final class PurpleTxtIcon extends CustomIcon {
 final class PurpleBgIcon extends CustomIcon {
   PurpleBgIcon()
     : super(
+        logoName: "PurpleBg",
         iOSIcon: 'AppIconPurpleBg',
         androidIcon: 'MainActivityPurpleBg',
         previewPath: 'assets/logo/icon_purple_bg.png',
@@ -113,6 +120,7 @@ final class PurpleBgIcon extends CustomIcon {
 final class DefaultIcon extends CustomIcon {
   DefaultIcon()
     : super(
+        logoName: "Default",
         iOSIcon: 'AppIcon',
         androidIcon: 'MainActivityDefault',
         previewPath: 'assets/logo/icon.png',
