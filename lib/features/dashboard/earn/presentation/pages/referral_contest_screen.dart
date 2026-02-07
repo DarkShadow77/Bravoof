@@ -231,11 +231,31 @@ class _ReferralContestScreenState extends State<ReferralContestScreen>
                           ),
                         ),
                         if (hasEnded) ...[
-                          Container(
-                            height: 150.h,
-                            width: double.infinity,
-                          )
                           Positioned(
+                            left: 0,
+                            right: 0,
+                            top: 150.h,
+                            child: Container(
+                              height: 130.h,
+                              width: double.infinity,
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [
+                                    AppColors.white.withValues(alpha: .15),
+                                    AppColors.white.withValues(alpha: .35),
+                                    AppColors.white.withValues(alpha: .55),
+                                    hexToColor(
+                                      campaign.endBgColor,
+                                    ).withValues(alpha: .5),
+                                    hexToColor(campaign.endBgColor),
+                                  ],
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                ),
+                              ),
+                            ),
+                          ),
+                          /*Positioned(
                             left: 0,
                             right: 0,
                             top: 150.h,
@@ -245,7 +265,7 @@ class _ReferralContestScreenState extends State<ReferralContestScreen>
                               width: double.infinity,
                               fit: BoxFit.cover,
                             ),
-                          ),
+                          ),*/
                           if (isWinner) ...[
                             Positioned(
                               left: 70.w,
@@ -429,9 +449,7 @@ class _ReferralContestScreenState extends State<ReferralContestScreen>
                   center: Alignment.center,
                   radius: 3.3,
                   colors: [
-                    AppColors.black.withValues(
-                      alpha: .05,
-                    ),
+                    AppColors.black.withValues(alpha: .05),
                     AppColors.white.withValues(alpha: .1),
                     AppColors.white.withValues(alpha: .3),
                     AppColors.white.withValues(
