@@ -244,10 +244,8 @@ class _ReferralContestScreenState extends State<ReferralContestScreen>
                                     AppColors.white.withValues(alpha: .15),
                                     AppColors.white.withValues(alpha: .35),
                                     AppColors.white.withValues(alpha: .55),
-                                    hexToColor(
-                                      campaign.endBgColor,
-                                    ).withValues(alpha: .5),
-                                    hexToColor(campaign.endBgColor),
+                                    color.withValues(alpha: .5),
+                                    color,
                                   ],
                                   begin: Alignment.topCenter,
                                   end: Alignment.bottomCenter,
