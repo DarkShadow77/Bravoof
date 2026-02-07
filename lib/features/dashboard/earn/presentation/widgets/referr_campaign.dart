@@ -1,5 +1,6 @@
 import 'package:Bravoo/app/styles/text_styles.dart';
 import 'package:Bravoo/app/view/widgets/cached_image_widget.dart';
+import 'package:Bravoo/core/constants/app_assets.dart';
 import 'package:Bravoo/core/constants/fonts.dart';
 import 'package:Bravoo/features/dashboard/earn/presentation/pages/referral_contest_screen.dart';
 import 'package:Bravoo/features/dashboard/home/data/model/campaign_response.dart';
@@ -75,6 +76,10 @@ class _ReferCampaignState extends State<ReferCampaign> {
     ];
   }
 
+  Color hexToColor(String hex) {
+    return Color(int.parse(hex.replaceFirst('#', '0xff')));
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<HomeCubit, HomeState>(
@@ -105,13 +110,23 @@ class _ReferCampaignState extends State<ReferCampaign> {
           child: Stack(
             // crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (!widget.transparent)
+              if (!widget.transparent) ...[
                 Positioned.fill(
-                  child: Image.asset(
-                    "assets/images/giveaway_bg.png",
-                    fit: BoxFit.cover,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: hexToColor(campaign.bgColor),
+                    ),
                   ),
                 ),
+                Positioned.fill(
+                  child: Image.asset(
+                    AssetsPngImages.campaignBg1,
+                    fit: BoxFit.cover,
+                    color: AppColors.white,
+                    colorBlendMode: BlendMode.srcIn,
+                  ),
+                ),
+              ],
               Container(
                 padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
                 child: Column(
@@ -119,9 +134,16 @@ class _ReferCampaignState extends State<ReferCampaign> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Row(
+                      spacing: 8.w,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Image.asset("assets/images/oraimo.png"),
-                        SizedBox(width: 8.w),
+                        CachedImageRadius(
+                          imageUrl: campaign.brandImage,
+                          size: 25,
+                          circle: true,
+                          color: Colors.transparent,
+                          fit: BoxFit.cover,
+                        ),
                         RichText(
                           text: TextSpan(
                             text: campaign.name.toString(),
@@ -148,7 +170,7 @@ class _ReferCampaignState extends State<ReferCampaign> {
                                     fontFamily: AppFonts.baloo2,
                                     height: 1.2.sp,
                                     color: !widget.transparent
-                                        ? Color(0xFFDCB5FF)
+                                        ? hexToColor(campaign.cardTextColor)
                                         : Color(0xFFAB7A7A),
                                   ),
                             ),
@@ -165,7 +187,7 @@ class _ReferCampaignState extends State<ReferCampaign> {
                               radius: 35,
                               backgroundColor: widget.transparent
                                   ? AppColors.redBrown20
-                                  : Color(0xFFDEC4FF),
+                                  : hexToColor(campaign.cardTextColor),
                               child: CachedImageSize(
                                 imageUrl: campaign.url,
                                 width: 45,

@@ -21,7 +21,7 @@ class CachedImageRadius extends StatelessWidget {
     this.size = 30.0,
     this.borderColor = Colors.transparent,
     this.color,
-    this.borderWidth = 1.0,
+    this.borderWidth = 0.0,
     this.borderRadius = 0.0,
     this.circle = false,
     this.fit = BoxFit.cover,

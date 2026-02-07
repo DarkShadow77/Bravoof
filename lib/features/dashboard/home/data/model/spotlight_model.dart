@@ -3,6 +3,8 @@ class SpotlightModel {
   final String title;
   final String name;
   final String image;
+  final String bgColor;
+  final String textColor;
   final int missionsCompleted;
   final int coinsEarned;
   final int redeemed;
@@ -13,6 +15,8 @@ class SpotlightModel {
     required this.title,
     required this.name,
     required this.image,
+    required this.bgColor,
+    required this.textColor,
     required this.missionsCompleted,
     required this.coinsEarned,
     required this.redeemed,
@@ -25,6 +29,8 @@ class SpotlightModel {
       title: json['title'] ?? '',
       name: json['name'] ?? '',
       image: json['image'] ?? '',
+      bgColor: json['bg_color'] ?? '#000000',
+      textColor: json['text_color'] ?? '#ffffff',
       missionsCompleted: json['missions_completed'] ?? 0,
       coinsEarned: json['coins_earned'] ?? 0,
       redeemed: json['redeemed'] ?? 0,
@@ -38,6 +44,8 @@ class SpotlightModel {
       title: '',
       name: '',
       image: '',
+      bgColor: '#000000',
+      textColor: '#ffffff',
       missionsCompleted: 0,
       coinsEarned: 0,
       redeemed: 0,

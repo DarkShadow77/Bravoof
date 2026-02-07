@@ -28,6 +28,7 @@ class AssetsPngImages {
   static String homeBg = "$baseImagePngPath/home_bg.png";
   static String product = "$baseImagePngPath/product.png";
   static String productTimerBg = "$baseImagePngPath/product_timer_bg.png";
+  static String productTimerBg1 = "$baseImagePngPath/product_timer_bg1.png";
   static String speaker = "$baseImagePngPath/speaker.png";
   static String whatsapp = "$baseImagePngPath/whatsapp.png";
   static String x = "$baseImagePngPath/x.png";
@@ -56,6 +57,8 @@ class AssetsPngImages {
   static String socialTik_tok = "$baseImagePngPath/social_tik_tok.png";
   static String socialTwitter = "$baseImagePngPath/social_twitter.png";
   static String coinBox = "$baseImagePngPath/coin_box.png";
+  static String campaignBg1 = "$baseImagePngPath/campaign_bg1.png";
+  static String campaignBg = "$baseImagePngPath/campaign_bg.png";
   static String campaignEnd = "$baseImagePngPath/campaign_end.png";
   static String campaignEndBg = "$baseImagePngPath/campaign_end_bg.png";
   static String campaignWinner = "$baseImagePngPath/campaign_winner.png";

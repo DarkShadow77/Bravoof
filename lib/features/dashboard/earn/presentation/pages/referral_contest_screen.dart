@@ -76,9 +76,8 @@ class _ReferralContestScreenState extends State<ReferralContestScreen>
       }
       context.read<ProfileBloc>().add(GetProfileEvent());
       successDialog(
-        title: "Reward claimed successfully",
-        subTitle:
-            "You have successfully participated in a campaign and received your reward",
+        title: "You Gave It a Shot!",
+        subTitle: state.message,
         mainBtnText: "Done",
         mainBtnPressed: () {
           Navigator.pushAndRemoveUntil(
@@ -109,15 +108,19 @@ class _ReferralContestScreenState extends State<ReferralContestScreen>
     }
   }
 
+  Color hexToColor(String hex) {
+    return Color(int.parse(hex.replaceFirst('#', '0xff')));
+  }
+
   @override
   Widget build(BuildContext context) {
     final hasEnded = campaign.campaignEndDate.isBefore(DateTime.now());
     final isWinner = campaign.winnerUserId == supabase.auth.currentUser!.id;
     final color = hasEnded
         ? isWinner
-              ? AppColors.purple
-              : Color(0xff2F1C48)
-        : AppColors.purple;
+              ? hexToColor(campaign.bgColor)
+              : hexToColor(campaign.endBgColor)
+        : hexToColor(campaign.bgColor);
     return BlocListener<CampaignBloc, CampaignState>(
       listener: (context, state) {
         if (state is CampaignLoadingState) {
@@ -152,10 +155,12 @@ class _ReferralContestScreenState extends State<ReferralContestScreen>
             children: [
               if (!hasEnded || (hasEnded && isWinner))
                 Image.asset(
-                  AssetsPngImages.homeBg,
+                  AssetsPngImages.campaignBg,
                   fit: BoxFit.cover,
                   height: 440.h + MediaQuery.of(context).padding.top,
                   width: double.infinity,
+                  color: AppColors.white,
+                  colorBlendMode: BlendMode.srcIn,
                 ),
               Column(
                 mainAxisSize: MainAxisSize.min,
@@ -165,7 +170,11 @@ class _ReferralContestScreenState extends State<ReferralContestScreen>
                   RichText(
                     textAlign: TextAlign.center,
                     text: TextSpan(
-                      text: campaign.innerTitle,
+                      text: hasEnded
+                          ? isWinner
+                                ? "Congratulations! You Won 🎉"
+                                : "Better Luck Next Time!"
+                          : campaign.innerTitle,
                       style: TextStyles.bigTitleRegular24(context).copyWith(
                         fontFamily: AppFonts.baloo,
                         height: 1.sp,
@@ -176,7 +185,7 @@ class _ReferralContestScreenState extends State<ReferralContestScreen>
                   Flexible(
                     child: Stack(
                       children: [
-                        Positioned(
+                        /*Positioned(
                           left: 0,
                           right: 0,
                           top: 115.h,
@@ -186,7 +195,17 @@ class _ReferralContestScreenState extends State<ReferralContestScreen>
                             height: 148.h,
                             fit: BoxFit.contain,
                           ),
+                        ),*/
+                        Positioned(
+                          left: 0,
+                          right: 0,
+                          top: 115.h,
+                          child: podiumBlock(
+                            color: hexToColor(campaign.bgColor),
+                            height: 148.h,
+                          ),
                         ),
+
                         if (hasEnded && isWinner)
                           Positioned(
                             left: 100.w,
@@ -212,6 +231,10 @@ class _ReferralContestScreenState extends State<ReferralContestScreen>
                           ),
                         ),
                         if (hasEnded) ...[
+                          Container(
+                            height: 150.h,
+                            width: double.infinity,
+                          )
                           Positioned(
                             left: 0,
                             right: 0,
@@ -360,6 +383,71 @@ class _ReferralContestScreenState extends State<ReferralContestScreen>
       ),
     );
   }
+
+  Widget podiumBlock({
+    bool isFull = true,
+    required double height,
+    required Color color,
+  }) {
+    final bgColor = hexToColor(campaign.bgColor);
+    return Stack(
+      alignment: Alignment.bottomCenter,
+      children: [
+        // Front face (main block)
+        Container(
+          width: 108.w,
+          height: height,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomCenter,
+              colors: [
+                bgColor,
+                bgColor.withValues(alpha: .45),
+                AppColors.white.withValues(alpha: .1),
+              ],
+              stops: [0.3, .5, 1],
+            ),
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20.r),
+              topRight: Radius.circular(5.r),
+            ),
+          ),
+        ),
+
+        // Top face (angled using Transform)
+        Positioned(
+          top: 0,
+          child: Transform(
+            alignment: Alignment.center,
+            transform: Matrix4.skewX(-0.4), // Skew to create 3D angle
+            child: Container(
+              width: isFull ? 103.11.w : 92.w,
+              height: 20.h,
+              decoration: BoxDecoration(
+                gradient: RadialGradient(
+                  center: Alignment.center,
+                  radius: 3.3,
+                  colors: [
+                    AppColors.black.withValues(
+                      alpha: .05,
+                    ),
+                    AppColors.white.withValues(alpha: .1),
+                    AppColors.white.withValues(alpha: .3),
+                    AppColors.white.withValues(
+                      alpha: .5,
+                    ), // Light edge (white shadow)
+                  ],
+                  stops: [0.3, 0.4, 0.7, .8],
+                ),
+                borderRadius: BorderRadius.circular(6.r),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
 }
 
 class HasEndedWidget extends StatefulWidget {
@@ -391,7 +479,7 @@ class _HasEndedWidgetState extends State<HasEndedWidget> with UIToolMixin {
                 textAlign: TextAlign.center,
                 text: TextSpan(
                   children: [
-                    TextSpan(text: "The Oraimo Opensnap Airpod goes to "),
+                    TextSpan(text: "The ${widget.campaign.item} goes to "),
                     TextSpan(
                       text: "@${widget.campaign.winnerName}",
                       style: TextStyle(
@@ -407,6 +495,17 @@ class _HasEndedWidgetState extends State<HasEndedWidget> with UIToolMixin {
                   style: TextStyles.smallBold12(
                     context,
                   ).copyWith(color: AppColors.white65),
+                ),
+              )
+            else
+              RichText(
+                textAlign: TextAlign.center,
+                text: TextSpan(
+                  text:
+                      "The ${widget.campaign.item} has won this time! Claim are yours. Claim your reward now to enter your information and receive your gift.",
+                  style: TextStyles.smallBold12(
+                    context,
+                  ).copyWith(color: AppColors.white80),
                 ),
               ),
             BlocBuilder<CampaignBloc, CampaignState>(
@@ -520,7 +619,7 @@ class _TimerWidgetState extends State<TimerWidget> {
         children: [
           if (!widget.hasEnded || (widget.hasEnded && widget.isWinner))
             Image.asset(
-              AssetsPngImages.productTimerBg,
+              AssetsPngImages.productTimerBg1,
               width: double.infinity,
               height: double.infinity,
               fit: BoxFit.cover,

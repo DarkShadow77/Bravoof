@@ -169,8 +169,8 @@ class _DeliveryAddressScreenState extends State<DeliveryAddressScreen>
       }
       context.read<ProfileBloc>().add(GetProfileEvent());
       successDialog(
-        title: "Details Received",
-        subTitle: "Thank you! We’ll let you know once it’s sent.",
+        title: "🎉 Reward claimed!",
+        subTitle: state.message,
         mainBtnText: "Done",
         mainBtnPressed: () {
           Navigator.pushAndRemoveUntil(

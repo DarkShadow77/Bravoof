@@ -81,7 +81,7 @@ class _FlowvaHomePageState extends State<FlowvaHomePage> with UIToolMixin {
                         children: [
                           RichText(
                             text: TextSpan(
-                              text: "Hey, ${userProfile.name}!",
+                              text: "Hey ${userProfile.name},",
                               style: TextStyles.titleSemiBold20(context),
                             ),
                           ),

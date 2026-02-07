@@ -336,12 +336,16 @@ class _SpotlightCardState extends State<SpotlightCard> {
     context.read<HomeCubit>().fetchSpotlight();
   }
 
+  Color hexToColor(String hex) {
+    return Color(int.parse(hex.replaceFirst('#', '0xff')));
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<HomeCubit, HomeState>(
       builder: (context, state) {
         spotlight = state.spotlight;
-
+        final textColor = hexToColor(spotlight.textColor);
         if (spotlight.name.isEmpty)
           return Center(
             child: Text(
@@ -353,392 +357,404 @@ class _SpotlightCardState extends State<SpotlightCard> {
           );
         else
           return Container(
+            clipBehavior: Clip.antiAlias,
             margin: EdgeInsets.symmetric(horizontal: 16.w),
-            padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 16.w),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(24.r),
-              image: DecorationImage(
-                image: AssetImage(AssetsPngImages.spotlightBg),
-                fit: BoxFit.cover,
-              ),
             ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
+            child: Stack(
               children: [
-                RichText(
-                  text: TextSpan(
-                    text: spotlight.title,
-                    style: TextStyles.bodyBold16(
-                      context,
-                    ).copyWith(color: AppColors.white),
+                Positioned.fill(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: hexToColor(spotlight.bgColor),
+                    ),
                   ),
                 ),
-                Row(
-                  spacing: 16.w,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    CachedImageRadius(
-                      imageUrl: spotlight.image,
-                      size: 103,
-                      color: AppColors.white05,
-                      circle: true,
-                      fit: BoxFit.cover,
-                    ),
-                    Expanded(
-                      child: Column(
-                        spacing: 6.5.h,
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                Positioned(
+                  left: 0,
+                  right: 0,
+                  child: Image.asset(
+                    AssetsPngImages.campaignBg1,
+                    fit: BoxFit.cover,
+                    color: AppColors.white,
+                    colorBlendMode: BlendMode.srcIn,
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                    vertical: 16.h,
+                    horizontal: 16.w,
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      RichText(
+                        text: TextSpan(
+                          text: spotlight.title,
+                          style: TextStyles.bodyBold16(
+                            context,
+                          ).copyWith(color: textColor),
+                        ),
+                      ),
+                      Row(
+                        spacing: 16.w,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          RichText(
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            text: TextSpan(
-                              text: spotlight.name,
-                              style: TextStyles.bodySemiBold16(
-                                context,
-                              ).copyWith(color: AppColors.white),
-                            ),
+                          CachedImageRadius(
+                            imageUrl: spotlight.image,
+                            size: 103,
+                            color: AppColors.white05,
+                            circle: true,
+                            fit: BoxFit.cover,
                           ),
-                          Row(
-                            spacing: 4.w,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              RichText(
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                text: TextSpan(
-                                  text: "Top User",
-                                  style: TextStyles.cardRegular10(
-                                    context,
-                                  ).copyWith(color: AppColors.grey300),
+                          Expanded(
+                            child: Column(
+                              spacing: 6.5.h,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                RichText(
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  text: TextSpan(
+                                    text: spotlight.name,
+                                    style: TextStyles.bodySemiBold16(
+                                      context,
+                                    ).copyWith(color: textColor),
+                                  ),
                                 ),
-                              ),
-                              SizedBox(
-                                height: 28,
-                                width: 80, // adjust based on number of avatars
-                                child: Stack(
-                                  clipBehavior: Clip.none,
+                                Row(
+                                  spacing: 4.w,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
-                                    _buildToolIcon(AssetsPngImages.one50, 0),
-                                    _buildToolIcon(AssetsPngImages.one50, 20),
-                                    _buildToolIcon(AssetsPngImages.one50, 40),
+                                    RichText(
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      text: TextSpan(
+                                        text: "Top User",
+                                        style: TextStyles.cardRegular10(context)
+                                            .copyWith(
+                                              color: textColor.withValues(
+                                                alpha: .5,
+                                              ),
+                                            ),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 28,
+                                      width:
+                                          80, // adjust based on number of avatars
+                                      child: Stack(
+                                        clipBehavior: Clip.none,
+                                        children: [
+                                          _buildToolIcon(
+                                            AssetsPngImages.one50,
+                                            0,
+                                          ),
+                                          _buildToolIcon(
+                                            AssetsPngImages.one50,
+                                            20,
+                                          ),
+                                          _buildToolIcon(
+                                            AssetsPngImages.one50,
+                                            40,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
                                   ],
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ],
                       ),
-                    ),
-                  ],
-                ),
-                Row(
-                  spacing: 15.w,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Flexible(
-                      child: IconTextButton(
-                        text: "Cheers",
-                        textSize: 10,
-                        spacing: 0,
-                        innerShadow: AppColors.primary10,
-                        iconWidget: Image.asset(
-                          AssetsPngImages.clap,
-                          width: 16.w,
-                          height: 16.h,
-                          fit: BoxFit.contain,
-                        ),
-                        onPressed: () {
-                          Confetti.launch(
-                            context,
-                            options: const ConfettiOptions(
-                              particleCount: 100,
-                              spread: 30,
-                              drift: -1,
-                              y: 0.5,
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                    /*   GestureDetector(
-                      onTap: () {
-                        Confetti.launch(
-                          context,
-                          options: const ConfettiOptions(
-                            particleCount: 100,
-                            spread: 30,
-                            drift: -1,
-                            y: 0.5,
-                          ),
-                        );
-                      },
-                      behavior: HitTestBehavior.opaque,
-                      child: Container(
-                        height: 38.h,
-                        width: 100.w,
-                        decoration: BoxDecoration(
-                          color: AppColors.white80,
-                          borderRadius: BorderRadius.circular(100.r),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            Image.asset(
-                              AssetsPngImages.clap,
-                              width: 16.w,
-                              height: 16.h,
-                              fit: BoxFit.contain,
-                            ),
-                            RichText(
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              text: TextSpan(
-                                text: "Cheers",
-                                style: TextStyles.cardBold10(
-                                  context,
-                                ).copyWith(color: AppColors.grey900),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),*/
-                    Expanded(
-                      flex: 2,
-                      child: Container(
-                        padding: EdgeInsets.symmetric(
-                          vertical: 10.h,
-                          horizontal: 16.w,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppColors.white10,
-                          borderRadius: BorderRadius.circular(100.r),
-                        ),
-                        child: IntrinsicHeight(
-                          child: Row(
-                            spacing: 6.w,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    RichText(
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      text: TextSpan(
-                                        text:
-                                            "${formatAmount(spotlight.missionsCompleted, compact: true, uniComp: true)}",
-                                        style: TextStyles.smallSemibold12(
-                                          context,
-                                        ).copyWith(color: AppColors.white),
-                                      ),
-                                    ),
-                                    RichText(
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      text: TextSpan(
-                                        text: "Mission",
-                                        style: TextStyles.smallCardRegular8(
-                                          context,
-                                          opacity: .8,
-                                        ).copyWith(color: AppColors.white85),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Container(
-                                height: double.infinity,
-                                width: 1.w,
-                                color: AppColors.white10,
-                              ),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    RichText(
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      text: TextSpan(
-                                        text:
-                                            "${formatAmount(spotlight.coinsEarned, compact: true, uniComp: true)}",
-                                        style: TextStyles.smallSemibold12(
-                                          context,
-                                        ).copyWith(color: AppColors.white),
-                                      ),
-                                    ),
-                                    RichText(
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      text: TextSpan(
-                                        text: "Coins",
-                                        style: TextStyles.smallCardRegular8(
-                                          context,
-                                          opacity: .8,
-                                        ).copyWith(color: AppColors.white85),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Container(
-                                height: double.infinity,
-                                width: 1.w,
-                                color: AppColors.white10,
-                              ),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    RichText(
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      text: TextSpan(
-                                        text:
-                                            "\$${formatAmount(spotlight.redeemed, compact: true, uniComp: true)}",
-                                        style: TextStyles.smallSemibold12(
-                                          context,
-                                        ).copyWith(color: AppColors.white),
-                                      ),
-                                    ),
-                                    RichText(
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      text: TextSpan(
-                                        text: "Redeemed",
-                                        style: TextStyles.smallCardRegular8(
-                                          context,
-                                          opacity: .8,
-                                        ).copyWith(color: AppColors.white85),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                /*SizedBox(height: 20),
-                data['listOfImages'] != null
-                    ? Row(
+                      Row(
+                        spacing: 15.w,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Container(
-                            height: 40,
-                            width: 100,
-
-                            decoration: BoxDecoration(
-                              color: Colors.white70,
-                              borderRadius: BorderRadius.circular(50),
+                          Flexible(
+                            child: IconTextButton(
+                              text: "Cheers",
+                              textSize: 10,
+                              spacing: 0,
+                              innerShadow: AppColors.primary10,
+                              color: textColor,
+                              iconWidget: Image.asset(
+                                AssetsPngImages.clap,
+                                width: 16.w,
+                                height: 16.h,
+                                fit: BoxFit.contain,
+                              ),
+                              onPressed: () {
+                                Confetti.launch(
+                                  context,
+                                  options: const ConfettiOptions(
+                                    particleCount: 100,
+                                    spread: 30,
+                                    drift: -1,
+                                    y: 0.5,
+                                  ),
+                                );
+                              },
                             ),
-                            child: Row(
-                              // crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.center,
+                          ),
+                          Expanded(
+                            flex: 2,
+                            child: Container(
+                              padding: EdgeInsets.symmetric(
+                                vertical: 10.h,
+                                horizontal: 16.w,
+                              ),
+                              decoration: BoxDecoration(
+                                color: textColor.withValues(alpha: .1),
+                                borderRadius: BorderRadius.circular(100.r),
+                              ),
+                              child: IntrinsicHeight(
+                                child: Row(
+                                  spacing: 6.w,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          RichText(
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            text: TextSpan(
+                                              text:
+                                                  "${formatAmount(spotlight.missionsCompleted, compact: true, uniComp: true)}",
+                                              style: TextStyles.smallSemibold12(
+                                                context,
+                                              ).copyWith(color: textColor),
+                                            ),
+                                          ),
+                                          RichText(
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            text: TextSpan(
+                                              text: "Mission",
+                                              style:
+                                                  TextStyles.smallCardRegular8(
+                                                    context,
+                                                    opacity: .8,
+                                                  ).copyWith(
+                                                    color: textColor.withValues(
+                                                      alpha: .85,
+                                                    ),
+                                                  ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Container(
+                                      height: double.infinity,
+                                      width: 1.w,
+                                      color: textColor.withValues(alpha: .1),
+                                    ),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          RichText(
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            text: TextSpan(
+                                              text:
+                                                  "${formatAmount(spotlight.coinsEarned, compact: true, uniComp: true)}",
+                                              style: TextStyles.smallSemibold12(
+                                                context,
+                                              ).copyWith(color: textColor),
+                                            ),
+                                          ),
+                                          RichText(
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            text: TextSpan(
+                                              text: "Coins",
+                                              style:
+                                                  TextStyles.smallCardRegular8(
+                                                    context,
+                                                    opacity: .8,
+                                                  ).copyWith(
+                                                    color: textColor.withValues(
+                                                      alpha: .85,
+                                                    ),
+                                                  ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Container(
+                                      height: double.infinity,
+                                      width: 1.w,
+                                      color: textColor.withValues(alpha: .1),
+                                    ),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          RichText(
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            text: TextSpan(
+                                              text:
+                                                  "\$${formatAmount(spotlight.redeemed, compact: true, uniComp: true)}",
+                                              style: TextStyles.smallSemibold12(
+                                                context,
+                                              ).copyWith(color: textColor),
+                                            ),
+                                          ),
+                                          RichText(
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            text: TextSpan(
+                                              text: "Redeemed",
+                                              style:
+                                                  TextStyles.smallCardRegular8(
+                                                    context,
+                                                    opacity: .8,
+                                                  ).copyWith(
+                                                    color: textColor.withValues(
+                                                      alpha: .85,
+                                                    ),
+                                                  ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      /*SizedBox(height: 20),
+                      data['listOfImages'] != null
+                          ? Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Image.asset("assets/images/cheer.png"),
-                                SizedBox(width: 5),
-                                Text(
-                                  "Awesome",
-                                  style: GoogleFonts.manrope(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w400,
-                                    color: Colors.black,
+                                Container(
+                                  height: 40,
+                                  width: 100,
+
+                                  decoration: BoxDecoration(
+                                    color: Colors.white70,
+                                    borderRadius: BorderRadius.circular(50),
+                                  ),
+                                  child: Row(
+                                    // crossAxisAlignment: CrossAxisAlignment.center,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Image.asset("assets/images/cheer.png"),
+                                      SizedBox(width: 5),
+                                      Text(
+                                        "Awesome",
+                                        style: GoogleFonts.manrope(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w400,
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Container(
+                                  width: 160,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 10,
+                                    vertical: 5,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white24,
+                                    borderRadius: BorderRadius.circular(50),
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Column(
+                                        children: [
+                                          Text(
+                                            '10',
+                                            style: GoogleFonts.manrope(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w600,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                          Text(
+                                            'Mission',
+                                            style: GoogleFonts.manrope(
+                                              fontSize: 8,
+                                              fontWeight: FontWeight.w400,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+
+                                      Column(
+                                        children: [
+                                          Text(
+                                            '3',
+                                            style: GoogleFonts.manrope(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w600,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                          Text(
+                                            'Coins',
+                                            style: GoogleFonts.manrope(
+                                              fontSize: 8,
+                                              fontWeight: FontWeight.w400,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+
+                                      Column(
+                                        children: [
+                                          Text(
+                                            '50',
+                                            style: GoogleFonts.manrope(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w600,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                          Text(
+                                            'Earned',
+                                            style: GoogleFonts.manrope(
+                                              fontSize: 8,
+                                              fontWeight: FontWeight.w400,
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ],
-                            ),
-                          ),
-                          Container(
-                            width: 160,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 10,
-                              vertical: 5,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.white24,
-                              borderRadius: BorderRadius.circular(50),
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Column(
-                                  children: [
-                                    Text(
-                                      '10',
-                                      style: GoogleFonts.manrope(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w600,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                    Text(
-                                      'Mission',
-                                      style: GoogleFonts.manrope(
-                                        fontSize: 8,
-                                        fontWeight: FontWeight.w400,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-
-                                Column(
-                                  children: [
-                                    Text(
-                                      '3',
-                                      style: GoogleFonts.manrope(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w600,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                    Text(
-                                      'Coins',
-                                      style: GoogleFonts.manrope(
-                                        fontSize: 8,
-                                        fontWeight: FontWeight.w400,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-
-                                Column(
-                                  children: [
-                                    Text(
-                                      '50',
-                                      style: GoogleFonts.manrope(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w600,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                    Text(
-                                      'Earned',
-                                      style: GoogleFonts.manrope(
-                                        fontSize: 8,
-                                        fontWeight: FontWeight.w400,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      )
-                    : Container(),*/
+                            )
+                          : Container(),*/
+                    ],
+                  ),
+                ),
               ],
             ),
           );

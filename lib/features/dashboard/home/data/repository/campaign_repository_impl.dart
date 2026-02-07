@@ -100,7 +100,7 @@ class CampaignRepositoryImpl extends CampaignRepository {
         'state': state,
       },
       fallbackErrorMessage: 'Failed to claim winner reward',
-      onSuccess: (data) => 'Winner reward claimed!',
+      onSuccess: (data) => data['message'] ?? 'Winner reward claimed!',
     );
   }
 }
