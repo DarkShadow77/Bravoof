@@ -174,7 +174,7 @@ class _ReferralContestScreenState extends State<ReferralContestScreen>
           ],
         ),
         body: SingleChildScrollView(
-          physics: BouncingScrollPhysics(),
+          physics: ClampingScrollPhysics(),
           child: Stack(
             children: [
               if (!hasEnded || (hasEnded && isWinner))
@@ -867,12 +867,18 @@ class _ReferralContainerState extends State<ReferralContainer> {
     userProfile = profileBloc.state.profile;
   }
 
-  String referralMessage(String code) {
-    return Uri.encodeComponent(
-      'Join me on Bravoo 🚀\n'
-      'Use my referral link:\n'
-      'https://app.joinbravoo.com?ref=$code',
-    );
+  String referralMessage(String code, [bool encode = true]) {
+    if (encode) {
+      return Uri.encodeComponent(
+        'Join me on Bravoo 🚀\n'
+        'https://www.joinbravoo.com\n'
+        'Use my referral code: $code\n',
+      );
+    } else {
+      return 'Join me on Bravoo 🚀\n'
+          'https://www.joinbravoo.com\n'
+          'Use my referral code: $code\n';
+    }
   }
 
   Future<void> shareToWhatsApp(String code) async {
@@ -887,7 +893,7 @@ class _ReferralContainerState extends State<ReferralContainer> {
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
     } else {
-      SharePlus.instance.share(ShareParams(text: text));
+      SharePlus.instance.share(ShareParams(text: referralMessage(code, false)));
     }
   }
 
@@ -903,20 +909,23 @@ class _ReferralContainerState extends State<ReferralContainer> {
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
     } else {
-      SharePlus.instance.share(ShareParams(text: text));
+      SharePlus.instance.share(ShareParams(text: referralMessage(code, false)));
     }
   }
 
   Future<void> shareToLinkedIn(String code) async {
-    final link = Uri.encodeComponent('https://app.joinbravoo.com?ref=$code');
+    final text = referralMessage(code);
 
     final linkedInUrl =
-        'https://www.linkedin.com/sharing/share-offsite/?url=$link';
+        'https://www.linkedin.com/sharing/share-offsite/?url=$text';
 
-    await launchUrl(
-      Uri.parse(linkedInUrl),
-      mode: LaunchMode.externalApplication,
-    );
+    final uri = Uri.parse(linkedInUrl);
+
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } else {
+      SharePlus.instance.share(ShareParams(text: referralMessage(code, false)));
+    }
   }
 
   @override
@@ -1175,8 +1184,7 @@ class _ReferralContainerState extends State<ReferralContainer> {
                                   overflow: TextOverflow.ellipsis,
                                   textAlign: TextAlign.center,
                                   text: TextSpan(
-                                    text:
-                                        'https://app.joinbravoo.com?ref=${userProfile.referralCode}',
+                                    text: '${userProfile.referralCode}',
                                     style: TextStyles.smallSemibold12(
                                       context,
                                     ).copyWith(color: textColor),
