@@ -15,7 +15,7 @@ class HomeRepositoryImpl extends HomeRepository {
 
   Future<Either<String, List<CampaignResponseModel>>> fetchCampaigns() async {
     return ApiService.instance!.invokeEdgeFunction<List<CampaignResponseModel>>(
-      functionName: 'fetch-campaigns-testing',
+      functionName: 'fetch-campaigns',
       body: {},
       fallbackErrorMessage: 'Failed to Retrieve Campaigns',
       onSuccess: (data) {
