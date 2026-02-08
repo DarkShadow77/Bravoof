@@ -377,7 +377,7 @@ class _SpotlightCardState extends State<SpotlightCard> {
                   child: Image.asset(
                     AssetsPngImages.campaignBg1,
                     fit: BoxFit.cover,
-                    color: AppColors.white,
+                    color: textColor,
                     colorBlendMode: BlendMode.srcIn,
                   ),
                 ),

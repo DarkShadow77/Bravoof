@@ -17,6 +17,8 @@ class CampaignResponseModel {
     required this.bgColor,
     required this.endBgColor,
     required this.cardTextColor,
+    required this.textColor,
+    required this.inverseTextColor,
   });
 
   int id;
@@ -36,6 +38,8 @@ class CampaignResponseModel {
   String bgColor;
   String endBgColor;
   String cardTextColor;
+  String textColor;
+  String inverseTextColor;
 
   factory CampaignResponseModel.fromJson(Map<String, dynamic> json) {
     return CampaignResponseModel(
@@ -60,6 +64,8 @@ class CampaignResponseModel {
       bgColor: json['bg_color'] ?? '#ffffff',
       endBgColor: json['end_bg_color'] ?? '#ffffff',
       cardTextColor: json['card_text_color'] ?? '#ffffff',
+      textColor: json['text_color'] ?? '#ffffff',
+      inverseTextColor: json['inverse_text_color'] ?? '#000000',
     );
   }
 
@@ -82,6 +88,8 @@ class CampaignResponseModel {
       bgColor: '#ffffff',
       endBgColor: '#ffffff',
       cardTextColor: '#ffffff',
+      textColor: '#ffffff',
+      inverseTextColor: '#000000',
     );
   }
 }

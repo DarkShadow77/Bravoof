@@ -37,6 +37,10 @@ import '../../../profile/presentation/bloc/profile_bloc.dart';
 import '../widgets/price_details_dialog.dart';
 import 'invite_earn.dart';
 
+Color hexToColor(String hex) {
+  return Color(int.parse(hex.replaceFirst('#', '0xff')));
+}
+
 class ReferralContestScreen extends StatefulWidget {
   const ReferralContestScreen({super.key, required this.campaign});
 
@@ -108,10 +112,6 @@ class _ReferralContestScreenState extends State<ReferralContestScreen>
     }
   }
 
-  Color hexToColor(String hex) {
-    return Color(int.parse(hex.replaceFirst('#', '0xff')));
-  }
-
   @override
   Widget build(BuildContext context) {
     final hasEnded = campaign.campaignEndDate.isBefore(DateTime.now());
@@ -121,6 +121,8 @@ class _ReferralContestScreenState extends State<ReferralContestScreen>
               ? hexToColor(campaign.bgColor)
               : hexToColor(campaign.endBgColor)
         : hexToColor(campaign.bgColor);
+
+    final textColor = hexToColor(campaign.textColor);
     return BlocListener<CampaignBloc, CampaignState>(
       listener: (context, state) {
         if (state is CampaignLoadingState) {
@@ -142,12 +144,34 @@ class _ReferralContestScreenState extends State<ReferralContestScreen>
             onPressed: () {
               Navigator.pop(context);
             },
-            icon: Icon(
-              Icons.arrow_back_rounded,
-              size: 16.sp,
-              color: AppColors.white,
+            icon: Icon(Icons.arrow_back_rounded, size: 16.sp, color: textColor),
+          ),
+          centerTitle: true,
+          title: RichText(
+            textAlign: TextAlign.center,
+            text: TextSpan(
+              text: hasEnded
+                  ? isWinner
+                        ? "Congratulations! You Won 🎉"
+                        : "Better Luck Next Time!"
+                  : campaign.innerTitle,
+              style: TextStyles.bigTitleRegular24(context).copyWith(
+                fontFamily: AppFonts.baloo,
+                height: 1.sp,
+                color: textColor,
+              ),
             ),
           ),
+          actions: [
+            IconButton(
+              onPressed: () {},
+              icon: Icon(
+                Icons.arrow_back_rounded,
+                size: 16.sp,
+                color: Colors.transparent,
+              ),
+            ),
+          ],
         ),
         body: SingleChildScrollView(
           physics: BouncingScrollPhysics(),
@@ -159,29 +183,20 @@ class _ReferralContestScreenState extends State<ReferralContestScreen>
                   fit: BoxFit.cover,
                   height: 440.h + MediaQuery.of(context).padding.top,
                   width: double.infinity,
-                  color: AppColors.white,
+                  color: textColor,
                   colorBlendMode: BlendMode.srcIn,
                 ),
               Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  SizedBox(height: 12.h + MediaQuery.of(context).padding.top),
-                  RichText(
-                    textAlign: TextAlign.center,
-                    text: TextSpan(
-                      text: hasEnded
-                          ? isWinner
-                                ? "Congratulations! You Won 🎉"
-                                : "Better Luck Next Time!"
-                          : campaign.innerTitle,
-                      style: TextStyles.bigTitleRegular24(context).copyWith(
-                        fontFamily: AppFonts.baloo,
-                        height: 1.sp,
-                        color: AppColors.white,
-                      ),
-                    ),
+                  SizedBox(
+                    height:
+                        12.h +
+                        kToolbarHeight +
+                        MediaQuery.of(context).padding.top,
                   ),
+
                   Flexible(
                     child: Stack(
                       children: [
@@ -241,9 +256,9 @@ class _ReferralContestScreenState extends State<ReferralContestScreen>
                               decoration: BoxDecoration(
                                 gradient: LinearGradient(
                                   colors: [
-                                    AppColors.white.withValues(alpha: .15),
-                                    AppColors.white.withValues(alpha: .35),
-                                    AppColors.white.withValues(alpha: .55),
+                                    textColor.withValues(alpha: .15),
+                                    textColor.withValues(alpha: .35),
+                                    textColor.withValues(alpha: .55),
                                     color.withValues(alpha: .5),
                                     color,
                                   ],
@@ -313,7 +328,7 @@ class _ReferralContestScreenState extends State<ReferralContestScreen>
                             borderRadius: BorderRadius.circular(16.r),
                             border: Border.all(
                               width: 1.w,
-                              color: AppColors.white.withValues(alpha: .01),
+                              color: textColor.withValues(alpha: .01),
                             ),
                           ),
                           child: Column(
@@ -326,12 +341,13 @@ class _ReferralContestScreenState extends State<ReferralContestScreen>
                                   isWinner: isWinner,
                                 ),
                               TimerWidget(
+                                campaign: campaign,
                                 campaignEndDate: campaign.campaignEndDate,
                                 hasEnded: hasEnded,
                                 isWinner: isWinner,
                               ),
                               Container(
-                                color: AppColors.white.withValues(alpha: .08),
+                                color: textColor.withValues(alpha: .08),
                                 padding: EdgeInsets.symmetric(horizontal: 16.w),
                                 child: Column(
                                   mainAxisSize: MainAxisSize.min,
@@ -352,7 +368,7 @@ class _ReferralContestScreenState extends State<ReferralContestScreen>
                                         style: TextStyles.bodyRegular16(context)
                                             .copyWith(
                                               fontFamily: AppFonts.baloo,
-                                              color: AppColors.white,
+                                              color: textColor,
                                             ),
                                       ),
                                     ),
@@ -373,8 +389,9 @@ class _ReferralContestScreenState extends State<ReferralContestScreen>
                                                 TextStyles.smallSemibold12(
                                                   context,
                                                 ).copyWith(
-                                                  color: AppColors.white
-                                                      .withValues(alpha: .7),
+                                                  color: textColor.withValues(
+                                                    alpha: .7,
+                                                  ),
                                                 ),
                                           ),
                                         );
@@ -408,6 +425,8 @@ class _ReferralContestScreenState extends State<ReferralContestScreen>
     required Color color,
   }) {
     final bgColor = hexToColor(campaign.bgColor);
+
+    final textColor = hexToColor(campaign.textColor);
     return Stack(
       alignment: Alignment.bottomCenter,
       children: [
@@ -422,7 +441,7 @@ class _ReferralContestScreenState extends State<ReferralContestScreen>
               colors: [
                 bgColor,
                 bgColor.withValues(alpha: .45),
-                AppColors.white.withValues(alpha: .1),
+                textColor.withValues(alpha: .1),
               ],
               stops: [0.3, .5, 1],
             ),
@@ -448,9 +467,9 @@ class _ReferralContestScreenState extends State<ReferralContestScreen>
                   radius: 3.3,
                   colors: [
                     AppColors.black.withValues(alpha: .05),
-                    AppColors.white.withValues(alpha: .1),
-                    AppColors.white.withValues(alpha: .3),
-                    AppColors.white.withValues(
+                    textColor.withValues(alpha: .1),
+                    textColor.withValues(alpha: .3),
+                    textColor.withValues(
                       alpha: .5,
                     ), // Light edge (white shadow)
                   ],
@@ -482,6 +501,7 @@ class HasEndedWidget extends StatefulWidget {
 class _HasEndedWidgetState extends State<HasEndedWidget> with UIToolMixin {
   @override
   Widget build(BuildContext context) {
+    final textColor = hexToColor(widget.campaign.textColor);
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.w),
       child: Column(
@@ -499,7 +519,7 @@ class _HasEndedWidgetState extends State<HasEndedWidget> with UIToolMixin {
                     TextSpan(
                       text: "@${widget.campaign.winnerName}",
                       style: TextStyle(
-                        color: AppColors.white,
+                        color: textColor,
                         fontWeight: FontWeight.w800,
                       ),
                     ),
@@ -510,7 +530,7 @@ class _HasEndedWidgetState extends State<HasEndedWidget> with UIToolMixin {
                   ],
                   style: TextStyles.smallBold12(
                     context,
-                  ).copyWith(color: AppColors.white65),
+                  ).copyWith(color: textColor.withValues(alpha: .65)),
                 ),
               )
             else
@@ -521,7 +541,7 @@ class _HasEndedWidgetState extends State<HasEndedWidget> with UIToolMixin {
                       "The ${widget.campaign.item} has won this time! Claim are yours. Claim your reward now to enter your information and receive your gift.",
                   style: TextStyles.smallBold12(
                     context,
-                  ).copyWith(color: AppColors.white80),
+                  ).copyWith(color: textColor.withValues(alpha: .80)),
                 ),
               ),
             BlocBuilder<CampaignBloc, CampaignState>(
@@ -582,11 +602,13 @@ class TimerWidget extends StatefulWidget {
     required this.hasEnded,
     required this.isWinner,
     required this.campaignEndDate,
+    required this.campaign,
   });
 
   final bool hasEnded;
   final bool isWinner;
   final DateTime campaignEndDate;
+  final CampaignResponseModel campaign;
 
   @override
   State<TimerWidget> createState() => _TimerWidgetState();
@@ -627,6 +649,7 @@ class _TimerWidgetState extends State<TimerWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final textColor = hexToColor(widget.campaign.textColor);
     return Container(
       height: 156.h,
       width: double.infinity,
@@ -653,7 +676,7 @@ class _TimerWidgetState extends State<TimerWidget> {
                     text: "DRAW ENDS IN",
                     style: TextStyles.smallBold12(
                       context,
-                    ).copyWith(color: AppColors.white.withValues(alpha: .32)),
+                    ).copyWith(color: textColor.withValues(alpha: .32)),
                   ),
                 ),
                 Countdown(
@@ -667,6 +690,7 @@ class _TimerWidgetState extends State<TimerWidget> {
                       children: [
                         Expanded(
                           child: CountdownBox(
+                            campaign: widget.campaign,
                             count: timeList[0],
                             subTitle: "Days",
                           ),
@@ -677,11 +701,12 @@ class _TimerWidgetState extends State<TimerWidget> {
                             text: ":",
                             style: TextStyles.bodyBold16(
                               context,
-                            ).copyWith(color: AppColors.white),
+                            ).copyWith(color: textColor),
                           ),
                         ),
                         Expanded(
                           child: CountdownBox(
+                            campaign: widget.campaign,
                             count: timeList[1],
                             subTitle: "Hours",
                           ),
@@ -692,11 +717,12 @@ class _TimerWidgetState extends State<TimerWidget> {
                             text: ":",
                             style: TextStyles.bodyBold16(
                               context,
-                            ).copyWith(color: AppColors.white),
+                            ).copyWith(color: textColor),
                           ),
                         ),
                         Expanded(
                           child: CountdownBox(
+                            campaign: widget.campaign,
                             count: timeList[2],
                             subTitle: "Mins",
                           ),
@@ -707,11 +733,12 @@ class _TimerWidgetState extends State<TimerWidget> {
                             text: ":",
                             style: TextStyles.bodyBold16(
                               context,
-                            ).copyWith(color: AppColors.white),
+                            ).copyWith(color: textColor),
                           ),
                         ),
                         Expanded(
                           child: CountdownBox(
+                            campaign: widget.campaign,
                             count: timeList[3],
                             subTitle: "Secs",
                           ),
@@ -726,7 +753,7 @@ class _TimerWidgetState extends State<TimerWidget> {
                     offset: Offset(0, 4),
                     blur: 6.r,
                     borderRadius: 100.r,
-                    backgroundColor: AppColors.white.withValues(alpha: .16),
+                    backgroundColor: textColor.withValues(alpha: .16),
                     shadowColor: AppColors.black.withValues(alpha: .04),
                     child: Container(
                       decoration: BoxDecoration(
@@ -742,7 +769,7 @@ class _TimerWidgetState extends State<TimerWidget> {
                                 style: TextStyles.smallRegular12(context)
                                     .copyWith(
                                       fontFamily: AppFonts.baloo,
-                                      color: AppColors.white,
+                                      color: textColor,
                                     ),
                               ),
                             );
@@ -762,24 +789,28 @@ class _TimerWidgetState extends State<TimerWidget> {
 }
 
 class CountdownBox extends StatelessWidget {
-  const CountdownBox({super.key, required this.count, required this.subTitle});
+  const CountdownBox({
+    super.key,
+    required this.count,
+    required this.subTitle,
+    required this.campaign,
+  });
 
   final String count;
   final String subTitle;
+  final CampaignResponseModel campaign;
 
   @override
   Widget build(BuildContext context) {
+    final textColor = hexToColor(campaign.textColor);
     return Container(
       height: 67.h,
       width: 67.w,
       padding: EdgeInsets.symmetric(vertical: 8.h),
       decoration: BoxDecoration(
-        color: AppColors.white10,
+        color: textColor.withValues(alpha: .1),
         borderRadius: BorderRadius.circular(6.r),
-        border: Border.all(
-          width: 1.w,
-          color: AppColors.white.withValues(alpha: .04),
-        ),
+        border: Border.all(width: 1.w, color: textColor.withValues(alpha: .04)),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -794,13 +825,13 @@ class CountdownBox extends StatelessWidget {
                   text: subTitle,
                   style: TextStyles.smallSemibold12(
                     context,
-                  ).copyWith(color: AppColors.white.withValues(alpha: .48)),
+                  ).copyWith(color: textColor.withValues(alpha: .48)),
                 ),
               ],
               style: TextStyles.h2Bold32(context).copyWith(
                 height: 1.h,
                 fontFamily: AppFonts.baloo2,
-                color: AppColors.white,
+                color: textColor,
               ),
             ),
           ),
@@ -891,12 +922,14 @@ class _ReferralContainerState extends State<ReferralContainer> {
   @override
   Widget build(BuildContext context) {
     final displayCount = referredUsers.length > 5 ? 5 : referredUsers.length;
+
     return BlocBuilder<CampaignBloc, CampaignState>(
       builder: (context, state) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           setState(() => referredUsers = state.referrals);
         });
 
+        final textColor = hexToColor(widget.campaign.textColor);
         return MultiBlocProvider(
           providers: [
             BlocListener<ProfileBloc, ProfileState>(
@@ -912,7 +945,7 @@ class _ReferralContainerState extends State<ReferralContainer> {
             margin: EdgeInsets.symmetric(vertical: 20.h),
             padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
             decoration: BoxDecoration(
-              color: AppColors.white.withValues(alpha: .2),
+              color: textColor.withValues(alpha: .2),
               borderRadius: BorderRadius.circular(16.r),
               border: Border.all(
                 width: 1.5.w,
@@ -935,7 +968,7 @@ class _ReferralContainerState extends State<ReferralContainer> {
                     text: "You've Entered",
                     icon: AssetsSvgIcons.checkmark,
                     color: AppColors.green500,
-                    textColor: AppColors.white,
+                    textColor: textColor,
                   )
                 else ...[
                   IconTextButton(
@@ -954,8 +987,8 @@ class _ReferralContainerState extends State<ReferralContainer> {
                     onPressed: () =>
                         priceDetailsDialog(campaign: widget.campaign),
                     text: "See Prize Details",
-                    color: AppColors.white.withValues(alpha: .16),
-                    textColor: AppColors.white,
+                    color: textColor.withValues(alpha: .16),
+                    textColor: textColor,
                   ),
                 ],
 
@@ -972,7 +1005,7 @@ class _ReferralContainerState extends State<ReferralContainer> {
                         horizontal: 12.w,
                       ),
                       decoration: BoxDecoration(
-                        color: AppColors.white.withValues(alpha: .05),
+                        color: textColor.withValues(alpha: .05),
                         borderRadius: BorderRadius.circular(100.r),
                       ),
                       child: Row(
@@ -991,15 +1024,13 @@ class _ReferralContainerState extends State<ReferralContainer> {
                                   imageUrl: user.profilePic,
                                   size: 24.r,
                                   circle: true,
-                                  color: AppColors.white10,
+                                  color: textColor.withValues(alpha: .1),
                                 ),
                                 if (index != displayCount - 1)
                                   Container(
                                     width: 1.w,
                                     height: 18.h,
-                                    color: AppColors.white.withValues(
-                                      alpha: .05,
-                                    ),
+                                    color: textColor.withValues(alpha: .05),
                                   ),
                               ],
                             );
@@ -1009,20 +1040,24 @@ class _ReferralContainerState extends State<ReferralContainer> {
                               Container(
                                 width: 1.w,
                                 height: 18.h,
-                                color: AppColors.white.withValues(alpha: .05),
+                                color: textColor.withValues(alpha: .05),
                               ),
                             SvgPicture.asset(
                               AssetsSvgIcons.user,
                               width: 20.w,
                               height: 20.h,
                               fit: BoxFit.contain,
+                              colorFilter: ColorFilter.mode(
+                                textColor,
+                                BlendMode.srcIn,
+                              ),
                             ),
                           ],
                           if (referredUsers.length > 5) ...[
                             Container(
                               width: 1.w,
                               height: 18.h,
-                              color: AppColors.white.withValues(alpha: .05),
+                              color: textColor.withValues(alpha: .05),
                             ),
                             Container(
                               padding: EdgeInsets.symmetric(
@@ -1030,7 +1065,7 @@ class _ReferralContainerState extends State<ReferralContainer> {
                                 vertical: 6.h,
                               ),
                               decoration: BoxDecoration(
-                                color: AppColors.white.withValues(alpha: .08),
+                                color: textColor.withValues(alpha: .08),
                                 borderRadius: BorderRadius.circular(100.r),
                               ),
                               child: Row(
@@ -1042,13 +1077,17 @@ class _ReferralContainerState extends State<ReferralContainer> {
                                     width: 14.w,
                                     height: 14.h,
                                     fit: BoxFit.contain,
+                                    colorFilter: ColorFilter.mode(
+                                      textColor,
+                                      BlendMode.srcIn,
+                                    ),
                                   ),
                                   RichText(
                                     text: TextSpan(
                                       text: "${referredUsers.length - 5}",
                                       style: TextStyles.smallSemibold12(
                                         context,
-                                      ).copyWith(color: AppColors.white),
+                                      ).copyWith(color: textColor),
                                     ),
                                   ),
                                 ],
@@ -1070,14 +1109,14 @@ class _ReferralContainerState extends State<ReferralContainer> {
                         : "Your entry is confirmed for this draw.",
                     style: TextStyles.smallSemibold12(
                       context,
-                    ).copyWith(color: AppColors.white30),
+                    ).copyWith(color: textColor.withValues(alpha: .3)),
                   ),
                 ),
                 Padding(
                   padding: EdgeInsets.symmetric(vertical: 24.h),
                   child: Divider(
                     height: 1.h,
-                    color: AppColors.white.withValues(alpha: .08),
+                    color: textColor.withValues(alpha: .08),
                   ),
                 ),
                 RichText(
@@ -1086,7 +1125,7 @@ class _ReferralContainerState extends State<ReferralContainer> {
                     text: "Invite your friends quick & easy.",
                     style: TextStyles.normalSemibold14(
                       context,
-                    ).copyWith(color: AppColors.white.withValues(alpha: .64)),
+                    ).copyWith(color: textColor.withValues(alpha: .64)),
                   ),
                 ),
                 SizedBox(height: 10.h),
@@ -1116,7 +1155,7 @@ class _ReferralContainerState extends State<ReferralContainer> {
                             horizontal: 12.w,
                           ),
                           decoration: BoxDecoration(
-                            color: AppColors.white.withValues(alpha: .08),
+                            color: textColor.withValues(alpha: .08),
                             borderRadius: BorderRadius.circular(12.r),
                             boxShadow: [
                               BoxShadow(
@@ -1140,7 +1179,7 @@ class _ReferralContainerState extends State<ReferralContainer> {
                                         'https://app.joinbravoo.com?ref=${userProfile.referralCode}',
                                     style: TextStyles.smallSemibold12(
                                       context,
-                                    ).copyWith(color: AppColors.white),
+                                    ).copyWith(color: textColor),
                                   ),
                                 ),
                               ),
@@ -1150,7 +1189,7 @@ class _ReferralContainerState extends State<ReferralContainer> {
                                 height: 16.h,
                                 fit: BoxFit.contain,
                                 colorFilter: ColorFilter.mode(
-                                  AppColors.white,
+                                  textColor,
                                   BlendMode.srcIn,
                                 ),
                               ),
@@ -1168,6 +1207,7 @@ class _ReferralContainerState extends State<ReferralContainer> {
                   children: [
                     Expanded(
                       child: SocialBox(
+                        campaign: widget.campaign,
                         icon: AssetsPngImages.whatsapp,
                         subTitle: "Whatsapp",
                         onTap: () => shareToWhatsApp(userProfile.referralCode),
@@ -1175,6 +1215,7 @@ class _ReferralContainerState extends State<ReferralContainer> {
                     ),
                     Expanded(
                       child: SocialBox(
+                        campaign: widget.campaign,
                         icon: AssetsPngImages.x,
                         subTitle: "X(Twitter)",
                         onTap: () => shareToX(userProfile.referralCode),
@@ -1182,6 +1223,7 @@ class _ReferralContainerState extends State<ReferralContainer> {
                     ),
                     Expanded(
                       child: SocialBox(
+                        campaign: widget.campaign,
                         icon: AssetsPngImages.linkedIn,
                         subTitle: "LinkedIn",
                         onTap: () => shareToLinkedIn(userProfile.referralCode),
@@ -1193,7 +1235,7 @@ class _ReferralContainerState extends State<ReferralContainer> {
                   padding: EdgeInsets.symmetric(vertical: 20.h),
                   child: Divider(
                     height: 1.h,
-                    color: AppColors.white.withValues(alpha: .08),
+                    color: textColor.withValues(alpha: .08),
                   ),
                 ),
                 Row(
@@ -1209,13 +1251,13 @@ class _ReferralContainerState extends State<ReferralContainer> {
                               text: "You referred",
                               style: TextStyles.smallSemibold12(
                                 context,
-                              ).copyWith(color: AppColors.white),
+                              ).copyWith(color: textColor),
                             ),
                           ),
                           Icon(
                             Icons.info_outline_rounded,
                             size: 16.sp,
-                            color: AppColors.white,
+                            color: textColor,
                           ),
                         ],
                       ),
@@ -1229,13 +1271,17 @@ class _ReferralContainerState extends State<ReferralContainer> {
                           width: 16.w,
                           height: 16.h,
                           fit: BoxFit.contain,
+                          colorFilter: ColorFilter.mode(
+                            textColor,
+                            BlendMode.srcIn,
+                          ),
                         ),
                         RichText(
                           text: TextSpan(
                             text: "${referredUsers.length}",
                             style: TextStyles.bodySemiBold16(
                               context,
-                            ).copyWith(color: AppColors.white),
+                            ).copyWith(color: textColor),
                           ),
                         ),
                       ],
@@ -1257,14 +1303,17 @@ class SocialBox extends StatelessWidget {
     required this.icon,
     required this.subTitle,
     required this.onTap,
+    required this.campaign,
   });
 
   final String icon;
   final String subTitle;
   final VoidCallback onTap;
+  final CampaignResponseModel campaign;
 
   @override
   Widget build(BuildContext context) {
+    final textColor = hexToColor(campaign.textColor);
     return GestureDetector(
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
@@ -1273,7 +1322,7 @@ class SocialBox extends StatelessWidget {
         width: 86.3.w,
         padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 12.w),
         decoration: BoxDecoration(
-          color: AppColors.white.withValues(alpha: .24),
+          color: textColor.withValues(alpha: .24),
           borderRadius: BorderRadius.circular(8.r),
         ),
         child: Column(
@@ -1288,7 +1337,7 @@ class SocialBox extends StatelessWidget {
                 text: subTitle,
                 style: TextStyles.cardSemibold10(
                   context,
-                ).copyWith(color: AppColors.white.withValues(alpha: .64)),
+                ).copyWith(color: textColor.withValues(alpha: .64)),
               ),
             ),
           ],

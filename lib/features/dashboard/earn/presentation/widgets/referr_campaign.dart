@@ -7,7 +7,6 @@ import 'package:Bravoo/features/dashboard/home/data/model/campaign_response.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:timer_count_down/timer_controller.dart';
 import 'package:timer_count_down/timer_count_down.dart';
 
@@ -97,6 +96,9 @@ class _ReferCampaignState extends State<ReferCampaign> {
             .clamp(0, double.infinity)
             .toInt();
 
+        final textColor = hexToColor(campaign.textColor);
+        final inverseTextColor = hexToColor(campaign.inverseTextColor);
+
         return Container(
           margin: widget.showMargin
               ? EdgeInsets.symmetric(horizontal: 16.w)
@@ -122,7 +124,7 @@ class _ReferCampaignState extends State<ReferCampaign> {
                   child: Image.asset(
                     AssetsPngImages.campaignBg1,
                     fit: BoxFit.cover,
-                    color: AppColors.white,
+                    color: textColor,
                     colorBlendMode: BlendMode.srcIn,
                   ),
                 ),
@@ -148,9 +150,7 @@ class _ReferCampaignState extends State<ReferCampaign> {
                           text: TextSpan(
                             text: campaign.name.toString(),
                             style: TextStyles.smallBold12(context).copyWith(
-                              color: widget.transparent
-                                  ? null
-                                  : AppColors.white,
+                              color: widget.transparent ? null : textColor,
                             ),
                           ),
                         ),
@@ -179,10 +179,10 @@ class _ReferCampaignState extends State<ReferCampaign> {
 
                         CircleAvatar(
                           radius: 45,
-                          backgroundColor: AppColors.white05,
+                          backgroundColor: textColor.withValues(alpha: .05),
                           child: CircleAvatar(
                             radius: 40,
-                            backgroundColor: AppColors.white30,
+                            backgroundColor: textColor.withValues(alpha: .30),
                             child: CircleAvatar(
                               radius: 35,
                               backgroundColor: widget.transparent
@@ -207,7 +207,7 @@ class _ReferCampaignState extends State<ReferCampaign> {
                               'Invite 2 friends to qualify. All qualifiers entered in the draw gets 50 coins each.',
                           style: TextStyles.smallBold12(
                             context,
-                          ).copyWith(color: AppColors.white),
+                          ).copyWith(color: textColor),
                         ),
                       ),
                       SizedBox(height: 5.h),
@@ -221,15 +221,17 @@ class _ReferCampaignState extends State<ReferCampaign> {
                             vertical: 6.h,
                           ),
                           decoration: BoxDecoration(
-                            color: widget.expanded ? null : AppColors.white80,
+                            color: widget.expanded
+                                ? null
+                                : textColor.withValues(alpha: .8),
                             borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(15),
-                              topRight: Radius.circular(15),
+                              topLeft: Radius.circular(15.r),
+                              topRight: Radius.circular(15.r),
                             ),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black12,
-                                blurRadius: 6,
+                                color: inverseTextColor.withValues(alpha: .12),
+                                blurRadius: 6.r,
                                 offset: Offset(0, 2),
                               ),
                             ],
@@ -259,31 +261,33 @@ class _ReferCampaignState extends State<ReferCampaign> {
                               return Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Text(
-                                    'Ends in ',
-                                    style: GoogleFonts.manrope(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w700,
-                                      color: const Color(0xFF191919),
+                                  RichText(
+                                    text: TextSpan(
+                                      text: 'Ends in ',
+                                      style: TextStyles.normalBold14(context)
+                                          .copyWith(
+                                            color: inverseTextColor,
+                                            fontSize: 13.sp,
+                                          ),
                                     ),
                                   ),
                                   _timerBox('${timeList[0]} days'),
-                                  const Icon(
+                                  Icon(
                                     Icons.more_vert,
-                                    size: 14,
-                                    color: Colors.black,
+                                    size: 14.sp,
+                                    color: inverseTextColor,
                                   ),
                                   _timerBox('${timeList[1]}h'),
-                                  const Icon(
+                                  Icon(
                                     Icons.more_vert,
-                                    size: 14,
-                                    color: Colors.black,
+                                    size: 14.sp,
+                                    color: inverseTextColor,
                                   ),
                                   _timerBox('${timeList[2]}m'),
-                                  const Icon(
+                                  Icon(
                                     Icons.more_vert,
-                                    size: 14,
-                                    color: Colors.black,
+                                    size: 14.sp,
+                                    color: inverseTextColor,
                                   ),
                                   _timerBox('${timeList[3]}s'),
                                 ],
@@ -307,6 +311,8 @@ class _ReferCampaignState extends State<ReferCampaign> {
                               ),
                             );
                           },
+                          color: textColor,
+                          textColor: inverseTextColor,
                           text: differenceInSeconds <= 0
                               ? "Draw Ended (See Winner)"
                               : "Join the Draw",
@@ -318,8 +324,8 @@ class _ReferCampaignState extends State<ReferCampaign> {
                         height: 54,
                         onPressed: () => priceDetailsDialog(campaign: campaign),
                         text: "See Prize Details",
-                        color: AppColors.white.withValues(alpha: .16),
-                        textColor: AppColors.white,
+                        color: textColor.withValues(alpha: .16),
+                        textColor: textColor,
                       ),
                       Container(
                         margin: EdgeInsets.symmetric(
@@ -331,7 +337,7 @@ class _ReferCampaignState extends State<ReferCampaign> {
                           vertical: 8.h,
                         ),
                         decoration: BoxDecoration(
-                          color: AppColors.white10,
+                          color: textColor.withValues(alpha: .1),
                           borderRadius: BorderRadius.circular(50.r),
                         ),
                         child: Row(
@@ -349,14 +355,14 @@ class _ReferCampaignState extends State<ReferCampaign> {
                                 vertical: 4,
                               ),
                               decoration: BoxDecoration(
-                                color: AppColors.white30,
+                                color: textColor.withValues(alpha: .3),
                                 borderRadius: BorderRadius.circular(50.r),
                               ),
                               child: Row(
                                 children: [
                                   Icon(
                                     Icons.group,
-                                    color: Colors.white,
+                                    color: textColor,
                                     size: 15.sp,
                                   ),
                                   RichText(
@@ -364,7 +370,7 @@ class _ReferCampaignState extends State<ReferCampaign> {
                                       text: '+12',
                                       style: TextStyles.smallSemibold12(
                                         context,
-                                      ).copyWith(color: AppColors.white),
+                                      ).copyWith(color: textColor),
                                     ),
                                   ),
                                 ],
@@ -380,11 +386,10 @@ class _ReferCampaignState extends State<ReferCampaign> {
                               'Qualify by inviting 2 friends who sign up via your link.',
                           style: TextStyles.cardSemibold10(
                             context,
-                          ).copyWith(color: AppColors.white50),
+                          ).copyWith(color: textColor.withValues(alpha: .5)),
                         ),
                       ),
                     ],
-                    // const SizedBox(height: 4),
                   ],
                 ),
               ),
@@ -396,20 +401,20 @@ class _ReferCampaignState extends State<ReferCampaign> {
   }
 
   Widget _timerBox(String text) {
+    final textColor = hexToColor(campaign.textColor);
+    final inverseTextColor = hexToColor(campaign.inverseTextColor);
     return Container(
-      // margin: const EdgeInsets.only(left: 4),
-      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 4),
+      padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 4.h),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(6),
-        border: Border.all(color: Colors.grey.shade200),
+        color: textColor,
+        borderRadius: BorderRadius.circular(6.r),
       ),
-      child: Text(
-        text,
-        style: GoogleFonts.manrope(
-          fontSize: 14,
-          fontWeight: FontWeight.w700,
-          color: Color(0xFF191919),
+      child: RichText(
+        text: TextSpan(
+          text: text,
+          style: TextStyles.smallSemibold12(
+            context,
+          ).copyWith(color: inverseTextColor),
         ),
       ),
     );
@@ -417,18 +422,20 @@ class _ReferCampaignState extends State<ReferCampaign> {
 
   /// --- Helper Widgets
   Widget _timerBox2(String value, String label) {
+    final textColor = hexToColor(campaign.textColor);
+    final inverseTextColor = hexToColor(campaign.inverseTextColor);
     return Container(
       width: 55.w,
       height: 55.h,
       padding: EdgeInsets.only(bottom: 5, top: 5),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        color: AppColors.white10,
+        borderRadius: BorderRadius.circular(12.r),
+        color: textColor.withValues(alpha: .1),
         boxShadow: [
           BoxShadow(
-            color: AppColors.black10,
+            color: inverseTextColor.withValues(alpha: .1),
             offset: const Offset(0, 4),
-            blurRadius: 15,
+            blurRadius: 15.r,
           ),
         ],
       ),
@@ -437,21 +444,22 @@ class _ReferCampaignState extends State<ReferCampaign> {
         mainAxisAlignment: MainAxisAlignment.center,
         // crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text(
-            value,
-            style: GoogleFonts.baloo2(
-              color: Colors.white,
-              fontSize: 24,
-              fontWeight: FontWeight.w700,
-              height: 1.0,
+          RichText(
+            text: TextSpan(
+              text: value,
+              style: TextStyles.bigTitleBold24(context).copyWith(
+                color: textColor,
+                height: 1.0,
+                fontFamily: AppFonts.baloo2,
+              ),
             ),
           ),
-          Text(
-            label,
-            style: GoogleFonts.manrope(
-              color: Colors.white70,
-              fontSize: 10,
-              height: 1.0,
+          RichText(
+            text: TextSpan(
+              text: value,
+              style: TextStyles.cardRegular10(
+                context,
+              ).copyWith(color: textColor.withValues(alpha: .7)),
             ),
           ),
         ],
@@ -460,10 +468,11 @@ class _ReferCampaignState extends State<ReferCampaign> {
   }
 
   Widget timeColon() {
+    final textColor = hexToColor(campaign.textColor);
     return RichText(
       text: TextSpan(
         text: ":",
-        style: TextStyles.bodyBold16(context).copyWith(color: AppColors.white),
+        style: TextStyles.bodyBold16(context).copyWith(color: textColor),
       ),
     );
   }

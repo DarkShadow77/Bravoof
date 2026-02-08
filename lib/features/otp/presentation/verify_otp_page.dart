@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:pinput/pinput.dart';
 
 import '../../common/data/constants.dart';
@@ -52,8 +53,20 @@ class _VerifyOtpPageState extends State<VerifyOtpPage> with UIToolMixin {
       backgroundColor: Colors.transparent,
       extendBodyBehindAppBar: true,
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         backgroundColor: Colors.transparent,
         surfaceTintColor: Colors.transparent,
+        leading: CircleAvatar(
+          backgroundColor: AppColors.black05,
+          child: GestureDetector(
+            onTap: () => Navigator.pop(context),
+            child: HugeIcon(
+              icon: HugeIcons.strokeRoundedArrowLeft02,
+              color: Colors.black,
+              strokeWidth: 1.5,
+            ),
+          ),
+        ),
       ),
       body: Container(
         decoration: const BoxDecoration(
