@@ -30,6 +30,11 @@ class UserProfile {
   String flag;
   String countryCode;
   String countryCodeIso3;
+  AuthProviders authProviders;
+  Map<String, dynamic> providerEmails;
+  List<String> allEmails;
+  String primaryEmail;
+  bool hasPassword;
 
   UserProfile({
     required this.id,
@@ -63,6 +68,11 @@ class UserProfile {
     required this.flag,
     required this.countryCode,
     required this.countryCodeIso3,
+    required this.authProviders,
+    required this.providerEmails,
+    required this.allEmails,
+    required this.primaryEmail,
+    required this.hasPassword,
   });
 
   factory UserProfile.empty() {
@@ -98,6 +108,11 @@ class UserProfile {
       flag: "",
       countryCode: "",
       countryCodeIso3: "",
+      authProviders: AuthProviders.empty(),
+      providerEmails: const {},
+      allEmails: const [],
+      primaryEmail: '',
+      hasPassword: false,
     );
   }
 
@@ -134,6 +149,11 @@ class UserProfile {
     String? flag,
     String? countryCode,
     String? countryCodeIso3,
+    AuthProviders? authProviders,
+    Map<String, dynamic>? providerEmails,
+    List<String>? allEmails,
+    String? primaryEmail,
+    bool? hasPassword,
   }) {
     return UserProfile(
       id: id ?? this.id,
@@ -167,6 +187,11 @@ class UserProfile {
       flag: flag ?? this.flag,
       countryCode: countryCode ?? this.countryCode,
       countryCodeIso3: countryCodeIso3 ?? this.countryCodeIso3,
+      authProviders: authProviders ?? this.authProviders,
+      providerEmails: providerEmails ?? this.providerEmails,
+      allEmails: allEmails ?? this.allEmails,
+      primaryEmail: primaryEmail ?? this.primaryEmail,
+      hasPassword: hasPassword ?? this.hasPassword,
     );
   }
 
@@ -209,6 +234,19 @@ class UserProfile {
       flag: json['flag'] ?? '',
       countryCode: json['country_code'] ?? '',
       countryCodeIso3: json['country_code_iso3'] ?? '',
+      authProviders: json['auth_providers'] != null
+          ? AuthProviders.fromJson(
+              json['auth_providers'] as Map<String, dynamic>,
+            )
+          : AuthProviders.empty(),
+      providerEmails: json['provider_emails'] as Map<String, dynamic>? ?? {},
+      allEmails:
+          (json['all_emails'] as List<dynamic>?)
+              ?.map((e) => e.toString())
+              .toList() ??
+          [],
+      primaryEmail: json['primary_email'] ?? '',
+      hasPassword: json['has_password'] ?? false,
     );
   }
 
@@ -250,5 +288,56 @@ class UserProfile {
       data["user_id"] = userId;
     }
     return data;
+  }
+}
+
+class AuthProviders {
+  bool apple;
+  bool email;
+  bool google;
+
+  AuthProviders({
+    required this.apple,
+    required this.email,
+    required this.google,
+  });
+
+  factory AuthProviders.empty() {
+    return AuthProviders(apple: false, email: false, google: false);
+  }
+
+  AuthProviders copyWith({bool? apple, bool? email, bool? google}) {
+    return AuthProviders(
+      apple: apple ?? this.apple,
+      email: email ?? this.email,
+      google: google ?? this.google,
+    );
+  }
+
+  factory AuthProviders.fromJson(Map<String, dynamic> json) {
+    return AuthProviders(
+      apple: json['apple'] ?? false,
+      email: json['email'] ?? false,
+      google: json['google'] ?? false,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {'apple': apple, 'email': email, 'google': google};
+  }
+
+  // Helper methods
+  bool get hasAnyProvider => apple || email || google;
+
+  List<String> get activeProviders {
+    List<String> providers = [];
+    if (apple) providers.add('apple');
+    if (email) providers.add('email');
+    if (google) providers.add('google');
+    return providers;
+  }
+
+  bool canUnlink(String provider) {
+    return hasAnyProvider;
   }
 }

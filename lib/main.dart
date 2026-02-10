@@ -22,6 +22,8 @@ import 'package:path_provider/path_provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'app/theme/app_themes.dart';
+import 'core/constants/navigators/routeName.dart';
+import 'core/constants/navigators/router.dart';
 import 'core/constants/strings.dart';
 import 'core/di/service_locator.dart';
 import 'features/app.dart';
@@ -147,9 +149,11 @@ class _MyAppState extends State<MyApp> {
             // routerConfig: _router,
             navigatorKey: navigatorKey,
             title: Strings.appName,
+            debugShowCheckedModeBanner: false,
             theme: lightTheme,
-            initialRoute: "/",
-            onGenerateRoute: (RouteSettings settings) {
+            onGenerateRoute: generateRoute,
+            initialRoute: RouteName.indexPage,
+            /*onGenerateRoute: (RouteSettings settings) {
               Widget routeWidget = App();
 
               // Mimic web routing
@@ -160,8 +164,7 @@ class _MyAppState extends State<MyApp> {
                 settings: settings,
                 fullscreenDialog: true,
               );
-            },
-            debugShowCheckedModeBanner: false,
+            },*/
           );
         },
       ),

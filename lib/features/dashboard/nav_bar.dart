@@ -25,10 +25,16 @@ import 'profile/presentation/bloc/profile_bloc.dart';
 import 'redeem/presentation/bloc/redeem_bloc.dart';
 
 class BottomNavBar extends StatefulWidget {
-  BottomNavBar({this.index = 0, super.key, this.missionIndex});
+  BottomNavBar({
+    this.index = 0,
+    super.key,
+    this.missionIndex,
+    this.redeemIndex,
+  });
 
   final int index;
   final int? missionIndex;
+  final int? redeemIndex;
 
   @override
   State<BottomNavBar> createState() => _BottomNavBarState();
@@ -102,7 +108,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
           children: [
             FlowvaHomePage(),
             MissionPage(index: widget.missionIndex),
-            RedeemScreen(),
+            RedeemScreen(index: widget.missionIndex),
           ],
         ),
 

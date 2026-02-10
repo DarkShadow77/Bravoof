@@ -169,10 +169,6 @@ class _ToolCardCarouselState extends State<ToolCardCarousel> {
       items.add(ReferCampaign());
     }
 
-    if (state.spotlight.name.isNotEmpty) {
-      items.add(SpotlightCard());
-    }
-
     final dynamicCarouselItems = state.extraCard;
 
     if (dynamicCarouselItems.isNotEmpty) {
@@ -180,6 +176,10 @@ class _ToolCardCarouselState extends State<ToolCardCarousel> {
       for (var item in dynamicCarouselItems) {
         items.add(DynamicCarouselCard(item: item));
       }
+    }
+
+    if (state.spotlight.name.isNotEmpty) {
+      items.add(SpotlightCard());
     }
 
     items.add(QuoteCard());
@@ -304,16 +304,19 @@ class DynamicCarouselCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      clipBehavior: Clip.antiAlias,
-      margin: EdgeInsets.symmetric(horizontal: 16.w),
-      decoration: BoxDecoration(borderRadius: BorderRadius.circular(24.r)),
-      child: CachedImageSize(
-        imageUrl: item.image,
-        width: double.infinity,
-        height: double.infinity,
-        color: AppColors.grey100,
-        fit: BoxFit.cover,
+    return GestureDetector(
+      onTap: () => Navigator.pushNamed(context, item.destination),
+      child: Container(
+        clipBehavior: Clip.antiAlias,
+        margin: EdgeInsets.symmetric(horizontal: 16.w),
+        decoration: BoxDecoration(borderRadius: BorderRadius.circular(24.r)),
+        child: CachedImageSize(
+          imageUrl: item.image,
+          width: double.infinity,
+          height: double.infinity,
+          color: AppColors.grey100,
+          fit: BoxFit.contain,
+        ),
       ),
     );
   }

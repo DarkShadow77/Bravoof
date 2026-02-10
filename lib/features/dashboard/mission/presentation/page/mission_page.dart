@@ -55,7 +55,6 @@ class _MissionPageState extends State<MissionPage> {
     context.read<StreakBloc>().add(LoadStreaksEvent());
     context.read<RedeemBloc>().add(LoadRedeemHistory());
     BlocProvider.of<HomeCubit>(context).fetchCampaigns();
-    BlocProvider.of<HomeCubit>(context).fetchCampaigns();
   }
 
   @override
@@ -73,7 +72,7 @@ class _MissionPageState extends State<MissionPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: 20.h + MediaQuery.of(context).padding.top),
+                SizedBox(height: 10.h + MediaQuery.of(context).padding.top),
                 FlowvaAppBar(title: "Missions"),
                 SizedBox(height: 12.h),
                 // Tabs

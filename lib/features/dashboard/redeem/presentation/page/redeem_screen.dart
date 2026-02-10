@@ -19,7 +19,8 @@ import '../../../profile/presentation/bloc/profile_bloc.dart';
 import '../bloc/redeem_bloc.dart';
 
 class RedeemScreen extends StatefulWidget {
-  RedeemScreen({super.key});
+  RedeemScreen({super.key, this.index});
+  final int? index;
 
   @override
   State<RedeemScreen> createState() => _RedeemScreenState();
@@ -35,6 +36,12 @@ class _RedeemScreenState extends State<RedeemScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (widget.index != null) {
+        selectedIndex = widget.index!;
+        _pageController.jumpToPage(widget.index!);
+      }
+    });
     BlocProvider.of<HomeCubit>(context).fetchCampaigns();
     _fetchDetails();
   }
