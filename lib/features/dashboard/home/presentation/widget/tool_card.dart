@@ -315,7 +315,7 @@ class DynamicCarouselCard extends StatelessWidget {
           width: double.infinity,
           height: double.infinity,
           color: AppColors.grey100,
-          fit: BoxFit.contain,
+          fit: BoxFit.cover,
         ),
       ),
     );

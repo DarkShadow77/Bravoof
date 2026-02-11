@@ -31,12 +31,30 @@ class ApiService {
     String? fallbackErrorMessage,
   }) async {
     try {
-      final res = await supabase.functions.invoke(functionName, body: body);
+      // IMPORTANT: Check if user is authenticated
+      final session = supabase.auth.currentSession;
+
+      if (session == null) {
+        Logger().e('No active session when calling $functionName');
+        return Left('Authentication required. Please log in again.');
+      }
+
+      Logger().i("Calling edge function: $functionName");
+      Logger().d("Request body: $body");
+      Logger().d("Session exists: ${session.accessToken.substring(0, 20)}...");
+
+      // The Supabase client automatically includes auth headers
+      final res = await supabase.functions.invoke(
+        functionName,
+        body: body,
+        headers: {'Authorization': 'Bearer ${session.accessToken}'},
+      );
 
       final ApiResponse apiResponse = ApiResponse();
 
       Logger().i("$functionName Response ${res.data}");
       Logger().d("🟢 Response runtimeType: ${res.data.runtimeType}");
+      Logger().d("🟢 Response status: ${res.status}");
 
       late final Map<String, dynamic> data;
 
@@ -72,6 +90,14 @@ class ApiService {
 
       // Convert raw JSON to your type T
       return Right(onSuccess(data));
+    } on AuthException catch (e) {
+      Logger().e('🔥 Auth error in "$functionName"', error: e);
+      return Left('Authentication error: ${e.message}');
+    } on FunctionException catch (e) {
+      Logger().e('🔥 Function exception in "$functionName"', error: e);
+      return Left(
+        _extractFunctionError(e, fallbackErrorMessage ?? 'Request failed'),
+      );
     } catch (e, s) {
       Logger().e(
         '🔥 Edge Function "$functionName" crashed',
@@ -79,12 +105,7 @@ class ApiService {
         stackTrace: s,
       );
 
-      return Left(
-        _extractFunctionError(
-          e,
-          fallbackErrorMessage ?? 'Something went wrong',
-        ),
-      );
+      return Left(fallbackErrorMessage ?? 'Something went wrong');
     }
   }
 

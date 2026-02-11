@@ -31,7 +31,7 @@ class UserProfile {
   String countryCode;
   String countryCodeIso3;
   AuthProviders authProviders;
-  Map<String, dynamic> providerEmails;
+  ProviderEmails providerEmails;
   List<String> allEmails;
   String primaryEmail;
   bool hasPassword;
@@ -109,7 +109,7 @@ class UserProfile {
       countryCode: "",
       countryCodeIso3: "",
       authProviders: AuthProviders.empty(),
-      providerEmails: const {},
+      providerEmails: ProviderEmails.empty(),
       allEmails: const [],
       primaryEmail: '',
       hasPassword: false,
@@ -150,7 +150,7 @@ class UserProfile {
     String? countryCode,
     String? countryCodeIso3,
     AuthProviders? authProviders,
-    Map<String, dynamic>? providerEmails,
+    ProviderEmails? providerEmails,
     List<String>? allEmails,
     String? primaryEmail,
     bool? hasPassword,
@@ -239,7 +239,11 @@ class UserProfile {
               json['auth_providers'] as Map<String, dynamic>,
             )
           : AuthProviders.empty(),
-      providerEmails: json['provider_emails'] as Map<String, dynamic>? ?? {},
+      providerEmails: json['provider_emails'] != null
+          ? ProviderEmails.fromJson(
+              json['provider_emails'] as Map<String, dynamic>,
+            )
+          : ProviderEmails.empty(),
       allEmails:
           (json['all_emails'] as List<dynamic>?)
               ?.map((e) => e.toString())
@@ -327,6 +331,14 @@ class AuthProviders {
   }
 
   // Helper methods
+  int get activeProvidersCount {
+    int count = 0;
+    if (apple) count++;
+    if (email) count++;
+    if (google) count++;
+    return count;
+  }
+
   bool get hasAnyProvider => apple || email || google;
 
   List<String> get activeProviders {
@@ -338,6 +350,85 @@ class AuthProviders {
   }
 
   bool canUnlink(String provider) {
-    return hasAnyProvider;
+    // Must have at least 2 providers to be able to unlink one
+    return activeProvidersCount > 1;
   }
+
+  String get primaryProvider {
+    if (email) return 'email';
+    if (google) return 'google';
+    if (apple) return 'apple';
+    return 'none';
+  }
+}
+
+class ProviderEmails {
+  String? apple;
+  String? email;
+  String? google;
+
+  ProviderEmails({this.apple, this.email, this.google});
+
+  factory ProviderEmails.empty() {
+    return ProviderEmails(apple: null, email: null, google: null);
+  }
+
+  ProviderEmails copyWith({
+    String? apple,
+    String? email,
+    String? google,
+    bool clearApple = false,
+    bool clearEmail = false,
+    bool clearGoogle = false,
+  }) {
+    return ProviderEmails(
+      apple: clearApple ? null : (apple ?? this.apple),
+      email: clearEmail ? null : (email ?? this.email),
+      google: clearGoogle ? null : (google ?? this.google),
+    );
+  }
+
+  factory ProviderEmails.fromJson(Map<String, dynamic> json) {
+    return ProviderEmails(
+      apple: json['apple']?.toString(),
+      email: json['email']?.toString(),
+      google: json['google']?.toString(),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {'apple': apple ?? '', 'email': email ?? '', 'google': google ?? ''};
+  }
+
+  // Get email for a specific provider
+  String? getEmail(String provider) {
+    switch (provider.toLowerCase()) {
+      case 'apple':
+        return apple;
+      case 'email':
+        return email;
+      case 'google':
+        return google;
+      default:
+        return null;
+    }
+  }
+
+  // Check if provider has an email
+  bool hasEmail(String provider) {
+    final email = getEmail(provider);
+    return email != null && email.isNotEmpty;
+  }
+
+  // Get all linked emails (non-null)
+  List<String> get linkedEmails {
+    List<String> emails = [];
+    if (apple != null && apple!.isNotEmpty) emails.add(apple!);
+    if (email != null && email!.isNotEmpty) emails.add(email!);
+    if (google != null && google!.isNotEmpty) emails.add(google!);
+    return emails;
+  }
+
+  // Get count of linked emails
+  int get linkedEmailsCount => linkedEmails.length;
 }

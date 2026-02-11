@@ -10,6 +10,7 @@ import 'package:Bravoo/features/onbaording/data/signup_repository/signup_reposit
 import 'package:Bravoo/session/session_manager.dart';
 import 'package:crypto/crypto.dart';
 import 'package:dartz/dartz.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -135,10 +136,8 @@ class SignupRepositoryImpl extends SignupRepository {
 
   Future<Either<String, AppBaseResponse>> googleAuth() async {
     try {
-      const iosClientId =
-          '413861787586-g0lkbu9m7nll0mrvm077fs15o9r0aq4q.apps.googleusercontent.com';
-      const webClientId =
-          '413861787586-i0po64n1vbfbu1d2apcach4d7uibn4s3.apps.googleusercontent.com';
+      final iosClientId = dotenv.env["IOS_CLIENT_ID"] ?? "";
+      final webClientId = dotenv.env["WEB_CLIENT_ID"] ?? "";
 
       final GoogleSignIn signIn = GoogleSignIn.instance;
 
