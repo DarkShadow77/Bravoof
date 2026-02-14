@@ -1,6 +1,8 @@
-import 'package:Bravoo/features/onbaording/data/bloc/user_cubit.dart';
 import 'package:get_it/get_it.dart';
 
+import '../../features/auth/data/repository/auth_repository.dart';
+import '../../features/auth/data/repository/auth_repository_impl.dart';
+import '../../features/auth/presentation/bloc/auth_bloc.dart';
 import '../../features/dashboard/earn/data/repositories/jackpot_repository.dart';
 import '../../features/dashboard/earn/data/repositories/jackpot_repository_impl.dart';
 import '../../features/dashboard/earn/presentation/bloc/jackpot_bloc.dart';
@@ -34,22 +36,23 @@ import '../../features/dashboard/mission/presentation/bloc/skill_up_bloc.dart';
 import '../../features/dashboard/mission/presentation/bloc/social_mission_bloc.dart';
 import '../../features/dashboard/mission/presentation/bloc/sponsored_mission_bloc.dart';
 import '../../features/dashboard/mission/presentation/bloc/streak_bloc.dart';
+import '../../features/dashboard/profile/data/repository/auth_link_repository.dart';
+import '../../features/dashboard/profile/data/repository/auth_link_repository_impl.dart';
 import '../../features/dashboard/profile/data/repository/feedback_repository.dart';
 import '../../features/dashboard/profile/data/repository/feedback_repository_impl.dart';
 import '../../features/dashboard/profile/data/repository/profile_repository.dart';
 import '../../features/dashboard/profile/data/repository/profile_repository_impl.dart';
+import '../../features/dashboard/profile/presentation/bloc/auth_link_bloc.dart';
 import '../../features/dashboard/profile/presentation/bloc/feedback_bloc.dart';
 import '../../features/dashboard/profile/presentation/bloc/profile_bloc.dart';
 import '../../features/dashboard/redeem/data/repository/redeem_repository.dart';
 import '../../features/dashboard/redeem/data/repository/reward_repository_impl.dart';
 import '../../features/dashboard/redeem/presentation/bloc/redeem_bloc.dart';
-import '../../features/onbaording/data/signup_repository/signup_repository.dart';
-import '../../features/onbaording/data/signup_repository/signup_repository_impl.dart';
 
 final sl = GetIt.instance;
 
 Future<void> initDI() async {
-  sl.registerLazySingleton<SignupRepository>(() => SignupRepositoryImpl());
+  sl.registerLazySingleton<AuthRepository>(() => AuthRepositoryImpl());
   sl.registerLazySingleton<CampaignRepository>(() => CampaignRepositoryImpl());
   sl.registerLazySingleton<HomeRepository>(() => HomeRepositoryImpl());
   sl.registerLazySingleton<CommunityMissionRepository>(
@@ -76,9 +79,10 @@ Future<void> initDI() async {
     () => NotificationRepositoryImpl(),
   );
   sl.registerLazySingleton<FeedbackRepository>(() => FeedbackRepositoryImpl());
+  sl.registerLazySingleton<AuthLinkRepository>(() => AuthLinkRepositoryImpl());
 
   //Blocs
-  sl.registerSingleton<UserCubit>(UserCubit());
+  sl.registerSingleton<AuthBloc>(AuthBloc(repo: sl<AuthRepository>()));
   sl.registerFactoryParam<CampaignBloc, int, void>(
     (campaignId, _) =>
         CampaignBloc(campaignId: campaignId, repo: sl<CampaignRepository>()),
@@ -109,5 +113,8 @@ Future<void> initDI() async {
   );
   sl.registerSingleton<FeedbackBloc>(
     FeedbackBloc(repo: sl<FeedbackRepository>()),
+  );
+  sl.registerSingleton<AuthLinkBloc>(
+    AuthLinkBloc(repo: sl<AuthLinkRepository>()),
   );
 }

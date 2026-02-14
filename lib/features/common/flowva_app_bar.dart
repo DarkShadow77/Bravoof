@@ -1,7 +1,7 @@
 import 'package:Bravoo/app/styles/text_styles.dart';
 import 'package:Bravoo/core/constants/app_assets.dart';
 import 'package:Bravoo/core/utils/helpers.dart';
-import 'package:Bravoo/features/onbaording/data/model/user_profile.dart';
+import 'package:Bravoo/features/dashboard/profile/data/model/user_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

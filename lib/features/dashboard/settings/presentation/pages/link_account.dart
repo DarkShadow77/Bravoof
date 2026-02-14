@@ -2,8 +2,8 @@ import 'package:Bravoo/features/dashboard/profile/presentation/bloc/profile_bloc
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../onbaording/data/model/user_profile.dart';
-import '../../../profile/data/repository/auth_linking_repository_impl.dart';
+import '../../../profile/data/model/user_profile.dart';
+import '../../../profile/data/repository/auth_link_repository_impl.dart';
 
 class LinkedAccountsScreen extends StatefulWidget {
   const LinkedAccountsScreen({Key? key}) : super(key: key);
@@ -13,7 +13,7 @@ class LinkedAccountsScreen extends StatefulWidget {
 }
 
 class _LinkedAccountsScreenState extends State<LinkedAccountsScreen> {
-  final AuthLinkingService _authService = AuthLinkingService();
+  final AuthLinkRepositoryImpl _authService = AuthLinkRepositoryImpl();
 
   UserProfile _userProfile = UserProfile.empty();
   bool _isLoading = true;
@@ -85,7 +85,9 @@ class _LinkedAccountsScreenState extends State<LinkedAccountsScreen> {
 
     setState(() => _isLoading = true);
 
-    final result = await _authService.addPassword(_passwordController.text);
+    final result = await _authService.addPassword(
+      password: _passwordController.text,
+    );
     _passwordController.clear();
 
     setState(() => _isLoading = false);
@@ -287,7 +289,7 @@ class _LinkedAccountsScreenState extends State<LinkedAccountsScreen> {
     setState(() => _isLoading = true);
 
     final result = await _authService.verifyAndCompleteLink(
-      _verificationController.text,
+      verificationCode: _verificationController.text,
     );
 
     setState(() => _isLoading = false);
@@ -345,7 +347,7 @@ class _LinkedAccountsScreenState extends State<LinkedAccountsScreen> {
     if (confirm == true) {
       setState(() => _isLoading = true);
 
-      final result = await _authService.unlinkProvider(provider);
+      final result = await _authService.unlinkProvider(provider: provider);
 
       setState(() => _isLoading = false);
 

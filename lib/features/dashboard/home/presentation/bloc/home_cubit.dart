@@ -8,7 +8,7 @@ import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../../../../onbaording/data/model/user_profile.dart';
+import '../../../profile/data/model/user_profile.dart';
 import '../../data/model/dynamic_carousel_model.dart';
 import '../../data/model/quote_model.dart';
 

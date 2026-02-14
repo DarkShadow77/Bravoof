@@ -14,22 +14,33 @@ class NotificationState {
   final List<NotificationModel> notification;
   final bool rewardEnabled;
   final bool offerEnabled;
+  final int unreadCount;
 
   NotificationState({
     required this.notification,
     required this.rewardEnabled,
     required this.offerEnabled,
+    this.unreadCount = 0,
   });
+
+  // Computed from the notification list directly
+  int get computedUnreadCount => notification.where((n) => !n.read).length;
 
   NotificationState copyWith({
     List<NotificationModel>? notification,
     bool? rewardEnabled,
     bool? offerEnabled,
+    int? unreadCount,
   }) {
+    final updatedNotifications = notification ?? this.notification;
     return NotificationState(
       notification: notification ?? this.notification,
       rewardEnabled: rewardEnabled ?? this.rewardEnabled,
       offerEnabled: offerEnabled ?? this.offerEnabled,
+      // Always recompute from list when notifications change
+      unreadCount: notification != null
+          ? updatedNotifications.where((n) => !n.read).length
+          : unreadCount ?? this.unreadCount,
     );
   }
 }

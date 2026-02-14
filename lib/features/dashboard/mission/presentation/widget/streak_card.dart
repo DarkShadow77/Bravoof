@@ -12,7 +12,7 @@ import '../../../../../core/constants/app_colors.dart';
 import '../../../../../utility/ui_tool_mix.dart';
 import '../../../../common/custom_success.dart';
 import '../../../../dashboard/profile/presentation/bloc/profile_bloc.dart';
-import '../../../../onbaording/data/model/user_profile.dart';
+import '../../../profile/data/model/user_profile.dart';
 import '../../data/model/streak_response.dart';
 import '../bloc/streak_bloc.dart';
 

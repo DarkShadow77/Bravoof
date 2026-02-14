@@ -30,9 +30,9 @@ import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/fonts.dart';
 import '../../../../../core/di/service_locator.dart';
 import '../../../../../utility/ui_tool_mix.dart';
-import '../../../../onbaording/data/model/user_profile.dart';
 import '../../../home/data/model/campaign_response.dart';
 import '../../../nav_bar.dart';
+import '../../../profile/data/model/user_profile.dart';
 import '../../../profile/presentation/bloc/profile_bloc.dart';
 import '../widgets/price_details_dialog.dart';
 import 'invite_earn.dart';
@@ -1176,6 +1176,7 @@ class _ReferralContainerState extends State<ReferralContainer> {
                           ),
                           child: Row(
                             spacing: 10.w,
+                            mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
                               Flexible(

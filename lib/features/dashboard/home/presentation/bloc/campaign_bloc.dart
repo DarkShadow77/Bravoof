@@ -3,7 +3,7 @@ import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../../../../onbaording/data/model/user_profile.dart';
+import '../../../profile/data/model/user_profile.dart';
 import '../../data/repository/campaign_repository.dart';
 
 part 'campaign_event.dart';

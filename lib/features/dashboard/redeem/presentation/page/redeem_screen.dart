@@ -75,8 +75,7 @@ class _RedeemScreenState extends State<RedeemScreen> {
                 SizedBox(height: 12.h),
                 // Tabs
                 Container(
-                  height: 45,
-
+                  height: 45.h,
                   padding: EdgeInsets.symmetric(horizontal: 16.w),
                   width: double.infinity,
                   child: ListView.separated(

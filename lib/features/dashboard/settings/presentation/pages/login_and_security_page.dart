@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../../../../../app/styles/text_styles.dart';
+import '../../../../../core/constants/app_colors.dart';
+import '../../../profile/presentation/bloc/profile_bloc.dart';
+import '../widgets/connect_social_account_modal.dart';
 import '../widgets/delete_account_modal.dart';
 
 class LoginAndSecurityScreen extends StatefulWidget {
@@ -85,59 +91,116 @@ class _LoginAndSecurityScreenState extends State<LoginAndSecurityScreen> {
           ),
 
           const SizedBox(height: 16),*/
-
-          // Account section
+          const SectionTitle(title: "Social Accounts"),
+          BlocBuilder<ProfileBloc, ProfileState>(
+            builder: (context, state) {
+              final profile = state.profile;
+              final socialAccount = profile.providerEmails.linkedSocial;
+              final title = socialAccount.isEmpty
+                  ? "No Social Account"
+                  : socialAccount.join(" ,");
+              return OptionTile(
+                title: title,
+                subtitle: socialAccount.isEmpty
+                    ? "Connect your social account"
+                    : "Connected",
+                onTap: () {
+                  connectSocialAccountModal();
+                },
+              );
+            },
+          ),
+          SizedBox(height: 24.h),
           const SectionTitle(title: "Account"),
-
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.grey.shade100,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Delete your account",
-                      style: GoogleFonts.manrope(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
-                        color: Color(0xFF191919),
-                      ),
-                    ),
-                    SizedBox(height: 4),
-                    Text(
-                      "This action cannot be undone",
-                      style: GoogleFonts.manrope(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        color: Color(0xFF5F5F5F),
-                      ),
-                    ),
-                  ],
+          OptionTile(
+            title: "Delete your account",
+            subtitle: "This action cannot be undone",
+            onTap: () {
+              deactivateAccountModal();
+            },
+            trailing: TextButton(
+              onPressed: () {
+                deactivateAccountModal();
+              },
+              child: Text(
+                "Delete",
+                style: GoogleFonts.manrope(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                  color: Color(0xFFB60000),
                 ),
-                TextButton(
-                  onPressed: () {
-                    deactivateAccountModal();
-                  },
-                  child: Text(
-                    "Delete",
-                    style: GoogleFonts.manrope(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w700,
-                      color: Color(0xFFB60000),
-                    ),
-                  ),
-                ),
-              ],
+              ),
             ),
           ),
           const SizedBox(height: 50),
         ],
+      ),
+    );
+  }
+}
+
+class OptionTile extends StatelessWidget {
+  const OptionTile({
+    super.key,
+    required this.title,
+    required this.subtitle,
+    this.onTap,
+    this.trailing,
+  });
+
+  final String title;
+  final String subtitle;
+  final VoidCallback? onTap;
+  final Widget? trailing;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12.r),
+      child: Ink(
+        decoration: BoxDecoration(
+          color: Colors.grey.shade100,
+          borderRadius: BorderRadius.circular(12.r),
+        ),
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Expanded(
+              child: Column(
+                spacing: 8.h,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  RichText(
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    text: TextSpan(
+                      text: title,
+                      style: TextStyles.normalBold14(context),
+                    ),
+                  ),
+                  RichText(
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    text: TextSpan(
+                      text: subtitle,
+                      style: TextStyles.smallMedium12(
+                        context,
+                      ).copyWith(color: AppColors.grey550),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            trailing ??
+                Icon(
+                  Icons.arrow_forward_ios_rounded,
+                  size: 18.sp,
+                  color: AppColors.grey500,
+                ),
+          ],
+        ),
       ),
     );
   }
@@ -151,66 +214,14 @@ class SectionTitle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: Text(
-        title,
-        style: GoogleFonts.manrope(
-          fontSize: 16,
-          fontWeight: FontWeight.w600,
-          color: Color(0xFF767676),
+      padding: EdgeInsets.only(bottom: 10.h),
+      child: RichText(
+        text: TextSpan(
+          text: title,
+          style: TextStyles.normalSemibold14(
+            context,
+          ).copyWith(color: AppColors.grey500),
         ),
-      ),
-    );
-  }
-}
-
-class CustomTile extends StatelessWidget {
-  final String title;
-  final String? subtitle;
-  final Widget? trailing;
-  final Widget? leading;
-  final Function() apply;
-
-  CustomTile({
-    super.key,
-    required this.title,
-    this.subtitle,
-    this.trailing,
-    this.leading,
-    required this.apply,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 10),
-      decoration: BoxDecoration(
-        color: Colors.grey.shade100,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-        leading: leading,
-        title: Text(
-          title,
-          style: GoogleFonts.manrope(
-            fontSize: 16,
-            fontWeight: FontWeight.w700,
-            color: Color(0xFF191919),
-          ),
-        ),
-        subtitle: subtitle != null
-            ? Text(
-                subtitle!,
-                style: GoogleFonts.manrope(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  color: Color(0xFF5F5F5F),
-                ),
-              )
-            : null,
-        trailing: trailing,
-        onTap: apply,
       ),
     );
   }

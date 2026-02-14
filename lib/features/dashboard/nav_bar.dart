@@ -9,7 +9,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../session/session_manager.dart';
-import '../onboarding2/widget/reward.dart';
+import '../onbaording/widget/reward.dart';
 import 'home/presentation/bloc/home_cubit.dart';
 import 'home/presentation/bloc/notification_bloc.dart';
 import 'home/presentation/widget/show_welcome_message.dart';
@@ -73,8 +73,10 @@ class _BottomNavBarState extends State<BottomNavBar> {
           : null;
 
       SessionManager().isNewUserVal = "NO";
+      Future.delayed((Duration(milliseconds: 500)), () {
+        _fetchDetails();
+      });
     });
-    _fetchDetails();
   }
 
   _fetchDetails() {

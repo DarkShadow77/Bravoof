@@ -16,7 +16,6 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:go_router/go_router.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -26,7 +25,7 @@ import 'core/constants/navigators/routeName.dart';
 import 'core/constants/navigators/router.dart';
 import 'core/constants/strings.dart';
 import 'core/di/service_locator.dart';
-import 'features/app.dart';
+import 'features/auth/presentation/bloc/auth_bloc.dart';
 import 'features/dashboard/earn/presentation/bloc/jackpot_bloc.dart';
 import 'features/dashboard/home/presentation/bloc/notification_bloc.dart';
 import 'features/dashboard/mission/presentation/bloc/community_mission_bloc.dart';
@@ -36,9 +35,9 @@ import 'features/dashboard/mission/presentation/bloc/skill_up_bloc.dart';
 import 'features/dashboard/mission/presentation/bloc/social_mission_bloc.dart';
 import 'features/dashboard/mission/presentation/bloc/sponsored_mission_bloc.dart';
 import 'features/dashboard/mission/presentation/bloc/streak_bloc.dart';
+import 'features/dashboard/profile/presentation/bloc/auth_link_bloc.dart';
 import 'features/dashboard/profile/presentation/bloc/feedback_bloc.dart';
 import 'features/dashboard/profile/presentation/bloc/profile_bloc.dart';
-import 'features/onbaording/data/bloc/user_cubit.dart';
 import 'firebase_options.dart';
 import 'utility/navigation.dart';
 
@@ -126,8 +125,10 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [
+        BlocProvider(create: (_) => sl<AuthBloc>()),
         BlocProvider(create: (_) => sl<HomeCubit>()),
         BlocProvider(create: (_) => sl<ProfileBloc>()),
+        BlocProvider(create: (_) => sl<AuthLinkBloc>()),
         BlocProvider(create: (_) => sl<CommunityMissionBloc>()),
         BlocProvider(create: (_) => sl<SocialMissionBloc>()),
         BlocProvider(create: (_) => sl<FeaturedMissionBloc>()),
@@ -153,35 +154,9 @@ class _MyAppState extends State<MyApp> {
             theme: lightTheme,
             onGenerateRoute: generateRoute,
             initialRoute: RouteName.indexPage,
-            /*onGenerateRoute: (RouteSettings settings) {
-              Widget routeWidget = App();
-
-              // Mimic web routing
-              final routeName = settings.name;
-
-              return MaterialPageRoute(
-                builder: (context) => routeWidget,
-                settings: settings,
-                fullscreenDialog: true,
-              );
-            },*/
           );
         },
       ),
     );
   }
-
-  final GoRouter _router = GoRouter(
-    routes: <RouteBase>[
-      GoRoute(
-        path: '/',
-        builder: (BuildContext context, GoRouterState state) {
-          return MultiBlocProvider(
-            providers: [BlocProvider.value(value: UserCubit())],
-            child: const App(),
-          );
-        },
-      ),
-    ],
-  );
 }

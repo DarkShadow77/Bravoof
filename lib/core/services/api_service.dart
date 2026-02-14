@@ -29,25 +29,30 @@ class ApiService {
     required Map<String, dynamic> body,
     required T Function(dynamic data) onSuccess,
     String? fallbackErrorMessage,
+    bool requiresAuth = true,
   }) async {
     try {
       // IMPORTANT: Check if user is authenticated
       final session = supabase.auth.currentSession;
 
-      if (session == null) {
+      // Only enforce auth check for protected functions
+      if (requiresAuth && session == null) {
         Logger().e('No active session when calling $functionName');
-        return Left('Authentication required. Please log in again.');
+        return const Left('Authentication required. Please login again.');
       }
+
+      // Use session token if available, otherwise use anon key
+      final authToken = session?.accessToken ?? dotenv.env['ANON_KEY'] ?? '';
 
       Logger().i("Calling edge function: $functionName");
       Logger().d("Request body: $body");
-      Logger().d("Session exists: ${session.accessToken.substring(0, 20)}...");
+      Logger().d("Session exists: $authToken");
 
       // The Supabase client automatically includes auth headers
       final res = await supabase.functions.invoke(
         functionName,
         body: body,
-        headers: {'Authorization': 'Bearer ${session.accessToken}'},
+        headers: {'Authorization': 'Bearer ${authToken}'},
       );
 
       final ApiResponse apiResponse = ApiResponse();

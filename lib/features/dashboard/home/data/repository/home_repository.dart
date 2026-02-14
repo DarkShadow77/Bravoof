@@ -1,7 +1,7 @@
 import 'package:Bravoo/features/dashboard/home/data/model/campaign_response.dart';
 import 'package:dartz/dartz.dart';
 
-import '../../../../onbaording/data/model/user_profile.dart';
+import '../../../profile/data/model/user_profile.dart';
 import '../model/dynamic_carousel_model.dart';
 import '../model/leaderboard_response_model.dart';
 import '../model/quote_model.dart';

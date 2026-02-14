@@ -9,8 +9,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:share_plus/share_plus.dart';
 
-import '../../../../onbaording/data/model/user_profile.dart';
 import '../../../home/presentation/bloc/home_cubit.dart';
+import '../../../profile/data/model/user_profile.dart';
 import '../../../profile/presentation/bloc/profile_bloc.dart';
 import '../widgets/referr_campaign.dart';
 

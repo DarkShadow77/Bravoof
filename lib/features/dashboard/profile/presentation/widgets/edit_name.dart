@@ -7,7 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
 
-import '../../../../onbaording/data/model/user_profile.dart';
+import '../../data/model/user_profile.dart';
 import '../bloc/profile_bloc.dart';
 
 class EditNameWidget extends StatefulWidget {

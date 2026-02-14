@@ -30,16 +30,19 @@ class _AppState extends State<App> {
     Supabase.instance.client.auth.onAuthStateChange.listen((data) {
       final event = data.event;
 
-      if (event == AuthChangeEvent.signedOut) {
-        setState(() {});
-      }
+      if (event == AuthChangeEvent.signedOut) {}
 
       if (event == AuthChangeEvent.signedIn) {
         profileBloc.add(GetProfileEvent());
         profileBloc.add(UpdateLocationEvent());
         profileBloc.add(SaveFCMTokenEvent());
         profileBloc.add(LogUserLoginActivityEvent(eventType: "login"));
-        setState(() {});
+      }
+      if (event == AuthChangeEvent.tokenRefreshed) {
+        profileBloc.add(GetProfileEvent());
+      }
+      if (event == AuthChangeEvent.userUpdated) {
+        profileBloc.add(GetProfileEvent());
       }
 
       if (event == AuthChangeEvent.passwordRecovery) {

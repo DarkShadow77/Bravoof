@@ -1,6 +1,6 @@
 import 'package:dartz/dartz.dart';
 
-import '../../../../onbaording/data/model/user_profile.dart';
+import '../../../profile/data/model/user_profile.dart';
 
 abstract class CampaignRepository {
   Future<Either<String, int>> getTotalJoinedForCampaign({

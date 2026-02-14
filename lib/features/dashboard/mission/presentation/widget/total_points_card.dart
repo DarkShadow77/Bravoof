@@ -6,7 +6,7 @@ import '../../../../../app/styles/text_styles.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/fonts.dart';
 import '../../../../dashboard/profile/presentation/bloc/profile_bloc.dart';
-import '../../../../onbaording/data/model/user_profile.dart';
+import '../../../profile/data/model/user_profile.dart';
 
 class TotalPointsCard extends StatelessWidget {
   const TotalPointsCard({super.key});

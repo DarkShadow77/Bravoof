@@ -3,6 +3,7 @@ import 'package:logger/logger.dart';
 import 'package:meta/meta.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../../../../core/services/local_notification_service.dart';
 import '../../data/model/notification_model.dart';
 import '../../data/repository/notification_repository.dart';
 
@@ -53,7 +54,13 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
         ),
       ),
       (notification) {
-        emit(state.copyWith(notification: notification));
+        // unreadCount auto-computed in copyWith when notification list changes
+        final newState = state.copyWith(notification: notification);
+        emit(newState);
+
+        // ─── Sync app icon badge with unread count ──────────────
+        LocalNotificationService.instance().updateBadge();
+
         emit(
           NotificationSuccessState(
             type: NotificationType.fetchNotification,
@@ -71,84 +78,36 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     MarkNotificationRead event,
     Emitter emit,
   ) async {
-    emit(
-      NotificationLoading(
-        type: NotificationType.markNotificationAsRead,
-        notification: state.notification,
-        rewardEnabled: state.rewardEnabled,
-        offerEnabled: state.offerEnabled,
-      ),
-    );
+    // Optimistically update the local list
+    final updatedList = state.notification.map((n) {
+      return n.id == event.notificationId ? n.copyWith(read: true) : n;
+    }).toList();
 
-    final res = await repo.markNotificationAsRead(
-      notificationId: event.notificationId,
-    );
+    // copyWith recomputes unreadCount automatically
+    emit(state.copyWith(notification: updatedList));
 
-    res.fold(
-      (err) => emit(
-        NotificationErrorState(
-          type: NotificationType.markNotificationAsRead,
-          message: err,
-          notification: state.notification,
-          rewardEnabled: state.rewardEnabled,
-          offerEnabled: state.offerEnabled,
-        ),
-      ),
-      (success) {
-        add(LoadNotifications());
-        emit(
-          NotificationSuccessState(
-            type: NotificationType.markNotificationAsRead,
-            message: success,
-            notification: state.notification,
-            rewardEnabled: state.rewardEnabled,
-            offerEnabled: state.offerEnabled,
-          ),
-        );
-      },
-    );
+    // ─── Update badge to new unread count ──────────────────────
+    await LocalNotificationService.instance().updateBadge();
+
+    await repo.markNotificationAsRead(notificationId: event.notificationId);
   }
 
   Future<void> _markAllNotificationRead(
     MarkAllNotificationRead event,
     Emitter emit,
   ) async {
-    emit(
-      NotificationLoading(
-        type: NotificationType.markAllNotificationAsRead,
-        notification: state.notification,
-        rewardEnabled: state.rewardEnabled,
-        offerEnabled: state.offerEnabled,
-      ),
-    );
+    // Optimistically mark all as read
+    final updatedList = state.notification
+        .map((n) => n.copyWith(read: true))
+        .toList();
 
-    final res = await repo.markAllNotificationAsRead(
-      userId: supabase.auth.currentUser!.id,
-    );
+    emit(state.copyWith(notification: updatedList));
 
-    res.fold(
-      (err) => emit(
-        NotificationErrorState(
-          type: NotificationType.markAllNotificationAsRead,
-          message: err,
-          notification: state.notification,
-          rewardEnabled: state.rewardEnabled,
-          offerEnabled: state.offerEnabled,
-        ),
-      ),
-      (success) {
-        add(LoadNotifications());
-        emit(
-          NotificationSuccessState(
-            type: NotificationType.markAllNotificationAsRead,
-            message: success,
-            notification: state.notification,
-            rewardEnabled: state.rewardEnabled,
-            offerEnabled: state.offerEnabled,
-          ),
-        );
-      },
-    );
+    // ─── Clear badge when all read ──────────────────────────────
+    await LocalNotificationService.instance().clearBadge();
+
+    // Then persist to backend
+    await repo.markAllNotificationAsRead(userId: supabase.auth.currentUser!.id);
   }
 
   Future<void> _clearAllNotification(

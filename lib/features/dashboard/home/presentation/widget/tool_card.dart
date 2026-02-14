@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:Bravoo/app/styles/text_styles.dart';
 import 'package:Bravoo/app/view/widgets/cached_image_widget.dart';
 import 'package:Bravoo/core/constants/app_assets.dart';
@@ -10,12 +12,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_confetti/flutter_confetti.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../../app/view/widgets/button/icon_text_button.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/utils/helpers.dart';
 import '../../../earn/presentation/widgets/referr_campaign.dart';
 import '../../../mission/presentation/page/tabs/skill_up_tab.dart';
+import '../../../profile/presentation/bloc/profile_bloc.dart';
 import '../../data/model/dynamic_carousel_model.dart';
 
 class ToolCardCarousel extends StatefulWidget {
@@ -57,112 +61,116 @@ class _ToolCardCarouselState extends State<ToolCardCarousel> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<HomeCubit, HomeState>(
-      builder: (context, state) {
-        // Build carousel dynamically based on state
-        final carouselWidgets = _buildCarouselItems(state);
+    return BlocBuilder<ProfileBloc, ProfileState>(
+      builder: (context, pState) {
+        return BlocBuilder<HomeCubit, HomeState>(
+          builder: (context, state) {
+            // Build carousel dynamically based on state
+            final carouselWidgets = _buildCarouselItems(state, pState);
 
-        return Column(
-          children: [
-            // PageView of cards
-            Container(
-              height: 240.h,
-              child: Center(
-                child: PageView.builder(
-                  padEnds: true,
-                  controller: _pageController,
-                  physics: BouncingScrollPhysics(),
-                  allowImplicitScrolling: true,
-                  scrollDirection: Axis.horizontal,
-                  itemCount: carouselWidgets.length,
-                  onPageChanged: (index) {
-                    _fetchDetails();
-                    setState(() {
-                      currentPage = index;
-                    });
-                  },
-                  itemBuilder: (context, index) {
-                    double scaleFactor = .8;
-                    double height = 230.h;
-                    Matrix4 matrix = Matrix4.identity();
+            return Column(
+              children: [
+                // PageView of cards
+                Container(
+                  height: 240.h,
+                  child: Center(
+                    child: PageView.builder(
+                      padEnds: true,
+                      controller: _pageController,
+                      physics: BouncingScrollPhysics(),
+                      allowImplicitScrolling: true,
+                      scrollDirection: Axis.horizontal,
+                      itemCount: carouselWidgets.length,
+                      onPageChanged: (index) {
+                        _fetchDetails();
+                        setState(() {
+                          currentPage = index;
+                        });
+                      },
+                      itemBuilder: (context, index) {
+                        double scaleFactor = .8;
+                        double height = 230.h;
+                        Matrix4 matrix = Matrix4.identity();
 
-                    if (index == _currentPage.floor()) {
-                      var currScale =
-                          1 - (_currentPage - index) * (1 - scaleFactor);
-                      var currTrans = height * (1 - currScale) / 2;
-                      matrix = Matrix4.diagonal3Values(1.0, currScale, 1.0)
-                        ..setTranslationRaw(0, currTrans, 0);
-                    } else if (index == _currentPage.floor() + 1) {
-                      var currScale =
-                          scaleFactor +
-                          (_currentPage - index + 1) * (1 - scaleFactor);
+                        if (index == _currentPage.floor()) {
+                          var currScale =
+                              1 - (_currentPage - index) * (1 - scaleFactor);
+                          var currTrans = height * (1 - currScale) / 2;
+                          matrix = Matrix4.diagonal3Values(1.0, currScale, 1.0)
+                            ..setTranslationRaw(0, currTrans, 0);
+                        } else if (index == _currentPage.floor() + 1) {
+                          var currScale =
+                              scaleFactor +
+                              (_currentPage - index + 1) * (1 - scaleFactor);
 
-                      var currTrans = height * (1 - currScale) / 2;
-                      matrix = Matrix4.diagonal3Values(1.0, currScale, 1.0)
-                        ..setTranslationRaw(0, currTrans, 0);
-                    } else if (index == _currentPage.floor() - 1) {
-                      var currScale =
-                          1 - (_currentPage - index) * (1 - scaleFactor);
-                      var currTrans = height * (1 - currScale) / 2;
-                      matrix = Matrix4.diagonal3Values(1.0, currScale, 1.0)
-                        ..setTranslationRaw(0, currTrans, 0);
-                    } else {
-                      var currScale = .8;
-                      matrix = Matrix4.diagonal3Values(1.0, currScale, 1.0)
-                        ..setTranslationRaw(
-                          0,
-                          height * (1 - scaleFactor) / 2,
-                          0,
+                          var currTrans = height * (1 - currScale) / 2;
+                          matrix = Matrix4.diagonal3Values(1.0, currScale, 1.0)
+                            ..setTranslationRaw(0, currTrans, 0);
+                        } else if (index == _currentPage.floor() - 1) {
+                          var currScale =
+                              1 - (_currentPage - index) * (1 - scaleFactor);
+                          var currTrans = height * (1 - currScale) / 2;
+                          matrix = Matrix4.diagonal3Values(1.0, currScale, 1.0)
+                            ..setTranslationRaw(0, currTrans, 0);
+                        } else {
+                          var currScale = .8;
+                          matrix = Matrix4.diagonal3Values(1.0, currScale, 1.0)
+                            ..setTranslationRaw(
+                              0,
+                              height * (1 - scaleFactor) / 2,
+                              0,
+                            );
+                        }
+                        return Transform(
+                          transform: matrix,
+                          child: Container(
+                            width: double.infinity,
+                            child: carouselWidgets[index],
+                          ),
                         );
-                    }
-                    return Transform(
-                      transform: matrix,
-                      child: Container(
-                        width: double.infinity,
-                        child: carouselWidgets[index],
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ),
-            SizedBox(height: 12.h),
-            // Page Indicator
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: List.generate(
-                carouselWidgets.length,
-                (index) => GestureDetector(
-                  onTap: () {
-                    _pageController.animateToPage(
-                      index,
-                      duration: const Duration(milliseconds: 300),
-                      curve: Curves.easeInOut,
-                    );
-                  },
-                  child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 300),
-                    margin: EdgeInsets.symmetric(horizontal: 2.w),
-                    width: index == currentPage ? 18.w : 6.w,
-                    height: 6.h,
-                    decoration: BoxDecoration(
-                      color: index == currentPage
-                          ? AppColors.darkPrimary
-                          : AppColors.darkPrimary20,
-                      borderRadius: BorderRadius.circular(6.r),
+                      },
                     ),
                   ),
                 ),
-              ),
-            ),
-          ],
+                SizedBox(height: 12.h),
+                // Page Indicator
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: List.generate(
+                    carouselWidgets.length,
+                    (index) => GestureDetector(
+                      onTap: () {
+                        _pageController.animateToPage(
+                          index,
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.easeInOut,
+                        );
+                      },
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 300),
+                        margin: EdgeInsets.symmetric(horizontal: 2.w),
+                        width: index == currentPage ? 18.w : 6.w,
+                        height: 6.h,
+                        decoration: BoxDecoration(
+                          color: index == currentPage
+                              ? AppColors.darkPrimary
+                              : AppColors.darkPrimary20,
+                          borderRadius: BorderRadius.circular(6.r),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
         );
       },
     );
   }
 
-  List<Widget> _buildCarouselItems(HomeState state) {
+  List<Widget> _buildCarouselItems(HomeState state, ProfileState pState) {
     List<Widget> items = [];
 
     if (state.campaign.isNotEmpty) {
@@ -174,7 +182,9 @@ class _ToolCardCarouselState extends State<ToolCardCarousel> {
     if (dynamicCarouselItems.isNotEmpty) {
       // Add each backend item as a separate carousel slide
       for (var item in dynamicCarouselItems) {
-        items.add(DynamicCarouselCard(item: item));
+        items.add(
+          DynamicCarouselCard(item: item, userId: pState.profile.userId),
+        );
       }
     }
 
@@ -297,25 +307,102 @@ class _QuoteCardState extends State<QuoteCard> {
   }
 }
 
-class DynamicCarouselCard extends StatelessWidget {
-  const DynamicCarouselCard({super.key, required this.item});
+class DynamicCarouselCard extends StatefulWidget {
+  const DynamicCarouselCard({
+    super.key,
+    required this.item,
+    required this.userId,
+  });
 
   final DynamicCarouselModel item;
+  final String userId;
+
+  @override
+  State<DynamicCarouselCard> createState() => _DynamicCarouselCardState();
+}
+
+class _DynamicCarouselCardState extends State<DynamicCarouselCard> {
+  bool _isViewed = false;
+  bool _isLoading = true;
+  @override
+  void initState() {
+    super.initState();
+    _checkIfViewed();
+  }
+
+  Future<void> _checkIfViewed() async {
+    final viewed = await ViewedItemsService.hasBeenViewed(
+      widget.item.id, // Assuming your DynamicCarouselModel has an id field
+      widget.userId,
+    );
+
+    if (mounted) {
+      setState(() {
+        _isViewed = viewed;
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _markAsViewed() async {
+    await ViewedItemsService.markAsViewed(widget.item.id, widget.userId);
+
+    if (mounted) {
+      setState(() {
+        _isViewed = true;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => Navigator.pushNamed(context, item.destination),
+      onTap: () {
+        _markAsViewed();
+        Navigator.pushNamed(context, widget.item.destination);
+      },
       child: Container(
         clipBehavior: Clip.antiAlias,
         margin: EdgeInsets.symmetric(horizontal: 16.w),
         decoration: BoxDecoration(borderRadius: BorderRadius.circular(24.r)),
-        child: CachedImageSize(
-          imageUrl: item.image,
-          width: double.infinity,
-          height: double.infinity,
-          color: AppColors.grey100,
-          fit: BoxFit.cover,
+        child: Stack(
+          children: [
+            CachedImageSize(
+              imageUrl: widget.item.image,
+              width: double.infinity,
+              height: double.infinity,
+              color: AppColors.grey100,
+              fit: BoxFit.cover,
+            ),
+            // Only show "New!" badge if not viewed and not loading
+            if (!_isViewed && !_isLoading)
+              Positioned(
+                top: 0,
+                right: 0,
+                child: Container(
+                  clipBehavior: Clip.antiAlias,
+                  padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 6.h),
+                  margin: EdgeInsets.symmetric(
+                    horizontal: 12.w,
+                    vertical: 12.h,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Color(0xffFCE4D1),
+                    borderRadius: BorderRadius.circular(8.r),
+                  ),
+                  child: RichText(
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    text: TextSpan(
+                      text: "New!",
+                      style: TextStyles.cardBold10(
+                        context,
+                      ).copyWith(color: AppColors.redBrown),
+                    ),
+                  ),
+                ),
+              ),
+          ],
         ),
       ),
     );
@@ -775,5 +862,58 @@ class _SpotlightCardState extends State<SpotlightCard> {
         fit: BoxFit.contain,
       ),
     );
+  }
+}
+
+class ViewedItemsService {
+  static const String _key = 'viewed_carousel_items';
+
+  // Store viewed item
+  static Future<void> markAsViewed(int itemId, String userId) async {
+    final prefs = await SharedPreferences.getInstance();
+    final viewedItems = await getViewedItems();
+
+    final viewedItem = {
+      'itemId': itemId,
+      'userId': userId,
+      'timestamp': DateTime.now().toIso8601String(),
+    };
+
+    // Check if already exists
+    final exists = viewedItems.any(
+      (item) => item['itemId'] == itemId && item['userId'] == userId,
+    );
+
+    if (!exists) {
+      viewedItems.add(viewedItem);
+      await prefs.setString(_key, json.encode(viewedItems));
+    }
+  }
+
+  // Check if item has been viewed by user
+  static Future<bool> hasBeenViewed(int itemId, String userId) async {
+    final viewedItems = await getViewedItems();
+    return viewedItems.any(
+      (item) => item['itemId'] == itemId && item['userId'] == userId,
+    );
+  }
+
+  // Get all viewed items
+  static Future<List<Map<String, dynamic>>> getViewedItems() async {
+    final prefs = await SharedPreferences.getInstance();
+    final String? itemsJson = prefs.getString(_key);
+
+    if (itemsJson == null || itemsJson.isEmpty) {
+      return [];
+    }
+
+    final List<dynamic> decoded = json.decode(itemsJson);
+    return decoded.cast<Map<String, dynamic>>();
+  }
+
+  // Clear all viewed items (optional, for testing or user preference)
+  static Future<void> clearViewedItems() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_key);
   }
 }

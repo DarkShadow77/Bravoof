@@ -5,7 +5,7 @@ import 'package:logger/logger.dart';
 import 'package:meta/meta.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../../../../onbaording/data/model/user_profile.dart';
+import '../../data/model/user_profile.dart';
 import '../../data/repository/profile_repository.dart';
 
 part 'profile_event.dart';

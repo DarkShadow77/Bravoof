@@ -3,7 +3,7 @@ import 'package:dartz/dartz.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../../core/services/api_service.dart';
-import '../../../../onbaording/data/model/user_profile.dart';
+import '../../../profile/data/model/user_profile.dart';
 import '../model/dynamic_carousel_model.dart';
 import '../model/leaderboard_response_model.dart';
 import '../model/quote_model.dart';

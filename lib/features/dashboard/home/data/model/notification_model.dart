@@ -32,4 +32,20 @@ class NotificationModel {
       createdAt: DateTime.now(),
     );
   }
+
+  NotificationModel copyWith({
+    int? id,
+    String? title,
+    String? message,
+    bool? read,
+    DateTime? createdAt,
+  }) {
+    return NotificationModel(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      message: message ?? this.message,
+      read: read ?? this.read,
+      createdAt: createdAt ?? this.createdAt,
+    );
+  }
 }

@@ -15,6 +15,7 @@ import '../../../../../utility/ui_tool_mix.dart';
 import '../../../settings/presentation/pages/help_page.dart';
 import '../../../settings/presentation/pages/legal_page.dart';
 import '../../../settings/presentation/pages/link_account.dart';
+import '../../../settings/presentation/pages/login_and_security_page.dart';
 import '../../../settings/presentation/pages/notification_settings_page.dart';
 import '../widgets/change_app_icon_modal.dart';
 
@@ -109,6 +110,22 @@ class SettingsPage extends StatelessWidget with UIToolMixin {
                   apply: () => Navigator.push(
                     context,
                     MaterialPageRoute(builder: (ctx) => LinkedAccountsScreen()),
+                  ),
+                ),
+                const Divider(height: 1, color: Color(0xFFF1F1F1)),
+                buildTile(
+                  HugeIcon(
+                    icon: HugeIcons.strokeRoundedUserShield01,
+                    strokeWidth: 2,
+                    color: Color(0xFF191919),
+                    size: 20,
+                  ),
+                  "Login & Security",
+                  apply: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (ctx) => LoginAndSecurityScreen(),
+                    ),
                   ),
                 ),
                 // const Divider(height: 1, color: Color(0xFFF1F1F1)),

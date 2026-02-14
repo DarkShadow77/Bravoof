@@ -18,7 +18,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../../../app/view/widgets/loading/outer_loading.dart';
 import '../../../../../../utility/ui_tool_mix.dart';
-import '../../../../../onbaording/data/model/user_profile.dart';
+import '../../../../profile/data/model/user_profile.dart';
 import '../../../../profile/presentation/bloc/profile_bloc.dart';
 import '../../widget/redeem_learn_more_modal.dart';
 
@@ -32,7 +32,7 @@ class _RedeemTabState extends State<RedeemTab>
     with SingleTickerProviderStateMixin, UIToolMixin {
   final _pageController = PageController(initialPage: 0);
 
-  double _pageHeight = 350;
+  double _pageHeight = 280;
   int _currentPage = 0;
 
   @override
@@ -95,7 +95,6 @@ class _RedeemTabState extends State<RedeemTab>
               ),
             ),
           ),
-
           SizedBox(height: 24.h),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -118,7 +117,7 @@ class _RedeemTabState extends State<RedeemTab>
                   _currentPage = index;
                   // 👇 set different heights for different pages
                   _pageHeight = index == 0
-                      ? 350
+                      ? 280
                       : (MediaQuery.of(context).size.height * 0.7);
                 });
               },
@@ -531,140 +530,149 @@ class JackpotCard extends StatelessWidget {
     return BlocBuilder<ProfileBloc, ProfileState>(
       builder: (context, state) {
         UserProfile profile = state.profile;
-        return _rewardCard(
-          context,
-          icon: Icons.savings,
-          title: 'Bravoo Jackpot 🏆',
-          subtitle: SizedBox(
-            width: 255.w,
-            child: RichText(
-              textAlign: TextAlign.center,
-              text: TextSpan(
-                children: [
-                  TextSpan(text: 'Your chance to win'),
-                  TextSpan(
-                    text: ' 20,000 coins ',
-                    style: TextStyle(color: AppColors.primary),
-                  ),
-                  TextSpan(
-                    text:
-                        'is here. Invite your friends and let the adventure begin!',
-                  ),
-                ],
-                style: TextStyles.smallBold12(context),
-              ),
-            ),
-          ),
-          cost: '100 Coins',
-          tag: 'Hot',
-          tagColor: AppColors.redBrown,
-          buttonText: 'Enter Jackpot',
-          active: (profile.spins) > 0,
-        );
+        return _rewardCard(context, active: (profile.spins) > 0);
       },
     );
   }
 
-  Widget _rewardCard(
-    BuildContext context, {
-    required IconData icon,
-    required String title,
-    required Widget subtitle,
-    required String cost,
-    required String buttonText,
-    required bool active,
-    String? tag,
-    Color? tagColor,
-  }) {
+  Widget _rewardCard(BuildContext context, {required bool active}) {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 16.w, vertical: 10.h),
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
       decoration: BoxDecoration(
-        color: AppColors.white40,
-        borderRadius: BorderRadius.circular(24.r),
+        color: AppColors.white85,
+        borderRadius: BorderRadius.circular(16.r),
+        border: Border.all(width: 1.5.r, color: AppColors.white50),
         boxShadow: [
           BoxShadow(
-            color: AppColors.black05,
-            blurRadius: 4.r,
-            spreadRadius: -3,
-            offset: const Offset(5, 5),
+            color: Color(0xff9E9A9A).withValues(alpha: .1),
+            blurRadius: 5,
+            offset: const Offset(1, 2),
+          ),
+          BoxShadow(
+            color: Color(0xff9E9A9A).withValues(alpha: .09),
+            blurRadius: 10,
+            offset: const Offset(3, 9),
+          ),
+          BoxShadow(
+            color: Color(0xff9E9A9A).withValues(alpha: .05),
+            blurRadius: 13,
+            offset: const Offset(8, 20),
           ),
         ],
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-
+      child: Stack(
         children: [
-          Row(
+          Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              if (tag != null) ...[
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 6,
-                    vertical: 6,
-                  ),
-                  decoration: BoxDecoration(
-                    color: tagColor?.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                  child: Row(
-                    children: [
-                      const Icon(
-                        Icons.local_fire_department,
-                        color: Color(0xFFFE5613),
-                        size: 14,
-                      ),
-                      const SizedBox(width: 2),
-                      Text(
-                        tag,
-                        style: TextStyle(
-                          color: tagColor,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ],
-                  ),
+              Image.asset(
+                "assets/images/flying_coins.png",
+                width: 44.w,
+                height: 56.h,
+                fit: BoxFit.contain,
+              ),
+              SizedBox(height: 12.h),
+              RichText(
+                text: TextSpan(
+                  text: 'Bravoo Jackpot 🏆',
+                  style: TextStyles.titleBold20(
+                    context,
+                  ).copyWith(fontFamily: AppFonts.baloo2, height: 1.sp),
                 ),
-              ],
+              ),
+              SizedBox(height: 12.h),
+              RichText(
+                text: TextSpan(
+                  children: [
+                    TextSpan(text: 'Your chance to win'),
+                    TextSpan(
+                      text: ' 20,000 coins ',
+                      style: TextStyle(color: AppColors.primary),
+                    ),
+                    TextSpan(
+                      text:
+                          'is here! Invite a friend and let the adventure begin!',
+                    ),
+                  ],
+                  style: TextStyles.smallBold12(
+                    context,
+                  ).copyWith(fontSize: 11.sp),
+                ),
+              ),
+              SizedBox(height: 16.h),
+              IconTextButton(
+                onPressed: () {
+                  if (active) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (ctx) => JackpotScreen()),
+                    );
+                  } else {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (ctx) => InviteAndEarnPage()),
+                    );
+                  }
+                },
+                height: 45,
+                color: active ? AppColors.primary : AppColors.black,
+                textSize: 14,
+                textColor: AppColors.white,
+                text: active ? "Play the Jackpot" : "Invite your friends",
+              ),
+              SizedBox(height: 12.h),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.error_rounded,
+                    size: 14.sp,
+                    color: AppColors.grey400,
+                  ),
+                  Expanded(
+                    child: RichText(
+                      textAlign: TextAlign.center,
+                      text: TextSpan(
+                        text:
+                            "Invite 10 friends every month to unlock the jackpot",
+                        style: TextStyles.smallSemibold12(context, opacity: .7),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ],
           ),
-          Image.asset("assets/images/flying_coins.png"),
-          SizedBox(height: 10.h),
-          RichText(
-            text: TextSpan(
-              text: title,
-              style: TextStyles.titleSemiBold20(context),
-            ),
-          ),
-          SizedBox(height: 4.h),
-          subtitle,
-          SizedBox(height: 12.h),
-          IconTextButton(
-            onPressed: () {
-              if (active) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (ctx) => JackpotScreen()),
-                );
-              } else {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (ctx) => InviteAndEarnPage()),
-                );
-              }
-            },
-            height: 54,
-            color: active ? AppColors.primary : AppColors.black,
-            textColor: AppColors.white,
-            text: active ? "Play the Jackpot" : "Invite your friends",
-          ),
-          SizedBox(height: 12.h),
-          RichText(
-            textAlign: TextAlign.center,
-            text: TextSpan(
-              text: "Invite 10+ friends every month to unluck the jackpot",
-              style: TextStyles.smallSemibold12(context, opacity: .7),
+          Align(
+            alignment: Alignment.topRight,
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 6.h),
+              decoration: BoxDecoration(
+                color: AppColors.orange11,
+                borderRadius: BorderRadius.circular(8.r),
+              ),
+              child: Row(
+                spacing: 2.w,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Image.asset(
+                    AssetsPngImages.flame,
+                    width: 16.w,
+                    height: 16.h,
+                    fit: BoxFit.contain,
+                  ),
+                  RichText(
+                    text: TextSpan(
+                      text: "Hot",
+                      style: TextStyles.cardBold10(
+                        context,
+                      ).copyWith(color: AppColors.orange),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
