@@ -14,7 +14,6 @@ import '../../../../../core/constants/app_colors.dart';
 import '../../../../../utility/ui_tool_mix.dart';
 import '../../../settings/presentation/pages/help_page.dart';
 import '../../../settings/presentation/pages/legal_page.dart';
-import '../../../settings/presentation/pages/link_account.dart';
 import '../../../settings/presentation/pages/login_and_security_page.dart';
 import '../../../settings/presentation/pages/notification_settings_page.dart';
 import '../widgets/change_app_icon_modal.dart';
@@ -98,7 +97,7 @@ class SettingsPage extends StatelessWidget with UIToolMixin {
                   ),
                 ),
 
-                const Divider(height: 1, color: Color(0xFFF1F1F1)),
+                /*const Divider(height: 1, color: Color(0xFFF1F1F1)),
                 buildTile(
                   HugeIcon(
                     icon: HugeIcons.strokeRoundedUserShield01,
@@ -111,7 +110,7 @@ class SettingsPage extends StatelessWidget with UIToolMixin {
                     context,
                     MaterialPageRoute(builder: (ctx) => LinkedAccountsScreen()),
                   ),
-                ),
+                ),*/
                 const Divider(height: 1, color: Color(0xFFF1F1F1)),
                 buildTile(
                   HugeIcon(
@@ -142,7 +141,7 @@ class SettingsPage extends StatelessWidget with UIToolMixin {
                   Image.asset(
                     "assets/images/bell.png",
                     height: 20,
-                    color: Colors.black.withOpacity(0.8),
+                    color: AppColors.black75,
                     fit: BoxFit.fitWidth,
                   ),
                   "Notifications",
@@ -205,7 +204,10 @@ class SettingsPage extends StatelessWidget with UIToolMixin {
                 ListTile(
                   leading: SvgPicture.asset(
                     "assets/images/logout-04.svg",
-                    color: Color(0xFF9B0000),
+                    colorFilter: ColorFilter.mode(
+                      Color(0xFF9B0000),
+                      BlendMode.srcIn,
+                    ),
                   ),
                   title: Text(
                     "Log out",
