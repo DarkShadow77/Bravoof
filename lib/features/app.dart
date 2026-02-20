@@ -1,7 +1,13 @@
+import 'dart:io';
+
+import 'package:bravoo/app/view/widgets/bottom_modals/update_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../app/view/widgets/dialog/maintenance_dialog.dart';
+import '../core/model/version_model.dart';
+import '../core/services/version_service.dart';
 import 'dashboard/nav_bar.dart';
 import 'dashboard/profile/presentation/bloc/profile_bloc.dart';
 import 'onbaording/page/onbaording_screen.dart';
@@ -30,25 +36,64 @@ class _AppState extends State<App> {
     Supabase.instance.client.auth.onAuthStateChange.listen((data) {
       final event = data.event;
 
-      if (event == AuthChangeEvent.signedOut) {}
+      if (event == AuthChangeEvent.signedOut) {
+        profileBloc.add(DeleteFCMTokenEvent());
+        profileBloc.add(LogoutProfileEvent());
+      }
+
+      if (event == AuthChangeEvent.initialSession) {
+        _checkVersion();
+      }
 
       if (event == AuthChangeEvent.signedIn) {
         profileBloc.add(GetProfileEvent());
         profileBloc.add(UpdateLocationEvent());
         profileBloc.add(SaveFCMTokenEvent());
         profileBloc.add(LogUserLoginActivityEvent(eventType: "login"));
+        _checkVersion();
       }
       if (event == AuthChangeEvent.tokenRefreshed) {
         profileBloc.add(GetProfileEvent());
+        _checkVersion();
       }
       if (event == AuthChangeEvent.userUpdated) {
         profileBloc.add(GetProfileEvent());
+        _checkVersion();
       }
 
       if (event == AuthChangeEvent.passwordRecovery) {
         Navigator.pop(context);
       }
     });
+  }
+
+  Future<void> _checkVersion() async {
+    final versionService = VersionCheckService();
+    final result = await versionService.checkVersion();
+
+    if (!mounted) return;
+
+    switch (result.status) {
+      case VersionStatus.blocked:
+      case VersionStatus.forceUpdate:
+        forceUpdateModal(result: result, service: versionService);
+        break;
+
+      case VersionStatus.updateAvailable:
+        optionalUpdateModal(result: result, service: versionService);
+        break;
+
+      case VersionStatus.maintenance:
+        maintenanceDialog(result: result);
+        break;
+
+      case VersionStatus.ok:
+        // Try Android in-app update in background
+        if (Platform.isAndroid) {
+          versionService.checkAndPerformInAppUpdate();
+        }
+        break;
+    }
   }
 
   @override

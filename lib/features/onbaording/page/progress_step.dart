@@ -113,8 +113,8 @@
 //   bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
 // }
 
-import 'package:Bravoo/features/common/data/constants.dart';
-import 'package:Bravoo/features/dashboard/nav_bar.dart';
+import 'package:bravoo/features/common/data/constants.dart';
+import 'package:bravoo/features/dashboard/nav_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -347,7 +347,9 @@ class _StepProgressPageState extends State<StepProgressPage>
                         child: CustomPaint(
                           painter: CircleProgressPainter(
                             backgroundColor: Colors.grey.shade300,
-                            progressColor: Color(0xFF9013FE).withOpacity(0.5),
+                            progressColor: Color(
+                              0xFF9013FE,
+                            ).withValues(alpha: 0.5),
                             progress: progress,
                             strokeWidth: 7,
                           ),
@@ -444,7 +446,7 @@ class CircleProgressPainter extends CustomPainter {
     // Define the paint for the background circle
     final innerPaint = Paint()
       ..color = Color(0xFFFDE2E4)
-          .withOpacity(0.1) // 👈 your inner circle color
+          .withValues(alpha: 0.1) // 👈 your inner circle color
       ..style = PaintingStyle.fill;
 
     canvas.drawCircle(center1, radius1, innerPaint);

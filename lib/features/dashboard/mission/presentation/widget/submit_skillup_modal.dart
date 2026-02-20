@@ -1,4 +1,4 @@
-import 'package:Bravoo/app/view/widgets/button/icon_text_button.dart';
+import 'package:bravoo/app/view/widgets/button/icon_text_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -10,7 +10,7 @@ import '../../../../../app/styles/text_styles.dart';
 import '../../../../../app/view/widgets/bottom_modals/show_modal_sheet.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/fonts.dart';
-import '../../../../common/helper.dart';
+import '../../../../../core/utils/helpers.dart';
 
 Future submitSkillUpModal({required Function(String?) onPressed}) {
   return Get.bottomSheet(

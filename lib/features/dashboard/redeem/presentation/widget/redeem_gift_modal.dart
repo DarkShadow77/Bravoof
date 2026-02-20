@@ -1,4 +1,4 @@
-import 'package:Bravoo/app/view/widgets/button/icon_text_button.dart';
+import 'package:bravoo/app/view/widgets/button/icon_text_button.dart';
 import 'package:country_state_city/models/country.dart';
 import 'package:country_state_city/utils/country_utils.dart';
 import 'package:flutter/material.dart';

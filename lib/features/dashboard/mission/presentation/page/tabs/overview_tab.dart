@@ -1,6 +1,6 @@
-import 'package:Bravoo/features/common/flowva_button.dart';
-import 'package:Bravoo/features/common/ui_tool_mixin/ui_tool_mixin.dart';
-import 'package:Bravoo/features/dashboard/earn/presentation/pages/badge_page.dart';
+import 'package:bravoo/features/common/flowva_button.dart';
+import 'package:bravoo/features/common/ui_tool_mixin/ui_tool_mixin.dart';
+import 'package:bravoo/features/dashboard/earn/presentation/pages/badge_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

@@ -1,12 +1,12 @@
 import 'dart:async';
 import 'dart:math';
 
-import 'package:Bravoo/app/view/widgets/button/icon_text_button.dart';
-import 'package:Bravoo/core/constants/fonts.dart';
-import 'package:Bravoo/core/utils/helpers.dart';
-import 'package:Bravoo/features/common/ui_tool_mixin/ui_tool_mixin.dart';
-import 'package:Bravoo/features/dashboard/earn/presentation/bloc/jackpot_bloc.dart';
-import 'package:Bravoo/features/dashboard/earn/presentation/widgets/jackpot_success_dialog.dart';
+import 'package:bravoo/app/view/widgets/button/icon_text_button.dart';
+import 'package:bravoo/core/constants/fonts.dart';
+import 'package:bravoo/core/utils/helpers.dart';
+import 'package:bravoo/features/common/ui_tool_mixin/ui_tool_mixin.dart';
+import 'package:bravoo/features/dashboard/earn/presentation/bloc/jackpot_bloc.dart';
+import 'package:bravoo/features/dashboard/earn/presentation/widgets/jackpot_success_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -450,7 +450,7 @@ class _JackpotScreenState extends State<JackpotScreen> with UIToolMixin {
                             child: BlocBuilder<ProfileBloc, ProfileState>(
                               builder: (context, state) {
                                 final profile = state.profile;
-                                spinsLeft = profile.spins ?? 0;
+                                spinsLeft = profile.spins;
                                 return IconTextButton(
                                   height: 65,
                                   color: AppColors.purple600,

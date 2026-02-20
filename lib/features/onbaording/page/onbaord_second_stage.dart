@@ -1,10 +1,10 @@
 import 'dart:developer';
 import 'dart:io';
 
-import 'package:Bravoo/app/view/widgets/button/icon_text_button.dart';
-import 'package:Bravoo/features/common/data/constants.dart';
-import 'package:Bravoo/features/common/ui_tool_mixin/ui_tool_mixin.dart';
-import 'package:Bravoo/features/dashboard/profile/data/model/user_profile.dart';
+import 'package:bravoo/app/view/widgets/button/icon_text_button.dart';
+import 'package:bravoo/features/common/data/constants.dart';
+import 'package:bravoo/features/common/ui_tool_mixin/ui_tool_mixin.dart';
+import 'package:bravoo/features/dashboard/profile/data/model/user_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

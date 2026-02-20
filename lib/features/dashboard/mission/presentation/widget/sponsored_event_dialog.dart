@@ -1,6 +1,6 @@
 import 'dart:ui';
 
-import 'package:Bravoo/core/constants/fonts.dart';
+import 'package:bravoo/core/constants/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
@@ -19,7 +19,7 @@ import '../../../../../core/constants/app_colors.dart';
 import '../../../../../utility/ui_tool_mix.dart';
 import '../../../../common/Mission_success.dart';
 import '../../../../common/flowva_button.dart';
-import '../../../../common/helper.dart';
+import '../../../../../core/utils/helpers.dart';
 import '../../data/model/community_mission_model.dart';
 import '../../data/model/sponsored_mission_model.dart';
 import '../bloc/sponsored_mission_bloc.dart';

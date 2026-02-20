@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'dart:ui';
 
-import 'package:Bravoo/app/view/widgets/loading/outer_loading.dart';
+import 'package:bravoo/app/view/widgets/loading/outer_loading.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

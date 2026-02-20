@@ -1,8 +1,8 @@
-import 'package:Bravoo/app/view/widgets/button/icon_text_button.dart';
-import 'package:Bravoo/features/onbaording/widget/first_screen.dart';
-import 'package:Bravoo/features/onbaording/widget/second_screen.dart';
-import 'package:Bravoo/features/onbaording/widget/third_screen.dart';
-import 'package:Bravoo/utility/ui_tool_mix.dart';
+import 'package:bravoo/app/view/widgets/button/icon_text_button.dart';
+import 'package:bravoo/features/onbaording/widget/first_screen.dart';
+import 'package:bravoo/features/onbaording/widget/second_screen.dart';
+import 'package:bravoo/features/onbaording/widget/third_screen.dart';
+import 'package:bravoo/utility/ui_tool_mix.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 

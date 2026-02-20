@@ -1,6 +1,6 @@
 import 'dart:ui';
 
-import 'package:Bravoo/features/common/flowva_button.dart';
+import 'package:bravoo/features/common/flowva_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_confetti/flutter_confetti.dart';
 import 'package:google_fonts/google_fonts.dart';

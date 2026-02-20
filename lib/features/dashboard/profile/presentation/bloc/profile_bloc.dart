@@ -417,7 +417,7 @@ class ProfileBloc extends HydratedBloc<ProfileEvent, ProfileState> {
 
     try {
       // 🔕 Remove FCM token from backend
-      add(DeleteFCMTokenEvent());
+      await _onDeleteFCMToken(DeleteFCMTokenEvent(), emit);
 
       // 🟢 Supabase logout
       await Supabase.instance.client.auth.signOut();

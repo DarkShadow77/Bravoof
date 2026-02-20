@@ -1,4 +1,4 @@
-import 'package:Bravoo/features/dashboard/redeem/data/redeem_history_model.dart';
+import 'package:bravoo/features/dashboard/redeem/data/redeem_history_model.dart';
 import 'package:bloc/bloc.dart';
 import 'package:logger/logger.dart';
 import 'package:meta/meta.dart';

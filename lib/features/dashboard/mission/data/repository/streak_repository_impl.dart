@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:timezone/timezone.dart' as tz;
 
 import '../../../../../core/services/api_service.dart';
 import '../model/streak_response.dart';
@@ -23,9 +24,10 @@ class StreakRepositoryImpl extends StreakRepository {
   Future<Either<String, StreakResponse>> checkIn({
     required String userId,
   }) async {
+    final String deviceTimezone = tz.local.name;
     return ApiService.instance!.invokeEdgeFunction<StreakResponse>(
       functionName: 'check-in',
-      body: {'userId': userId},
+      body: {'userId': userId, 'timezone': deviceTimezone},
       fallbackErrorMessage: 'Failed to CheckIn',
       onSuccess: (data) => StreakResponse.fromJson(data['data']),
     );

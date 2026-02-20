@@ -1,4 +1,4 @@
-import 'package:Bravoo/features/common/ui_tool_mixin/ui_tool_mixin.dart';
+import 'package:bravoo/features/common/ui_tool_mixin/ui_tool_mixin.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

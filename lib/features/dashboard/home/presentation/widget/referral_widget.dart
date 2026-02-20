@@ -1,10 +1,10 @@
-import 'package:Bravoo/app/styles/text_styles.dart';
-import 'package:Bravoo/app/view/widgets/button/icon_text_button.dart';
-import 'package:Bravoo/app/view/widgets/gradient_progress.dart';
-import 'package:Bravoo/core/constants/app_assets.dart';
-import 'package:Bravoo/features/common/flowva_colors.dart';
-import 'package:Bravoo/features/dashboard/earn/presentation/pages/invite_earn.dart';
-import 'package:Bravoo/features/dashboard/profile/data/model/user_profile.dart';
+import 'package:bravoo/app/styles/text_styles.dart';
+import 'package:bravoo/app/view/widgets/button/icon_text_button.dart';
+import 'package:bravoo/app/view/widgets/gradient_progress.dart';
+import 'package:bravoo/core/constants/app_assets.dart';
+import 'package:bravoo/features/common/flowva_colors.dart';
+import 'package:bravoo/features/dashboard/earn/presentation/pages/invite_earn.dart';
+import 'package:bravoo/features/dashboard/profile/data/model/user_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

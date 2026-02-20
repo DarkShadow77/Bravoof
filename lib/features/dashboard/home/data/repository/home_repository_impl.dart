@@ -1,4 +1,4 @@
-import 'package:Bravoo/features/dashboard/home/data/model/campaign_response.dart';
+import 'package:bravoo/features/dashboard/home/data/model/campaign_response.dart';
 import 'package:dartz/dartz.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 

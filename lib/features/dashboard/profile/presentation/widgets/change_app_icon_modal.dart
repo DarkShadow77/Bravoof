@@ -1,7 +1,7 @@
 import 'dart:ui';
 
-import 'package:Bravoo/app/view/widgets/button/icon_text_button.dart';
-import 'package:Bravoo/features/dashboard/profile/presentation/bloc/profile_bloc.dart';
+import 'package:bravoo/app/view/widgets/button/icon_text_button.dart';
+import 'package:bravoo/features/dashboard/profile/presentation/bloc/profile_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_app_icon_changer/flutter_app_icon_changer.dart';

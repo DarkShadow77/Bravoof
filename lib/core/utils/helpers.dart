@@ -1,4 +1,5 @@
 import 'package:intl/intl.dart';
+import 'package:path/path.dart' as p;
 
 String formatAmount(
   num value, {
@@ -41,4 +42,13 @@ String formatAmount(
 String _trim(num value) {
   final formatted = value.toStringAsFixed(value % 1 == 0 ? 0 : 1);
   return formatted;
+}
+
+String shortenFileName(String fileName, {int maxLength = 10}) {
+  String ext = p.extension(fileName); // ".jpg"
+  String name = p.basenameWithoutExtension(fileName); // "photo12345"
+
+  if (name.length <= maxLength) return fileName;
+  print(ext);
+  return '${name.substring(0, maxLength)}$ext';
 }

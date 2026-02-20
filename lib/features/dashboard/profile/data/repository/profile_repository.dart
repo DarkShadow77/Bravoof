@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:Bravoo/features/dashboard/profile/data/model/user_profile.dart';
+import 'package:bravoo/features/dashboard/profile/data/model/user_profile.dart';
 import 'package:dartz/dartz.dart';
 
 abstract class ProfileRepository {

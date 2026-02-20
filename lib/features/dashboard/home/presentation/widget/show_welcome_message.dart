@@ -1,10 +1,10 @@
 import 'dart:ui';
 
-import 'package:Bravoo/app/styles/text_styles.dart';
-import 'package:Bravoo/core/constants/app_assets.dart';
-import 'package:Bravoo/features/common/flowva_button.dart';
-import 'package:Bravoo/features/dashboard/nav_bar.dart';
-import 'package:Bravoo/session/session_manager.dart';
+import 'package:bravoo/app/styles/text_styles.dart';
+import 'package:bravoo/core/constants/app_assets.dart';
+import 'package:bravoo/features/common/flowva_button.dart';
+import 'package:bravoo/features/dashboard/nav_bar.dart';
+import 'package:bravoo/session/session_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hugeicons/hugeicons.dart';

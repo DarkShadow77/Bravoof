@@ -1,4 +1,4 @@
-import 'package:Bravoo/features/dashboard/home/data/model/notification_model.dart';
+import 'package:bravoo/features/dashboard/home/data/model/notification_model.dart';
 import 'package:dartz/dartz.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 

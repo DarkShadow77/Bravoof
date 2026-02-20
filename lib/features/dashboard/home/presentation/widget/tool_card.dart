@@ -1,12 +1,12 @@
 import 'dart:convert';
 
-import 'package:Bravoo/app/styles/text_styles.dart';
-import 'package:Bravoo/app/view/widgets/cached_image_widget.dart';
-import 'package:Bravoo/core/constants/app_assets.dart';
-import 'package:Bravoo/core/constants/fonts.dart';
-import 'package:Bravoo/features/dashboard/home/data/model/quote_model.dart';
-import 'package:Bravoo/features/dashboard/home/data/model/spotlight_model.dart';
-import 'package:Bravoo/features/dashboard/home/presentation/bloc/home_cubit.dart';
+import 'package:bravoo/app/styles/text_styles.dart';
+import 'package:bravoo/app/view/widgets/cached_image_widget.dart';
+import 'package:bravoo/core/constants/app_assets.dart';
+import 'package:bravoo/core/constants/fonts.dart';
+import 'package:bravoo/features/dashboard/home/data/model/quote_model.dart';
+import 'package:bravoo/features/dashboard/home/data/model/spotlight_model.dart';
+import 'package:bravoo/features/dashboard/home/presentation/bloc/home_cubit.dart';
 import 'package:fade_shimmer/fade_shimmer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

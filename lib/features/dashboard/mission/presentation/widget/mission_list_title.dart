@@ -1,4 +1,4 @@
-import 'package:Bravoo/app/view/widgets/dialog/success_dialog.dart';
+import 'package:bravoo/app/view/widgets/dialog/success_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

@@ -1,4 +1,4 @@
-import 'package:Bravoo/features/dashboard/profile/data/model/user_profile.dart';
+import 'package:bravoo/features/dashboard/profile/data/model/user_profile.dart';
 import 'package:dartz/dartz.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 

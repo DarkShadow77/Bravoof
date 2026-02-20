@@ -3,8 +3,8 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
-import 'package:Bravoo/features/dashboard/profile/data/model/user_profile.dart';
-import 'package:Bravoo/session/session_manager.dart';
+import 'package:bravoo/features/dashboard/profile/data/model/user_profile.dart';
+import 'package:bravoo/session/session_manager.dart';
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';

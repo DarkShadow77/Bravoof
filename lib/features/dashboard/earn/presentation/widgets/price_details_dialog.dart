@@ -1,9 +1,9 @@
 import 'dart:ui';
 
-import 'package:Bravoo/app/view/widgets/cached_image_widget.dart';
-import 'package:Bravoo/core/constants/app_assets.dart';
-import 'package:Bravoo/core/constants/fonts.dart';
-import 'package:Bravoo/features/dashboard/home/data/model/campaign_response.dart';
+import 'package:bravoo/app/view/widgets/cached_image_widget.dart';
+import 'package:bravoo/core/constants/app_assets.dart';
+import 'package:bravoo/core/constants/fonts.dart';
+import 'package:bravoo/features/dashboard/home/data/model/campaign_response.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';

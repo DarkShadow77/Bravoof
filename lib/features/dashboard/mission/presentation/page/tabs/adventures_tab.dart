@@ -1,10 +1,10 @@
-import 'package:Bravoo/app/styles/text_styles.dart';
-import 'package:Bravoo/core/constants/fonts.dart';
-import 'package:Bravoo/features/common/ui_tool_mixin/ui_tool_mixin.dart';
-import 'package:Bravoo/features/dashboard/earn/data/models/mission_res.dart';
-import 'package:Bravoo/features/dashboard/earn/presentation/widgets/referr_campaign.dart';
-import 'package:Bravoo/features/dashboard/mission/presentation/bloc/growth_mission_bloc.dart';
-import 'package:Bravoo/session/session_manager.dart';
+import 'package:bravoo/app/styles/text_styles.dart';
+import 'package:bravoo/core/constants/fonts.dart';
+import 'package:bravoo/features/common/ui_tool_mixin/ui_tool_mixin.dart';
+import 'package:bravoo/features/dashboard/earn/data/models/mission_res.dart';
+import 'package:bravoo/features/dashboard/earn/presentation/widgets/referr_campaign.dart';
+import 'package:bravoo/features/dashboard/mission/presentation/bloc/growth_mission_bloc.dart';
+import 'package:bravoo/session/session_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

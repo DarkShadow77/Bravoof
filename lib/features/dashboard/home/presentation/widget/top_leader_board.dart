@@ -1,6 +1,6 @@
-import 'package:Bravoo/app/view/widgets/cached_image_widget.dart';
-import 'package:Bravoo/features/common/flowva_button.dart';
-import 'package:Bravoo/features/dashboard/home/data/model/leaderboard_response_model.dart';
+import 'package:bravoo/app/view/widgets/cached_image_widget.dart';
+import 'package:bravoo/features/common/flowva_button.dart';
+import 'package:bravoo/features/dashboard/home/data/model/leaderboard_response_model.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 

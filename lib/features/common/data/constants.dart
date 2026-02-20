@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:math';
 
-import 'package:Bravoo/session/session_manager.dart';
+import 'package:bravoo/session/session_manager.dart';
 import 'package:crypto/crypto.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 

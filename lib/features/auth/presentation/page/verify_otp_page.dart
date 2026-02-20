@@ -1,10 +1,10 @@
 import 'dart:io';
 
-import 'package:Bravoo/app/styles/text_styles.dart';
-import 'package:Bravoo/core/constants/app_colors.dart';
-import 'package:Bravoo/core/constants/fonts.dart';
-import 'package:Bravoo/features/auth/presentation/bloc/auth_bloc.dart';
-import 'package:Bravoo/features/common/ui_tool_mixin/ui_tool_mixin.dart';
+import 'package:bravoo/app/styles/text_styles.dart';
+import 'package:bravoo/core/constants/app_colors.dart';
+import 'package:bravoo/core/constants/fonts.dart';
+import 'package:bravoo/features/auth/presentation/bloc/auth_bloc.dart';
+import 'package:bravoo/features/common/ui_tool_mixin/ui_tool_mixin.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

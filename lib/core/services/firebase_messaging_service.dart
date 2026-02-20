@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:Bravoo/core/services/local_notification_service.dart';
+import 'package:bravoo/core/services/local_notification_service.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';

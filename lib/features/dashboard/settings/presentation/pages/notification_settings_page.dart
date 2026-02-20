@@ -1,7 +1,7 @@
 import 'dart:ui';
 
-import 'package:Bravoo/features/common/app_enum.dart';
-import 'package:Bravoo/features/common/flowva_button.dart';
+import 'package:bravoo/features/common/app_enum.dart';
+import 'package:bravoo/features/common/flowva_button.dart';
 import 'package:app_settings/app_settings.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';

@@ -1,9 +1,9 @@
-import 'package:Bravoo/app/styles/text_styles.dart';
-import 'package:Bravoo/app/view/widgets/button/icon_text_button.dart';
-import 'package:Bravoo/app/view/widgets/cached_image_widget.dart';
-import 'package:Bravoo/app/view/widgets/gradient_progress.dart';
-import 'package:Bravoo/core/constants/fonts.dart';
-import 'package:Bravoo/features/dashboard/mission/presentation/widget/community_event_dialog.dart';
+import 'package:bravoo/app/styles/text_styles.dart';
+import 'package:bravoo/app/view/widgets/button/icon_text_button.dart';
+import 'package:bravoo/app/view/widgets/cached_image_widget.dart';
+import 'package:bravoo/app/view/widgets/gradient_progress.dart';
+import 'package:bravoo/core/constants/fonts.dart';
+import 'package:bravoo/features/dashboard/mission/presentation/widget/community_event_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

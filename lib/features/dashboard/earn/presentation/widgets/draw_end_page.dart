@@ -1,7 +1,7 @@
 import 'dart:ui';
 
-import 'package:Bravoo/features/common/flowva_button.dart';
-import 'package:Bravoo/features/dashboard/earn/presentation/widgets/social_media_cards.dart';
+import 'package:bravoo/features/common/flowva_button.dart';
+import 'package:bravoo/features/dashboard/earn/presentation/widgets/social_media_cards.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';

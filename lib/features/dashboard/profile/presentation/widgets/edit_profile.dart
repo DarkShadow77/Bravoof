@@ -1,9 +1,9 @@
 import 'dart:io';
 
-import 'package:Bravoo/app/view/widgets/cached_image_widget.dart';
-import 'package:Bravoo/core/utils/convert_asset_file.dart';
-import 'package:Bravoo/features/dashboard/profile/data/model/user_profile.dart';
-import 'package:Bravoo/features/dashboard/profile/presentation/widgets/edit_avatar.dart';
+import 'package:bravoo/app/view/widgets/cached_image_widget.dart';
+import 'package:bravoo/core/utils/convert_asset_file.dart';
+import 'package:bravoo/features/dashboard/profile/data/model/user_profile.dart';
+import 'package:bravoo/features/dashboard/profile/presentation/widgets/edit_avatar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -304,21 +304,21 @@ class _EditProfilePageState extends State<EditProfilePage> with UIToolMixin {
                     ),
                   ),
                   "Name",
-                  userProfile.name ?? 'N/A',
+                  userProfile.name,
                   true,
                 ),
                 buildDetailTile(
                   context,
                   apply: () {},
                   "Bio",
-                  userProfile.bio ?? 'Say something about yourself..',
+                  userProfile.bio,
                   false,
                 ),
                 buildDetailTile(
                   context,
                   apply: () {},
                   "Email Address",
-                  userProfile.email ?? 'N/A',
+                  userProfile.email,
                   false,
                 ),
               ],

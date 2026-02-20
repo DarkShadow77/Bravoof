@@ -1,6 +1,6 @@
 import 'dart:ui';
 
-import 'package:Bravoo/core/constants/fonts.dart';
+import 'package:bravoo/core/constants/fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
@@ -16,10 +16,11 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../../../app/styles/text_styles.dart';
 import '../../../../../app/view/widgets/loading/outer_loading.dart';
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../../core/utils/helpers.dart';
 import '../../../../../utility/ui_tool_mix.dart';
 import '../../../../common/Mission_success.dart';
 import '../../../../common/flowva_button.dart';
-import '../../../../common/helper.dart';
+import '../../../../../core/utils/helpers.dart';
 import '../../data/model/community_mission_model.dart';
 import '../bloc/community_mission_bloc.dart';
 
@@ -76,8 +77,8 @@ class _AskingDialogState extends State<CommunityEventDialog> with UIToolMixin {
           if (state is CommunityMissionError &&
               state.type == CommunityMissionType.joinMission) {
             if (Get.isDialogOpen == true) {
-        Navigator.of(context, rootNavigator: true).pop();
-      }
+              Navigator.of(context, rootNavigator: true).pop();
+            }
             showMessage(
               state.message,
               context,
@@ -89,11 +90,11 @@ class _AskingDialogState extends State<CommunityEventDialog> with UIToolMixin {
 
           if (state is CommunityMissionJoined) {
             if (Get.isDialogOpen == true) {
-        Navigator.of(context, rootNavigator: true).pop();
-      }
+              Navigator.of(context, rootNavigator: true).pop();
+            }
             if (Get.isDialogOpen == true) {
-        Navigator.of(context, rootNavigator: true).pop();
-      }
+              Navigator.of(context, rootNavigator: true).pop();
+            }
             context.read<CommunityMissionBloc>().add(LoadCommunityMission());
 
             showModalBottomSheet(
