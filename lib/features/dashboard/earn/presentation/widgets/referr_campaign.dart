@@ -51,7 +51,7 @@ class _ReferCampaignState extends State<ReferCampaign> {
     campaignList = homeCubit.state.campaign;
 
     if (campaignList.isNotEmpty) {
-      campaign = campaignList.first;
+      campaign = campaignList.last;
       final now = DateTime.now().toUtc();
       differenceInSeconds = campaign.campaignEndDate
           .difference(now)
@@ -88,7 +88,7 @@ class _ReferCampaignState extends State<ReferCampaign> {
 
         if (campaignList.isEmpty) return SizedBox.shrink();
 
-        campaign = campaignList.first;
+        campaign = campaignList.last;
 
         final now = DateTime.now().toUtc();
         differenceInSeconds = campaign.campaignEndDate
