@@ -1,9 +1,9 @@
+import 'package:bloc/bloc.dart';
 import 'package:bravoo/features/dashboard/home/data/model/campaign_response.dart';
 import 'package:bravoo/features/dashboard/home/data/model/leaderboard_response_model.dart';
 import 'package:bravoo/features/dashboard/home/data/model/spotlight_model.dart';
 import 'package:bravoo/features/dashboard/home/data/repository/home_repository.dart';
 import 'package:bravoo/features/dashboard/home/data/repository/home_repository_impl.dart';
-import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -23,6 +23,7 @@ class HomeCubit extends Cubit<HomeState> {
           campaign: [],
           extraCard: [],
           spotlight: SpotlightModel.empty(),
+          spotlights: [],
           referrals: [],
           quote: QuoteModel.empty(),
           leaderboard: LeaderboardResponseModel.empty(),
@@ -37,6 +38,7 @@ class HomeCubit extends Cubit<HomeState> {
           campaign: state.campaign,
           extraCard: state.extraCard,
           spotlight: state.spotlight,
+          spotlights: state.spotlights,
           quote: state.quote,
           referrals: state.referrals,
           leaderboard: state.leaderboard,
@@ -53,6 +55,7 @@ class HomeCubit extends Cubit<HomeState> {
           campaign: state.campaign,
           extraCard: state.extraCard,
           spotlight: state.spotlight,
+          spotlights: state.spotlights,
           quote: state.quote,
           referrals: state.referrals,
           leaderboard: state.leaderboard,
@@ -67,6 +70,7 @@ class HomeCubit extends Cubit<HomeState> {
             campaign: campaign,
             extraCard: state.extraCard,
             spotlight: state.spotlight,
+            spotlights: state.spotlights,
             quote: state.quote,
             referrals: state.referrals,
             leaderboard: state.leaderboard,
@@ -83,6 +87,7 @@ class HomeCubit extends Cubit<HomeState> {
         campaign: state.campaign,
         extraCard: state.extraCard,
         spotlight: state.spotlight,
+        spotlights: state.spotlights,
         quote: state.quote,
         referrals: state.referrals,
         leaderboard: state.leaderboard,
@@ -99,6 +104,7 @@ class HomeCubit extends Cubit<HomeState> {
           campaign: state.campaign,
           extraCard: state.extraCard,
           spotlight: state.spotlight,
+          spotlights: state.spotlights,
           quote: state.quote,
           referrals: state.referrals,
           leaderboard: state.leaderboard,
@@ -113,6 +119,7 @@ class HomeCubit extends Cubit<HomeState> {
             campaign: state.campaign,
             extraCard: extraCard,
             spotlight: state.spotlight,
+            spotlights: state.spotlights,
             quote: state.quote,
             referrals: state.referrals,
             leaderboard: state.leaderboard,
@@ -130,6 +137,7 @@ class HomeCubit extends Cubit<HomeState> {
           campaign: state.campaign,
           extraCard: state.extraCard,
           spotlight: state.spotlight,
+          spotlights: state.spotlights,
           quote: state.quote,
           referrals: state.referrals,
           leaderboard: state.leaderboard,
@@ -146,6 +154,7 @@ class HomeCubit extends Cubit<HomeState> {
           campaign: state.campaign,
           extraCard: state.extraCard,
           spotlight: state.spotlight,
+          spotlights: state.spotlights,
           quote: state.quote,
           referrals: state.referrals,
           leaderboard: state.leaderboard,
@@ -160,6 +169,57 @@ class HomeCubit extends Cubit<HomeState> {
             campaign: state.campaign,
             extraCard: state.extraCard,
             spotlight: spotlight,
+            spotlights: state.spotlights,
+            quote: state.quote,
+            referrals: state.referrals,
+            leaderboard: state.leaderboard,
+          ),
+        );
+      },
+    );
+  }
+
+  void fetchSpotlights() async {
+    if (state.spotlights.isEmpty)
+      emit(
+        HomeLoadingState(
+          type: HomeType.getSpotlights,
+          campaign: state.campaign,
+          extraCard: state.extraCard,
+          spotlight: state.spotlight,
+          spotlights: state.spotlights,
+          quote: state.quote,
+          referrals: state.referrals,
+          leaderboard: state.leaderboard,
+        ),
+      );
+
+    final either = await homeRepository.fetchSpotlights();
+
+    either.fold(
+      (failure) => emit(
+        HomeFailureState(
+          type: HomeType.getSpotlights,
+          message: failure.toString(),
+          campaign: state.campaign,
+          extraCard: state.extraCard,
+          spotlight: state.spotlight,
+          spotlights: state.spotlights,
+          quote: state.quote,
+          referrals: state.referrals,
+          leaderboard: state.leaderboard,
+        ),
+      ),
+      (spotlights) {
+        emit(state.copyWith(spotlights: spotlights));
+        emit(
+          HomeSuccessState(
+            type: HomeType.getSpotlights,
+            message: "Spotlight Got Successfully",
+            campaign: state.campaign,
+            extraCard: state.extraCard,
+            spotlights: spotlights,
+            spotlight: state.spotlight,
             quote: state.quote,
             referrals: state.referrals,
             leaderboard: state.leaderboard,
@@ -176,6 +236,7 @@ class HomeCubit extends Cubit<HomeState> {
         campaign: state.campaign,
         extraCard: state.extraCard,
         spotlight: state.spotlight,
+        spotlights: state.spotlights,
         quote: state.quote,
         referrals: state.referrals,
         leaderboard: state.leaderboard,
@@ -192,6 +253,7 @@ class HomeCubit extends Cubit<HomeState> {
           campaign: state.campaign,
           extraCard: state.extraCard,
           spotlight: state.spotlight,
+          spotlights: state.spotlights,
           quote: state.quote,
           referrals: state.referrals,
           leaderboard: state.leaderboard,
@@ -207,6 +269,7 @@ class HomeCubit extends Cubit<HomeState> {
             extraCard: state.extraCard,
             quote: quote,
             spotlight: state.spotlight,
+            spotlights: state.spotlights,
             referrals: state.referrals,
             leaderboard: state.leaderboard,
           ),
@@ -233,6 +296,7 @@ class HomeCubit extends Cubit<HomeState> {
         campaign: state.campaign,
         extraCard: state.extraCard,
         spotlight: state.spotlight,
+        spotlights: state.spotlights,
         quote: state.quote,
         referrals: state.referrals,
         leaderboard: state.leaderboard,
@@ -251,6 +315,7 @@ class HomeCubit extends Cubit<HomeState> {
           campaign: state.campaign,
           extraCard: state.extraCard,
           spotlight: state.spotlight,
+          spotlights: state.spotlights,
           quote: state.quote,
           referrals: state.referrals,
           leaderboard: state.leaderboard,
@@ -266,6 +331,7 @@ class HomeCubit extends Cubit<HomeState> {
             extraCard: state.extraCard,
             quote: state.quote,
             spotlight: state.spotlight,
+            spotlights: state.spotlights,
             referrals: state.referrals,
             leaderboard: leaderboard,
           ),

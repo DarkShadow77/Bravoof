@@ -81,7 +81,7 @@ class RedeemRepositoryImpl extends RedeemRepository {
         'email': email,
       },
       fallbackErrorMessage: '${rewardType.capitalize} redemption failed',
-      onSuccess: (data) => data['redirectUrl'],
+      onSuccess: (data) => data['message'],
     );
   }
 }

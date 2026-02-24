@@ -15,6 +15,7 @@ abstract class ProfileRepository {
     required String userId,
     required String reason,
   });
+  Future<Either<String, String>> logUserHomeActivity();
   Future<Either<String, String>> logUserLoginActivity({
     required String eventType,
   });

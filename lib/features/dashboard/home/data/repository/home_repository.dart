@@ -9,6 +9,7 @@ import '../model/spotlight_model.dart';
 
 abstract class HomeRepository {
   Future<Either<String, List<CampaignResponseModel>>> fetchCampaigns();
+  Future<Either<String, List<SpotlightModel>>> fetchSpotlights();
   Future<Either<String, SpotlightModel>> fetchSpotlight();
   Future<Either<String, List<DynamicCarouselModel>>> fetchExtraHomeCard();
   Future<Either<String, QuoteModel>> fetchQuote();

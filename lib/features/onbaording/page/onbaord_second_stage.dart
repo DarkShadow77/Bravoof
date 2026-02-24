@@ -233,12 +233,15 @@ class _OnboardSecondStageState extends State<OnboardSecondStage>
                                 ),
                               ),
                             ),
-                            CircleAvatar(
-                              backgroundColor: Colors.transparent,
-                              child: HugeIcon(
-                                icon: HugeIcons.strokeRoundedArrowLeft02,
-                                color: Colors.white10,
-                                strokeWidth: 1.5,
+                            Opacity(
+                              opacity: 0,
+                              child: CircleAvatar(
+                                backgroundColor: AppColors.black05,
+                                child: HugeIcon(
+                                  icon: HugeIcons.strokeRoundedArrowLeft02,
+                                  color: Colors.black,
+                                  strokeWidth: 1.5,
+                                ),
                               ),
                             ),
                           ],
@@ -291,7 +294,7 @@ class _OnboardSecondStageState extends State<OnboardSecondStage>
                   child: IconTextButton(
                     onPressed: () => _proceedToOnboard(),
                     height: 56,
-                    text: "Looks good,next",
+                    text: "Looks good",
                     color: AppColors.black,
                     textColor: AppColors.white,
                   ),

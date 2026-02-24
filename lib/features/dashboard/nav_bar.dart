@@ -94,6 +94,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
     if (currentIndex == 0) {
       context.read<HomeCubit>().fetchCampaigns();
       context.read<HomeCubit>().fetchSpotlight();
+      context.read<HomeCubit>().fetchSpotlights();
       context.read<HomeCubit>().fetchQuote();
       context.read<HomeCubit>().fetchLeaderboard();
       context.read<HomeCubit>().getUserReferrals();
@@ -102,8 +103,9 @@ class _BottomNavBarState extends State<BottomNavBar> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: _onWillPop,
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (canPop, result) => _onWillPop,
       child: Scaffold(
         body: IndexedStack(
           index: currentIndex,

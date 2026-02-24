@@ -147,7 +147,7 @@ Future forceUpdateModal({
     isScrollControlled: true,
     ignoreSafeArea: true,
     isDismissible: false,
-    enableDrag: true,
+    enableDrag: false,
     barrierColor: Colors.transparent,
     backgroundColor: Colors.transparent,
     enterBottomSheetDuration: const Duration(milliseconds: 200),

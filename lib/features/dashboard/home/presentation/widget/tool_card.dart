@@ -12,15 +12,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_confetti/flutter_confetti.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../../app/view/widgets/button/icon_text_button.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/utils/helpers.dart';
 import '../../../earn/presentation/widgets/referr_campaign.dart';
-import '../../../mission/presentation/page/tabs/skill_up_tab.dart';
 import '../../../profile/presentation/bloc/profile_bloc.dart';
 import '../../data/model/dynamic_carousel_model.dart';
+import '../page/past_spotlight_page.dart';
 
 class ToolCardCarousel extends StatefulWidget {
   ToolCardCarousel({Key? key}) : super(key: key);
@@ -55,6 +56,7 @@ class _ToolCardCarouselState extends State<ToolCardCarousel> {
   _fetchDetails() {
     context.read<HomeCubit>().fetchCampaigns();
     context.read<HomeCubit>().fetchSpotlight();
+    context.read<HomeCubit>().fetchSpotlights();
     context.read<HomeCubit>().fetchExtraHomeCard();
     context.read<HomeCubit>().fetchQuote();
   }
@@ -410,7 +412,9 @@ class _DynamicCarouselCardState extends State<DynamicCarouselCard> {
 }
 
 class SpotlightCard extends StatefulWidget {
-  const SpotlightCard({super.key});
+  const SpotlightCard({super.key, this.isMainPage = false});
+
+  final bool isMainPage;
 
   @override
   State<SpotlightCard> createState() => _SpotlightCardState();
@@ -424,10 +428,7 @@ class _SpotlightCardState extends State<SpotlightCard> {
     super.initState();
     spotlight = context.read<HomeCubit>().state.spotlight;
     context.read<HomeCubit>().fetchSpotlight();
-  }
-
-  Color hexToColor(String hex) {
-    return Color(int.parse(hex.replaceFirst('#', '0xff')));
+    context.read<HomeCubit>().fetchSpotlights();
   }
 
   @override
@@ -448,7 +449,9 @@ class _SpotlightCardState extends State<SpotlightCard> {
         else
           return Container(
             clipBehavior: Clip.antiAlias,
-            margin: EdgeInsets.symmetric(horizontal: 16.w),
+            margin: EdgeInsets.symmetric(
+              horizontal: widget.isMainPage ? 0 : 16.w,
+            ),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(24.r),
             ),
@@ -480,24 +483,92 @@ class _SpotlightCardState extends State<SpotlightCard> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      RichText(
-                        text: TextSpan(
-                          text: spotlight.title,
-                          style: TextStyles.bodyBold16(
-                            context,
-                          ).copyWith(color: textColor),
-                        ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Expanded(
+                            child: RichText(
+                              text: TextSpan(
+                                text: spotlight.title,
+                                style: TextStyles.bodyBold16(
+                                  context,
+                                ).copyWith(color: textColor),
+                              ),
+                            ),
+                          ),
+
+                          Visibility(
+                            visible: !widget.isMainPage,
+                            child: SizedBox(
+                              width: 126.w,
+                              child: IconTextButton(
+                                onPressed: () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (ctx) => PastSpotlightPage(),
+                                  ),
+                                ),
+                                height: 35,
+                                textSize: 10,
+                                text: "Past Spotlights",
+                                textColor: hexToColor(spotlight.btnTextColor),
+                                color: hexToColor(spotlight.btnColor),
+                                innerShadow: hexToColor(
+                                  spotlight.btnTextColor,
+                                ).withValues(alpha: .1),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                       Row(
                         spacing: 16.w,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          CachedImageRadius(
-                            imageUrl: spotlight.image,
-                            size: 103,
-                            color: AppColors.white05,
-                            circle: true,
-                            fit: BoxFit.cover,
+                          Container(
+                            width: 120.w,
+                            height: 115.h,
+                            child: Stack(
+                              children: [
+                                Positioned(
+                                  right: 0,
+                                  child: Container(
+                                    padding: EdgeInsets.all(4.r),
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      gradient: LinearGradient(
+                                        colors: [
+                                          hexToColor(
+                                            spotlight.gradientColor.start,
+                                          ),
+                                          hexToColor(
+                                            spotlight.gradientColor.end,
+                                          ),
+                                        ],
+                                        begin: Alignment.bottomCenter,
+                                        end: Alignment.topCenter,
+                                      ),
+                                    ),
+                                    child: CachedImageRadius(
+                                      imageUrl: spotlight.image,
+                                      size: 103,
+                                      color: AppColors.white05,
+                                      circle: true,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                ),
+                                Positioned(
+                                  top: 0,
+                                  left: 0,
+                                  child: SvgPicture.asset(
+                                    AssetsSvgIcons.crown,
+                                    width: 45.w,
+                                    height: 40.h,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                           Expanded(
                             child: Column(

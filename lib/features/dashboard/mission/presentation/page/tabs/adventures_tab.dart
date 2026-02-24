@@ -52,7 +52,7 @@ class _AdventuresTabState extends State<AdventuresTab> with UIToolMixin {
           children: [
             CommunityMissionCard(),
             SizedBox(height: 20.h),
-            ReferCampaign(),
+            SizedBox(height: 240.h, child: ReferCampaign()),
             SizedBox(height: 20.h),
             _buildGrowthMission(),
             SizedBox(height: 20.h),

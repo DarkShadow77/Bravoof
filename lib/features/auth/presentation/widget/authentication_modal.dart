@@ -66,7 +66,9 @@ class _AuthenticationModalState extends State<AuthenticationModal>
   void _loadingAuthState(BuildContext context, AuthLoadingState state) {
     if (state.type == AuthType.checkEmail) {
       setState(() => _isEmailCheck = true);
-    } else if (state.type == AuthType.signIn) {
+    } else if (state.type == AuthType.signIn ||
+        state.type == AuthType.googleAuth ||
+        state.type == AuthType.appleAuth) {
       setState(() => _isLoginLoading = true);
     }
   }
@@ -107,14 +109,12 @@ class _AuthenticationModalState extends State<AuthenticationModal>
   void _failedAuthState(BuildContext context, AuthFailureState state) {
     if (state.type == AuthType.checkEmail) {
       setState(() => _isEmailCheck = false);
-    } else if (state.type == AuthType.signIn) {
-      setState(() => _isLoginLoading = false);
-    }
-    if (state.type == AuthType.checkEmail ||
+    } else if (state.type == AuthType.checkEmail ||
         state.type == AuthType.signIn ||
         state.type == AuthType.googleAuth ||
         state.type == AuthType.appleAuth) {
       Future.delayed((Duration(milliseconds: 500)), () {
+        setState(() => _isLoginLoading = false);
         if (Get.isDialogOpen == true)
           Navigator.of(context, rootNavigator: true).pop();
         final error = state.message.toLowerCase();
@@ -259,6 +259,7 @@ class _AuthenticationModalState extends State<AuthenticationModal>
                 if (_isLogin) ...[
                   GestureDetector(
                     onTap: () {
+                      if (_isLoginLoading || _isEmailCheck) return;
                       showModalBottomSheet(
                         context: context,
                         isScrollControlled: true,
@@ -350,6 +351,7 @@ class _AuthenticationModalState extends State<AuthenticationModal>
                         ),
                         recognizer: TapGestureRecognizer()
                           ..onTap = () {
+                            if (_isLoginLoading || _isEmailCheck) return;
                             setState(() {
                               _isLogin = !_isLogin;
                             });

@@ -16,6 +16,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
 
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../../main.dart';
 import '../../../mission/presentation/widget/mission_list_title.dart';
 import '../../../nav_bar.dart';
 import '../bloc/home_cubit.dart';
@@ -32,7 +33,8 @@ class FlowvaHomePage extends StatefulWidget {
   State<FlowvaHomePage> createState() => _FlowvaHomePageState();
 }
 
-class _FlowvaHomePageState extends State<FlowvaHomePage> with UIToolMixin {
+class _FlowvaHomePageState extends State<FlowvaHomePage>
+    with UIToolMixin, RouteAware {
   final sessionManager = SessionManager();
   UserProfile userProfile = UserProfile.empty();
   late ProfileBloc profileBloc;
@@ -43,6 +45,51 @@ class _FlowvaHomePageState extends State<FlowvaHomePage> with UIToolMixin {
     profileBloc = context.read<ProfileBloc>();
     userProfile = profileBloc.state.profile;
     profileBloc.add(GetProfileEvent());
+    _logHomeActivity();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Subscribe to route changes using the global routeObserver
+    final route = ModalRoute.of(context);
+    if (route is PageRoute) {
+      routeObserver.subscribe(this, route); // ← use global variable directly
+    }
+  }
+
+  @override
+  void dispose() {
+    routeObserver.unsubscribe(this); // ← use global variable directly
+    super.dispose();
+  }
+
+  void didPopNext() {
+    // Called when returning to this page from another page
+    _logHomeActivity();
+  }
+
+  void _logHomeActivity() {
+    profileBloc.add(LogUserHomeActivityEvent());
+  }
+
+  Future<void> _onRefresh() async {
+    // Refresh profile
+    profileBloc.add(GetProfileEvent());
+
+    // Refresh home data
+    context.read<HomeCubit>().fetchCampaigns();
+    context.read<HomeCubit>().fetchSpotlight();
+    context.read<HomeCubit>().fetchSpotlights();
+    context.read<HomeCubit>().fetchQuote();
+    context.read<HomeCubit>().fetchLeaderboard();
+    context.read<HomeCubit>().getUserReferrals();
+
+    // Refresh notifications
+    context.read<NotificationBloc>().add(LoadNotifications());
+
+    // Wait a bit for the data to load
+    await Future.delayed(Duration(milliseconds: 500));
   }
 
   @override
@@ -152,126 +199,139 @@ class _FlowvaHomePageState extends State<FlowvaHomePage> with UIToolMixin {
                     ),
 
                     Expanded(
-                      child: SingleChildScrollView(
-                        padding: EdgeInsets.only(top: 0),
-                        physics: const BouncingScrollPhysics(),
-                        child: Column(
-                          children: [
-                            SizedBox(height: 18.h),
-                            if (SessionManager().firstTimeUserVal == "YES") ...[
-                              InviteFriendContainer(
-                                onTap: () {
-                                  setState(() {
-                                    SessionManager().firstTimeUserVal = "NO";
-                                  });
-                                },
-                              ),
-                              SizedBox(height: 16.h),
-                            ],
-                            ToolCardCarousel(),
-                            SizedBox(height: 20.h),
-                            MissionAwaitWidget(),
-                            SizedBox(height: 20.h),
-                            Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 16.w),
-                              child: Container(
-                                padding: EdgeInsets.symmetric(horizontal: 15),
-                                decoration: BoxDecoration(
-                                  color: Colors.white54,
-                                  borderRadius: BorderRadius.circular(16),
+                      child: RefreshIndicator(
+                        onRefresh: _onRefresh,
+                        color: AppColors.primary,
+                        child: SingleChildScrollView(
+                          padding: EdgeInsets.only(top: 0),
+                          physics: const AlwaysScrollableScrollPhysics(
+                            parent: BouncingScrollPhysics(),
+                          ),
+                          child: Column(
+                            children: [
+                              SizedBox(height: 18.h),
+                              if (SessionManager().firstTimeUserVal ==
+                                  "YES") ...[
+                                InviteFriendContainer(
+                                  onTap: () {
+                                    setState(() {
+                                      SessionManager().firstTimeUserVal = "NO";
+                                    });
+                                  },
                                 ),
-                                child: Column(
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          "Growth Missions",
-                                          style: GoogleFonts.baloo2(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.w700,
+                                SizedBox(height: 16.h),
+                              ],
+                              ToolCardCarousel(),
+                              SizedBox(height: 20.h),
+                              MissionAwaitWidget(),
+                              SizedBox(height: 20.h),
+                              Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 16.w),
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(horizontal: 15),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white54,
+                                    borderRadius: BorderRadius.circular(16),
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            "Growth Missions",
+                                            style: GoogleFonts.baloo2(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.w700,
+                                            ),
                                           ),
-                                        ),
-                                        SizedBox(
-                                          height: 70,
-                                          child: Stack(
-                                            children: [
-                                              GestureDetector(
-                                                onTap: () {
-                                                  Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                      builder: (_) =>
-                                                          BottomNavBar(
-                                                            index: 1,
-                                                            missionIndex: 1,
+                                          SizedBox(
+                                            height: 70,
+                                            child: Stack(
+                                              children: [
+                                                GestureDetector(
+                                                  onTap: () {
+                                                    Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                        builder: (_) =>
+                                                            BottomNavBar(
+                                                              index: 1,
+                                                              missionIndex: 1,
+                                                            ),
+                                                      ),
+                                                    );
+                                                  },
+                                                  child: Container(
+                                                    margin: EdgeInsets.only(
+                                                      top: 20,
+                                                    ),
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                          horizontal: 12,
+                                                          vertical: 9,
+                                                        ),
+                                                    decoration: BoxDecoration(
+                                                      color: Color(0xFFF6E4E6),
+                                                      border: Border.all(
+                                                        color: Color(
+                                                          0xFFE9E9E9,
+                                                        ),
+                                                      ),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                            28,
                                                           ),
                                                     ),
-                                                  );
-                                                },
-                                                child: Container(
-                                                  margin: EdgeInsets.only(
-                                                    top: 20,
-                                                  ),
-                                                  padding: EdgeInsets.symmetric(
-                                                    horizontal: 12,
-                                                    vertical: 9,
-                                                  ),
-                                                  decoration: BoxDecoration(
-                                                    color: Color(0xFFF6E4E6),
-                                                    border: Border.all(
-                                                      color: Color(0xFFE9E9E9),
-                                                    ),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                          28,
-                                                        ),
-                                                  ),
-                                                  child: Text(
-                                                    "See more",
-                                                    style: GoogleFonts.manrope(
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      color: Color(0xFF020617),
-                                                      fontSize: 14,
+                                                    child: Text(
+                                                      "See more",
+                                                      style:
+                                                          GoogleFonts.manrope(
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                            color: Color(
+                                                              0xFF020617,
+                                                            ),
+                                                            fontSize: 14,
+                                                          ),
                                                     ),
                                                   ),
                                                 ),
-                                              ),
-                                            ],
+                                              ],
+                                            ),
                                           ),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 16),
-                                    MissionCard(isFull: false),
-                                  ],
+                                        ],
+                                      ),
+                                      const SizedBox(height: 16),
+                                      MissionCard(isFull: false),
+                                    ],
+                                  ),
                                 ),
                               ),
-                            ),
-                            SizedBox(height: 20.h),
-                            BlocBuilder<HomeCubit, HomeState>(
-                              builder: (context, state) {
-                                final leaderboard =
-                                    state.leaderboard.leaderboard;
-                                if (leaderboard.isNotEmpty &&
-                                    leaderboard.length > 2)
-                                  return TopLeaderboard(
-                                    leaderboard: leaderboard,
-                                  );
-                                else
-                                  return SizedBox.shrink();
-                              },
-                            ),
+                              SizedBox(height: 20.h),
+                              BlocBuilder<HomeCubit, HomeState>(
+                                builder: (context, state) {
+                                  final leaderboard =
+                                      state.leaderboard.leaderboard;
+                                  if (leaderboard.isNotEmpty &&
+                                      leaderboard.length > 2)
+                                    return TopLeaderboard(
+                                      leaderboard: leaderboard,
+                                    );
+                                  else
+                                    return SizedBox.shrink();
+                                },
+                              ),
 
-                            SizedBox(height: 20.h),
-                            Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 16.w),
-                              child: ReferralWidget(),
-                            ),
-                            SizedBox(height: 20.h),
-                          ],
+                              SizedBox(height: 20.h),
+                              Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 16.w),
+                                child: ReferralWidget(),
+                              ),
+                              SizedBox(height: 20.h),
+                            ],
+                          ),
                         ),
                       ),
                     ),

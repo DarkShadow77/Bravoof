@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:intl/intl.dart';
 import 'package:path/path.dart' as p;
 
@@ -51,4 +53,8 @@ String shortenFileName(String fileName, {int maxLength = 10}) {
   if (name.length <= maxLength) return fileName;
   print(ext);
   return '${name.substring(0, maxLength)}$ext';
+}
+
+Color hexToColor(String hex) {
+  return Color(int.parse(hex.replaceFirst('#', '0xff')));
 }

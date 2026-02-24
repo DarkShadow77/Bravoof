@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../app/view/widgets/dialog/maintenance_dialog.dart';
+import '../app/view/page/maintenance_page.dart';
 import '../core/model/version_model.dart';
 import '../core/services/version_service.dart';
 import 'dashboard/nav_bar.dart';
@@ -36,13 +36,8 @@ class _AppState extends State<App> {
     Supabase.instance.client.auth.onAuthStateChange.listen((data) {
       final event = data.event;
 
-      if (event == AuthChangeEvent.signedOut) {
-        profileBloc.add(DeleteFCMTokenEvent());
-        profileBloc.add(LogoutProfileEvent());
-      }
-
       if (event == AuthChangeEvent.initialSession) {
-        _checkVersion();
+        _checkVersion(true);
       }
 
       if (event == AuthChangeEvent.signedIn) {
@@ -67,7 +62,7 @@ class _AppState extends State<App> {
     });
   }
 
-  Future<void> _checkVersion() async {
+  Future<void> _checkVersion([bool isInit = false]) async {
     final versionService = VersionCheckService();
     final result = await versionService.checkVersion();
 
@@ -80,11 +75,16 @@ class _AppState extends State<App> {
         break;
 
       case VersionStatus.updateAvailable:
+        if (isInit) break;
         optionalUpdateModal(result: result, service: versionService);
         break;
 
       case VersionStatus.maintenance:
-        maintenanceDialog(result: result);
+        Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(builder: (ctx) => MaintenancePage(result: result)),
+          (route) => false,
+        );
         break;
 
       case VersionStatus.ok:

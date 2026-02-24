@@ -62,6 +62,10 @@ class AssetsPngImages {
   static String campaignEnd = "$baseImagePngPath/campaign_end.png";
   static String campaignEndBg = "$baseImagePngPath/campaign_end_bg.png";
   static String campaignWinner = "$baseImagePngPath/campaign_winner.png";
+  static String campaignWinner2 = "$baseImagePngPath/campaign_winner_2.png";
+  static String maintenance = "$baseImagePngPath/maintenance.png";
+  static String maintenanceBg = "$baseImagePngPath/maintenance_bg.png";
+  static String confetti = "$baseImagePngPath/confetti.png";
 }
 
 class AssetsSvgImages {
@@ -70,6 +74,8 @@ class AssetsSvgImages {
   static String prizeDetailTitle = "$baseImageSvgPath/prize_detail_title.svg";
   static String prizeDetailBottom = "$baseImageSvgPath/prize_detail_bottom.svg";
   static String emptyNotification = "$baseImageSvgPath/empty_notification.svg";
+  static String maintenance = "$baseImageSvgPath/maintenance.svg";
+  static String maintenanceBg = "$baseImageSvgPath/maintenance_bg.svg";
 }
 
 class AssetsSvgIcons {
@@ -90,4 +96,5 @@ class AssetsSvgIcons {
   static String upload = "$baseSvgIconsPath/upload.svg";
   static String google = "$baseSvgIconsPath/google.svg";
   static String apple = "$baseSvgIconsPath/apple.svg";
+  static String crown = "$baseSvgIconsPath/crown.svg";
 }

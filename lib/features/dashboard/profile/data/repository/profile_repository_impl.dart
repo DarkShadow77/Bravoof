@@ -123,6 +123,18 @@ class ProfileRepositoryImpl extends ProfileRepository {
     );
   }
 
+  Future<Either<String, String>> logUserHomeActivity() async {
+    return ApiService.instance!.invokeEdgeFunction<String>(
+      functionName: 'log-user-home-activity',
+      body: {
+        "platform": Platform.isAndroid ? "android" : "ios",
+        "device_id": await firebase.getDeviceId(),
+      },
+      fallbackErrorMessage: "Failed to Log User Home Activity",
+      onSuccess: (data) => "logged User Home Activity successfully",
+    );
+  }
+
   Future<Either<String, String>> logUserLoginActivity({
     required String eventType,
   }) async {

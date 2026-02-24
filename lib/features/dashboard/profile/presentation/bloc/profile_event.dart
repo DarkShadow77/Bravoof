@@ -31,6 +31,10 @@ class DeleteAccountEvent extends ProfileEvent {
   const DeleteAccountEvent({required this.reason});
 }
 
+class LogUserHomeActivityEvent extends ProfileEvent {
+  const LogUserHomeActivityEvent();
+}
+
 class LogUserLoginActivityEvent extends ProfileEvent {
   final String eventType;
   const LogUserLoginActivityEvent({required this.eventType});

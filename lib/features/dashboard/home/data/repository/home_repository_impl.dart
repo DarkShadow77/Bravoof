@@ -1,6 +1,5 @@
 import 'package:bravoo/features/dashboard/home/data/model/campaign_response.dart';
 import 'package:dartz/dartz.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../../core/services/api_service.dart';
 import '../../../profile/data/model/user_profile.dart';
@@ -11,8 +10,6 @@ import '../model/spotlight_model.dart';
 import 'home_repository.dart';
 
 class HomeRepositoryImpl extends HomeRepository {
-  final SupabaseClient supabase = Supabase.instance.client;
-
   Future<Either<String, List<CampaignResponseModel>>> fetchCampaigns() async {
     return ApiService.instance!.invokeEdgeFunction<List<CampaignResponseModel>>(
       functionName: 'fetch-campaigns',
@@ -34,6 +31,18 @@ class HomeRepositoryImpl extends HomeRepository {
       onSuccess: (data) {
         final campaign = data["data"] as List;
         return campaign.map((e) => DynamicCarouselModel.fromJson(e)).toList();
+      },
+    );
+  }
+
+  Future<Either<String, List<SpotlightModel>>> fetchSpotlights() async {
+    return ApiService.instance!.invokeEdgeFunction<List<SpotlightModel>>(
+      functionName: 'fetch-spotlights',
+      body: {},
+      fallbackErrorMessage: 'Failed to Retrieve Spotlight',
+      onSuccess: (data) {
+        final spotlight = data["data"] as List;
+        return spotlight.map((e) => SpotlightModel.fromJson(e)).toList();
       },
     );
   }

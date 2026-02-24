@@ -14,7 +14,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../../../app/view/widgets/loading/outer_loading.dart';
 import '../../../../../../utility/ui_tool_mix.dart';
@@ -41,8 +40,7 @@ class _RedeemTabState extends State<RedeemTab>
       child: Column(
         children: [
           SizedBox(height: 20.h),
-          ReferCampaign(transparent: true),
-
+          SizedBox(height: 240.h, child: ReferCampaign(transparent: true)),
           SizedBox(height: 20.h),
           // 💡 Info Box
           Padding(
@@ -215,20 +213,20 @@ class _RewardCardState extends State<RewardCard> with UIToolMixin {
         Navigator.of(context, rootNavigator: true).pop();
 
       context.read<ProfileBloc>().add(GetProfileEvent());
+      context.read<RedeemBloc>().add(LoadRedeemHistory());
 
-      final uri = Uri.tryParse(state.message);
-
-      if (uri == null) {
-        showMessage(
-          "Invalid gift card URL",
-          context,
-          color: Colors.white,
-          styleColor: Colors.black,
-          iconColor: Colors.red,
-          status: true,
-        );
-      } else
-        await launchUrl(uri, mode: LaunchMode.externalApplication);
+      showMessage(
+        state.message,
+        context,
+        color: Colors.white,
+        styleColor: Colors.black,
+      );
+      successDialog(
+        title: "Giftcard unlocked! 🎉",
+        subTitle: "Your Giftcard would be sent to your email once approved!",
+        mainBtnText: "Close",
+        mainBtnPressed: () => Navigator.of(context, rootNavigator: true).pop(),
+      );
     }
   }
 

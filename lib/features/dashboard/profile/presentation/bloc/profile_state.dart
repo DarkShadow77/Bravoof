@@ -6,6 +6,7 @@ enum ProfileType {
   updateCoverPic,
   updateLocation,
   deleteAccount,
+  logUserHomeActivity,
   logUserLoginActivity,
   logUserLogoActivity,
   logout,

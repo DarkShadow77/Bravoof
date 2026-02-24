@@ -2,6 +2,7 @@ part of 'home_cubit.dart';
 
 enum HomeType {
   getCampaign,
+  getSpotlights,
   getSpotlight,
   getExtraCard,
   getQuote,
@@ -14,6 +15,7 @@ class HomeState extends Equatable {
   final List<CampaignResponseModel> campaign;
   final List<DynamicCarouselModel> extraCard;
   final SpotlightModel spotlight;
+  final List<SpotlightModel> spotlights;
   final QuoteModel quote;
   final List<UserProfile> referrals;
   final LeaderboardResponseModel leaderboard;
@@ -22,6 +24,7 @@ class HomeState extends Equatable {
     required this.campaign,
     required this.extraCard,
     required this.spotlight,
+    required this.spotlights,
     required this.quote,
     required this.referrals,
     required this.leaderboard,
@@ -31,6 +34,7 @@ class HomeState extends Equatable {
     List<CampaignResponseModel>? campaign,
     List<DynamicCarouselModel>? extraCard,
     SpotlightModel? spotlight,
+    List<SpotlightModel>? spotlights,
     QuoteModel? quote,
     List<UserProfile>? referrals,
     LeaderboardResponseModel? leaderboard,
@@ -39,6 +43,7 @@ class HomeState extends Equatable {
       campaign: campaign ?? this.campaign,
       extraCard: extraCard ?? this.extraCard,
       spotlight: spotlight ?? this.spotlight,
+      spotlights: spotlights ?? this.spotlights,
       quote: quote ?? this.quote,
       referrals: referrals ?? this.referrals,
       leaderboard: leaderboard ?? this.leaderboard,
@@ -50,6 +55,7 @@ class HomeState extends Equatable {
     campaign,
     extraCard,
     spotlight,
+    spotlights,
     quote,
     referrals,
     leaderboard,
@@ -61,6 +67,7 @@ final class HomeInitialState extends HomeState {
     required super.campaign,
     required super.extraCard,
     required super.spotlight,
+    required super.spotlights,
     required super.quote,
     required super.referrals,
     required super.leaderboard,
@@ -77,6 +84,7 @@ final class HomeLoadingState extends HomeState {
     required super.campaign,
     required super.extraCard,
     required super.spotlight,
+    required super.spotlights,
     required super.quote,
     required super.referrals,
     required super.leaderboard,
@@ -95,6 +103,7 @@ final class HomeSuccessState extends HomeState {
     required super.campaign,
     required super.extraCard,
     required super.spotlight,
+    required super.spotlights,
     required super.quote,
     required super.referrals,
     required super.leaderboard,
@@ -113,6 +122,7 @@ final class HomeFailureState extends HomeState {
     required super.campaign,
     required super.extraCard,
     required super.spotlight,
+    required super.spotlights,
     required super.quote,
     required super.referrals,
     required super.leaderboard,
