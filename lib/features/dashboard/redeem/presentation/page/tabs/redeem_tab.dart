@@ -633,7 +633,7 @@ class JackpotCard extends StatelessWidget {
                       textAlign: TextAlign.center,
                       text: TextSpan(
                         text:
-                            "Invite 10 friends every month to unlock the jackpot",
+                            "Invite 5 friends every month to unlock a jackpot",
                         style: TextStyles.smallSemibold12(context, opacity: .7),
                       ),
                     ),
