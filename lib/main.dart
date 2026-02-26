@@ -19,6 +19,7 @@ import 'package:get/get.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:timezone/data/latest.dart' as tz_data;
 
 import 'app/theme/app_themes.dart';
 import 'core/constants/navigators/routeName.dart';
@@ -59,6 +60,7 @@ void main() async {
   await firebaseMessagingService.init(
     localNotificationService: localNotificationService,
   );
+
   //Initialize dotenv for environment variables
   await dotenv.load(fileName: ".env.development");
 
@@ -78,6 +80,9 @@ void main() async {
   HydratedBloc.storage = await HydratedStorage.build(
     storageDirectory: kIsWeb ? HydratedStorage.webStorageDirectory : storageDir,
   );
+
+  // Initialize timezone data
+  tz_data.initializeTimeZones();
 
   await initDI();
   await SessionManager().init();

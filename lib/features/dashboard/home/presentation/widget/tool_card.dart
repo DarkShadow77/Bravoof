@@ -22,6 +22,7 @@ import '../../../earn/presentation/widgets/referr_campaign.dart';
 import '../../../profile/presentation/bloc/profile_bloc.dart';
 import '../../data/model/dynamic_carousel_model.dart';
 import '../page/past_spotlight_page.dart';
+import 'campain_winner_card.dart';
 
 class ToolCardCarousel extends StatefulWidget {
   ToolCardCarousel({Key? key}) : super(key: key);
@@ -174,15 +175,27 @@ class _ToolCardCarouselState extends State<ToolCardCarousel> {
 
   List<Widget> _buildCarouselItems(HomeState state, ProfileState pState) {
     List<Widget> items = [];
-
+    // Active campaign
     if (state.campaign.isNotEmpty) {
       items.add(ReferCampaign());
     }
 
-    final dynamicCarouselItems = state.extraCard;
+    // Winner announcement (most recently ended campaign)
+    final endedCampaigns = state.campaign
+        .where((c) => c.campaignEndDate.isBefore(DateTime.now()))
+        .toList();
 
+    if (endedCampaigns.isNotEmpty) {
+      // Sort to get the most recent ended campaign
+      endedCampaigns.sort(
+        (a, b) => b.campaignEndDate.compareTo(a.campaignEndDate),
+      );
+      items.add(CampaignWinnerCard());
+    }
+
+    // Dynamic carousel items
+    final dynamicCarouselItems = state.extraCard;
     if (dynamicCarouselItems.isNotEmpty) {
-      // Add each backend item as a separate carousel slide
       for (var item in dynamicCarouselItems) {
         items.add(
           DynamicCarouselCard(item: item, userId: pState.profile.userId),
@@ -190,10 +203,12 @@ class _ToolCardCarouselState extends State<ToolCardCarousel> {
       }
     }
 
+    // Spotlight
     if (state.spotlight.name.isNotEmpty) {
       items.add(SpotlightCard());
     }
 
+    // Quote
     items.add(QuoteCard());
 
     return items;

@@ -99,8 +99,6 @@ class _ReferCampaignState extends State<ReferCampaign> {
 
         final textColor = hexToColor(campaign.textColor);
         final inverseTextColor = hexToColor(campaign.inverseTextColor);
-
-        final hasEnded = campaign.campaignEndDate.isBefore(DateTime.now());
         final bgColor = widget.transparent
             ? AppColors.white50
             : hexToColor(campaign.bgColor);
@@ -156,309 +154,243 @@ class _ReferCampaignState extends State<ReferCampaign> {
                         ),
                       ],
                     ),
-                    if (!hasEnded || widget.expanded) ...[
-                      Row(
-                        spacing: 10.w,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Expanded(
-                            child: RichText(
-                              text: TextSpan(
-                                text: campaign.title.toString(),
-                                style: TextStyles.bigTitleBold24(context)
-                                    .copyWith(
-                                      fontSize: 22.sp,
-                                      fontFamily: AppFonts.baloo2,
-                                      height: 1.2.sp,
-                                      color: !widget.transparent
-                                          ? hexToColor(campaign.cardTextColor)
-                                          : Color(0xFFAB7A7A),
-                                    ),
-                              ),
+                    Row(
+                      spacing: 10.w,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Expanded(
+                          child: RichText(
+                            text: TextSpan(
+                              text: campaign.title.toString(),
+                              style: TextStyles.bigTitleBold24(context)
+                                  .copyWith(
+                                    fontSize: 22.sp,
+                                    fontFamily: AppFonts.baloo2,
+                                    height: 1.2.sp,
+                                    color: !widget.transparent
+                                        ? hexToColor(campaign.cardTextColor)
+                                        : Color(0xFFAB7A7A),
+                                  ),
                             ),
                           ),
+                        ),
 
-                          CircleAvatar(
-                            radius: 45,
-                            backgroundColor: textColor.withValues(alpha: .05),
+                        CircleAvatar(
+                          radius: 45,
+                          backgroundColor: textColor.withValues(alpha: .05),
+                          child: CircleAvatar(
+                            radius: 40,
+                            backgroundColor: textColor.withValues(alpha: .30),
                             child: CircleAvatar(
-                              radius: 40,
-                              backgroundColor: textColor.withValues(alpha: .30),
-                              child: CircleAvatar(
-                                radius: 35,
-                                backgroundColor: widget.transparent
-                                    ? AppColors.redBrown20
-                                    : hexToColor(campaign.cardTextColor),
-                                child: CachedImageSize(
-                                  imageUrl: campaign.url,
-                                  width: 45,
-                                  height: 45,
-                                  fit: BoxFit.contain,
-                                  color: Colors.transparent,
-                                ),
+                              radius: 35,
+                              backgroundColor: widget.transparent
+                                  ? AppColors.redBrown20
+                                  : hexToColor(campaign.cardTextColor),
+                              child: CachedImageSize(
+                                imageUrl: campaign.url,
+                                width: 45,
+                                height: 45,
+                                fit: BoxFit.contain,
+                                color: Colors.transparent,
                               ),
                             ),
                           ),
-                        ],
-                      ),
-                      if (widget.expanded) ...[
-                        RichText(
-                          text: TextSpan(
-                            text:
-                                'Invite 2 friends to qualify. All qualifiers entered in the draw gets 50 coins each.',
-                            style: TextStyles.smallBold12(
-                              context,
-                            ).copyWith(color: textColor),
-                          ),
                         ),
-                        SizedBox(height: 5.h),
                       ],
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 12.w,
-                              vertical: 6.h,
-                            ),
-                            decoration: BoxDecoration(
-                              color: widget.expanded
-                                  ? null
-                                  : textColor.withValues(alpha: .8),
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(15.r),
-                                topRight: Radius.circular(15.r),
-                              ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: inverseTextColor.withValues(
-                                    alpha: .12,
-                                  ),
-                                  blurRadius: 6.r,
-                                  offset: Offset(0, 2),
-                                ),
-                              ],
-                            ),
-                            child: Countdown(
-                              controller: _timerController,
-                              seconds: differenceInSeconds,
-                              build: (BuildContext context, double time) {
-                                List<String> timeList = formattedTime2(time);
-                                if (widget.expanded) {
-                                  return Row(
-                                    spacing: 4.w,
-                                    mainAxisSize: MainAxisSize.min,
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      _timerBox2(timeList[0], "DAYS"),
-                                      timeColon(),
-                                      _timerBox2(timeList[1], "HRS"),
-                                      timeColon(),
-                                      _timerBox2(timeList[2], "MIN"),
-                                      timeColon(),
-                                      _timerBox2(timeList[3], "SEC"),
-                                    ],
-                                  );
-                                }
-                                return Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    RichText(
-                                      text: TextSpan(
-                                        text: 'Ends in ',
-                                        style: TextStyles.normalBold14(context)
-                                            .copyWith(
-                                              color: inverseTextColor,
-                                              fontSize: 13.sp,
-                                            ),
-                                      ),
-                                    ),
-                                    _timerBox('${timeList[0]} days'),
-                                    Icon(
-                                      Icons.more_vert,
-                                      size: 14.sp,
-                                      color: inverseTextColor,
-                                    ),
-                                    _timerBox('${timeList[1]}h'),
-                                    Icon(
-                                      Icons.more_vert,
-                                      size: 14.sp,
-                                      color: inverseTextColor,
-                                    ),
-                                    _timerBox('${timeList[2]}m'),
-                                    Icon(
-                                      Icons.more_vert,
-                                      size: 14.sp,
-                                      color: inverseTextColor,
-                                    ),
-                                    _timerBox('${timeList[3]}s'),
-                                  ],
-                                );
-                              },
-                            ),
-                          ),
-                          IconTextButton(
-                            height: 54,
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => BlocProvider<CampaignBloc>(
-                                    create: (_) =>
-                                        sl<CampaignBloc>(param1: campaign.id),
-                                    child: ReferralContestScreen(
-                                      campaign: campaign,
-                                    ),
-                                  ),
-                                ),
-                              );
-                            },
-                            color: textColor,
-                            textColor: inverseTextColor,
-                            text: differenceInSeconds <= 0
-                                ? "Draw Ended (See Winner)"
-                                : "Join the Draw",
-                          ),
-                        ],
-                      ),
-                      if (widget.expanded) ...[
-                        IconTextButton(
-                          height: 54,
-                          onPressed: () =>
-                              priceDetailsDialog(campaign: campaign),
-                          text: "See Prize Details",
-                          color: textColor.withValues(alpha: .16),
-                          textColor: textColor,
+                    ),
+                    if (widget.expanded) ...[
+                      RichText(
+                        text: TextSpan(
+                          text:
+                              'Invite 2 friends to qualify. All qualifiers entered in the draw gets 50 coins each.',
+                          style: TextStyles.smallBold12(
+                            context,
+                          ).copyWith(color: textColor),
                         ),
+                      ),
+                      SizedBox(height: 5.h),
+                    ],
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
                         Container(
-                          margin: EdgeInsets.symmetric(
-                            horizontal: 20.w,
-                            vertical: 4.h,
-                          ),
                           padding: EdgeInsets.symmetric(
                             horizontal: 12.w,
-                            vertical: 8.h,
+                            vertical: 6.h,
                           ),
                           decoration: BoxDecoration(
-                            color: textColor.withValues(alpha: .1),
-                            borderRadius: BorderRadius.circular(50.r),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            children: [
-                              avatar("1"),
-                              avatar("2"),
-                              avatar("3"),
-                              avatar("4"),
-                              avatar("5"),
-                              Container(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 8,
-                                  vertical: 4,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: textColor.withValues(alpha: .3),
-                                  borderRadius: BorderRadius.circular(50.r),
-                                ),
-                                child: Row(
-                                  children: [
-                                    Icon(
-                                      Icons.group,
-                                      color: textColor,
-                                      size: 15.sp,
-                                    ),
-                                    RichText(
-                                      text: TextSpan(
-                                        text: '+12',
-                                        style: TextStyles.smallSemibold12(
-                                          context,
-                                        ).copyWith(color: textColor),
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                            color: widget.expanded
+                                ? null
+                                : textColor.withValues(alpha: .8),
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(15.r),
+                              topRight: Radius.circular(15.r),
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: inverseTextColor.withValues(alpha: .12),
+                                blurRadius: 6.r,
+                                offset: Offset(0, 2),
                               ),
                             ],
                           ),
-                        ),
-                        RichText(
-                          textAlign: TextAlign.center,
-                          text: TextSpan(
-                            text:
-                                'Qualify by inviting 2 friends who sign up via your link.',
-                            style: TextStyles.cardSemibold10(
-                              context,
-                            ).copyWith(color: textColor.withValues(alpha: .5)),
+                          child: Countdown(
+                            controller: _timerController,
+                            seconds: differenceInSeconds,
+                            build: (BuildContext context, double time) {
+                              List<String> timeList = formattedTime2(time);
+                              if (widget.expanded) {
+                                return Row(
+                                  spacing: 4.w,
+                                  mainAxisSize: MainAxisSize.min,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    _timerBox2(timeList[0], "DAYS"),
+                                    timeColon(),
+                                    _timerBox2(timeList[1], "HRS"),
+                                    timeColon(),
+                                    _timerBox2(timeList[2], "MIN"),
+                                    timeColon(),
+                                    _timerBox2(timeList[3], "SEC"),
+                                  ],
+                                );
+                              }
+                              return Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  RichText(
+                                    text: TextSpan(
+                                      text: 'Ends in ',
+                                      style: TextStyles.normalBold14(context)
+                                          .copyWith(
+                                            color: inverseTextColor,
+                                            fontSize: 13.sp,
+                                          ),
+                                    ),
+                                  ),
+                                  _timerBox('${timeList[0]} days'),
+                                  Icon(
+                                    Icons.more_vert,
+                                    size: 14.sp,
+                                    color: inverseTextColor,
+                                  ),
+                                  _timerBox('${timeList[1]}h'),
+                                  Icon(
+                                    Icons.more_vert,
+                                    size: 14.sp,
+                                    color: inverseTextColor,
+                                  ),
+                                  _timerBox('${timeList[2]}m'),
+                                  Icon(
+                                    Icons.more_vert,
+                                    size: 14.sp,
+                                    color: inverseTextColor,
+                                  ),
+                                  _timerBox('${timeList[3]}s'),
+                                ],
+                              );
+                            },
                           ),
                         ),
+                        IconTextButton(
+                          height: 54,
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => BlocProvider<CampaignBloc>(
+                                  create: (_) =>
+                                      sl<CampaignBloc>(param1: campaign.id),
+                                  child: ReferralContestScreen(
+                                    campaign: campaign,
+                                  ),
+                                ),
+                              ),
+                            );
+                          },
+                          color: textColor,
+                          textColor: inverseTextColor,
+                          text: differenceInSeconds <= 0
+                              ? "Draw Ended (See Winner)"
+                              : "Join the Draw",
+                        ),
                       ],
-                    ] else ...[
-                      Expanded(
-                        child: Stack(
+                    ),
+                    if (widget.expanded) ...[
+                      IconTextButton(
+                        height: 54,
+                        onPressed: () => priceDetailsDialog(campaign: campaign),
+                        text: "See Prize Details",
+                        color: textColor.withValues(alpha: .16),
+                        textColor: textColor,
+                      ),
+                      Container(
+                        margin: EdgeInsets.symmetric(
+                          horizontal: 20.w,
+                          vertical: 4.h,
+                        ),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 12.w,
+                          vertical: 8.h,
+                        ),
+                        decoration: BoxDecoration(
+                          color: textColor.withValues(alpha: .1),
+                          borderRadius: BorderRadius.circular(50.r),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Positioned(
-                              left: 100.w,
-                              right: 0.w,
-                              top: 40.h,
-                              child: Image.asset(
-                                AssetsPngImages.one50,
-                                width: 72.w,
-                                height: 72.h,
-                                fit: BoxFit.contain,
+                            avatar("1"),
+                            avatar("2"),
+                            avatar("3"),
+                            avatar("4"),
+                            avatar("5"),
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 8,
+                                vertical: 4,
                               ),
-                            ),
-                            Positioned(
-                              left: 50.w,
-                              top: 30.h,
-                              child: CachedImageRadius(
-                                imageUrl: campaign.winnerProfileImage,
-                                size: 88,
-                                circle: true,
-                                fit: BoxFit.cover,
-                                color: Colors.transparent,
+                              decoration: BoxDecoration(
+                                color: textColor.withValues(alpha: .3),
+                                borderRadius: BorderRadius.circular(50.r),
                               ),
-                            ),
-                            Positioned(
-                              left: 0,
-                              right: 0,
-                              top: 05.h,
-                              child: CachedImageSize(
-                                imageUrl: campaign.url,
-                                width: 142.w,
-                                height: 110.h,
-                                color: Colors.transparent,
-                                fit: BoxFit.contain,
-                              ),
-                            ),
-                            Positioned(
-                              left: 0,
-                              right: 0,
-                              bottom: 15.h,
-                              child: Image.asset(
-                                AssetsPngImages.campaignWinner,
-                                width: 200.w,
-                                height: 116.h,
-                                fit: BoxFit.contain,
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    Icons.group,
+                                    color: textColor,
+                                    size: 15.sp,
+                                  ),
+                                  RichText(
+                                    text: TextSpan(
+                                      text: '+12',
+                                      style: TextStyles.smallSemibold12(
+                                        context,
+                                      ).copyWith(color: textColor),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ],
+                        ),
+                      ),
+                      RichText(
+                        textAlign: TextAlign.center,
+                        text: TextSpan(
+                          text:
+                              'Qualify by inviting 2 friends who sign up via your link.',
+                          style: TextStyles.cardSemibold10(
+                            context,
+                          ).copyWith(color: textColor.withValues(alpha: .5)),
                         ),
                       ),
                     ],
                   ],
                 ),
               ),
-              if (hasEnded)
-                Positioned.fill(
-                  child: Image.asset(
-                    AssetsPngImages.confetti,
-                    fit: BoxFit.contain,
-                    alignment: Alignment.topCenter,
-                  ),
-                ),
             ],
           ),
         );

@@ -16,7 +16,6 @@ import '../../../../dashboard/earn/data/models/mission_res.dart';
 import '../../../../dashboard/earn/presentation/pages/invite_earn.dart'
     hide MissionTile;
 import '../../../../dashboard/profile/presentation/bloc/profile_bloc.dart';
-import '../../data/bloc/mission_cubit.dart';
 import '../bloc/growth_mission_bloc.dart';
 
 class MissionCard extends StatefulWidget {
@@ -130,12 +129,9 @@ class MissionListTitle extends StatefulWidget {
 }
 
 class _MissionListTitleState extends State<MissionListTitle> with UIToolMixin {
-  late MissionCubit missionCubit;
-
   @override
   void initState() {
     super.initState();
-    missionCubit = MissionCubit();
   }
 
   @override

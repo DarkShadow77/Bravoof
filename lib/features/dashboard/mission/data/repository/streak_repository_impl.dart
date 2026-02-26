@@ -1,5 +1,4 @@
 import 'package:dartz/dartz.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:timezone/timezone.dart' as tz;
 
 import '../../../../../core/services/api_service.dart';
@@ -7,8 +6,6 @@ import '../model/streak_response.dart';
 import 'streak_repository.dart';
 
 class StreakRepositoryImpl extends StreakRepository {
-  final supabase = Supabase.instance.client;
-
   /// Fetch Streaks
   Future<Either<String, StreakResponse>> fetchStreak({
     required String userId,
