@@ -1,10 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:bravoo/features/dashboard/profile/data/model/user_profile.dart';
-import 'package:bravoo/session/session_manager.dart';
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -28,12 +26,6 @@ class ProfileRepositoryImpl extends ProfileRepository {
           .single();
 
       UserProfile userProfile = UserProfile.fromJson(response);
-
-      log("User Profile Res $response");
-      Logger().d("User Profile Res $response");
-
-      SessionManager().pointsVal = userProfile.totalPoints;
-      SessionManager().jackpotVal = userProfile.spins;
       return Right(userProfile);
     } catch (e) {
       return Left(e.toString());
@@ -69,8 +61,6 @@ class ProfileRepositoryImpl extends ProfileRepository {
     if (response.responseSuccessful == true) {
       final updatedUserProfile = response.responseBody!;
 
-      SessionManager().pointsVal = updatedUserProfile.totalPoints;
-      SessionManager().jackpotVal = updatedUserProfile.spins;
       return Right(updatedUserProfile);
     } else {
       return Left(response.responseMessage ?? "Failed to Update Profile");

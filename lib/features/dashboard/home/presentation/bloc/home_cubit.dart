@@ -27,8 +27,13 @@ class HomeCubit extends Cubit<HomeState> {
           referrals: [],
           quote: QuoteModel.empty(),
           leaderboard: LeaderboardResponseModel.empty(),
+          updateLater: false,
         ),
       );
+
+  void updateLater(bool updateLater) async {
+    emit(state.copyWith(updateLater: updateLater));
+  }
 
   void fetchCampaigns() async {
     if (state.campaign.isEmpty)
@@ -42,6 +47,7 @@ class HomeCubit extends Cubit<HomeState> {
           quote: state.quote,
           referrals: state.referrals,
           leaderboard: state.leaderboard,
+          updateLater: state.updateLater,
         ),
       );
 
@@ -59,6 +65,7 @@ class HomeCubit extends Cubit<HomeState> {
           quote: state.quote,
           referrals: state.referrals,
           leaderboard: state.leaderboard,
+          updateLater: state.updateLater,
         ),
       ),
       (campaign) {
@@ -74,6 +81,7 @@ class HomeCubit extends Cubit<HomeState> {
             quote: state.quote,
             referrals: state.referrals,
             leaderboard: state.leaderboard,
+            updateLater: state.updateLater,
           ),
         );
       },
@@ -91,6 +99,7 @@ class HomeCubit extends Cubit<HomeState> {
         quote: state.quote,
         referrals: state.referrals,
         leaderboard: state.leaderboard,
+        updateLater: state.updateLater,
       ),
     );
 
@@ -108,6 +117,7 @@ class HomeCubit extends Cubit<HomeState> {
           quote: state.quote,
           referrals: state.referrals,
           leaderboard: state.leaderboard,
+          updateLater: state.updateLater,
         ),
       ),
       (extraCard) {
@@ -123,6 +133,7 @@ class HomeCubit extends Cubit<HomeState> {
             quote: state.quote,
             referrals: state.referrals,
             leaderboard: state.leaderboard,
+            updateLater: state.updateLater,
           ),
         );
       },
@@ -141,6 +152,7 @@ class HomeCubit extends Cubit<HomeState> {
           quote: state.quote,
           referrals: state.referrals,
           leaderboard: state.leaderboard,
+          updateLater: state.updateLater,
         ),
       );
 
@@ -158,6 +170,7 @@ class HomeCubit extends Cubit<HomeState> {
           quote: state.quote,
           referrals: state.referrals,
           leaderboard: state.leaderboard,
+          updateLater: state.updateLater,
         ),
       ),
       (spotlight) {
@@ -173,6 +186,7 @@ class HomeCubit extends Cubit<HomeState> {
             quote: state.quote,
             referrals: state.referrals,
             leaderboard: state.leaderboard,
+            updateLater: state.updateLater,
           ),
         );
       },
@@ -191,6 +205,7 @@ class HomeCubit extends Cubit<HomeState> {
           quote: state.quote,
           referrals: state.referrals,
           leaderboard: state.leaderboard,
+          updateLater: state.updateLater,
         ),
       );
 
@@ -208,6 +223,7 @@ class HomeCubit extends Cubit<HomeState> {
           quote: state.quote,
           referrals: state.referrals,
           leaderboard: state.leaderboard,
+          updateLater: state.updateLater,
         ),
       ),
       (spotlights) {
@@ -223,6 +239,7 @@ class HomeCubit extends Cubit<HomeState> {
             quote: state.quote,
             referrals: state.referrals,
             leaderboard: state.leaderboard,
+            updateLater: state.updateLater,
           ),
         );
       },
@@ -240,6 +257,7 @@ class HomeCubit extends Cubit<HomeState> {
         quote: state.quote,
         referrals: state.referrals,
         leaderboard: state.leaderboard,
+        updateLater: state.updateLater,
       ),
     );
 
@@ -257,6 +275,7 @@ class HomeCubit extends Cubit<HomeState> {
           quote: state.quote,
           referrals: state.referrals,
           leaderboard: state.leaderboard,
+          updateLater: state.updateLater,
         ),
       ),
       (quote) {
@@ -272,6 +291,7 @@ class HomeCubit extends Cubit<HomeState> {
             spotlights: state.spotlights,
             referrals: state.referrals,
             leaderboard: state.leaderboard,
+            updateLater: state.updateLater,
           ),
         );
       },
@@ -300,6 +320,7 @@ class HomeCubit extends Cubit<HomeState> {
         quote: state.quote,
         referrals: state.referrals,
         leaderboard: state.leaderboard,
+        updateLater: state.updateLater,
       ),
     );
 
@@ -319,6 +340,7 @@ class HomeCubit extends Cubit<HomeState> {
           quote: state.quote,
           referrals: state.referrals,
           leaderboard: state.leaderboard,
+          updateLater: state.updateLater,
         ),
       ),
       (leaderboard) {
@@ -333,6 +355,7 @@ class HomeCubit extends Cubit<HomeState> {
             spotlight: state.spotlight,
             spotlights: state.spotlights,
             referrals: state.referrals,
+            updateLater: state.updateLater,
             leaderboard: leaderboard,
           ),
         );

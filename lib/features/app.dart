@@ -8,6 +8,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../app/view/page/maintenance_page.dart';
 import '../core/model/version_model.dart';
 import '../core/services/version_service.dart';
+import 'dashboard/home/presentation/bloc/home_cubit.dart';
 import 'dashboard/nav_bar.dart';
 import 'dashboard/profile/presentation/bloc/profile_bloc.dart';
 import 'onbaording/page/onbaording_screen.dart';
@@ -37,7 +38,7 @@ class _AppState extends State<App> {
       final event = data.event;
 
       if (event == AuthChangeEvent.initialSession) {
-        _checkVersion(true);
+        _checkVersion();
       }
 
       if (event == AuthChangeEvent.signedIn) {
@@ -62,7 +63,7 @@ class _AppState extends State<App> {
     });
   }
 
-  Future<void> _checkVersion([bool isInit = false]) async {
+  Future<void> _checkVersion() async {
     final versionService = VersionCheckService();
     final result = await versionService.checkVersion();
 
@@ -75,8 +76,8 @@ class _AppState extends State<App> {
         break;
 
       case VersionStatus.updateAvailable:
-        if (isInit) break;
-        optionalUpdateModal(result: result, service: versionService);
+        if (!context.read<HomeCubit>().state.updateLater)
+          optionalUpdateModal(result: result, service: versionService);
         break;
 
       case VersionStatus.maintenance:

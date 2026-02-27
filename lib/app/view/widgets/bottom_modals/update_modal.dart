@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
@@ -12,6 +13,7 @@ import '../../../../../core/constants/app_colors.dart';
 import '../../../../../utility/ui_tool_mix.dart';
 import '../../../../core/model/version_model.dart';
 import '../../../../core/services/version_service.dart';
+import '../../../../features/dashboard/home/presentation/bloc/home_cubit.dart';
 
 Future optionalUpdateModal({
   required VersionCheckResult result,
@@ -112,7 +114,10 @@ class _OptionalUpdateModalState extends State<OptionalUpdateModal> {
             SizedBox(height: 16.h),
             IconTextButton(
               height: 40,
-              onPressed: () => Navigator.pop(context),
+              onPressed: () {
+                context.read<HomeCubit>().updateLater(true);
+                Navigator.pop(context);
+              },
               text: "Later",
               color: Colors.transparent,
               textColor: AppColors.white,

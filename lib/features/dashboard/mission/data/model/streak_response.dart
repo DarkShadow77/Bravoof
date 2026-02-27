@@ -4,6 +4,9 @@ class StreakResponse {
   final int currentStreak;
   final DateTime? lastClaimedDate;
   final List<DateTime> history;
+  final int? coinsAwarded;
+  final bool? isMilestone;
+  final String? message;
 
   StreakResponse({
     this.id,
@@ -11,6 +14,9 @@ class StreakResponse {
     required this.currentStreak,
     this.lastClaimedDate,
     required this.history,
+    this.coinsAwarded,
+    this.isMilestone,
+    this.message,
   });
 
   factory StreakResponse.fromJson(Map<String, dynamic> json) {
@@ -26,6 +32,9 @@ class StreakResponse {
               ?.map((e) => DateTime.parse(e.toString()))
               .toList() ??
           [],
+      coinsAwarded: json['coinsAwarded'] ?? 0,
+      isMilestone: json['isMilestone'] ?? false,
+      message: json['message'] ?? "",
     );
   }
 
@@ -36,6 +45,9 @@ class StreakResponse {
       currentStreak: 0,
       lastClaimedDate: null,
       history: const [],
+      coinsAwarded: 0,
+      isMilestone: false,
+      message: "",
     );
   }
 

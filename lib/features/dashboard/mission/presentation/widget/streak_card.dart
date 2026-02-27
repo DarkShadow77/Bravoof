@@ -40,6 +40,7 @@ class _StreakCardState extends State<StreakCard> with UIToolMixin {
     userId: '',
     currentStreak: 0,
     history: [],
+    coinsAwarded: 0,
   );
 
   @override
@@ -116,8 +117,10 @@ class _StreakCardState extends State<StreakCard> with UIToolMixin {
           borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
         ),
         builder: (_) => CustomSuccess(
-          title: "You earned 5 coins! ✨",
-          bodyText: getStreakQuote(streaks.currentStreak),
+          title: "You earned ${state.streak.coinsAwarded} coins! ✨",
+          bodyText: state.streak.isMilestone == true
+              ? state.streak.message
+              : getStreakQuote(streaks.currentStreak),
           b_text1: "Done",
         ),
       );

@@ -19,6 +19,7 @@ class HomeState extends Equatable {
   final QuoteModel quote;
   final List<UserProfile> referrals;
   final LeaderboardResponseModel leaderboard;
+  final bool updateLater;
 
   HomeState({
     required this.campaign,
@@ -28,6 +29,7 @@ class HomeState extends Equatable {
     required this.quote,
     required this.referrals,
     required this.leaderboard,
+    required this.updateLater,
   });
 
   HomeState copyWith({
@@ -38,6 +40,7 @@ class HomeState extends Equatable {
     QuoteModel? quote,
     List<UserProfile>? referrals,
     LeaderboardResponseModel? leaderboard,
+    bool? updateLater,
   }) {
     return HomeState(
       campaign: campaign ?? this.campaign,
@@ -47,6 +50,7 @@ class HomeState extends Equatable {
       quote: quote ?? this.quote,
       referrals: referrals ?? this.referrals,
       leaderboard: leaderboard ?? this.leaderboard,
+      updateLater: updateLater ?? this.updateLater,
     );
   }
 
@@ -59,6 +63,7 @@ class HomeState extends Equatable {
     quote,
     referrals,
     leaderboard,
+    updateLater,
   ];
 }
 
@@ -71,6 +76,7 @@ final class HomeInitialState extends HomeState {
     required super.quote,
     required super.referrals,
     required super.leaderboard,
+    required super.updateLater,
   });
 
   @override
@@ -88,6 +94,7 @@ final class HomeLoadingState extends HomeState {
     required super.quote,
     required super.referrals,
     required super.leaderboard,
+    required super.updateLater,
   });
 
   @override
@@ -107,6 +114,7 @@ final class HomeSuccessState extends HomeState {
     required super.quote,
     required super.referrals,
     required super.leaderboard,
+    required super.updateLater,
   });
 
   @override
@@ -126,6 +134,7 @@ final class HomeFailureState extends HomeState {
     required super.quote,
     required super.referrals,
     required super.leaderboard,
+    required super.updateLater,
   });
 
   @override

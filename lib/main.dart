@@ -19,7 +19,7 @@ import 'package:get/get.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:timezone/data/latest.dart' as tz_data;
+import 'package:timezone/data/latest_all.dart' as tz_data;
 
 import 'app/theme/app_themes.dart';
 import 'core/constants/navigators/routeName.dart';
