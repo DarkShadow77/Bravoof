@@ -6,6 +6,7 @@ import 'package:bravoo/features/common/flowva_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../../core/constants/app_colors.dart';
@@ -264,12 +265,12 @@ class LeaderboardPage extends StatelessWidget {
         spacing: 8.w,
         children: [
           Container(
-            width: 40.w,
+            width: 30.w,
             child: Center(
               child: RichText(
                 text: TextSpan(
                   text: "$rank",
-                  style: TextStyles.titleBold20(context),
+                  style: TextStyles.bodyBold16(context),
                 ),
               ),
             ),
@@ -290,7 +291,8 @@ class LeaderboardPage extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   text: TextSpan(
-                    text: "${leaderboard.name} ${isUser ? "(You)" : ""}",
+                    text:
+                        "${leaderboard.name.capitalize} ${isUser ? "(You)" : ""}",
                     style: TextStyles.smallSemibold12(context),
                   ),
                 ),
@@ -494,7 +496,7 @@ class Top3Widget extends StatelessWidget {
             if (leaderboardDetails != null) ...[
               RichText(
                 text: TextSpan(
-                  text: leaderboardDetails?.name ?? "--",
+                  text: leaderboardDetails?.name.capitalize ?? "--",
                   style: TextStyles.smallRegular12(context).copyWith(
                     color: AppColors.white,
                     fontWeight: isFirst ? FontWeight.bold : null,
