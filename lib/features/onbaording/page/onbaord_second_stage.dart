@@ -123,9 +123,6 @@ class _OnboardSecondStageState extends State<OnboardSecondStage>
         );
       else {
         try {
-          context.read<AuthBloc>().add(
-            SendOtpEvent(email: widget.data['email']),
-          );
           final profilePic = selectedAvatar != null
               ? await assetToFile(selectedToConvert!)
               : pickedImage;
@@ -143,6 +140,9 @@ class _OnboardSecondStageState extends State<OnboardSecondStage>
                 },
               ),
             ),
+          );
+          context.read<AuthBloc>().add(
+            SendOtpEvent(email: widget.data['email']),
           );
         } catch (e) {
           log("Error in _proceedToOnboard: $e");
