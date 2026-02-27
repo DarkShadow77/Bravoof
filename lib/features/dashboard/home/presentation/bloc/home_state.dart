@@ -8,6 +8,7 @@ enum HomeType {
   getQuote,
   getReferrals,
   getLeaderboard,
+  getHomeMessage,
 }
 
 @immutable
@@ -19,6 +20,7 @@ class HomeState extends Equatable {
   final QuoteModel quote;
   final List<UserProfile> referrals;
   final LeaderboardResponseModel leaderboard;
+  final HomeMessageModel homeMessage;
   final bool updateLater;
 
   HomeState({
@@ -29,6 +31,7 @@ class HomeState extends Equatable {
     required this.quote,
     required this.referrals,
     required this.leaderboard,
+    required this.homeMessage,
     required this.updateLater,
   });
 
@@ -40,6 +43,7 @@ class HomeState extends Equatable {
     QuoteModel? quote,
     List<UserProfile>? referrals,
     LeaderboardResponseModel? leaderboard,
+    HomeMessageModel? homeMessage,
     bool? updateLater,
   }) {
     return HomeState(
@@ -50,6 +54,7 @@ class HomeState extends Equatable {
       quote: quote ?? this.quote,
       referrals: referrals ?? this.referrals,
       leaderboard: leaderboard ?? this.leaderboard,
+      homeMessage: homeMessage ?? this.homeMessage,
       updateLater: updateLater ?? this.updateLater,
     );
   }
@@ -63,6 +68,7 @@ class HomeState extends Equatable {
     quote,
     referrals,
     leaderboard,
+    homeMessage,
     updateLater,
   ];
 }
@@ -76,6 +82,7 @@ final class HomeInitialState extends HomeState {
     required super.quote,
     required super.referrals,
     required super.leaderboard,
+    required super.homeMessage,
     required super.updateLater,
   });
 
@@ -94,6 +101,7 @@ final class HomeLoadingState extends HomeState {
     required super.quote,
     required super.referrals,
     required super.leaderboard,
+    required super.homeMessage,
     required super.updateLater,
   });
 
@@ -114,6 +122,7 @@ final class HomeSuccessState extends HomeState {
     required super.quote,
     required super.referrals,
     required super.leaderboard,
+    required super.homeMessage,
     required super.updateLater,
   });
 
@@ -134,6 +143,7 @@ final class HomeFailureState extends HomeState {
     required super.quote,
     required super.referrals,
     required super.leaderboard,
+    required super.homeMessage,
     required super.updateLater,
   });
 

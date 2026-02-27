@@ -10,10 +10,12 @@ import 'package:bravoo/features/dashboard/profile/presentation/pages/profile_pag
 import 'package:bravoo/session/session_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../main.dart';
@@ -84,6 +86,8 @@ class _FlowvaHomePageState extends State<FlowvaHomePage>
     context.read<HomeCubit>().fetchQuote();
     context.read<HomeCubit>().fetchLeaderboard();
     context.read<HomeCubit>().getUserReferrals();
+    context.read<HomeCubit>().fetchHomeMessage();
+    context.read<HomeCubit>().fetchExtraHomeCard();
 
     // Refresh notifications
     context.read<NotificationBloc>().add(LoadNotifications());
@@ -212,7 +216,7 @@ class _FlowvaHomePageState extends State<FlowvaHomePage>
                               SizedBox(height: 18.h),
                               if (SessionManager().firstTimeUserVal ==
                                   "YES") ...[
-                                InviteFriendContainer(
+                                MessageContainer(
                                   onTap: () {
                                     setState(() {
                                       SessionManager().firstTimeUserVal = "NO";
@@ -346,61 +350,101 @@ class _FlowvaHomePageState extends State<FlowvaHomePage>
   }
 }
 
-class InviteFriendContainer extends StatelessWidget {
-  const InviteFriendContainer({super.key, required this.onTap});
+class MessageContainer extends StatelessWidget {
+  const MessageContainer({super.key, required this.onTap});
 
   final VoidCallback onTap;
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: 16.w),
-      padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 16.w),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16.r),
-      ),
-      child: Column(
-        spacing: 4.h,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return BlocBuilder<HomeCubit, HomeState>(
+      builder: (context, state) {
+        final homeMessage = state.homeMessage;
+        if (homeMessage.title.isEmpty) {
+          return SizedBox();
+        }
+        return Container(
+          margin: EdgeInsets.symmetric(horizontal: 16.w),
+          padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 16.w),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                hexToColor(homeMessage.gradientColor.start),
+                hexToColor(homeMessage.gradientColor.end),
+              ],
+              begin: Alignment.bottomCenter,
+              end: Alignment.topCenter,
+            ),
+            borderRadius: BorderRadius.circular(16.r),
+          ),
+          child: Column(
+            spacing: 4.h,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Expanded(
-                child: RichText(
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  text: TextSpan(
-                    text: "Invite your friends to play with you",
-                    style: TextStyles.normalBold14(context),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: RichText(
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      text: TextSpan(
+                        text: homeMessage.title,
+                        style: TextStyles.normalBold14(
+                          context,
+                        ).copyWith(color: hexToColor(homeMessage.textColor)),
+                      ),
+                    ),
                   ),
-                ),
+                  GestureDetector(
+                    onTap: onTap,
+                    behavior: HitTestBehavior.opaque,
+                    child: SvgPicture.asset(
+                      AssetsSvgIcons.close,
+                      width: 14.r,
+                      height: 14.r,
+                      fit: BoxFit.contain,
+                      colorFilter: ColorFilter.mode(
+                        hexToColor(homeMessage.textColor),
+                        BlendMode.srcIn,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              GestureDetector(
-                onTap: onTap,
-                behavior: HitTestBehavior.opaque,
-                child: SvgPicture.asset(
-                  AssetsSvgIcons.close,
-                  width: 14.r,
-                  height: 14.r,
-                  fit: BoxFit.contain,
+              MarkdownBody(
+                data: homeMessage.message,
+                onTapLink: (text, href, title) async {
+                  if (href != null) {
+                    final uri = Uri.parse(href);
+                    if (await canLaunchUrl(uri)) {
+                      await launchUrl(
+                        uri,
+                        mode: LaunchMode.externalApplication,
+                      );
+                    }
+                  }
+                },
+                styleSheet: MarkdownStyleSheet(
+                  a: TextStyle(
+                    color: AppColors.primary,
+                    decoration: TextDecoration.underline,
+                  ),
+                  p: TextStyles.smallMedium12(context).copyWith(
+                    color: hexToColor(
+                      homeMessage.textColor,
+                    ).withValues(alpha: .65),
+                  ),
+                  strong: TextStyles.smallBold12(context).copyWith(
+                    color: hexToColor(
+                      homeMessage.textColor,
+                    ).withValues(alpha: .65),
+                  ),
                 ),
               ),
             ],
           ),
-          RichText(
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            text: TextSpan(
-              text:
-                  "Get ${formatAmount(1000)} coins when you bring in your first 10 friends.",
-              style: TextStyles.smallMedium12(
-                context,
-              ).copyWith(color: AppColors.grey550),
-            ),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

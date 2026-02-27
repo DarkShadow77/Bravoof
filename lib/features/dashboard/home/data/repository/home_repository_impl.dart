@@ -4,6 +4,7 @@ import 'package:dartz/dartz.dart';
 import '../../../../../core/services/api_service.dart';
 import '../../../profile/data/model/user_profile.dart';
 import '../model/dynamic_carousel_model.dart';
+import '../model/home_message_model.dart';
 import '../model/leaderboard_response_model.dart';
 import '../model/quote_model.dart';
 import '../model/spotlight_model.dart';
@@ -53,6 +54,15 @@ class HomeRepositoryImpl extends HomeRepository {
       body: {},
       fallbackErrorMessage: 'Failed to Retrieve Spotlight',
       onSuccess: (data) => SpotlightModel.fromJson(data["data"]),
+    );
+  }
+
+  Future<Either<String, HomeMessageModel>> fetchHomeMessage() async {
+    return ApiService.instance!.invokeEdgeFunction<HomeMessageModel>(
+      functionName: 'fetch-home-message',
+      body: {},
+      fallbackErrorMessage: 'Failed to Retrieve Home Message',
+      onSuccess: (data) => HomeMessageModel.fromJson(data["data"]),
     );
   }
 

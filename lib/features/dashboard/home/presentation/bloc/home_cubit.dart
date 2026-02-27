@@ -10,6 +10,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../profile/data/model/user_profile.dart';
 import '../../data/model/dynamic_carousel_model.dart';
+import '../../data/model/home_message_model.dart';
 import '../../data/model/quote_model.dart';
 
 part 'home_state.dart';
@@ -27,6 +28,7 @@ class HomeCubit extends Cubit<HomeState> {
           referrals: [],
           quote: QuoteModel.empty(),
           leaderboard: LeaderboardResponseModel.empty(),
+          homeMessage: HomeMessageModel.empty(),
           updateLater: false,
         ),
       );
@@ -47,6 +49,7 @@ class HomeCubit extends Cubit<HomeState> {
           quote: state.quote,
           referrals: state.referrals,
           leaderboard: state.leaderboard,
+          homeMessage: state.homeMessage,
           updateLater: state.updateLater,
         ),
       );
@@ -65,6 +68,7 @@ class HomeCubit extends Cubit<HomeState> {
           quote: state.quote,
           referrals: state.referrals,
           leaderboard: state.leaderboard,
+          homeMessage: state.homeMessage,
           updateLater: state.updateLater,
         ),
       ),
@@ -81,6 +85,7 @@ class HomeCubit extends Cubit<HomeState> {
             quote: state.quote,
             referrals: state.referrals,
             leaderboard: state.leaderboard,
+            homeMessage: state.homeMessage,
             updateLater: state.updateLater,
           ),
         );
@@ -99,6 +104,7 @@ class HomeCubit extends Cubit<HomeState> {
         quote: state.quote,
         referrals: state.referrals,
         leaderboard: state.leaderboard,
+        homeMessage: state.homeMessage,
         updateLater: state.updateLater,
       ),
     );
@@ -117,6 +123,7 @@ class HomeCubit extends Cubit<HomeState> {
           quote: state.quote,
           referrals: state.referrals,
           leaderboard: state.leaderboard,
+          homeMessage: state.homeMessage,
           updateLater: state.updateLater,
         ),
       ),
@@ -133,6 +140,7 @@ class HomeCubit extends Cubit<HomeState> {
             quote: state.quote,
             referrals: state.referrals,
             leaderboard: state.leaderboard,
+            homeMessage: state.homeMessage,
             updateLater: state.updateLater,
           ),
         );
@@ -152,6 +160,7 @@ class HomeCubit extends Cubit<HomeState> {
           quote: state.quote,
           referrals: state.referrals,
           leaderboard: state.leaderboard,
+          homeMessage: state.homeMessage,
           updateLater: state.updateLater,
         ),
       );
@@ -170,6 +179,7 @@ class HomeCubit extends Cubit<HomeState> {
           quote: state.quote,
           referrals: state.referrals,
           leaderboard: state.leaderboard,
+          homeMessage: state.homeMessage,
           updateLater: state.updateLater,
         ),
       ),
@@ -186,6 +196,7 @@ class HomeCubit extends Cubit<HomeState> {
             quote: state.quote,
             referrals: state.referrals,
             leaderboard: state.leaderboard,
+            homeMessage: state.homeMessage,
             updateLater: state.updateLater,
           ),
         );
@@ -205,6 +216,7 @@ class HomeCubit extends Cubit<HomeState> {
           quote: state.quote,
           referrals: state.referrals,
           leaderboard: state.leaderboard,
+          homeMessage: state.homeMessage,
           updateLater: state.updateLater,
         ),
       );
@@ -223,6 +235,7 @@ class HomeCubit extends Cubit<HomeState> {
           quote: state.quote,
           referrals: state.referrals,
           leaderboard: state.leaderboard,
+          homeMessage: state.homeMessage,
           updateLater: state.updateLater,
         ),
       ),
@@ -239,6 +252,62 @@ class HomeCubit extends Cubit<HomeState> {
             quote: state.quote,
             referrals: state.referrals,
             leaderboard: state.leaderboard,
+            homeMessage: state.homeMessage,
+            updateLater: state.updateLater,
+          ),
+        );
+      },
+    );
+  }
+
+  void fetchHomeMessage() async {
+    emit(
+      HomeLoadingState(
+        type: HomeType.getSpotlights,
+        campaign: state.campaign,
+        extraCard: state.extraCard,
+        spotlight: state.spotlight,
+        spotlights: state.spotlights,
+        quote: state.quote,
+        referrals: state.referrals,
+        leaderboard: state.leaderboard,
+        homeMessage: state.homeMessage,
+        updateLater: state.updateLater,
+      ),
+    );
+
+    final either = await homeRepository.fetchHomeMessage();
+
+    either.fold(
+      (failure) => emit(
+        HomeFailureState(
+          type: HomeType.getSpotlights,
+          message: failure.toString(),
+          campaign: state.campaign,
+          extraCard: state.extraCard,
+          spotlight: state.spotlight,
+          spotlights: state.spotlights,
+          quote: state.quote,
+          referrals: state.referrals,
+          leaderboard: state.leaderboard,
+          homeMessage: state.homeMessage,
+          updateLater: state.updateLater,
+        ),
+      ),
+      (homeMessage) {
+        emit(state.copyWith(homeMessage: homeMessage));
+        emit(
+          HomeSuccessState(
+            type: HomeType.getSpotlights,
+            message: "Spotlight Got Successfully",
+            campaign: state.campaign,
+            extraCard: state.extraCard,
+            spotlights: state.spotlights,
+            spotlight: state.spotlight,
+            quote: state.quote,
+            referrals: state.referrals,
+            leaderboard: state.leaderboard,
+            homeMessage: homeMessage,
             updateLater: state.updateLater,
           ),
         );
@@ -257,6 +326,7 @@ class HomeCubit extends Cubit<HomeState> {
         quote: state.quote,
         referrals: state.referrals,
         leaderboard: state.leaderboard,
+        homeMessage: state.homeMessage,
         updateLater: state.updateLater,
       ),
     );
@@ -275,6 +345,7 @@ class HomeCubit extends Cubit<HomeState> {
           quote: state.quote,
           referrals: state.referrals,
           leaderboard: state.leaderboard,
+          homeMessage: state.homeMessage,
           updateLater: state.updateLater,
         ),
       ),
@@ -291,6 +362,7 @@ class HomeCubit extends Cubit<HomeState> {
             spotlights: state.spotlights,
             referrals: state.referrals,
             leaderboard: state.leaderboard,
+            homeMessage: state.homeMessage,
             updateLater: state.updateLater,
           ),
         );
@@ -320,6 +392,7 @@ class HomeCubit extends Cubit<HomeState> {
         quote: state.quote,
         referrals: state.referrals,
         leaderboard: state.leaderboard,
+        homeMessage: state.homeMessage,
         updateLater: state.updateLater,
       ),
     );
@@ -340,6 +413,7 @@ class HomeCubit extends Cubit<HomeState> {
           quote: state.quote,
           referrals: state.referrals,
           leaderboard: state.leaderboard,
+          homeMessage: state.homeMessage,
           updateLater: state.updateLater,
         ),
       ),
@@ -356,6 +430,7 @@ class HomeCubit extends Cubit<HomeState> {
             spotlights: state.spotlights,
             referrals: state.referrals,
             updateLater: state.updateLater,
+            homeMessage: state.homeMessage,
             leaderboard: leaderboard,
           ),
         );
