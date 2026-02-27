@@ -122,25 +122,36 @@ class _OnboardSecondStageState extends State<OnboardSecondStage>
           status: true,
         );
       else {
-        context.read<AuthBloc>().add(SendOtpEvent(email: widget.data['email']));
-        final profilePic = selectedAvatar != null
-            ? await assetToFile(selectedToConvert!)
-            : pickedImage;
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => VerifyOtpPage(
-              data: {
-                "name": _usernameController.text,
-                "email": widget.data['email'],
-                "referral_code": widget.data['referral_code'],
-                "pass": widget.data['pass'],
-                "goals": goals,
-                "profilePic": profilePic,
-              },
+        try {
+          context.read<AuthBloc>().add(
+            SendOtpEvent(email: widget.data['email']),
+          );
+          final profilePic = selectedAvatar != null
+              ? await assetToFile(selectedToConvert!)
+              : pickedImage;
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => VerifyOtpPage(
+                data: {
+                  "name": _usernameController.text,
+                  "email": widget.data['email'],
+                  "referral_code": widget.data['referral_code'],
+                  "pass": widget.data['pass'],
+                  "goals": goals,
+                  "profilePic": profilePic,
+                },
+              ),
             ),
-          ),
-        );
+          );
+        } catch (e) {
+          log("Error in _proceedToOnboard: $e");
+          showMessage(
+            "Something went wrong, please try again",
+            context,
+            status: true,
+          );
+        }
       }
     } else {
       _pageController.nextPage(
