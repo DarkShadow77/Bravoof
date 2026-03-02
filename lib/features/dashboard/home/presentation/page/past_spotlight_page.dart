@@ -187,7 +187,7 @@ class _PastSpotlightPageState extends State<PastSpotlightPage> {
                                               maxLines: 1,
                                               overflow: TextOverflow.ellipsis,
                                               text: TextSpan(
-                                                text: pastSpotlight.name,
+                                                text: pastSpotlight.name.capitalize,
                                                 style:
                                                     TextStyles.smallSemibold12(
                                                       context,

@@ -13,6 +13,7 @@ class CampaignResponseModel {
     required this.winnerProfileImage,
     required this.campaignEndDate,
     required this.claimed,
+    required this.isDelivery,
     required this.prizeDetails,
     required this.bgColor,
     required this.endBgColor,
@@ -34,6 +35,7 @@ class CampaignResponseModel {
   String winnerProfileImage;
   DateTime campaignEndDate;
   bool claimed;
+  bool isDelivery;
   String prizeDetails;
   String bgColor;
   String endBgColor;
@@ -60,6 +62,7 @@ class CampaignResponseModel {
         json['campaign_end_date'] ?? DateTime.now(),
       ),
       claimed: json['claimed'] ?? false,
+      isDelivery: json['is_delivery'] ?? false,
       prizeDetails: json['prize_details'] ?? "",
       bgColor: json['bg_color'] ?? '#ffffff',
       endBgColor: json['end_bg_color'] ?? '#ffffff',
@@ -84,6 +87,7 @@ class CampaignResponseModel {
       winnerProfileImage: '',
       campaignEndDate: DateTime.now(),
       claimed: false,
+      isDelivery: false,
       prizeDetails: "",
       bgColor: '#ffffff',
       endBgColor: '#ffffff',

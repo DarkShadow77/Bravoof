@@ -1,8 +1,11 @@
+import 'package:bravoo/app/styles/text_styles.dart';
 import 'package:bravoo/app/view/widgets/cached_image_widget.dart';
+import 'package:bravoo/core/constants/app_assets.dart';
 import 'package:bravoo/features/common/flowva_button.dart';
 import 'package:bravoo/features/dashboard/home/data/model/leaderboard_response_model.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 
 import '../../../../../core/constants/app_colors.dart';
 import '../page/leaderboard_screen.dart';
@@ -38,32 +41,32 @@ class TopLeaderboard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Image.asset("assets/images/left_hand.png"),
-                Text(
-                  'Celebrate Consistency',
-                  style: GoogleFonts.manrope(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
+                RichText(
+                  text: TextSpan(
+                    text: 'Celebrate Consistency',
+                    style: TextStyles.bodySemiBold16(
+                      context,
+                    ).copyWith(color: AppColors.white),
                   ),
                 ),
                 Image.asset("assets/images/right_hand.png"),
               ],
             ),
-            SizedBox(height: 20),
+            SizedBox(height: 20.h),
 
             // Podium
             Container(
-              height: 165,
+              height: 165.h,
               child: Row(
+                spacing: 10.w,
                 mainAxisAlignment: MainAxisAlignment.center,
-
                 children: [
                   Column(
                     children: [
-                      SizedBox(height: 20),
+                      SizedBox(height: 20.h),
                       Container(
-                        width: 80,
-                        height: 80,
+                        width: 70.w,
+                        height: 70.h,
                         child: Stack(
                           children: [
                             CachedImageRadius(
@@ -77,21 +80,21 @@ class TopLeaderboard extends StatelessWidget {
                               top: 2,
                               right: 0,
                               child: Container(
-                                padding: EdgeInsets.all(2),
-                                width: 20,
-                                height: 20,
+                                padding: EdgeInsets.all(2.r),
+                                width: 20.w,
+                                height: 20.h,
                                 decoration: BoxDecoration(
                                   color: AppColors.redBrown50,
-                                  borderRadius: BorderRadius.circular(100),
+                                  shape: BoxShape.circle,
                                   border: Border.all(color: AppColors.white50),
                                 ),
                                 child: Center(
-                                  child: Text(
-                                    "2",
-                                    style: GoogleFonts.manrope(
-                                      fontWeight: FontWeight.w800,
-                                      fontSize: 11,
-                                      color: Colors.white,
+                                  child: RichText(
+                                    text: TextSpan(
+                                      text: "2",
+                                      style: TextStyles.cardBold10(
+                                        context,
+                                      ).copyWith(color: AppColors.white),
                                     ),
                                   ),
                                 ),
@@ -100,35 +103,42 @@ class TopLeaderboard extends StatelessWidget {
                           ],
                         ),
                       ),
-                      // SizedBox(height: 8),
-                      Text(
-                        second.name,
-                        style: GoogleFonts.manrope(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 14,
+
+                      SizedBox(height: 10.h),
+                      RichText(
+                        text: TextSpan(
+                          text: second.name.capitalize,
+                          style: TextStyles.normalSemibold14(
+                            context,
+                          ).copyWith(color: AppColors.white),
                         ),
                       ),
                       Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 6,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 8.w,
+                          vertical: 6.h,
                         ),
                         decoration: BoxDecoration(
                           color: AppColors.black05,
-                          borderRadius: BorderRadius.circular(30),
+                          borderRadius: BorderRadius.circular(30.r),
                         ),
                         child: Row(
+                          spacing: 6.w,
                           mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Image.asset("assets/images/one_50.png", height: 14),
-                            const SizedBox(width: 6),
-                            Text(
-                              second.totalEarned.toString(),
-                              style: GoogleFonts.manrope(
-                                fontWeight: FontWeight.w700,
-                                fontSize: 10,
-                                color: Colors.white,
+                            Image.asset(
+                              AssetsPngImages.one50,
+                              height: 14.h,
+                              width: 14.w,
+                              fit: BoxFit.contain,
+                            ),
+                            RichText(
+                              text: TextSpan(
+                                text: second.totalEarned.toString(),
+                                style: TextStyles.cardBold10(
+                                  context,
+                                ).copyWith(color: AppColors.white),
                               ),
                             ),
                           ],
@@ -139,8 +149,8 @@ class TopLeaderboard extends StatelessWidget {
                   Column(
                     children: [
                       Container(
-                        width: 80,
-                        height: 80,
+                        width: 80.w,
+                        height: 80.h,
                         child: Stack(
                           children: [
                             CachedImageRadius(
@@ -155,20 +165,20 @@ class TopLeaderboard extends StatelessWidget {
                               right: 2,
                               child: Container(
                                 padding: EdgeInsets.all(2),
-                                width: 20,
-                                height: 20,
+                                width: 20.w,
+                                height: 20.h,
                                 decoration: BoxDecoration(
                                   color: AppColors.orange50,
                                   borderRadius: BorderRadius.circular(100),
                                   border: Border.all(color: AppColors.white50),
                                 ),
                                 child: Center(
-                                  child: Text(
-                                    "1",
-                                    style: GoogleFonts.manrope(
-                                      fontWeight: FontWeight.w800,
-                                      fontSize: 11,
-                                      color: Colors.white,
+                                  child: RichText(
+                                    text: TextSpan(
+                                      text: "1",
+                                      style: TextStyles.cardBold10(
+                                        context,
+                                      ).copyWith(color: AppColors.white),
                                     ),
                                   ),
                                 ),
@@ -177,41 +187,41 @@ class TopLeaderboard extends StatelessWidget {
                           ],
                         ),
                       ),
-                      SizedBox(height: 20),
-                      Text(
-                        first.name.toString(),
-                        style: GoogleFonts.manrope(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 14,
+                      SizedBox(height: 20.h),
+                      RichText(
+                        text: TextSpan(
+                          text: first.name.capitalize,
+                          style: TextStyles.normalSemibold14(
+                            context,
+                          ).copyWith(color: AppColors.white),
                         ),
                       ),
                       Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 6,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 8.w,
+                          vertical: 6.h,
                         ),
                         decoration: BoxDecoration(
                           color: AppColors.black05,
-                          borderRadius: BorderRadius.circular(30),
-                          // boxShadow: [
-                          //   BoxShadow(
-                          //     color: Colors.black.withOpacity(0.06),
-                          //     blurRadius: 6,
-                          //   ),
-                          // ],
+                          borderRadius: BorderRadius.circular(30.r),
                         ),
                         child: Row(
+                          spacing: 6.w,
                           mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Image.asset("assets/images/one_50.png", height: 12),
-                            const SizedBox(width: 6),
-                            Text(
-                              first.totalEarned.toString(),
-                              style: GoogleFonts.manrope(
-                                fontWeight: FontWeight.w700,
-                                fontSize: 10,
-                                color: Colors.white,
+                            Image.asset(
+                              AssetsPngImages.one50,
+                              height: 14.h,
+                              width: 14.w,
+                              fit: BoxFit.contain,
+                            ),
+                            RichText(
+                              text: TextSpan(
+                                text: first.totalEarned.toString(),
+                                style: TextStyles.cardBold10(
+                                  context,
+                                ).copyWith(color: AppColors.white),
                               ),
                             ),
                           ],
@@ -219,13 +229,12 @@ class TopLeaderboard extends StatelessWidget {
                       ),
                     ],
                   ),
-                  SizedBox(width: 10),
                   Column(
                     children: [
-                      SizedBox(height: 20),
+                      SizedBox(height: 20.h),
                       Container(
-                        width: 80,
-                        height: 80,
+                        width: 70.w,
+                        height: 70.h,
                         child: Stack(
                           children: [
                             CachedImageRadius(
@@ -250,12 +259,12 @@ class TopLeaderboard extends StatelessWidget {
                                   border: Border.all(color: AppColors.white50),
                                 ),
                                 child: Center(
-                                  child: Text(
-                                    "3",
-                                    style: GoogleFonts.manrope(
-                                      fontWeight: FontWeight.w800,
-                                      fontSize: 11,
-                                      color: Colors.white,
+                                  child: RichText(
+                                    text: TextSpan(
+                                      text: "3",
+                                      style: TextStyles.cardBold10(
+                                        context,
+                                      ).copyWith(color: AppColors.white),
                                     ),
                                   ),
                                 ),
@@ -264,40 +273,41 @@ class TopLeaderboard extends StatelessWidget {
                           ],
                         ),
                       ),
-                      Text(
-                        third.name.toString(),
-                        style: GoogleFonts.manrope(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 14,
+                      SizedBox(height: 10.h),
+                      RichText(
+                        text: TextSpan(
+                          text: third.name.capitalize,
+                          style: TextStyles.normalSemibold14(
+                            context,
+                          ).copyWith(color: AppColors.white),
                         ),
                       ),
                       Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 6,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 8.w,
+                          vertical: 6.h,
                         ),
                         decoration: BoxDecoration(
                           color: AppColors.black05,
-                          borderRadius: BorderRadius.circular(30),
-                          // boxShadow: [
-                          //   BoxShadow(
-                          //     color: Colors.black.withOpacity(0.06),
-                          //     blurRadius: 6,
-                          //   ),
-                          // ],
+                          borderRadius: BorderRadius.circular(30.r),
                         ),
                         child: Row(
+                          spacing: 6.w,
                           mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Image.asset("assets/images/one_50.png", height: 12),
-                            const SizedBox(width: 6),
-                            Text(
-                              third.totalEarned.toString(),
-                              style: GoogleFonts.manrope(
-                                fontWeight: FontWeight.w700,
-                                fontSize: 10,
-                                color: Colors.white,
+                            Image.asset(
+                              AssetsPngImages.one50,
+                              height: 14.h,
+                              width: 14.w,
+                              fit: BoxFit.contain,
+                            ),
+                            RichText(
+                              text: TextSpan(
+                                text: third.totalEarned.toString(),
+                                style: TextStyles.cardBold10(
+                                  context,
+                                ).copyWith(color: AppColors.white),
                               ),
                             ),
                           ],
@@ -306,14 +316,6 @@ class TopLeaderboard extends StatelessWidget {
                     ],
                   ),
                 ],
-              ),
-            ),
-            Text(
-              'Rank resets in 7 days',
-              style: GoogleFonts.baloo2(
-                fontSize: 14,
-                fontWeight: FontWeight.w400,
-                color: Color(0xFFF1F1F1),
               ),
             ),
             SizedBox(height: 20),

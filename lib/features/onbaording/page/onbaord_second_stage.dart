@@ -99,9 +99,12 @@ class _OnboardSecondStageState extends State<OnboardSecondStage>
   }
 
   _proceedToOnboard() async {
-    log(
-      "Sign Up Data ${widget.data}, Referral Code ${widget.data['referral_code']}",
-    );
+    FocusScope.of(context).unfocus(); // dismiss keyboard first
+    await Future.delayed(
+      const Duration(milliseconds: 300),
+    ); // let keyboard dismiss
+
+    if (!mounted) return;
     if (currentPage == 1 && _usernameController.text.isEmpty)
       return showMessage(
         "Please Choose a user name to continue",

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:bravoo/core/constants/app_assets.dart';
 import 'package:bravoo/core/constants/app_colors.dart';
 import 'package:bravoo/features/dashboard/home/presentation/page/home_page.dart';
@@ -91,13 +93,17 @@ class _BottomNavBarState extends State<BottomNavBar> {
     context.read<RedeemBloc>().add(LoadRedeemHistory());
     context.read<NotificationBloc>().add(LoadNotifications());
 
+    // Refresh home data
+    context.read<HomeCubit>().fetchCampaigns();
+
     if (currentIndex == 0) {
-      context.read<HomeCubit>().fetchCampaigns();
       context.read<HomeCubit>().fetchSpotlight();
       context.read<HomeCubit>().fetchSpotlights();
       context.read<HomeCubit>().fetchQuote();
       context.read<HomeCubit>().fetchLeaderboard();
       context.read<HomeCubit>().getUserReferrals();
+      context.read<HomeCubit>().fetchHomeMessage();
+      context.read<HomeCubit>().fetchExtraHomeCard();
     }
   }
 
@@ -105,7 +111,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
   Widget build(BuildContext context) {
     return PopScope(
       canPop: false,
-      onPopInvokedWithResult: (canPop, result) => _onWillPop,
+      onPopInvokedWithResult: (canPop, result) => _onWillPop(),
       child: Scaffold(
         body: IndexedStack(
           index: currentIndex,
@@ -115,7 +121,6 @@ class _BottomNavBarState extends State<BottomNavBar> {
             RedeemScreen(index: widget.missionIndex),
           ],
         ),
-
         bottomNavigationBar: Container(
           decoration: BoxDecoration(
             border: Border(
@@ -199,27 +204,27 @@ class _BottomNavBarState extends State<BottomNavBar> {
     );
   }
 
-  Future<bool> _onWillPop() async {
-    return (await showDialog(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: Text('Are you sure?'),
-            content: Text('Do you want to exit this app'),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () =>
-                    Navigator.of(context).pop(false), //<-- SEE HERE
-                child: new Text('No'),
-              ),
-              TextButton(
-                onPressed: () {
-                  // Navigator.of(context).pop(true);
-                }, // <-- SEE HERE
-                child: new Text('Yes'),
-              ),
-            ],
-          ),
-        )) ??
-        false;
+  _onWillPop() async {
+    if (currentIndex == 0) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('Are you sure?'),
+          content: Text('Do you want to exit this app'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false), //<-- SEE HERE
+              child: new Text('No'),
+            ),
+            TextButton(onPressed: () => exit(0), child: new Text('Yes')),
+          ],
+        ),
+      );
+    } else {
+      setState(() {
+        currentIndex = 0;
+        currentI = 0;
+      });
+    }
   }
 }

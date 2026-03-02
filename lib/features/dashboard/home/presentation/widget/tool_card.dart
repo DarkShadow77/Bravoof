@@ -13,6 +13,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_confetti/flutter_confetti.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../../app/view/widgets/button/icon_text_button.dart';
@@ -594,7 +595,7 @@ class _SpotlightCardState extends State<SpotlightCard> {
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
                                   text: TextSpan(
-                                    text: spotlight.name,
+                                    text: spotlight.name.capitalize,
                                     style: TextStyles.bodySemiBold16(
                                       context,
                                     ).copyWith(color: textColor),

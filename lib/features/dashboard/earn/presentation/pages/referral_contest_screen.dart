@@ -68,19 +68,25 @@ class _ReferralContestScreenState extends State<ReferralContestScreen>
   }
 
   _loadingState(BuildContext context, CampaignLoadingState state) {
-    if (state.type == CampaignType.claimReward) {
+    if (state.type == CampaignType.claimReward ||
+        (!campaign.isDelivery &&
+            state.type == CampaignType.claimWinnerReward)) {
       outerLoadingDialog(text: "Claiming Reward");
     }
   }
 
   _successState(BuildContext context, CampaignSuccessState state) {
-    if (state.type == CampaignType.claimReward) {
+    if (state.type == CampaignType.claimReward ||
+        (!campaign.isDelivery &&
+            state.type == CampaignType.claimWinnerReward)) {
       if (Get.isDialogOpen == true) {
         Navigator.of(context, rootNavigator: true).pop();
       }
       context.read<ProfileBloc>().add(GetProfileEvent());
       successDialog(
-        title: "You Gave It a Shot!",
+        title: state.type == CampaignType.claimWinnerReward
+            ? "🎉 Reward claimed!"
+            : "You Gave It a Shot!",
         subTitle: state.message,
         mainBtnText: "Done",
         mainBtnPressed: () {
@@ -97,7 +103,9 @@ class _ReferralContestScreenState extends State<ReferralContestScreen>
   }
 
   _failureState(BuildContext context, CampaignFailureState state) {
-    if (state.type == CampaignType.claimReward) {
+    if (state.type == CampaignType.claimReward ||
+        (!campaign.isDelivery &&
+            state.type == CampaignType.claimWinnerReward)) {
       if (Get.isDialogOpen == true) {
         Navigator.of(context, rootNavigator: true).pop();
       }
@@ -559,18 +567,33 @@ class _HasEndedWidgetState extends State<HasEndedWidget> with UIToolMixin {
                   onPressed: () {
                     if (!state.hasClaimed) {
                       if (widget.isWinner) {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => BlocProvider<CampaignBloc>(
-                              create: (_) =>
-                                  sl<CampaignBloc>(param1: widget.campaign.id),
-                              child: DeliveryAddressScreen(
-                                campaign: widget.campaign,
+                        if (widget.campaign.isDelivery) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => BlocProvider<CampaignBloc>(
+                                create: (_) => sl<CampaignBloc>(
+                                  param1: widget.campaign.id,
+                                ),
+                                child: DeliveryAddressScreen(
+                                  campaign: widget.campaign,
+                                ),
                               ),
                             ),
-                          ),
-                        );
+                          );
+                        } else {
+                          context.read<CampaignBloc>().add(
+                            ClaimWinnerReward(
+                              firstName: "",
+                              lastName: "",
+                              phoneNumber: "",
+                              country: "",
+                              deliveryAddress: "",
+                              city: "",
+                              state: "",
+                            ),
+                          );
+                        }
                       } else {
                         context.read<CampaignBloc>().add(
                           ClaimParticipantReward(),

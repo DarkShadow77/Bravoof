@@ -327,7 +327,6 @@ class _FlowvaHomePageState extends State<FlowvaHomePage>
                                     return SizedBox.shrink();
                                 },
                               ),
-
                               SizedBox(height: 20.h),
                               Padding(
                                 padding: EdgeInsets.symmetric(horizontal: 16.w),

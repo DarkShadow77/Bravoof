@@ -312,7 +312,7 @@ class _ReferCampaignState extends State<ReferCampaign> {
                           color: textColor,
                           textColor: inverseTextColor,
                           text: differenceInSeconds <= 0
-                              ? "Draw Ended (See Winner)"
+                              ? "Draw Ended (See Results)"
                               : "Join the Draw",
                         ),
                       ],

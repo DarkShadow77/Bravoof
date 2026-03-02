@@ -33,6 +33,7 @@ class _StreakCardState extends State<StreakCard> with UIToolMixin {
     "Momentum feels good, doesn't it?",
     "Progress loves consistency.",
   ];
+  List<String> checkedDays = [];
 
   UserProfile userProfile = UserProfile.empty();
   StreakResponse streaks = StreakResponse(
@@ -145,7 +146,7 @@ class _StreakCardState extends State<StreakCard> with UIToolMixin {
 
   @override
   Widget build(BuildContext context) {
-    final checkedDays = getCheckedDays(streaks);
+    checkedDays = getCheckedDays(streaks);
     return MultiBlocListener(
       listeners: [
         BlocListener<ProfileBloc, ProfileState>(
@@ -173,6 +174,7 @@ class _StreakCardState extends State<StreakCard> with UIToolMixin {
       child: BlocBuilder<StreakBloc, StreakState>(
         builder: (context, state) {
           streaks = state.streak;
+          checkedDays = getCheckedDays(streaks);
           return Container(
             decoration: BoxDecoration(
               color: Color(0xFFF6EDFE),
