@@ -1,38 +1,90 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../../app/styles/text_styles.dart';
+import '../../../../../app/view/widgets/button/icon_text_button.dart';
 import '../../../../../app/view/widgets/cached_image_widget.dart';
 import '../../../../../core/constants/app_assets.dart';
 import '../../../../../core/utils/helpers.dart';
+import '../../data/model/campaign_response.dart';
 import '../bloc/home_cubit.dart';
+import '../page/past_campaign_page.dart';
 
-class CampaignWinnerCard extends StatelessWidget {
+class CampaignWinnerCard extends StatefulWidget {
   const CampaignWinnerCard({super.key});
+
+  @override
+  State<CampaignWinnerCard> createState() => _CampaignWinnerCardState();
+}
+
+class _CampaignWinnerCardState extends State<CampaignWinnerCard> {
+  CampaignResponseModel campaign = CampaignResponseModel.empty();
+  List<CampaignResponseModel> campaigns = [];
+  final supabase = Supabase.instance.client;
+
+  @override
+  void initState() {
+    super.initState();
+    final homeBloc = context.read<HomeCubit>();
+    campaigns = homeBloc.state.campaign
+        .where((c) => c.campaignEndDate.isBefore(DateTime.now()))
+        .toList();
+    campaigns.sort((a, b) => b.campaignEndDate.compareTo(a.campaignEndDate));
+    if (campaigns.isNotEmpty) {
+      campaign = campaigns.first;
+    }
+    homeBloc.fetchCampaigns();
+  }
+
+  CampaignWinner? _getCurrentUserWinnerDetails() {
+    final currentUserId = supabase.auth.currentUser?.id;
+    if (currentUserId == null) return null;
+
+    try {
+      return campaign.winners.firstWhere((w) => w.userId == currentUserId);
+    } catch (e) {
+      return null;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<HomeCubit, HomeState>(
       builder: (context, state) {
-        final campaignList = state.campaign;
-        if (campaignList.isEmpty) return SizedBox.shrink();
-
-        // Find the most recently ended campaign
-        final endedCampaigns = campaignList
+        campaigns = state.campaign
             .where((c) => c.campaignEndDate.isBefore(DateTime.now()))
             .toList();
-
-        if (endedCampaigns.isEmpty) return SizedBox.shrink();
-
-        // Sort by campaign_end_date descending to get the most recent
-        endedCampaigns.sort(
+        campaigns.sort(
           (a, b) => b.campaignEndDate.compareTo(a.campaignEndDate),
         );
-        final campaign = endedCampaigns.first;
+        if (campaigns.isNotEmpty) {
+          campaign = campaigns.first;
+        }
+        if (campaigns.isEmpty) return SizedBox.shrink();
 
         final textColor = hexToColor(campaign.textColor);
         final bgColor = hexToColor(campaign.bgColor);
+        final hasEnded = campaign.campaignEndDate.isBefore(DateTime.now());
+        final currentUserId = supabase.auth.currentUser?.id ?? '';
+        final isWinner = campaign.isUserWinner(currentUserId);
+        final currentUserWinner = _getCurrentUserWinnerDetails();
+
+        // Display profile image (current user if winner, else first winner)
+        final displayProfileImage =
+            hasEnded && isWinner && currentUserWinner != null
+            ? currentUserWinner.profileImage
+            : campaign.winners.isNotEmpty
+            ? campaign.winners.first.profileImage
+            : campaign.winnerProfileImage;
+
+        // Display name
+        final displayName = hasEnded && isWinner && currentUserWinner != null
+            ? currentUserWinner.name
+            : campaign.winners.isNotEmpty
+            ? campaign.winners.first.name
+            : campaign.winnerName;
 
         return Container(
           margin: EdgeInsets.symmetric(horizontal: 16.w),
@@ -81,6 +133,27 @@ class CampaignWinnerCard extends StatelessWidget {
                             ).copyWith(color: textColor),
                           ),
                         ),
+                        Flexible(
+                          child: SizedBox(
+                            width: 126.w,
+                            child: IconTextButton(
+                              onPressed: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (ctx) => PastCampaignPage(),
+                                ),
+                              ),
+                              height: 35,
+                              textSize: 10,
+                              text: "${campaign.month} Winner(s)",
+                              textColor: hexToColor(campaign.textColor),
+                              color: hexToColor(campaign.bgColor),
+                              innerShadow: hexToColor(
+                                campaign.textColor,
+                              ).withValues(alpha: .3),
+                            ),
+                          ),
+                        ),
                       ],
                     ),
 
@@ -103,7 +176,7 @@ class CampaignWinnerCard extends StatelessWidget {
                             left: 50.w,
                             top: 30.h,
                             child: CachedImageRadius(
-                              imageUrl: campaign.winnerProfileImage,
+                              imageUrl: displayProfileImage,
                               size: 88,
                               circle: true,
                               fit: BoxFit.cover,
@@ -141,13 +214,13 @@ class CampaignWinnerCard extends StatelessWidget {
               ),
 
               // Confetti overlay
-              Positioned.fill(
+              /*Positioned.fill(
                 child: Image.asset(
                   AssetsPngImages.confetti,
                   fit: BoxFit.contain,
                   alignment: Alignment.topCenter,
                 ),
-              ),
+              ),*/
             ],
           ),
         );

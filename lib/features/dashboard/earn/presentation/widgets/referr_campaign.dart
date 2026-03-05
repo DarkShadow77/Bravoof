@@ -42,24 +42,44 @@ class _ReferCampaignState extends State<ReferCampaign> {
   List<CampaignResponseModel> campaignList = [];
   CampaignResponseModel campaign = CampaignResponseModel.empty();
 
-  late HomeCubit homeCubit;
-
   @override
   void initState() {
     super.initState();
-    homeCubit = HomeCubit();
+    final homeCubit = context.read<HomeCubit>();
     campaignList = homeCubit.state.campaign;
-
-    if (campaignList.isNotEmpty) {
-      campaign = campaignList.last;
-      final now = DateTime.now().toUtc();
-      differenceInSeconds = campaign.campaignEndDate
-          .difference(now)
-          .inSeconds
-          .clamp(0, double.infinity)
-          .toInt();
-    }
+    _updateCampaign(campaignList);
     homeCubit.fetchCampaigns();
+  }
+
+  void _updateCampaign(List<CampaignResponseModel> list) {
+    if (list.isEmpty) return;
+
+    final now = DateTime.now();
+
+    // Find campaigns that haven't ended yet
+    final activeCampaigns = list
+        .where((c) => c.campaignEndDate.isAfter(now))
+        .toList();
+
+    if (activeCampaigns.isNotEmpty) {
+      // Pick the soonest ending active campaign
+      activeCampaigns.sort(
+        (a, b) => a.campaignEndDate.compareTo(b.campaignEndDate),
+      );
+      campaign = activeCampaigns.first;
+    } else {
+      // All ended — pick the most recently ended one
+      final ended = List<CampaignResponseModel>.from(list);
+      ended.sort((a, b) => b.campaignEndDate.compareTo(a.campaignEndDate));
+      campaign = ended.first;
+    }
+
+    final now2 = DateTime.now().toUtc();
+    differenceInSeconds = campaign.campaignEndDate
+        .difference(now2)
+        .inSeconds
+        .clamp(0, double.infinity)
+        .toInt();
   }
 
   List<String> formattedTime2(double time) {
@@ -85,17 +105,8 @@ class _ReferCampaignState extends State<ReferCampaign> {
     return BlocBuilder<HomeCubit, HomeState>(
       builder: (context, state) {
         campaignList = state.campaign;
-
         if (campaignList.isEmpty) return SizedBox.shrink();
-
-        campaign = campaignList.last;
-
-        final now = DateTime.now().toUtc();
-        differenceInSeconds = campaign.campaignEndDate
-            .difference(now)
-            .inSeconds
-            .clamp(0, double.infinity)
-            .toInt();
+        _updateCampaign(campaignList);
 
         final textColor = hexToColor(campaign.textColor);
         final inverseTextColor = hexToColor(campaign.inverseTextColor);
@@ -159,39 +170,80 @@ class _ReferCampaignState extends State<ReferCampaign> {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Expanded(
-                          child: RichText(
-                            text: TextSpan(
-                              text: campaign.title.toString(),
-                              style: TextStyles.bigTitleBold24(context)
-                                  .copyWith(
-                                    fontSize: 22.sp,
-                                    fontFamily: AppFonts.baloo2,
-                                    height: 1.2.sp,
-                                    color: !widget.transparent
-                                        ? hexToColor(campaign.cardTextColor)
-                                        : Color(0xFFAB7A7A),
-                                  ),
+                          child: ShaderMask(
+                            shaderCallback: (bounds) => LinearGradient(
+                              colors: [
+                                hexToColor(
+                                  campaign.cardTextColor,
+                                ).withValues(alpha: .7),
+                                hexToColor(
+                                  campaign.cardTextColor,
+                                ).withValues(alpha: .32),
+                              ],
+                              begin: Alignment.centerLeft,
+                              end: Alignment.bottomLeft,
+                            ).createShader(bounds),
+                            child: RichText(
+                              text: TextSpan(
+                                text: campaign.title.toString(),
+                                style: TextStyles.bigTitleBold24(context)
+                                    .copyWith(
+                                      fontSize: 22.sp,
+                                      fontFamily: AppFonts.baloo2,
+                                      height: 1.2.sp,
+                                      color: !widget.transparent
+                                          ? hexToColor(campaign.cardTextColor)
+                                          : Color(0xFF630233),
+                                    ),
+                              ),
                             ),
                           ),
                         ),
-
-                        CircleAvatar(
-                          radius: 45,
-                          backgroundColor: textColor.withValues(alpha: .05),
-                          child: CircleAvatar(
-                            radius: 40,
-                            backgroundColor: textColor.withValues(alpha: .30),
-                            child: CircleAvatar(
-                              radius: 35,
-                              backgroundColor: widget.transparent
-                                  ? AppColors.redBrown20
-                                  : hexToColor(campaign.cardTextColor),
-                              child: CachedImageSize(
-                                imageUrl: campaign.url,
-                                width: 45,
-                                height: 45,
-                                fit: BoxFit.contain,
-                                color: Colors.transparent,
+                        Container(
+                          width: 71.w,
+                          height: 71.h,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: widget.transparent
+                                ? AppColors.white10
+                                : hexToColor(
+                                    campaign.cardTextColor,
+                                  ).withValues(alpha: .1),
+                          ),
+                          child: Center(
+                            child: Container(
+                              width: 64.w,
+                              height: 64.h,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: widget.transparent
+                                    ? AppColors.white30
+                                    : hexToColor(
+                                        campaign.cardTextColor,
+                                      ).withValues(alpha: .3),
+                              ),
+                              child: Center(
+                                child: Container(
+                                  width: 58.w,
+                                  height: 58.w,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: widget.transparent
+                                        ? AppColors.redBrown20
+                                        : hexToColor(
+                                            campaign.cardTextColor,
+                                          ).withValues(alpha: .35),
+                                  ),
+                                  child: Center(
+                                    child: CachedImageSize(
+                                      imageUrl: campaign.url,
+                                      width: 46,
+                                      height: 46,
+                                      fit: BoxFit.contain,
+                                      color: Colors.transparent,
+                                    ),
+                                  ),
+                                ),
                               ),
                             ),
                           ),

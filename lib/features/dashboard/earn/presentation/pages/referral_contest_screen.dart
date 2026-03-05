@@ -1,10 +1,8 @@
 import 'dart:developer';
 import 'dart:io';
-import 'dart:ui';
 
 import 'package:bravoo/app/view/widgets/button/icon_text_button.dart';
 import 'package:bravoo/app/view/widgets/dialog/success_dialog.dart';
-import 'package:bravoo/features/common/flowva_button.dart';
 import 'package:bravoo/features/dashboard/earn/presentation/pages/delivery_address_page.dart';
 import 'package:bravoo/features/dashboard/home/presentation/bloc/campaign_bloc.dart';
 import 'package:flutter/material.dart';
@@ -13,8 +11,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:hugeicons/hugeicons.dart';
 import 'package:inner_shadow_container/inner_shadow_container.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -120,10 +116,23 @@ class _ReferralContestScreenState extends State<ReferralContestScreen>
     }
   }
 
+  CampaignWinner? _getCurrentUserWinnerDetails() {
+    final currentUserId = supabase.auth.currentUser?.id;
+    if (currentUserId == null) return null;
+
+    try {
+      return campaign.winners.firstWhere((w) => w.userId == currentUserId);
+    } catch (e) {
+      return null;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final hasEnded = campaign.campaignEndDate.isBefore(DateTime.now());
-    final isWinner = campaign.winnerUserId == supabase.auth.currentUser!.id;
+    final currentUserId = supabase.auth.currentUser?.id ?? '';
+    final isWinner = campaign.isUserWinner(currentUserId);
+    final currentUserWinner = _getCurrentUserWinnerDetails();
     final color = hasEnded
         ? isWinner
               ? hexToColor(campaign.bgColor)
@@ -131,6 +140,22 @@ class _ReferralContestScreenState extends State<ReferralContestScreen>
         : hexToColor(campaign.bgColor);
 
     final textColor = hexToColor(campaign.textColor);
+
+    // Display profile image (current user if winner, else first winner)
+    final displayProfileImage =
+        hasEnded && isWinner && currentUserWinner != null
+        ? currentUserWinner.profileImage
+        : campaign.winners.isNotEmpty
+        ? campaign.winners.first.profileImage
+        : campaign.winnerProfileImage;
+
+    // Display name
+    final displayName = hasEnded && isWinner && currentUserWinner != null
+        ? currentUserWinner.name
+        : campaign.winners.isNotEmpty
+        ? campaign.winners.first.name
+        : campaign.winnerName;
+
     return BlocListener<CampaignBloc, CampaignState>(
       listener: (context, state) {
         if (state is CampaignLoadingState) {
@@ -149,9 +174,7 @@ class _ReferralContestScreenState extends State<ReferralContestScreen>
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           leading: IconButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
+            onPressed: () => Navigator.pop(context),
             icon: Icon(Icons.arrow_back_rounded, size: 16.sp, color: textColor),
           ),
           centerTitle: true,
@@ -160,7 +183,9 @@ class _ReferralContestScreenState extends State<ReferralContestScreen>
             text: TextSpan(
               text: hasEnded
                   ? isWinner
-                        ? "Congratulations! You Won 🎉"
+                        ? campaign.isMultipleWinner
+                              ? "🎉 You're a Winner!"
+                              : "Congratulations! You Won 🎉"
                         : "Better Luck Next Time!"
                   : campaign.innerTitle,
               style: TextStyles.bigTitleRegular24(context).copyWith(
@@ -171,12 +196,15 @@ class _ReferralContestScreenState extends State<ReferralContestScreen>
             ),
           ),
           actions: [
-            IconButton(
-              onPressed: () {},
-              icon: Icon(
-                Icons.arrow_back_rounded,
-                size: 16.sp,
-                color: Colors.transparent,
+            Visibility(
+              visible: false,
+              child: IconButton(
+                onPressed: () {},
+                icon: Icon(
+                  Icons.arrow_back_rounded,
+                  size: 16.sp,
+                  color: Colors.transparent,
+                ),
               ),
             ),
           ],
@@ -208,17 +236,6 @@ class _ReferralContestScreenState extends State<ReferralContestScreen>
                   Flexible(
                     child: Stack(
                       children: [
-                        /*Positioned(
-                          left: 0,
-                          right: 0,
-                          top: 115.h,
-                          child: Image.asset(
-                            AssetsPngImages.podium,
-                            width: 104.w,
-                            height: 148.h,
-                            fit: BoxFit.contain,
-                          ),
-                        ),*/
                         Positioned(
                           left: 0,
                           right: 0,
@@ -276,23 +293,12 @@ class _ReferralContestScreenState extends State<ReferralContestScreen>
                               ),
                             ),
                           ),
-                          /*Positioned(
-                            left: 0,
-                            right: 0,
-                            top: 150.h,
-                            child: Image.asset(
-                              AssetsPngImages.campaignEndBg,
-                              height: 130.h,
-                              width: double.infinity,
-                              fit: BoxFit.cover,
-                            ),
-                          ),*/
                           if (isWinner) ...[
                             Positioned(
                               left: 70.w,
                               top: 30.h,
                               child: CachedImageRadius(
-                                imageUrl: campaign.winnerProfileImage,
+                                imageUrl: displayProfileImage,
                                 size: 94,
                                 circle: true,
                                 fit: BoxFit.cover,
@@ -416,7 +422,7 @@ class _ReferralContestScreenState extends State<ReferralContestScreen>
                     ),
                   ),
                   SizedBox(
-                    height: 20.h + MediaQuery.of(context).padding.bottom,
+                    height: 20.h + MediaQuery.of(context).viewPadding.bottom,
                   ),
                 ],
               ),
@@ -510,6 +516,9 @@ class _HasEndedWidgetState extends State<HasEndedWidget> with UIToolMixin {
   @override
   Widget build(BuildContext context) {
     final textColor = hexToColor(widget.campaign.textColor);
+    final hasMultipleWinners = widget.campaign.isMultipleWinner;
+    final winnerCount = widget.campaign.winners.length;
+
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.w),
       child: Column(
@@ -517,24 +526,38 @@ class _HasEndedWidgetState extends State<HasEndedWidget> with UIToolMixin {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          if (widget.campaign.winnerUserId.isNotEmpty) ...[
+          if (widget.campaign.winnerUserId.isNotEmpty ||
+              widget.campaign.winners.isNotEmpty) ...[
             if (!widget.isWinner)
               RichText(
                 textAlign: TextAlign.center,
                 text: TextSpan(
                   children: [
-                    TextSpan(text: "The ${widget.campaign.item} goes to "),
-                    TextSpan(
-                      text: "@${widget.campaign.winnerName}",
-                      style: TextStyle(
-                        color: textColor,
-                        fontWeight: FontWeight.w800,
+                    if (hasMultipleWinners && winnerCount > 1) ...[
+                      TextSpan(
+                        text:
+                            "${widget.campaign.item} goes to $winnerCount lucky winners! ",
                       ),
-                    ),
-                    TextSpan(
-                      text:
-                          " You didn’t win this time, but the next one could be yours.",
-                    ),
+                      TextSpan(
+                        text:
+                            "You didn't win this time, but the next one could be yours.",
+                      ),
+                    ] else ...[
+                      TextSpan(text: "The ${widget.campaign.item} goes to "),
+                      TextSpan(
+                        text: widget.campaign.winners.isNotEmpty
+                            ? "@${widget.campaign.winners.first.name}"
+                            : "@${widget.campaign.winnerName}",
+                        style: TextStyle(
+                          color: textColor,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                      TextSpan(
+                        text:
+                            " You didn't win this time, but the next one could be yours.",
+                      ),
+                    ],
                   ],
                   style: TextStyles.smallBold12(
                     context,
@@ -545,8 +568,9 @@ class _HasEndedWidgetState extends State<HasEndedWidget> with UIToolMixin {
               RichText(
                 textAlign: TextAlign.center,
                 text: TextSpan(
-                  text:
-                      "The ${widget.campaign.item} has won this time! Claim are yours. Claim your reward now to enter your information and receive your gift.",
+                  text: hasMultipleWinners && winnerCount > 1
+                      ? "Congratulations! You're one of the $winnerCount winners! Claim your reward now to enter your information and receive your gift."
+                      : "The ${widget.campaign.item} is yours! Claim your reward now to enter your information and receive your gift.",
                   style: TextStyles.smallBold12(
                     context,
                   ).copyWith(color: textColor.withValues(alpha: .80)),
@@ -653,7 +677,6 @@ class _TimerWidgetState extends State<TimerWidget> {
         .inSeconds
         .clamp(0, double.infinity)
         .toInt();
-    WinnerDialog();
   }
 
   List<String> formattedTime2(double time) {
@@ -1375,109 +1398,6 @@ class SocialBox extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-}
-
-class WinnerDialog extends StatelessWidget {
-  const WinnerDialog({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
-          child: Container(color: AppColors.black25),
-        ),
-        Dialog(
-          backgroundColor: Colors.transparent,
-          insetPadding: const EdgeInsets.all(10),
-          child: Container(
-            child: Column(
-              // mainAxisAlignment: MainAxisAlignment.center,
-              // crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Align(
-                  alignment: Alignment.topRight,
-                  child: Container(
-                    height: 36,
-                    width: 36,
-                    margin: EdgeInsets.only(left: 40, top: 30, bottom: 30),
-
-                    decoration: BoxDecoration(
-                      // color: Color(0xFFF1F1F1),
-                      borderRadius: BorderRadius.circular(120),
-                      border: Border.all(width: 2, color: Colors.white),
-                    ),
-                    child: IconButton(
-                      onPressed: () => Navigator.pop(context),
-                      icon: HugeIcon(
-                        icon: HugeIcons.strokeRoundedCancel01,
-                        color: Colors.white,
-                        strokeWidth: 2.5,
-                      ),
-                    ),
-                  ),
-                ),
-
-                ShaderMask(
-                  shaderCallback: (bounds) =>
-                      const LinearGradient(
-                        colors: [
-                          Color(0xFFFAD961), // light yellow
-                          Colors.white, // white middle
-                          Color(0xFFFAD961), // light yellow again
-                        ],
-                        begin: Alignment.centerLeft,
-                        end: Alignment.centerRight,
-                      ).createShader(
-                        Rect.fromLTWH(0, 0, bounds.width, bounds.height),
-                      ),
-                  blendMode: BlendMode.srcIn,
-                  child: Text(
-                    'You did it James!',
-                    style: GoogleFonts.baloo2(
-                      fontSize: 24,
-                      fontWeight: FontWeight.w800,
-                      shadows: [
-                        Shadow(
-                          offset: const Offset(2, 2),
-                          blurRadius: 6,
-                          color: AppColors.black20,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                Text(
-                  "You’re this Month’s winner",
-                  style: GoogleFonts.baloo2(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                SizedBox(height: 20),
-                Image.asset("assets/images/winner_package.png"),
-                SizedBox(height: 20),
-                FlowvaButton.winnerButton(name: "Claim Reward"),
-                SizedBox(height: 20),
-                Text(
-                  "Your consistency, curiosity, and Flowva spirit just paid off. Enjoy your Oraimo Boomsnap + 500 FlowCoins!",
-                  style: GoogleFonts.baloo2(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
     );
   }
 }

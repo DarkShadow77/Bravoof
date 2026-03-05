@@ -73,7 +73,7 @@ class _MissionPageState extends State<MissionPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(height: 10.h + MediaQuery.of(context).padding.top),
-                FlowvaAppBar(title: "Missions"),
+                FlowvaAppBar(title: "Mission"),
                 SizedBox(height: 12.h),
                 // Tabs
                 Container(

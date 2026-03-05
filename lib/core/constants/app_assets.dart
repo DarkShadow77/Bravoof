@@ -66,6 +66,7 @@ class AssetsPngImages {
   static String maintenance = "$baseImagePngPath/maintenance.png";
   static String maintenanceBg = "$baseImagePngPath/maintenance_bg.png";
   static String confetti = "$baseImagePngPath/confetti.png";
+  static String trophy = "$baseImagePngPath/throphy.png";
 }
 
 class AssetsSvgImages {

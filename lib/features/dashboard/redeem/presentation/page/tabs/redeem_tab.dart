@@ -296,6 +296,14 @@ class _RewardCardState extends State<RewardCard> with UIToolMixin {
                 isActive: (profile.totalPoints) >= 10000,
                 isHot: true,
               ),
+              buildRewardCard(
+                title: "Paypal",
+                value: 20,
+                imagePath: AssetsPngImages.cash,
+                coins: 20000,
+                isActive: false,
+                isComingSoon: true,
+              ),
             ]),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
@@ -318,6 +326,7 @@ class _RewardCardState extends State<RewardCard> with UIToolMixin {
     required int value,
     required bool isActive,
     bool isHot = false,
+    bool isComingSoon = false,
   }) {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 10.w),
@@ -438,12 +447,12 @@ class _RewardCardState extends State<RewardCard> with UIToolMixin {
                         status: true,
                       );
                   },
-                  height: 34,
+                  height: 38,
                   color: isActive ? AppColors.black : AppColors.grey400,
                   textSize: 10,
                   borderColor: Colors.transparent,
                   textColor: isActive ? AppColors.white : AppColors.white60,
-                  text: "Claim now",
+                  text: isComingSoon ? "Coming Soon" : "Claim now",
                 ),
                 Divider(color: AppColors.black05, height: 1.h),
                 Padding(
