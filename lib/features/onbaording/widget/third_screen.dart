@@ -98,8 +98,8 @@ class _ThirdScreenState extends State<ThirdScreen>
       padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 20),
       decoration: BoxDecoration(
         color: faded
-            ? Colors.white.withOpacity(0.2)
-            : const Color(0xFFFDF8F9).withOpacity(0.8),
+            ? Colors.white.withValues(alpha:0.2)
+            : const Color(0xFFFDF8F9).withValues(alpha:0.8),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           if (!faded)

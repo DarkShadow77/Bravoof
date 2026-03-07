@@ -146,9 +146,7 @@ class _InviteAndEarnPageState extends State<InviteAndEarnPage> {
                           apply: () {
                             SharePlus.instance.share(
                               ShareParams(
-                                text: referralMessage(
-                                  userProfile.referralCode ?? "",
-                                ),
+                                text: referralMessage(userProfile.referralCode),
                               ),
                             );
                           },
@@ -243,12 +241,12 @@ class _InviteAndEarnPageState extends State<InviteAndEarnPage> {
                               itemBuilder: (context, index) {
                                 final user = referrals[index];
                                 return _buildReferralCard(
-                                  avatar: user.profilePic ?? "",
-                                  name: user.name ?? "",
+                                  avatar: user.profilePic,
+                                  name: user.name,
                                   statusLabel: "Joined",
                                   statusColor: const Color(0xFFE3FAE1),
                                   textColor: const Color(0xFF008753),
-                                  time: user.createdAt?.toIso8601String() ?? "",
+                                  time: user.createdAt.toIso8601String(),
                                 );
                               },
                               separatorBuilder: (_, _) {
@@ -272,7 +270,7 @@ class _InviteAndEarnPageState extends State<InviteAndEarnPage> {
                                   BoxShadow(
                                     color: const Color(
                                       0xFFDCC6FF,
-                                    ).withOpacity(0.35),
+                                    ).withValues(alpha: 0.35),
                                     blurRadius: 20,
                                     offset: const Offset(0, 6),
                                   ),
@@ -327,7 +325,7 @@ class _InviteAndEarnPageState extends State<InviteAndEarnPage> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -387,7 +385,7 @@ class _InviteAndEarnPageState extends State<InviteAndEarnPage> {
         borderRadius: BorderRadius.circular(14),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.03),
+            color: Colors.black.withValues(alpha: 0.03),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),
@@ -477,307 +475,4 @@ class _InviteAndEarnPageState extends State<InviteAndEarnPage> {
       child: Center(child: child),
     );
   }
-
-  // Template card replicating your design
-  Widget _buildTemplateCard({required Widget text}) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-      decoration: BoxDecoration(
-        color: Color(0xFFF9F9F9),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFE9E9E9)),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.02),
-            blurRadius: 10,
-            offset: const Offset(0, 6),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          text,
-
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              _actionButton(
-                icon: HugeIcon(icon: HugeIcons.strokeRoundedCopy01, size: 18),
-                label: "Copy",
-                onTap: () {},
-              ),
-              const SizedBox(width: 10),
-              _actionButton(
-                icon: HugeIcon(icon: HugeIcons.strokeRoundedShare03, size: 18),
-                label: "Share",
-                onTap: () {},
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _actionButton({
-    required Widget icon,
-    required String label,
-    required VoidCallback onTap,
-  }) {
-    return ElevatedButton.icon(
-      onPressed: onTap,
-
-      label: Row(
-        children: [
-          Text(
-            label,
-            style: GoogleFonts.manrope(
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          SizedBox(width: 4),
-          icon,
-        ],
-      ),
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black87,
-        elevation: 0,
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      ),
-    );
-  }
-}
-
-class _Mission {
-  final String id;
-  final String title;
-  String rightIcon;
-  final String points;
-  final String subject;
-  final int progress;
-  final bool completed;
-
-  _Mission({
-    required this.id,
-    required this.title,
-    required this.rightIcon,
-    required this.points,
-    required this.subject,
-    required this.progress,
-    required this.completed,
-  });
-
-  Widget get icon {
-    switch (id) {
-      case 'watch':
-        return Image.asset("assets/images/play.png", height: 28);
-      case 'download':
-        return Image.asset("assets/images/qr.png", height: 28);
-      case 'stars':
-        return Image.asset("assets/images/thumb_stars.png", height: 28);
-      default:
-        return Container();
-    }
-  }
-
-  _Mission copyWith({bool? completed}) {
-    return _Mission(
-      id: id,
-      title: title,
-      rightIcon: rightIcon,
-      points: points,
-      subject: subject,
-      progress: progress,
-      completed: completed ?? this.completed,
-    );
-  }
-}
-
-String _progressTextFromValue(double progress) {
-  // simple mapping for demo: 0 -> 0/1, 1/3 -> 1/3, etc.
-  if (progress == 0.0) return '0/1';
-  if ((progress - 1 / 3).abs() < 0.01) return '1/3';
-  // fallback
-  return '${(progress * 1).round()}/${1}';
-}
-
-class MissionTile extends StatelessWidget {
-  final _Mission mission;
-  final VoidCallback onClaim;
-
-  const MissionTile({required this.mission, required this.onClaim, super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    print(mission.id);
-    return Container(
-      padding: const EdgeInsets.only(left: 10, top: 2, right: 2, bottom: 2),
-      decoration: BoxDecoration(
-        color: mission.completed ? Color(0xFFF6FDF5) : Color(0xFFF6FDF5),
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          mission.icon,
-          const SizedBox(width: 5),
-          Expanded(
-            child: Column(
-              children: [
-                SizedBox(
-                  width: 180,
-                  child: Text(
-                    mission.title!,
-                    style: GoogleFonts.baloo2(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                      color: mission.id == "rate"
-                          ? Colors.black.withOpacity(0.24)
-                          : Colors.black.withOpacity(0.50),
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-                const SizedBox(height: 6),
-                mission.completed
-                    ? Image.asset("assets/images/mark.png")
-                    : Container(
-                        padding: EdgeInsets.symmetric(horizontal: 15),
-                        child: Stack(
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(12),
-                              child: Stack(
-                                children: [
-                                  // Background color (track)
-                                  Container(
-                                    height: 20,
-                                    decoration: BoxDecoration(
-                                      color: Color(0xFFF1F1F1),
-                                      gradient: LinearGradient(
-                                        begin: Alignment.topCenter,
-                                        end: Alignment.bottomCenter,
-                                        colors: [
-                                          const Color(0xFFD9AEFF),
-                                          const Color(0xFF550AA9),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-
-                                  // Gradient progress bar
-                                  LayoutBuilder(
-                                    builder: (context, constraints) {
-                                      return Container(
-                                        height: 16,
-                                        width:
-                                            constraints.maxWidth *
-                                            mission.progress!,
-                                        // width proportional to value
-                                        decoration: BoxDecoration(
-                                          color: Color(0xFFF1F1F1),
-                                          gradient: LinearGradient(
-                                            begin: Alignment.topCenter,
-                                            end: Alignment.bottomCenter,
-                                            colors: [
-                                              const Color(0xFFD9AEFF),
-                                              const Color(0xFF550AA9),
-                                            ],
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Positioned(
-                              left: 50,
-                              right: 50,
-                              top: -1,
-
-                              child: Center(
-                                child: Text(
-                                  progressTextFromValue(mission.progress!),
-                                  style: GoogleFonts.baloo2(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w700,
-                                    color: Colors.white.withOpacity(0.42),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                // const SizedBox(height: 4),
-              ],
-            ),
-          ),
-          const SizedBox(width: 4),
-          Container(
-            padding: EdgeInsets.only(top: 8, right: 8, left: 8),
-            // height: 80,
-            width: 88,
-            decoration: BoxDecoration(
-              color: mission.completed
-                  ? Color(0xFFF1F1F1)
-                  : Color(0xFF9013FE).withOpacity(0.08),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    mission.id.isNotEmpty
-                        ? Image.asset(mission.rightIcon, height: 22)
-                        : Image.network(mission.rightIcon, height: 22),
-                    SizedBox(width: 5),
-                    Text(
-                      "${mission.points}",
-                      style: GoogleFonts.manrope(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.black.withOpacity(0.34),
-                      ),
-                    ),
-                  ],
-                ),
-
-                // SizedBox(height: 5),
-                // const SizedBox(height: 10),
-                FlowvaButton.purpleButton(
-                  color: mission.completed! ? Colors.grey : null,
-                  name: "${mission.subject}",
-                  apply: onClaim,
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-String progressTextFromValue(int progress) {
-  // simple mapping for demo: 0 -> 0/1, 1/3 -> 1/3, etc.
-  if (progress == 1) return '0/1';
-  if ((progress - 1 / 3).abs() < 0.01) return '1/3';
-  // fallback
-  return '${(progress * 1).round()}/${1}';
 }

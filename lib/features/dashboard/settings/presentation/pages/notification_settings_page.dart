@@ -1,8 +1,8 @@
 import 'dart:ui';
 
+import 'package:app_settings/app_settings.dart';
 import 'package:bravoo/features/common/app_enum.dart';
 import 'package:bravoo/features/common/flowva_button.dart';
-import 'package:app_settings/app_settings.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -393,7 +393,9 @@ class _NotificationWidgetState extends State<NotificationWidget>
           BackdropFilter(
             filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
             child: Container(
-              color: Colors.black.withOpacity(0.5), // Optional dark overlay
+              color: Colors.black.withValues(
+                alpha: 0.5,
+              ), // Optional dark overlay
             ),
           ),
           DraggableScrollableSheet(
@@ -451,7 +453,7 @@ class _NotificationWidgetState extends State<NotificationWidget>
                               borderRadius: BorderRadius.circular(120),
                               border: Border.all(
                                 width: 0.2,
-                                color: Colors.black.withOpacity(0.6),
+                                color: Colors.black.withValues(alpha: 0.6),
                               ),
                             ),
                             child: IconButton(
@@ -536,8 +538,8 @@ class _NotificationWidgetState extends State<NotificationWidget>
                                   ) {
                                     if (states.contains(WidgetState.selected)) {
                                       print(states);
-                                      return CupertinoColors.black.withOpacity(
-                                        .88,
+                                      return CupertinoColors.black.withValues(
+                                        alpha: .88,
                                       );
                                     }
                                     return null; // Use the default color.

@@ -21,7 +21,7 @@ class _ConnectedDeviceWidgetState extends State<ConnectedDeviceWidget> {
         BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
           child: Container(
-            color: Colors.black.withOpacity(0.5), // Optional dark overlay
+            color: Colors.black.withValues(alpha: 0.5), // Optional dark overlay
           ),
         ),
         DraggableScrollableSheet(
@@ -79,7 +79,7 @@ class _ConnectedDeviceWidgetState extends State<ConnectedDeviceWidget> {
                             borderRadius: BorderRadius.circular(120),
                             border: Border.all(
                               width: 0.2,
-                              color: Colors.black.withOpacity(0.6),
+                              color: Colors.black.withValues(alpha: 0.6),
                             ),
                           ),
                           child: IconButton(

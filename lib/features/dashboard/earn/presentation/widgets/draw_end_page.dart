@@ -120,13 +120,15 @@ class _DrawEndPageState extends State<DrawEndPage> {
                         end: Alignment.bottomCenter,
                         colors: [
                           // Color(0xFF2F1C48),
-                          Colors.white.withOpacity(0.02),
+                          Colors.white.withValues(alpha: 0.02),
                           Color(0xFF2F1C48),
                         ],
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: const Color(0xFF1E0540).withOpacity(0.06),
+                          color: const Color(
+                            0xFF1E0540,
+                          ).withValues(alpha: 0.06),
                           blurRadius: 2,
                           spreadRadius: 1,
                           offset: Offset(0, 20),
@@ -156,12 +158,12 @@ class _DrawEndPageState extends State<DrawEndPage> {
                         end: Alignment.bottomCenter,
                         colors: [
                           Color(0xFF4F396A),
-                          Color(0xFF3E2E56).withOpacity(0.2),
+                          Color(0xFF3E2E56).withValues(alpha: 0.2),
                         ],
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: Color(0xFFAAA7A7).withOpacity(0.09),
+                          color: Color(0xFFAAA7A7).withValues(alpha: 0.09),
                           offset: const Offset(0, 0),
                           blurRadius: 2,
                           spreadRadius: 1,
@@ -176,8 +178,8 @@ class _DrawEndPageState extends State<DrawEndPage> {
                             style: GoogleFonts.manrope(
                               fontSize: 12,
                               fontWeight: FontWeight.w700,
-                              color: Colors.white.withOpacity(
-                                0.42,
+                              color: Colors.white.withValues(
+                                alpha: 0.42,
                               ), // default color
                             ),
                             children: [
@@ -205,7 +207,7 @@ class _DrawEndPageState extends State<DrawEndPage> {
                         Text(
                           "DRAW ENDS IN",
                           style: GoogleFonts.manrope(
-                            color: Colors.white.withOpacity(0.42),
+                            color: Colors.white.withValues(alpha: 0.42),
                             fontSize: 12,
                             fontWeight: FontWeight.w700,
                           ),
@@ -254,7 +256,7 @@ class _DrawEndPageState extends State<DrawEndPage> {
                             horizontal: 16,
                           ),
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.1),
+                            color: Colors.white.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(30),
                           ),
                           child: ShaderMask(
@@ -300,11 +302,11 @@ class _DrawEndPageState extends State<DrawEndPage> {
                 bottomLeft: Radius.circular(16),
                 bottomRight: Radius.circular(16),
               ),
-              border: Border.all(color: Colors.white.withOpacity(0.1)),
+              border: Border.all(color: Colors.white.withValues(alpha: 0.1)),
               boxShadow: [
                 //#2C0066
                 BoxShadow(
-                  color: Color(0xFFAAA7A7).withOpacity(0.9),
+                  color: Color(0xFFAAA7A7).withValues(alpha: 0.9),
                   offset: const Offset(0, 0),
                   blurRadius: 0,
                 ),
@@ -327,7 +329,7 @@ class _DrawEndPageState extends State<DrawEndPage> {
                   "Invite at least 2 friends who sign up through your link to qualify.",
                   textAlign: TextAlign.center,
                   style: GoogleFonts.manrope(
-                    color: Colors.white.withOpacity(0.7),
+                    color: Colors.white.withValues(alpha: 0.7),
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
                   ),
@@ -342,10 +344,10 @@ class _DrawEndPageState extends State<DrawEndPage> {
                       topRight: Radius.circular(16),
                       topLeft: Radius.circular(16),
                     ),
-                    color: Colors.white.withOpacity(0.2),
+                    color: Colors.white.withValues(alpha: 0.2),
                     boxShadow: [
                       BoxShadow(
-                        color: Color(0xFFAAA7A7).withOpacity(0.1),
+                        color: Color(0xFFAAA7A7).withValues(alpha: 0.1),
                         offset: const Offset(0, 4),
                         blurRadius: 15,
                       ),
@@ -403,7 +405,7 @@ class _DrawEndPageState extends State<DrawEndPage> {
                         ),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(100),
-                          color: Colors.white.withOpacity(0.1),
+                          color: Colors.white.withValues(alpha: 0.1),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
@@ -413,7 +415,7 @@ class _DrawEndPageState extends State<DrawEndPage> {
                               width: 30,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                color: Colors.white.withOpacity(0.2),
+                                color: Colors.white.withValues(alpha: 0.2),
                               ),
                               clipBehavior: Clip.hardEdge,
                               child: Image.asset("assets/avatar/2.png"),
@@ -422,7 +424,7 @@ class _DrawEndPageState extends State<DrawEndPage> {
                             const SizedBox(width: 12),
                             HugeIcon(
                               icon: HugeIcons.strokeRoundedUser03,
-                              color: Colors.white.withOpacity(0.2),
+                              color: Colors.white.withValues(alpha: 0.2),
                               strokeWidth: 0.5,
                             ),
                           ],
@@ -441,7 +443,7 @@ class _DrawEndPageState extends State<DrawEndPage> {
                       ),
 
                       const SizedBox(height: 20),
-                      Divider(color: Colors.white.withOpacity(0.1)),
+                      Divider(color: Colors.white.withValues(alpha: 0.1)),
 
                       const SizedBox(height: 16),
 
@@ -461,7 +463,7 @@ class _DrawEndPageState extends State<DrawEndPage> {
                           horizontal: 16,
                         ),
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.08),
+                          color: Colors.white.withValues(alpha: 0.08),
                           borderRadius: BorderRadius.circular(30),
                         ),
                         child: Row(
@@ -492,21 +494,21 @@ class _DrawEndPageState extends State<DrawEndPage> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           SocialMediaCards(
-                            color: Colors.white.withOpacity(0.24),
+                            color: Colors.white.withValues(alpha: 0.24),
                             textColor: Colors.white70,
                             icon: Image.asset("assets/images/whatsapp.png"),
                             label: "Whatsapp",
                           ),
                           const SizedBox(width: 16),
                           SocialMediaCards(
-                            color: Colors.white.withOpacity(0.24),
+                            color: Colors.white.withValues(alpha: 0.24),
                             textColor: Colors.white70,
                             icon: Image.asset("assets/images/x.png"),
                             label: "X (Twitter)",
                           ),
                           const SizedBox(width: 16),
                           SocialMediaCards(
-                            color: Colors.white.withOpacity(0.24),
+                            color: Colors.white.withValues(alpha: 0.24),
                             textColor: Colors.white70,
                             icon: Image.asset("assets/images/linkedin.png"),
                             label: "LinkedIn",
@@ -570,10 +572,10 @@ class _DrawEndPageState extends State<DrawEndPage> {
       padding: EdgeInsets.only(bottom: 5, top: 5),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
-        color: Colors.white.withOpacity(0.1),
+        color: Colors.white.withValues(alpha: 0.1),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.12),
+            color: Colors.black.withValues(alpha: 0.12),
             offset: const Offset(0, 4),
             blurRadius: 15,
           ),
@@ -617,7 +619,7 @@ class WinnerDailog extends StatelessWidget {
       children: [
         BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
-          child: Container(color: Colors.black.withOpacity(0.2)),
+          child: Container(color: Colors.black.withValues(alpha: 0.2)),
         ),
         Dialog(
           backgroundColor: Colors.transparent,
@@ -673,7 +675,7 @@ class WinnerDailog extends StatelessWidget {
                         Shadow(
                           offset: const Offset(2, 2),
                           blurRadius: 6,
-                          color: Colors.black.withOpacity(0.2),
+                          color: Colors.black.withValues(alpha: 0.2),
                         ),
                       ],
                     ),

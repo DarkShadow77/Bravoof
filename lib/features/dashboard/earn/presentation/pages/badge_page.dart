@@ -74,7 +74,7 @@ class BadgesScreen extends StatelessWidget {
                           color: Color(0xFFF6E4E6),
                           borderRadius: BorderRadius.circular(100),
                           border: Border.all(
-                            color: Colors.black.withOpacity(0.2),
+                            color: Colors.black.withValues(alpha: 0.2),
                             width: 0.5,
                           ),
                         ),
@@ -104,11 +104,11 @@ class BadgesScreen extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Color(0xFFF8F7FF).withOpacity(0.5),
+        color: Color(0xFFF8F7FF).withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Color(0xFF9E9A9A).withOpacity(0.1),
+            color: Color(0xFF9E9A9A).withValues(alpha: 0.1),
             blurRadius: 25,
             offset: const Offset(0, 6),
             spreadRadius: 10,
@@ -216,7 +216,7 @@ class BadgesScreen extends StatelessWidget {
               return Container(
                 padding: EdgeInsets.only(top: 6, bottom: 6),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.5),
+                  color: Colors.white.withValues(alpha: 0.5),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Column(
@@ -262,7 +262,7 @@ class BadgesScreen extends StatelessWidget {
               return Container(
                 padding: EdgeInsets.only(top: 6, bottom: 6),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.5),
+                  color: Colors.white.withValues(alpha: 0.5),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Image.asset("assets/images/hiddenReward2.png"),

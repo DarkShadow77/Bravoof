@@ -178,11 +178,11 @@ class _TriviaResultScreenState extends State<TriviaResultScreen>
             width: 40,
             alignment: Alignment.center,
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
+              color: Colors.white.withValues(alpha:0.2),
               borderRadius: BorderRadius.circular(120),
               border: Border.all(
                 width: 0.2,
-                color: Colors.black.withOpacity(0.6),
+                color: Colors.black.withValues(alpha:0.6),
               ),
             ),
             child: IconButton(
@@ -210,7 +210,7 @@ class _TriviaResultScreenState extends State<TriviaResultScreen>
           borderRadius: BorderRadius.circular(50),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.1),
+              color: Colors.black.withValues(alpha:0.1),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -253,7 +253,7 @@ class _TriviaResultScreenState extends State<TriviaResultScreen>
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.3),
+              color: Colors.white.withValues(alpha:0.3),
               shape: BoxShape.circle,
             ),
             child: const Icon(Icons.person, color: Colors.white, size: 25),
@@ -272,7 +272,7 @@ class _TriviaResultScreenState extends State<TriviaResultScreen>
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.2),
+              color: Colors.white.withValues(alpha:0.2),
               borderRadius: BorderRadius.circular(20),
             ),
             child: Row(
@@ -323,7 +323,7 @@ class _TriviaResultScreenState extends State<TriviaResultScreen>
           color: Colors.white,
           shape: BoxShape.circle,
           boxShadow: [
-            BoxShadow(color: medalColor.withOpacity(0.4), blurRadius: 8),
+            BoxShadow(color: medalColor.withValues(alpha:0.4), blurRadius: 8),
           ],
         ),
         child: Icon(icon, color: medalColor, size: 28),

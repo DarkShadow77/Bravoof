@@ -533,7 +533,7 @@ class _LinkedAccountsScreenState extends State<LinkedAccountsScreen> {
       leading: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          color: (color ?? Colors.blue).withOpacity(0.1),
+          color: (color ?? Colors.blue).withValues(alpha:0.1),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Icon(icon, size: 28, color: color ?? Colors.blue),

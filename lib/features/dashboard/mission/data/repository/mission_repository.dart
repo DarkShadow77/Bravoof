@@ -20,15 +20,11 @@ class MissionRepository {
 
       print(allUsersReward);
 
-      if (allUsersReward != null) {
-        RewardsSummaryResponse rewardsSummaryResponse =
-            RewardsSummaryResponse.fromJson({"rewards": allUsersReward});
+      RewardsSummaryResponse rewardsSummaryResponse =
+          RewardsSummaryResponse.fromJson({"rewards": allUsersReward});
 
-        return Right(rewardsSummaryResponse);
-      } else {
-        return Left("Empty");
-      }
-    } catch (e) {
+      return Right(rewardsSummaryResponse);
+        } catch (e) {
       print(e);
       return Left(e.toString());
     }

@@ -223,7 +223,7 @@ class _FunTimeScreenState extends State<FunTimeScreen> {
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(50),
                                 border: Border.all(
-                                  color: Colors.black.withOpacity(0.1),
+                                  color: Colors.black.withValues(alpha:0.1),
                                 ),
                               ),
                               child: Text(
@@ -325,7 +325,7 @@ class _FunTimeScreenState extends State<FunTimeScreen> {
                     //         shape: BoxShape.circle,
                     //         color: Colors.white,
                     //         border: Border.all(
-                    //           color: Colors.black.withOpacity(0.1),
+                    //           color: Colors.black.withValues(alpha:0.1),
                     //         ),
                     //       ),
                     //       child: HugeIcon(icon: HugeIcons.strokeRoundedShuffle),
@@ -385,7 +385,7 @@ class _FunTimeScreenState extends State<FunTimeScreen> {
                                             BoxShadow(
                                               color: _getButtonColor(
                                                 option,
-                                              ).withOpacity(0.3),
+                                              ).withValues(alpha:0.3),
                                               blurRadius: 12,
                                               offset: const Offset(0, 6),
                                             ),
@@ -443,7 +443,7 @@ class _FunTimeScreenState extends State<FunTimeScreen> {
                                   : const Color(0xFFCC0000),
                               shadows: [
                                 Shadow(
-                                  color: Colors.black.withOpacity(0.2),
+                                  color: Colors.black.withValues(alpha:0.2),
                                   blurRadius: 8,
                                   offset: const Offset(0, 4),
                                 ),
@@ -481,7 +481,7 @@ class _FunTimeScreenState extends State<FunTimeScreen> {
             borderRadius: BorderRadius.circular(28),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.1),
+                color: Colors.black.withValues(alpha:0.1),
                 blurRadius: 12,
                 offset: const Offset(0, 4),
               ),

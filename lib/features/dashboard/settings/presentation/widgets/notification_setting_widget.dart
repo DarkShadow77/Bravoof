@@ -23,7 +23,7 @@ class _NotificationSettingWidgetState extends State<NotificationSettingWidget> {
         BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
           child: Container(
-            color: Colors.black.withOpacity(0.5), // Optional dark overlay
+            color: Colors.black.withValues(alpha: 0.5), // Optional dark overlay
           ),
         ),
         DraggableScrollableSheet(
@@ -81,7 +81,7 @@ class _NotificationSettingWidgetState extends State<NotificationSettingWidget> {
                             borderRadius: BorderRadius.circular(120),
                             border: Border.all(
                               width: 0.2,
-                              color: Colors.black.withOpacity(0.6),
+                              color: Colors.black.withValues(alpha: 0.6),
                             ),
                           ),
                           child: IconButton(
@@ -134,7 +134,7 @@ class _NotificationSettingWidgetState extends State<NotificationSettingWidget> {
                                           newValue; // Update the state
                                     });
                                   },
-                                  activeColor: Colors
+                                  activeThumbColor: Colors
                                       .green, // Color when the switch is ON
                                   inactiveThumbColor: Colors
                                       .white, // Color of the thumb when OFF
@@ -178,7 +178,7 @@ class _NotificationSettingWidgetState extends State<NotificationSettingWidget> {
                                           newValue; // Update the state
                                     });
                                   },
-                                  activeColor: Colors
+                                  activeThumbColor: Colors
                                       .green, // Color when the switch is ON
                                   inactiveThumbColor: Colors
                                       .grey, // Color of the thumb when OFF

@@ -29,7 +29,7 @@ class RegistrationStepWidget extends StatelessWidget {
         'title': '5 of 5',
         'desc': 'Invite your first friend and earn 100  B-Coin as a thank you.',
         'done': false,
-      }
+      },
     ];
 
     return Stack(
@@ -37,7 +37,7 @@ class RegistrationStepWidget extends StatelessWidget {
         BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
           child: Container(
-            color: Colors.black.withOpacity(0.5), // Optional dark overlay
+            color: Colors.black.withValues(alpha: 0.5), // Optional dark overlay
           ),
         ),
         DraggableScrollableSheet(
@@ -81,7 +81,7 @@ class RegistrationStepWidget extends StatelessWidget {
                               borderRadius: BorderRadius.circular(120),
                               border: Border.all(
                                 width: 0.2,
-                                color: Colors.black.withOpacity(0.6),
+                                color: Colors.black.withValues(alpha: 0.6),
                               ),
                             ),
                             child: IconButton(
@@ -165,11 +165,11 @@ class RegistrationStepWidget extends StatelessWidget {
                         borderRadius: BorderRadius.circular(14),
                         border: Border.all(
                           width: 0.5,
-                          color: Colors.black.withOpacity(0.08),
+                          color: Colors.black.withValues(alpha: 0.08),
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.05),
+                            color: Colors.black.withValues(alpha: 0.05),
                             blurRadius: 8,
                             offset: const Offset(0, 3),
                           ),

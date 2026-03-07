@@ -308,7 +308,7 @@ class _TimeSectionState extends State<_TimeSection> with UIToolMixin {
                                 child: FractionallySizedBox(
                                   widthFactor:
                                       (communityMission?.usersJoined ?? 0) /
-                                      5000,
+        (communityMission?.maxUsers ?? 0),
                                   child: Container(
                                     decoration: const BoxDecoration(
                                       gradient: LinearGradient(

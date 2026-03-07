@@ -15,7 +15,7 @@ class ShareProfileWidget extends StatelessWidget {
       children: [
         BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
-          child: Container(color: Colors.black.withOpacity(0.2)),
+          child: Container(color: Colors.black.withValues(alpha: 0.2)),
         ),
         Container(
           height: 750,
@@ -23,7 +23,7 @@ class ShareProfileWidget extends StatelessWidget {
           decoration: BoxDecoration(
             border: Border.all(
               width: 0.2,
-              color: Colors.black.withOpacity(0.2),
+              color: Colors.black.withValues(alpha: 0.2),
             ),
           ),
           child: Dialog(
@@ -114,7 +114,7 @@ class ShareProfileWidget extends StatelessWidget {
                           borderRadius: BorderRadius.circular(120),
                           border: Border.all(
                             width: 0.2,
-                            color: Colors.black.withOpacity(0.6),
+                            color: Colors.black.withValues(alpha: 0.6),
                           ),
                         ),
                         child: IconButton(
@@ -133,7 +133,7 @@ class ShareProfileWidget extends StatelessWidget {
                       color: Colors.white,
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.08),
+                          color: Colors.black.withValues(alpha: 0.08),
                           blurRadius: 15,
                           offset: const Offset(0, 5),
                         ),
@@ -205,7 +205,7 @@ class ShareProfileWidget extends StatelessWidget {
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.08),
+                          color: Colors.black.withValues(alpha: 0.08),
                           blurRadius: 8,
                           offset: const Offset(0, 3),
                         ),
@@ -246,8 +246,8 @@ class ShareProfileWidget extends StatelessWidget {
                         width: 45,
                         decoration: BoxDecoration(
                           color: index == 0
-                              ? Colors.black.withOpacity(0.2)
-                              : Colors.black.withOpacity(0.05),
+                              ? Colors.black.withValues(alpha: 0.2)
+                              : Colors.black.withValues(alpha: 0.05),
                           shape: BoxShape.circle,
                         ),
                       ),
@@ -257,7 +257,7 @@ class ShareProfileWidget extends StatelessWidget {
                   Divider(
                     height: 35,
                     thickness: 0.5,
-                    color: Colors.black.withOpacity(0.2),
+                    color: Colors.black.withValues(alpha: 0.2),
                   ),
 
                   // Copy link button

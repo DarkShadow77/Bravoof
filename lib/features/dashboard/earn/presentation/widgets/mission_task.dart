@@ -42,9 +42,9 @@ class _MissionsTaskScreenState extends State<MissionsTaskScreen> {
     final bg = const Color(0xFFFFF6F9);
     final cardBg = Colors.white;
     final accent = const Color(0xFF8A3BFF); // purple accent
-    final softGray = Colors.black.withOpacity(0.55);
-    final Color g1 = const Color(0xFF7367F0).withOpacity(0.5);
-    final Color g2 = const Color(0xFFFF8A80).withOpacity(0.5);
+    final softGray = Colors.black.withValues(alpha: 0.55);
+    final Color g1 = const Color(0xFF7367F0).withValues(alpha: 0.5);
+    final Color g2 = const Color(0xFFFF8A80).withValues(alpha: 0.5);
     return Scaffold(
       backgroundColor: bg,
       body: SafeArea(
@@ -82,18 +82,18 @@ class _MissionsTaskScreenState extends State<MissionsTaskScreen> {
             Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(18),
-                border: Border.all(color: Colors.black.withOpacity(0.05)),
+                border: Border.all(color: Colors.black.withValues(alpha: 0.05)),
                 gradient: LinearGradient(
                   colors: [
-                    Colors.white.withOpacity(0.98),
-                    Colors.pink.shade50.withOpacity(0.7),
+                    Colors.white.withValues(alpha: 0.98),
+                    Colors.pink.shade50.withValues(alpha: 0.7),
                   ],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
+                    color: Colors.black.withValues(alpha: 0.05),
                     blurRadius: 14,
                     offset: const Offset(0, 6),
                   ),
@@ -122,7 +122,7 @@ class _MissionsTaskScreenState extends State<MissionsTaskScreen> {
                       children: [
                         Container(
                           decoration: BoxDecoration(
-                            color: Colors.pink.shade50.withOpacity(0.02),
+                            color: Colors.pink.shade50.withValues(alpha: 0.02),
                             borderRadius: BorderRadius.circular(100),
                           ),
 
@@ -184,13 +184,13 @@ class _MissionsTaskScreenState extends State<MissionsTaskScreen> {
                           ),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(12),
-                            color: Colors.white.withOpacity(0.5),
+                            color: Colors.white.withValues(alpha: 0.5),
                             border: Border.all(
-                              color: Colors.black.withOpacity(0.08),
+                              color: Colors.black.withValues(alpha: 0.08),
                             ),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.03),
+                                color: Colors.black.withValues(alpha: 0.03),
                                 blurRadius: 10,
                                 offset: const Offset(0, 4),
                               ),
@@ -248,7 +248,9 @@ class _MissionsTaskScreenState extends State<MissionsTaskScreen> {
                                   color: Colors.white,
                                   boxShadow: [
                                     BoxShadow(
-                                      color: Colors.black.withOpacity(0.04),
+                                      color: Colors.black.withValues(
+                                        alpha: 0.04,
+                                      ),
                                       blurRadius: 10,
 
                                       offset: const Offset(0, 4),
@@ -293,8 +295,8 @@ class _MissionsTaskScreenState extends State<MissionsTaskScreen> {
                                                               color:
                                                                   const Color(
                                                                     0xFF7367F0,
-                                                                  ).withOpacity(
-                                                                    0.5,
+                                                                  ).withValues(
+                                                                    alpha: 0.5,
                                                                   ),
                                                               blurRadius: 4,
                                                               spreadRadius: 3,
@@ -322,8 +324,9 @@ class _MissionsTaskScreenState extends State<MissionsTaskScreen> {
                                                                 color:
                                                                     const Color(
                                                                       0xFFFF8A80,
-                                                                    ).withOpacity(
-                                                                      0.5,
+                                                                    ).withValues(
+                                                                      alpha:
+                                                                          0.5,
                                                                     ),
                                                                 blurRadius: 25,
                                                                 spreadRadius:
@@ -360,7 +363,9 @@ class _MissionsTaskScreenState extends State<MissionsTaskScreen> {
                                         style: GoogleFonts.baloo2(
                                           fontSize: 16,
                                           fontWeight: FontWeight.w700,
-                                          color: Colors.black.withOpacity(0.34),
+                                          color: Colors.black.withValues(
+                                            alpha: 0.34,
+                                          ),
                                         ),
                                       ),
                                     ],
@@ -404,12 +409,12 @@ class _MissionsTaskScreenState extends State<MissionsTaskScreen> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 22),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.32),
+                color: Colors.white.withValues(alpha: 0.32),
                 borderRadius: BorderRadius.circular(14),
                 border: Border.all(color: Colors.white),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.03),
+                    color: Colors.black.withValues(alpha: 0.03),
                     blurRadius: 10,
                     offset: const Offset(0, 6),
                   ),
@@ -422,7 +427,7 @@ class _MissionsTaskScreenState extends State<MissionsTaskScreen> {
                     style: GoogleFonts.baloo2(
                       fontSize: 18,
                       fontWeight: FontWeight.w700,
-                      color: Colors.black.withOpacity(0.25),
+                      color: Colors.black.withValues(alpha: 0.25),
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -459,10 +464,10 @@ class _MissionsTaskScreenState extends State<MissionsTaskScreen> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.black.withOpacity(0.08)),
+        border: Border.all(color: Colors.black.withValues(alpha: 0.08)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.03),
+            color: Colors.black.withValues(alpha: 0.03),
             blurRadius: 12,
             offset: const Offset(0, 6),
           ),
@@ -519,7 +524,7 @@ class _MissionsTaskScreenState extends State<MissionsTaskScreen> {
             height: 100,
             padding: const EdgeInsets.only(left: 10, right: 10, top: 12),
             decoration: BoxDecoration(
-              color: Colors.black.withOpacity(0.03),
+              color: Colors.black.withValues(alpha: 0.03),
               borderRadius: BorderRadius.circular(14),
             ),
             child: Column(

@@ -153,7 +153,7 @@ class _EarnOverviewScreenState extends State<EarnOverviewScreen>
 
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -184,10 +184,12 @@ class _EarnOverviewScreenState extends State<EarnOverviewScreen>
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(30),
-                        border: Border.all(color: Colors.grey.withOpacity(0.4)),
+                        border: Border.all(
+                          color: Colors.grey.withValues(alpha: 0.4),
+                        ),
                         // boxShadow: [
                         //   BoxShadow(
-                        //     color: Colors.black.withOpacity(0.06),
+                        //     color: Colors.black.withValues(alpha:0.06),
                         //     blurRadius: 6,
                         //   ),
                         // ],
@@ -373,7 +375,7 @@ class ProgressTrack extends StatelessWidget {
               shape: BoxShape.circle,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.06),
+                  color: Colors.black.withValues(alpha: 0.06),
                   blurRadius: 8,
                   offset: const Offset(0, 4),
                 ),

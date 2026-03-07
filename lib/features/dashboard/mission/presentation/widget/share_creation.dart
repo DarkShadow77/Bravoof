@@ -49,7 +49,7 @@ class _ShareCreationState extends State<ShareCreation> {
         BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
           child: Container(
-            color: Colors.black.withOpacity(0.5), // Optional dark overlay
+            color: Colors.black.withValues(alpha:0.5), // Optional dark overlay
           ),
         ),
         DraggableScrollableSheet(
@@ -99,7 +99,7 @@ class _ShareCreationState extends State<ShareCreation> {
                             borderRadius: BorderRadius.circular(120),
                             border: Border.all(
                               width: 0.2,
-                              color: Colors.black.withOpacity(0.6),
+                              color: Colors.black.withValues(alpha:0.6),
                             ),
                           ),
                           child: IconButton(
@@ -143,7 +143,7 @@ class _ShareCreationState extends State<ShareCreation> {
                                 borderRadius: BorderRadius.circular(8),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: Colors.black.withOpacity(0.08),
+                                    color: Colors.black.withValues(alpha:0.08),
                                     blurRadius: 8,
                                     offset: const Offset(0, 4),
                                   ),

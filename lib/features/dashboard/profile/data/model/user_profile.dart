@@ -257,41 +257,27 @@ class UserProfile {
   Map<String, dynamic> toJson() {
     Map<String, dynamic> data = {};
 
-    if (name != null && name!.isNotEmpty) {
+    if (name.isNotEmpty) {
       data["name"] = name;
     }
-    if (isLogin != null) {
-      data["isLogin"] = isLogin;
-    }
-
-    if (bio != null && bio!.isNotEmpty) {
+    data["isLogin"] = isLogin;
+  
+    if (bio.isNotEmpty) {
       data["bio"] = bio;
     }
-    if (pass != null) {
-      data['pass'] = pass;
-    }
-    if (fullName != null && fullName!.isNotEmpty) {
+    data['pass'] = pass;
+      if (fullName.isNotEmpty) {
       data["full_name"] = fullName;
     }
-    if (email != null && email!.isNotEmpty) {
+    if (email.isNotEmpty) {
       data["email"] = email;
     }
-    if (goals != null) {
-      data["goals"] = goals;
-    }
-    if (referralCount != null) {
+    data["goals"] = goals;
       data["referral_count"] = referralCount;
-    }
-    if (referralCode != null) {
       data["referral_code"] = referralCode;
-    }
-    if (profilePic != null) {
       data["profile_image"] = profilePic;
-    }
-    if (userId != null) {
       data["user_id"] = userId;
-    }
-    return data;
+      return data;
   }
 }
 

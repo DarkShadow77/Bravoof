@@ -29,7 +29,7 @@ class _DeactivateAccountWidgetState extends State<DeactivateAccountWidget> {
         BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
           child: Container(
-            color: Colors.black.withOpacity(0.5), // Optional dark overlay
+            color: Colors.black.withValues(alpha: 0.5), // Optional dark overlay
           ),
         ),
         DraggableScrollableSheet(
@@ -87,7 +87,7 @@ class _DeactivateAccountWidgetState extends State<DeactivateAccountWidget> {
                             borderRadius: BorderRadius.circular(120),
                             border: Border.all(
                               width: 0.2,
-                              color: Colors.black.withOpacity(0.6),
+                              color: Colors.black.withValues(alpha: 0.6),
                             ),
                           ),
                           child: IconButton(
@@ -118,7 +118,7 @@ class _DeactivateAccountWidgetState extends State<DeactivateAccountWidget> {
                                 horizontal: 16,
                               ),
                               decoration: BoxDecoration(
-                                color: Colors.black.withOpacity(0.06),
+                                color: Colors.black.withValues(alpha: 0.06),
                                 borderRadius: BorderRadius.circular(8),
 
                                 // border: selectedOption == items[i]["label"]

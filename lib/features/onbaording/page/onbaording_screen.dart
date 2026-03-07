@@ -75,7 +75,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> with UIToolMixin {
                         decoration: BoxDecoration(
                           color: currentPage == index
                               ? Colors.black
-                              : Colors.black.withOpacity(0.2),
+                              : Colors.black.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(100),
                         ),
                       ),

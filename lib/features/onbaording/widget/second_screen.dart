@@ -107,7 +107,7 @@ class _SecondScreenState extends State<SecondScreen>
       margin: const EdgeInsets.symmetric(vertical: 10),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.95),
+        color: Colors.white.withValues(alpha: 0.95),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(width: 0.3, color: Colors.deepOrange),
         boxShadow: [

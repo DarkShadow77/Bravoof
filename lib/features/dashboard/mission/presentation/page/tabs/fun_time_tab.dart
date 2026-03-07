@@ -98,7 +98,7 @@ List<Quiz>quiz=[];
             borderRadius: BorderRadius.circular(20),
             // boxShadow: [
             //   BoxShadow(
-            //     color: colors[0].withOpacity(0.4),
+            //     color: colors[0].withValues(alpha:0.4),
             //     blurRadius: 12,
             //     offset: const Offset(0, 6),
             //   ),
@@ -125,7 +125,7 @@ List<Quiz>quiz=[];
                       vertical: 6,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.3),
+                      color: Colors.black.withValues(alpha:0.3),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Row(
@@ -206,7 +206,7 @@ List<Quiz>quiz=[];
                       //         // Blur Background
                       //         BackdropFilter(
                       //           filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
-                      //           child: Container(color: Colors.black.withOpacity(0.2)),
+                      //           child: Container(color: Colors.black.withValues(alpha:0.2)),
                       //         ),
                       //
                       //         // Dialog with Confetti Stack
@@ -326,7 +326,7 @@ class DottedLinePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = Colors.white.withOpacity(0.4)
+      ..color = Colors.white.withValues(alpha:0.4)
       ..strokeWidth = 2
       ..strokeCap = StrokeCap.round;
 

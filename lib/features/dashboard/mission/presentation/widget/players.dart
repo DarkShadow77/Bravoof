@@ -17,7 +17,7 @@ class Players extends StatelessWidget {
         BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
           child: Container(
-            color: Colors.black.withOpacity(0.5), // Optional dark overlay
+            color: Colors.black.withValues(alpha:0.5), // Optional dark overlay
           ),
         ),
         DraggableScrollableSheet(
@@ -75,7 +75,7 @@ class Players extends StatelessWidget {
                             borderRadius: BorderRadius.circular(120),
                             border: Border.all(
                               width: 0.2,
-                              color: Colors.black.withOpacity(0.6),
+                              color: Colors.black.withValues(alpha:0.6),
                             ),
                           ),
                           child: IconButton(
@@ -106,13 +106,13 @@ class Players extends StatelessWidget {
                             decoration: BoxDecoration(
                               border: Border.all(
                                 width: 0.87,
-                                color: Colors.black.withOpacity(0.12),
+                                color: Colors.black.withValues(alpha:0.12),
                               ),
                               borderRadius: BorderRadius.circular(8.65),
-                              color: Colors.white.withOpacity(0.5),
+                              color: Colors.white.withValues(alpha:0.5),
                               boxShadow: [
                                 BoxShadow(
-                                  color: Colors.black.withOpacity(0.016),
+                                  color: Colors.black.withValues(alpha:0.016),
                                 ),
                               ],
                             ),
@@ -143,7 +143,7 @@ class Players extends StatelessWidget {
                                   style: GoogleFonts.manrope(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w500,
-                                    color: Colors.black.withOpacity(0.5),
+                                    color: Colors.black.withValues(alpha:0.5),
                                   ),
                                 ),
                               ],

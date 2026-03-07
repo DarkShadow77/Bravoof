@@ -36,8 +36,12 @@ class _FocusTimerPageState extends State<FocusTimerPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       GestureDetector(
-                          onTap: ()=>Navigator.pop(context),
-                          child: const Icon(Icons.keyboard_arrow_down_rounded, size: 28)),
+                        onTap: () => Navigator.pop(context),
+                        child: const Icon(
+                          Icons.keyboard_arrow_down_rounded,
+                          size: 28,
+                        ),
+                      ),
                       Text(
                         "Focus Haven",
                         style: GoogleFonts.manrope(
@@ -59,7 +63,7 @@ class _FocusTimerPageState extends State<FocusTimerPage> {
                         Container(
                           width: 260,
                           height: 260,
-                          decoration:  BoxDecoration(
+                          decoration: BoxDecoration(
                             shape: BoxShape.circle,
 
                             gradient: LinearGradient(
@@ -69,12 +73,15 @@ class _FocusTimerPageState extends State<FocusTimerPage> {
                             ),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black.withOpacity(0.1),
+                                color: Colors.black.withValues(alpha: 0.1),
                                 blurRadius: 20,
                                 offset: Offset(0, 3),
                               ),
                             ],
-                            border: Border.all(color: Colors.black.withOpacity(0.1),width: 0.5),
+                            border: Border.all(
+                              color: Colors.black.withValues(alpha: 0.1),
+                              width: 0.5,
+                            ),
                           ),
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -84,7 +91,7 @@ class _FocusTimerPageState extends State<FocusTimerPage> {
                                 width: 60,
                                 padding: const EdgeInsets.all(8),
                                 decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.9),
+                                  color: Colors.white.withValues(alpha: 0.9),
                                   borderRadius: BorderRadius.circular(20),
                                 ),
                                 child: HugeIcon(
@@ -117,7 +124,9 @@ class _FocusTimerPageState extends State<FocusTimerPage> {
                                   borderRadius: BorderRadius.circular(28),
                                   boxShadow: [
                                     BoxShadow(
-                                      color: Colors.black.withOpacity(0.05),
+                                      color: Colors.black.withValues(
+                                        alpha: 0.05,
+                                      ),
                                       blurRadius: 10,
                                     ),
                                   ],
@@ -172,11 +181,10 @@ class _FocusTimerPageState extends State<FocusTimerPage> {
                                     fontWeight: FontWeight.w600,
                                   ),
                                 ),
-
                               ],
                             ),
 
-                            SvgPicture.asset("assets/images/play_badge.svg")
+                            SvgPicture.asset("assets/images/play_badge.svg"),
                           ],
                         ),
 
@@ -192,7 +200,10 @@ class _FocusTimerPageState extends State<FocusTimerPage> {
                                 left: 0,
                                 child: Container(
                                   width: double.infinity,
-                                  padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: 12,
+                                    horizontal: 16,
+                                  ),
                                   decoration: BoxDecoration(
                                     color: const Color(0xFFF8F8F8),
                                     borderRadius: BorderRadius.circular(16),
@@ -201,7 +212,8 @@ class _FocusTimerPageState extends State<FocusTimerPage> {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       HugeIcon(
-                                        icon: HugeIcons.strokeRoundedArrowDown03,
+                                        icon:
+                                            HugeIcons.strokeRoundedArrowDown03,
                                         size: 20,
                                       ),
                                       const SizedBox(width: 8),
@@ -219,17 +231,26 @@ class _FocusTimerPageState extends State<FocusTimerPage> {
 
                               // Browse playlists button — just above bottom bar
                               Positioned(
-                                bottom: 0, // 👈 move up slightly above the bottom bar
+                                bottom:
+                                    0, // 👈 move up slightly above the bottom bar
                                 left: 0,
                                 right: 0,
                                 child: Align(
                                   alignment: Alignment.center,
                                   child: Container(
-                                    padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 14,
+                                      horizontal: 16,
+                                    ),
                                     decoration: BoxDecoration(
                                       color: Colors.white,
                                       borderRadius: BorderRadius.circular(50),
-                                      border: Border.all(color: Colors.black.withOpacity(0.1),width: 0.5),
+                                      border: Border.all(
+                                        color: Colors.black.withValues(
+                                          alpha: 0.1,
+                                        ),
+                                        width: 0.5,
+                                      ),
                                     ),
                                     child: Row(
                                       mainAxisSize: MainAxisSize.min,
@@ -294,7 +315,9 @@ class _FocusTimerPageState extends State<FocusTimerPage> {
                           borderRadius: BorderRadius.circular(60),
                           boxShadow: [
                             BoxShadow(
-                              color: const Color(0xFF7367F0).withOpacity(0.5),
+                              color: const Color(
+                                0xFF7367F0,
+                              ).withValues(alpha: 0.5),
                               blurRadius: 20,
                               spreadRadius: 6,
                             ),
@@ -316,7 +339,7 @@ class _FocusTimerPageState extends State<FocusTimerPage> {
                               BoxShadow(
                                 color: const Color(
                                   0xFFFF8A80,
-                                ).withOpacity(0.5),
+                                ).withValues(alpha: 0.5),
                                 blurRadius: 60,
                                 spreadRadius: 10,
                               ),
@@ -332,14 +355,13 @@ class _FocusTimerPageState extends State<FocusTimerPage> {
           ),
           // Floating player - positioned above bottom
           Positioned(left: 20, right: 20, bottom: 30, child: _floatingPlayer()),
-
         ],
       ),
     );
   }
 
   Widget _floatingPlayer() {
-    return  GestureDetector(
+    return GestureDetector(
       onTap: () {
         // optional: open full player or toggle
         setState(() => isPlaying = !isPlaying);
@@ -354,12 +376,12 @@ class _FocusTimerPageState extends State<FocusTimerPage> {
             borderRadius: BorderRadius.circular(999),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.12),
+                color: Colors.black.withValues(alpha: 0.12),
                 blurRadius: 18,
                 offset: const Offset(0, 8),
               ),
               BoxShadow(
-                color: Colors.black.withOpacity(0.03),
+                color: Colors.black.withValues(alpha: 0.03),
                 blurRadius: 6,
                 offset: const Offset(0, 2),
               ),
@@ -379,10 +401,13 @@ class _FocusTimerPageState extends State<FocusTimerPage> {
                     colors: [Color(0xFFFCE7E7), Color(0xFFE9E2FF)],
                   ),
                   shape: BoxShape.circle,
-                  border: Border.all(color: Colors.black.withOpacity(0.1),width: 0.5),
+                  border: Border.all(
+                    color: Colors.black.withValues(alpha: 0.1),
+                    width: 0.5,
+                  ),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.06),
+                      color: Colors.black.withValues(alpha: 0.06),
                       blurRadius: 6,
                       offset: const Offset(0, 4),
                     ),
@@ -391,7 +416,7 @@ class _FocusTimerPageState extends State<FocusTimerPage> {
                 child: IconButton(
                   padding: EdgeInsets.zero,
                   icon: Icon(
-                    isPlaying ? Icons.pause  : Icons.play_circle_outline,
+                    isPlaying ? Icons.pause : Icons.play_circle_outline,
                     size: 20,
                   ),
                   onPressed: () => setState(() => isPlaying = !isPlaying),
@@ -428,10 +453,7 @@ class _FocusTimerPageState extends State<FocusTimerPage> {
     return ListTile(
       title: Text(
         title,
-        style: GoogleFonts.manrope(
-          fontSize: 14,
-          fontWeight: FontWeight.w700,
-        ),
+        style: GoogleFonts.manrope(fontSize: 14, fontWeight: FontWeight.w700),
       ),
       leading: Icon(
         isPlaying ? Icons.pause_circle_filled : Icons.play_circle_outline,
@@ -440,11 +462,13 @@ class _FocusTimerPageState extends State<FocusTimerPage> {
       ),
       subtitle: Text(
         duration,
-        style: GoogleFonts.manrope(fontSize: 12,
-            fontWeight: FontWeight.w500,
-            color: Color(0xFF767676)),
+        style: GoogleFonts.manrope(
+          fontSize: 12,
+          fontWeight: FontWeight.w500,
+          color: Color(0xFF767676),
+        ),
       ),
-      trailing:  const Icon(Icons.more_horiz, size: 18),
+      trailing: const Icon(Icons.more_horiz, size: 18),
       dense: true,
       minTileHeight: 10,
       minVerticalPadding: 10,
@@ -453,8 +477,7 @@ class _FocusTimerPageState extends State<FocusTimerPage> {
       contentPadding: EdgeInsets.zero,
     );
 
-      Container(
-
+    Container(
       padding: const EdgeInsets.symmetric(vertical: 10),
       decoration: BoxDecoration(
         color: isPlaying ? Colors.white : Colors.transparent,
@@ -462,17 +485,9 @@ class _FocusTimerPageState extends State<FocusTimerPage> {
       ),
       child: Row(
         children: [
-
           const SizedBox(width: 8),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-
-
-            ],
-          ),
-Spacer(),
-
+          Column(crossAxisAlignment: CrossAxisAlignment.start, children: []),
+          Spacer(),
         ],
       ),
     );

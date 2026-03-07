@@ -225,7 +225,7 @@ class _HelpWidgetState extends State<HelpWidget> {
                             borderRadius: BorderRadius.circular(120),
                             border: Border.all(
                               width: 0.2,
-                              color: Colors.black.withOpacity(0.6),
+                              color: Colors.black.withValues(alpha:0.6),
                             ),
                           ),
                           child: IconButton(
@@ -267,7 +267,7 @@ class _HelpWidgetState extends State<HelpWidget> {
                                 borderRadius: BorderRadius.circular(16),
                                 border: Border.all(
                                   width: 0.5,
-                                  color: Colors.black.withOpacity(0.08),
+                                  color: Colors.black.withValues(alpha:0.08),
                                 ),
                               ),
                               child: Row(
