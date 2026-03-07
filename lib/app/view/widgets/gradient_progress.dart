@@ -8,27 +8,32 @@ class GradientProgress extends StatelessWidget {
     super.key,
     required this.height,
     required this.progress,
+    this.color,
+    this.backgroundColor,
   });
 
   final double height;
   final double progress;
-
+  final List<Color>? color;
+  final Color? backgroundColor;
   @override
   Widget build(BuildContext context) {
+    final mainColour = color ?? [Color(0xFFA259FF), Color(0xFFDEC4FF)];
+    final bgColor = backgroundColor ?? AppColors.grey200;
     return ClipRRect(
       borderRadius: BorderRadius.circular(100.r),
       child: Container(
         height: height.h,
         width: double.infinity,
-        color: AppColors.grey200, // background
+        color: bgColor, // background
         child: Align(
           alignment: Alignment.centerLeft,
           child: FractionallySizedBox(
             widthFactor: progress,
             child: Container(
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  colors: [Color(0xFFA259FF), Color(0xFFDEC4FF)],
+                  colors: mainColour,
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                 ),

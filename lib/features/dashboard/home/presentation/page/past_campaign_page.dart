@@ -40,7 +40,7 @@ class _PastCampaignPageState extends State<PastCampaignPage>
         .toList();
     campaigns.sort((a, b) => b.campaignEndDate.compareTo(a.campaignEndDate));
     if (campaigns.isNotEmpty) {
-      campaign = campaigns.first;
+      campaign = campaigns.last;
     }
     homeBloc.fetchCampaigns();
 
@@ -64,7 +64,7 @@ class _PastCampaignPageState extends State<PastCampaignPage>
           (a, b) => b.campaignEndDate.compareTo(a.campaignEndDate),
         );
         if (campaigns.isNotEmpty) {
-          campaign = campaigns.first;
+          campaign = campaigns.last;
         }
         return Scaffold(
           body: Stack(
@@ -221,12 +221,11 @@ class _PastCampaignPageState extends State<PastCampaignPage>
                     sliver: SliverList(
                       delegate: SliverChildBuilderDelegate((context, index) {
                         final pastCampaign = campaigns[index];
-                        bool isLatest = pastCampaign.id == campaign.id;
 
                         return Padding(
                           padding: EdgeInsets.only(bottom: 12.h),
                           child: PastCampaignTile(
-                            isLatest: isLatest,
+                            isLatest: false,
                             pastCampaign: pastCampaign,
                           ),
                         );

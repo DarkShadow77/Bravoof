@@ -156,7 +156,7 @@ class _CampaignWinnerCardState extends State<CampaignWinnerCard> {
                                 textSize: 10,
                                 text: "${campaign.month} Winner(s)",
                                 textColor: hexToColor(campaign.textColor),
-                                color: hexToColor(campaign.bgColor),
+                                color: hexToColor(campaign.inverseTextColor),
                                 innerShadow: hexToColor(
                                   campaign.textColor,
                                 ).withValues(alpha: .3),

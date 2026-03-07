@@ -14,7 +14,6 @@ import '../../../../../../core/constants/app_colors.dart';
 import '../../widget/community_mission_card.dart';
 import '../../widget/discover_perks.dart';
 import '../../widget/featured_card.dart';
-import '../../widget/follow_us_card.dart';
 import '../../widget/mission_list_title.dart';
 import '../../widget/sponsored_card.dart';
 
@@ -57,8 +56,8 @@ class _AdventuresTabState extends State<AdventuresTab> with UIToolMixin {
             _buildGrowthMission(),
             SizedBox(height: 20.h),
             SponsoredCard(),
-            SizedBox(height: 20.h),
-            FollowUsCard(),
+            /*SizedBox(height: 20.h),
+            FollowUsCard(),*/
             SizedBox(height: 20.h),
             FeaturedCard(),
             SizedBox(height: 40.h),

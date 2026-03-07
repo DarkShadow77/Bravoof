@@ -59,10 +59,10 @@ class _FollowUsCardState extends State<FollowUsCard> {
     return Container(
       width: double.infinity,
       margin: EdgeInsets.symmetric(horizontal: 16.w),
-      padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 16.w),
+      padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 13.w),
       decoration: BoxDecoration(
-        color: AppColors.white80,
-        borderRadius: BorderRadius.circular(16.r),
+        color: AppColors.primary,
+        borderRadius: BorderRadius.circular(32.r),
       ),
       child: BlocBuilder<SocialMissionBloc, SocialMissionState>(
         builder: (context, state) {
@@ -85,120 +85,148 @@ class _FollowUsCardState extends State<FollowUsCard> {
           final double safeProgress = progress.clamp(0.0, 1.0);
 
           return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               // Title
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Expanded(
-                    child: RichText(
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      text: TextSpan(
-                        text: 'Follow Us On Socials 🔥',
-                        style: TextStyles.titleBold20(
-                          context,
-                        ).copyWith(fontFamily: AppFonts.baloo2),
+              Container(
+                padding: EdgeInsets.symmetric(vertical: 5.h, horizontal: 6.w),
+                decoration: BoxDecoration(
+                  color: AppColors.white80,
+                  borderRadius: BorderRadius.circular(1000.r),
+                ),
+                child: Row(
+                  spacing: 4.w,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Container(),
+                    Expanded(
+                      child: RichText(
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        text: TextSpan(
+                          text: 'Bravoo Social mission 🔥',
+                          style: TextStyles.titleBold20(
+                            context,
+                          ).copyWith(fontFamily: AppFonts.baloo2),
+                        ),
                       ),
                     ),
-                  ),
-                  Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 10.w,
-                      vertical: 6.h,
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 8.w,
+                        vertical: 6.h,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.black40,
+                        borderRadius: BorderRadius.circular(100.r),
+                      ),
+                      child: Row(
+                        spacing: 4.w,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          SizedBox(),
+                          Image.asset(
+                            AssetsPngImages.one50,
+                            height: 14.r,
+                            width: 14.r,
+                          ),
+                          RichText(
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            text: TextSpan(
+                              text: getMissionPointRange(),
+                              style: TextStyles.cardSemibold10(
+                                context,
+                              ).copyWith(color: AppColors.white),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                    decoration: BoxDecoration(
-                      color: AppColors.black05,
-                      borderRadius: BorderRadius.circular(100.r),
-                    ),
-                    child: Row(
-                      spacing: 4.w,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisSize: MainAxisSize.min,
+                  ],
+                ),
+              ),
+              SizedBox(height: 16.h),
+              RichText(
+                text: TextSpan(
+                  text: "Total Progress 0%",
+                  style: TextStyles.cardSemibold10(
+                    context,
+                  ).copyWith(color: AppColors.white),
+                ),
+              ),
+              SizedBox(height: 7.h),
+              // Progress bar area with markers and icons
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 3.w),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    GradientProgress(height: 8, progress: safeProgress),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        Image.asset(
-                          AssetsPngImages.one50,
-                          height: 14.r,
-                          width: 14.r,
+                        Expanded(
+                          child: RichText(
+                            text: TextSpan(
+                              text: "0%",
+                              style: TextStyles.smallCardSemibold8(
+                                context,
+                              ).copyWith(color: AppColors.white),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: RichText(
+                            text: TextSpan(
+                              text: "33%",
+                              style: TextStyles.smallCardSemibold8(
+                                context,
+                              ).copyWith(color: AppColors.white),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: RichText(
+                            text: TextSpan(
+                              text: "67%",
+                              style: TextStyles.smallCardSemibold8(
+                                context,
+                              ).copyWith(color: AppColors.white),
+                            ),
+                          ),
                         ),
                         RichText(
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
                           text: TextSpan(
-                            text: getMissionPointRange(),
-                            style: TextStyles.cardSemibold10(context),
+                            text: "100%",
+                            style: TextStyles.smallCardSemibold8(
+                              context,
+                            ).copyWith(color: AppColors.white),
                           ),
                         ),
                       ],
                     ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 16.h),
-              // Progress bar area with markers and icons
-              GradientProgress(height: 8, progress: safeProgress),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Expanded(
-                    child: RichText(
-                      text: TextSpan(
-                        text: "0%",
-                        style: TextStyles.smallCardSemibold8(
-                          context,
-                          opacity: .35,
-                        ),
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: RichText(
-                      text: TextSpan(
-                        text: "33%",
-                        style: TextStyles.smallCardSemibold8(
-                          context,
-                          opacity: .55,
-                        ),
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: RichText(
-                      text: TextSpan(
-                        text: "67%",
-                        style: TextStyles.smallCardSemibold8(
-                          context,
-                          opacity: .75,
-                        ),
-                      ),
-                    ),
-                  ),
-                  RichText(
-                    text: TextSpan(
-                      text: "100%",
-                      style: TextStyles.smallCardSemibold8(context),
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(height: 16.r),
-              // Three tier cards row: Beginner / Explorer / Master
-              Row(
-                spacing: 12.w,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: socialMissions.asMap().entries.map((e) {
-                  final index = e.key;
-                  final socialMission = socialMissions[index];
-                  final missionStatus = socialMissionStatus[index];
+                    SizedBox(height: 16.r),
+                    // Three tier cards row: Beginner / Explorer / Master
+                    Row(
+                      spacing: 12.w,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: socialMissions.asMap().entries.map((e) {
+                        final index = e.key;
+                        final socialMission = socialMissions[index];
+                        final missionStatus = socialMissionStatus[index];
 
-                  return Expanded(
-                    child: _SocialCard(
-                      socialMission: socialMission,
-                      missionStatus: missionStatus,
+                        return Expanded(
+                          child: _SocialCard(
+                            socialMission: socialMission,
+                            missionStatus: missionStatus,
+                          ),
+                        );
+                      }).toList(),
                     ),
-                  );
-                }).toList(),
+                  ],
+                ),
               ),
             ],
           );
@@ -230,10 +258,9 @@ class _SocialCard extends StatelessWidget {
         padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 12.w),
         decoration: BoxDecoration(
           color: joined ? Color(0xFFECD6FF) : AppColors.black05,
-          borderRadius: BorderRadius.circular(16.r),
+          borderRadius: BorderRadius.circular(24.r),
           border: Border.all(width: 1.w, color: AppColors.white),
         ),
-
         child: Stack(
           children: [
             Column(
@@ -253,7 +280,9 @@ class _SocialCard extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   text: TextSpan(
                     text: socialMission.title,
-                    style: TextStyles.cardBold10(context),
+                    style: TextStyles.cardBold10(
+                      context,
+                    ).copyWith(color: !joined ? AppColors.white : null),
                   ),
                 ),
                 joined
@@ -286,6 +315,10 @@ class _SocialCard extends StatelessWidget {
                 width: 14.r,
                 height: 14.r,
                 fit: BoxFit.contain,
+                colorFilter: ColorFilter.mode(
+                  !joined ? AppColors.white : AppColors.black,
+                  BlendMode.srcIn,
+                ),
               ),
             ),
           ],

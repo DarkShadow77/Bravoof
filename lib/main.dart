@@ -32,6 +32,7 @@ import 'features/dashboard/home/presentation/bloc/notification_bloc.dart';
 import 'features/dashboard/mission/presentation/bloc/community_mission_bloc.dart';
 import 'features/dashboard/mission/presentation/bloc/featured_mission_bloc.dart';
 import 'features/dashboard/mission/presentation/bloc/growth_mission_bloc.dart';
+import 'features/dashboard/mission/presentation/bloc/new_social_mission_bloc.dart';
 import 'features/dashboard/mission/presentation/bloc/skill_up_bloc.dart';
 import 'features/dashboard/mission/presentation/bloc/social_mission_bloc.dart';
 import 'features/dashboard/mission/presentation/bloc/sponsored_mission_bloc.dart';
@@ -138,6 +139,7 @@ class _MyAppState extends State<MyApp> {
         BlocProvider(create: (_) => sl<AuthLinkBloc>()),
         BlocProvider(create: (_) => sl<CommunityMissionBloc>()),
         BlocProvider(create: (_) => sl<SocialMissionBloc>()),
+        BlocProvider(create: (_) => sl<NewSocialMissionBloc>()),
         BlocProvider(create: (_) => sl<FeaturedMissionBloc>()),
         BlocProvider(create: (_) => sl<SponsoredMissionBloc>()),
         BlocProvider(create: (_) => sl<SkillUpBloc>()),

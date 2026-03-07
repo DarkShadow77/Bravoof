@@ -21,6 +21,8 @@ import '../../features/dashboard/mission/data/repository/featured_mission_reposi
 import '../../features/dashboard/mission/data/repository/featured_mission_repository_impl.dart';
 import '../../features/dashboard/mission/data/repository/growth_mission_repository.dart';
 import '../../features/dashboard/mission/data/repository/growth_mission_repository_impl.dart';
+import '../../features/dashboard/mission/data/repository/new_social_mission_repository.dart';
+import '../../features/dashboard/mission/data/repository/new_social_mission_repository_impl.dart';
 import '../../features/dashboard/mission/data/repository/skill_up_repository.dart';
 import '../../features/dashboard/mission/data/repository/skill_up_repository_impl.dart';
 import '../../features/dashboard/mission/data/repository/social_mission_repository.dart';
@@ -32,6 +34,7 @@ import '../../features/dashboard/mission/data/repository/streak_repository_impl.
 import '../../features/dashboard/mission/presentation/bloc/community_mission_bloc.dart';
 import '../../features/dashboard/mission/presentation/bloc/featured_mission_bloc.dart';
 import '../../features/dashboard/mission/presentation/bloc/growth_mission_bloc.dart';
+import '../../features/dashboard/mission/presentation/bloc/new_social_mission_bloc.dart';
 import '../../features/dashboard/mission/presentation/bloc/skill_up_bloc.dart';
 import '../../features/dashboard/mission/presentation/bloc/social_mission_bloc.dart';
 import '../../features/dashboard/mission/presentation/bloc/sponsored_mission_bloc.dart';
@@ -63,6 +66,9 @@ Future<void> initDI() async {
   );
   sl.registerLazySingleton<FeaturedMissionRepository>(
     () => FeaturedMissionRepositoryImpl(),
+  );
+  sl.registerLazySingleton<NewSocialMissionRepository>(
+    () => NewSocialMissionRepositoryImpl(),
   );
   sl.registerLazySingleton<SponsoredMissionRepository>(
     () => SponsoredMissionRepositoryImpl(),
@@ -96,6 +102,9 @@ Future<void> initDI() async {
   );
   sl.registerSingleton<FeaturedMissionBloc>(
     FeaturedMissionBloc(repo: sl<FeaturedMissionRepository>()),
+  );
+  sl.registerSingleton<NewSocialMissionBloc>(
+    NewSocialMissionBloc(repo: sl<NewSocialMissionRepository>()),
   );
   sl.registerSingleton<SponsoredMissionBloc>(
     SponsoredMissionBloc(repo: sl<SponsoredMissionRepository>()),

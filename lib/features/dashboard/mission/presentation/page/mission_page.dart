@@ -1,8 +1,8 @@
+import 'package:bravoo/app/styles/text_styles.dart';
 import 'package:bravoo/features/common/flowva_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import '../../../home/presentation/bloc/home_cubit.dart';
 import '../../../profile/presentation/bloc/profile_bloc.dart';
@@ -10,6 +10,7 @@ import '../../../redeem/presentation/bloc/redeem_bloc.dart';
 import '../bloc/community_mission_bloc.dart';
 import '../bloc/featured_mission_bloc.dart';
 import '../bloc/growth_mission_bloc.dart';
+import '../bloc/new_social_mission_bloc.dart';
 import '../bloc/skill_up_bloc.dart';
 import '../bloc/social_mission_bloc.dart';
 import '../bloc/sponsored_mission_bloc.dart';
@@ -17,6 +18,7 @@ import '../bloc/streak_bloc.dart';
 import 'tabs/adventures_tab.dart';
 import 'tabs/overview_tab.dart';
 import 'tabs/skill_up_tab.dart';
+import 'tabs/social_tab.dart';
 
 class MissionPage extends StatefulWidget {
   MissionPage({super.key, this.index});
@@ -27,7 +29,7 @@ class MissionPage extends StatefulWidget {
 }
 
 class _MissionPageState extends State<MissionPage> {
-  var tab = ["Overview", "Adventures", "Skill Up" /*"Fun time"*/];
+  var tab = ["Overview", "Adventures", "Socials", "Skill Up" /*"Fun time"*/];
   final _pageController = PageController(initialPage: 0);
   int currentPage = 0;
   int selectedIndex = 0;
@@ -48,6 +50,7 @@ class _MissionPageState extends State<MissionPage> {
     context.read<ProfileBloc>().add(GetProfileEvent());
     context.read<CommunityMissionBloc>().add(LoadCommunityMission());
     context.read<SocialMissionBloc>().add(LoadSocialMission());
+    context.read<NewSocialMissionBloc>().add(LoadNewSocialMission());
     context.read<FeaturedMissionBloc>().add(LoadFeaturedMission());
     context.read<SponsoredMissionBloc>().add(LoadSponsoredMission());
     context.read<GrowthMissionBloc>().add(LoadGrowthMission());
@@ -85,7 +88,7 @@ class _MissionPageState extends State<MissionPage> {
                     shrinkWrap: true,
                     padding: EdgeInsets.symmetric(vertical: 5.h),
                     itemCount: tab.length,
-                    separatorBuilder: (_, __) => SizedBox(width: 10.w),
+                    separatorBuilder: (_, __) => SizedBox(width: 8.w),
                     itemBuilder: (context, index) {
                       final isSelected2 = selectedIndex == index;
                       return GestureDetector(
@@ -96,28 +99,22 @@ class _MissionPageState extends State<MissionPage> {
                         child: AnimatedContainer(
                           duration: const Duration(milliseconds: 300),
                           padding: EdgeInsets.symmetric(
-                            horizontal: 12.w,
+                            horizontal: isSelected2 ? 12.w : 8.w,
                             vertical: 6.h,
                           ),
                           decoration: BoxDecoration(
                             color: isSelected2 ? Colors.white : null,
-                            borderRadius: BorderRadius.circular(120),
-                            border: isSelected2
-                                ? Border.all(
-                                    width: 0.2,
-                                    color: Colors.black.withValues(alpha: 0.6),
-                                  )
-                                : null,
+                            borderRadius: BorderRadius.circular(120.r),
                           ),
                           child: Center(
-                            child: Text(
-                              tab[index],
-                              style: GoogleFonts.manrope(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w700,
-                                color: isSelected2
-                                    ? Colors.black
-                                    : Colors.black.withValues(alpha: 0.6),
+                            child: RichText(
+                              text: TextSpan(
+                                text: tab[index],
+                                style: TextStyles.smallBold12(context).copyWith(
+                                  color: isSelected2
+                                      ? Colors.black
+                                      : Colors.black.withValues(alpha: 0.6),
+                                ),
                               ),
                             ),
                           ),
@@ -139,6 +136,7 @@ class _MissionPageState extends State<MissionPage> {
                     children: [
                       EarnOverviewScreen(),
                       AdventuresTab(),
+                      SocialTab(),
                       SkillUpPage(),
                       // TriviaPage(),
                     ],
