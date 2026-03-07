@@ -14,6 +14,8 @@ class NewSocialMission {
   final String submissionType;
   final DateTime createdAt;
   final List<MissionInstruction> instructions;
+  final int maxUsers;
+  final int usersJoined;
 
   NewSocialMission({
     required this.id,
@@ -28,6 +30,8 @@ class NewSocialMission {
     required this.submissionType,
     required this.createdAt,
     required this.instructions,
+    required this.maxUsers,
+    required this.usersJoined,
   });
 
   factory NewSocialMission.fromJson(Map<String, dynamic> json) {
@@ -46,6 +50,8 @@ class NewSocialMission {
       instructions: (json['instructions'] as List<dynamic>? ?? [])
           .map((e) => MissionInstruction.fromJson(e))
           .toList(),
+      maxUsers: json['max_users'] ?? 0,
+      usersJoined: json['users_joined'] ?? 0,
     );
   }
 }

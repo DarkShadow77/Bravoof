@@ -26,7 +26,9 @@ class NewSocialCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double progress = 50 == 0 ? 0.0 : 15 / 50;
+    final double progress = socialMission.maxUsers == 0
+        ? 0.0
+        : socialMission.usersJoined / socialMission.maxUsers;
     final double safeProgress = progress.clamp(0.0, 1.0);
 
     final joined =
@@ -139,14 +141,31 @@ class NewSocialCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                RichText(
-                  text: TextSpan(
-                    text:
-                        "Mission Progress ${formatAmount(safeProgress * 100)}%",
-                    style: TextStyles.cardSemibold10(
-                      context,
-                    ).copyWith(color: AppColors.white),
-                  ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: RichText(
+                        text: TextSpan(
+                          text:
+                              "Mission Progress ${formatAmount(safeProgress * 100)}%",
+                          style: TextStyles.cardSemibold10(context).copyWith(
+                            color: hexToColor(socialMission.textColor),
+                          ),
+                        ),
+                      ),
+                    ),
+                    RichText(
+                      text: TextSpan(
+                        text:
+                            "${socialMission.usersJoined} / ${socialMission.maxUsers}",
+                        style: TextStyles.cardRegular10(context).copyWith(
+                          fontFamily: AppFonts.baloo,
+                          color: hexToColor(socialMission.textColor),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
                 SizedBox(height: 7.h),
                 // Progress bar area with markers and icons
@@ -175,9 +194,12 @@ class NewSocialCard extends StatelessWidget {
                             child: RichText(
                               text: TextSpan(
                                 text: "0%",
-                                style: TextStyles.smallCardSemibold8(
-                                  context,
-                                ).copyWith(color: AppColors.white),
+                                style: TextStyles.smallCardSemibold8(context)
+                                    .copyWith(
+                                      color: hexToColor(
+                                        socialMission.textColor,
+                                      ),
+                                    ),
                               ),
                             ),
                           ),
@@ -185,9 +207,12 @@ class NewSocialCard extends StatelessWidget {
                             child: RichText(
                               text: TextSpan(
                                 text: "33%",
-                                style: TextStyles.smallCardSemibold8(
-                                  context,
-                                ).copyWith(color: AppColors.white),
+                                style: TextStyles.smallCardSemibold8(context)
+                                    .copyWith(
+                                      color: hexToColor(
+                                        socialMission.textColor,
+                                      ),
+                                    ),
                               ),
                             ),
                           ),
@@ -195,18 +220,22 @@ class NewSocialCard extends StatelessWidget {
                             child: RichText(
                               text: TextSpan(
                                 text: "67%",
-                                style: TextStyles.smallCardSemibold8(
-                                  context,
-                                ).copyWith(color: AppColors.white),
+                                style: TextStyles.smallCardSemibold8(context)
+                                    .copyWith(
+                                      color: hexToColor(
+                                        socialMission.textColor,
+                                      ),
+                                    ),
                               ),
                             ),
                           ),
                           RichText(
                             text: TextSpan(
                               text: "100%",
-                              style: TextStyles.smallCardSemibold8(
-                                context,
-                              ).copyWith(color: AppColors.white),
+                              style: TextStyles.smallCardSemibold8(context)
+                                  .copyWith(
+                                    color: hexToColor(socialMission.textColor),
+                                  ),
                             ),
                           ),
                         ],
