@@ -91,6 +91,7 @@ class SocialMissionBloc extends Bloc<SocialMissionEvent, SocialMissionState> {
     final res = await repo.completeMission(
       missionId: event.missionId,
       userId: supabase.auth.currentUser!.id,
+      imageUrl: event.imageUrl,
       text: event.text,
     );
 

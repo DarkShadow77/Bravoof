@@ -27,17 +27,21 @@ class FeaturedMissionRepositoryImpl extends FeaturedMissionRepository {
   Future<Either<String, void>> completeMission({
     required int missionId,
     required String userId,
-    required String imageUrl,
+    required String? imageUrl,
+    required String text,
   }) async {
     final token =
         Supabase.instance.client.auth.currentSession?.accessToken ?? "";
     final formData = FormData.fromMap({
       'missionId': missionId,
       'userId': userId,
-      'image': await MultipartFile.fromFile(
-        imageUrl,
-        filename: imageUrl.split('/').last,
-      ),
+      'image': imageUrl != null
+          ? await MultipartFile.fromFile(
+              imageUrl,
+              filename: imageUrl.split('/').last,
+            )
+          : null,
+      'evidenceText': text,
     });
 
     final response = await ApiService.instance!.postRequest(

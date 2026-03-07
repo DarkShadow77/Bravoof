@@ -90,6 +90,7 @@ class CommunityMissionBloc
       missionId: event.missionId,
       userId: supabase.auth.currentUser!.id,
       imageUrl: event.imageUrl,
+      text: event.text,
     );
 
     res.fold(

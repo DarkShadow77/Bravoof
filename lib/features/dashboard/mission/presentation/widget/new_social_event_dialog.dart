@@ -267,14 +267,13 @@ class _AskingDialogState extends State<NewSocialEventDialog> with UIToolMixin {
                           ? FlowvaButton.blueButton(
                               name: "Mission complete",
                               apply: () {
-                                if (pickedImage != null)
-                                  context.read<NewSocialMissionBloc>().add(
-                                    CompleteNewSocialMission(
-                                      missionId: widget.newSocialMission.id,
-                                      imageUrl: pickedImage!,
-                                      text: answerController.text.trim(),
-                                    ),
-                                  );
+                                context.read<NewSocialMissionBloc>().add(
+                                  CompleteNewSocialMission(
+                                    missionId: widget.newSocialMission.id,
+                                    imageUrl: pickedImage!,
+                                    text: answerController.text.trim(),
+                                  ),
+                                );
                               },
                             )
                           : SizedBox(
@@ -364,7 +363,7 @@ class _AskingDialogState extends State<NewSocialEventDialog> with UIToolMixin {
                       setState(() {});
                     },
                   )
-                else
+                else if (widget.newSocialMission.submissionType == "photo")
                   GestureDetector(
                     onTap: () => pickImage(ImageSource.gallery),
                     child: Container(

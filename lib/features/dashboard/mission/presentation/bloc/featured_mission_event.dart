@@ -15,7 +15,12 @@ class CheckCompletedStatus extends FeaturedMissionEvent {
 
 class CompleteFeaturedMission extends FeaturedMissionEvent {
   final int missionId;
-  final String imageUrl;
+  final String? imageUrl;
+  final String text;
 
-  CompleteFeaturedMission({required this.missionId, required this.imageUrl});
+  CompleteFeaturedMission({
+    required this.missionId,
+    required this.imageUrl,
+    required this.text,
+  });
 }

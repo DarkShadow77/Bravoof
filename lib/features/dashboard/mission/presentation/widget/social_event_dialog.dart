@@ -7,13 +7,17 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:path/path.dart' as p;
 import 'package:timelines_plus/timelines_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../../app/styles/text_styles.dart';
 import '../../../../../app/view/widgets/loading/outer_loading.dart';
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../../core/utils/helpers.dart';
 import '../../../../../utility/ui_tool_mix.dart';
 import '../../../../common/Mission_success.dart';
 import '../../../../common/flowva_button.dart';
@@ -43,7 +47,25 @@ class SocialEventDialog extends StatefulWidget {
 }
 
 class _AskingDialogState extends State<SocialEventDialog> with UIToolMixin {
+  final ImagePicker _picker = ImagePicker();
   final TextEditingController answerController = TextEditingController();
+
+  String? pickedImage;
+
+  pickImage(ImageSource imageSource) async {
+    try {
+      final XFile? pickedFile = await _picker.pickImage(source: imageSource);
+
+      setState(() {
+        pickedImage = pickedFile!.path;
+      });
+    } catch (e) {
+      print(e);
+      setState(() {
+        // _pickImageError = e;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -240,13 +262,15 @@ class _AskingDialogState extends State<SocialEventDialog> with UIToolMixin {
                         },
                       ),
                       SizedBox(height: 8.h),
-                      answerController.text.trim().isNotEmpty
+                      pickedImage != null ||
+                              answerController.text.trim().isNotEmpty
                           ? FlowvaButton.blueButton(
                               name: "Mission complete",
                               apply: () {
-                                BlocProvider.of<SocialMissionBloc>(context).add(
+                                context.read<SocialMissionBloc>().add(
                                   CompleteSocialMission(
                                     missionId: widget.socialMission.id,
+                                    imageUrl: pickedImage,
                                     text: answerController.text.trim(),
                                   ),
                                 );
@@ -328,16 +352,48 @@ class _AskingDialogState extends State<SocialEventDialog> with UIToolMixin {
                     color: AppColors.grey300.withValues(alpha: .5),
                   ),
                 ),
-                AppTextFeild(
-                  controller: answerController,
-                  hintText: "Type your answer here",
-                  validator: MultiValidator([
-                    RequiredValidator(errorText: "Answer is required"),
-                  ]).call,
-                  onChanged: (value) {
-                    setState(() {});
-                  },
-                ),
+                if (widget.socialMission.submissionType == "text")
+                  AppTextFeild(
+                    controller: answerController,
+                    hintText: "Type your answer here",
+                    validator: MultiValidator([
+                      RequiredValidator(errorText: "Answer is required"),
+                    ]).call,
+                    onChanged: (value) {
+                      setState(() {});
+                    },
+                  )
+                else if (widget.socialMission.submissionType == "photo")
+                  GestureDetector(
+                    onTap: () => pickImage(ImageSource.gallery),
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        vertical: 12,
+                        horizontal: 10,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Color(0xFFF9F9F9),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: Color(0xFFFE9E9E9)),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            pickedImage != null
+                                ? '${shortenFileName(p.basename(pickedImage!))}'
+                                : "Upload screenshot",
+                            style: GoogleFonts.manrope(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w400,
+                              color: Colors.black,
+                            ),
+                          ),
+                          HugeIcon(icon: HugeIcons.strokeRoundedImageCrop),
+                        ],
+                      ),
+                    ),
+                  ),
               ],
             )
           : MarkdownBody(

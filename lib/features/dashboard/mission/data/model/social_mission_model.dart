@@ -8,6 +8,7 @@ class SocialMission {
   final List<MissionInstruction> instructions;
   final DateTime createdAt;
   final int points;
+  final String submissionType;
 
   SocialMission({
     required this.id,
@@ -17,6 +18,7 @@ class SocialMission {
     required this.instructions,
     required this.createdAt,
     required this.points,
+    required this.submissionType,
   });
 
   factory SocialMission.fromJson(Map<String, dynamic> json) {
@@ -30,6 +32,7 @@ class SocialMission {
           .toList(),
       createdAt: DateTime.parse(json['created_at']),
       points: json['points'] ?? 0,
+      submissionType: json['submission_type'] ?? '',
     );
   }
 
@@ -40,6 +43,7 @@ class SocialMission {
       'image_url': image,
       'points': points,
       'instruction_title': instructionTitle,
+      'submission_type': submissionType,
       'instructions': instructions.map((e) => e.toJson()).toList(),
       'created_at': createdAt.toIso8601String(),
     };

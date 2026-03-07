@@ -13,6 +13,7 @@ class SponsoredMission {
   final String instructionTitle;
   final DateTime createdAt;
   final List<MissionInstruction> instructions;
+  final String submissionType;
 
   SponsoredMission({
     required this.id,
@@ -26,6 +27,7 @@ class SponsoredMission {
     required this.instructionTitle,
     required this.createdAt,
     required this.instructions,
+    required this.submissionType,
   });
 
   factory SponsoredMission.fromJson(Map<String, dynamic> json) {
@@ -43,6 +45,7 @@ class SponsoredMission {
       instructions: (json['instructions'] as List<dynamic>? ?? [])
           .map((e) => MissionInstruction.fromJson(e))
           .toList(),
+      submissionType: json['submission_type'] ?? '',
     );
   }
 }

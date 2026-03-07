@@ -10,6 +10,7 @@ class CommunityMission {
   final DateTime createdAt;
   final int point;
   final String instructionTitle;
+  final String submissionType;
 
   CommunityMission({
     required this.id,
@@ -23,6 +24,7 @@ class CommunityMission {
     required this.createdAt,
     required this.point,
     required this.instructionTitle,
+    required this.submissionType,
   });
 
   factory CommunityMission.fromJson(Map<String, dynamic> json) {
@@ -40,6 +42,7 @@ class CommunityMission {
       createdAt: DateTime.parse(json['created_at']),
       point: json['points'] ?? 0,
       instructionTitle: json['instruction_title'] ?? '',
+      submissionType: json['submission_type'] ?? '',
     );
   }
 
@@ -56,6 +59,7 @@ class CommunityMission {
       'created_at': createdAt.toIso8601String(),
       'points': point,
       'instruction_title': instructionTitle,
+      'submission_type': submissionType,
     };
   }
 }

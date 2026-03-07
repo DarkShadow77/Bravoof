@@ -12,7 +12,8 @@ abstract class CommunityMissionRepository {
   Future<Either<String, void>> completeMission({
     required int missionId,
     required String userId,
-    required String imageUrl,
+    required String? imageUrl,
+    required String text,
   });
 
   Future<Either<String, MissionStatus>> hasJoined({

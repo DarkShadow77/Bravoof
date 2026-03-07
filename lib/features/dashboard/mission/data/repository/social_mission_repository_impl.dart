@@ -1,5 +1,8 @@
 import 'package:dartz/dartz.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:dio/dio.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:logger/logger.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' hide MultipartFile;
 
 import '../../../../../core/services/api_service.dart';
 import '../model/mission_status_enum.dart';
@@ -24,14 +27,38 @@ class SocialMissionRepositoryImpl extends SocialMissionRepository {
   Future<Either<String, void>> completeMission({
     required int missionId,
     required String userId,
+    required String? imageUrl,
     required String text,
   }) async {
-    return ApiService.instance!.invokeEdgeFunction<void>(
-      functionName: 'complete-social-mission',
-      body: {'missionId': missionId, 'userId': userId, 'text': text},
-      fallbackErrorMessage: 'Failed to Complete Social Mission',
-      onSuccess: (data) => "Completed Social Mission",
+    final token = supabase.auth.currentSession?.accessToken ?? "";
+    final formData = FormData.fromMap({
+      'missionId': missionId,
+      'userId': userId,
+      'image': imageUrl != null
+          ? await MultipartFile.fromFile(
+              imageUrl,
+              filename: imageUrl.split('/').last,
+            )
+          : null,
+      'evidenceText': text,
+    });
+
+    final response = await ApiService.instance!.postRequest(
+      "functions/v1/complete-social-mission",
+      formData,
+      accessToken: token,
+      apiKey: dotenv.env["ANON_KEY"] ?? "",
     );
+
+    Logger().d("Complete Sponsored Mission Response $response");
+
+    if (response.responseSuccessful == true) {
+      return Right(null);
+    } else {
+      return Left(
+        response.responseMessage ?? "Failed to Complete Social Mission",
+      );
+    }
   }
 
   Future<Either<String, MissionStatus>> hasJoined({

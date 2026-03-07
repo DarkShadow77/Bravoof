@@ -9,6 +9,7 @@ abstract class SocialMissionRepository {
   Future<Either<String, void>> completeMission({
     required int missionId,
     required String userId,
+    required String? imageUrl,
     required String text,
   });
 

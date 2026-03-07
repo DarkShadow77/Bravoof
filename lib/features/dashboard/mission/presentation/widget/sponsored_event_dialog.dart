@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:form_field_validator/form_field_validator.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
@@ -16,10 +17,11 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../../../app/styles/text_styles.dart';
 import '../../../../../app/view/widgets/loading/outer_loading.dart';
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../../core/utils/helpers.dart';
 import '../../../../../utility/ui_tool_mix.dart';
 import '../../../../common/Mission_success.dart';
 import '../../../../common/flowva_button.dart';
-import '../../../../../core/utils/helpers.dart';
+import '../../../../common/flowva_text_field.dart';
 import '../../data/model/community_mission_model.dart';
 import '../../data/model/sponsored_mission_model.dart';
 import '../bloc/sponsored_mission_bloc.dart';
@@ -46,6 +48,7 @@ class SponsoredEventDialog extends StatefulWidget {
 
 class _AskingDialogState extends State<SponsoredEventDialog> with UIToolMixin {
   final ImagePicker _picker = ImagePicker();
+  final TextEditingController answerController = TextEditingController();
 
   String? pickedImage;
 
@@ -259,17 +262,18 @@ class _AskingDialogState extends State<SponsoredEventDialog> with UIToolMixin {
                         },
                       ),
                       SizedBox(height: 8.h),
-                      pickedImage != null
+                      pickedImage != null ||
+                              answerController.text.trim().isNotEmpty
                           ? FlowvaButton.blueButton(
                               name: "Mission complete",
                               apply: () {
-                                if (pickedImage != null)
-                                  context.read<SponsoredMissionBloc>().add(
-                                    CompleteSponsoredMission(
-                                      missionId: widget.sponsoredMission.id,
-                                      imageUrl: pickedImage!,
-                                    ),
-                                  );
+                                context.read<SponsoredMissionBloc>().add(
+                                  CompleteSponsoredMission(
+                                    missionId: widget.sponsoredMission.id,
+                                    imageUrl: pickedImage!,
+                                    text: answerController.text.trim(),
+                                  ),
+                                );
                               },
                             )
                           : SizedBox(
@@ -348,34 +352,48 @@ class _AskingDialogState extends State<SponsoredEventDialog> with UIToolMixin {
                     color: AppColors.grey300.withValues(alpha: .5),
                   ),
                 ),
-
-                GestureDetector(
-                  onTap: () => pickImage(ImageSource.gallery),
-                  child: Container(
-                    padding: EdgeInsets.symmetric(vertical: 12, horizontal: 10),
-                    decoration: BoxDecoration(
-                      color: Color(0xFFF9F9F9),
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: Color(0xFFFE9E9E9)),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          pickedImage != null
-                              ? '${shortenFileName(p.basename(pickedImage!))}'
-                              : "Upload screenshot",
-                          style: GoogleFonts.manrope(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w400,
-                            color: Colors.black,
+                if (widget.sponsoredMission.submissionType == "text")
+                  AppTextFeild(
+                    controller: answerController,
+                    hintText: "Type your answer here",
+                    validator: MultiValidator([
+                      RequiredValidator(errorText: "Answer is required"),
+                    ]).call,
+                    onChanged: (value) {
+                      setState(() {});
+                    },
+                  )
+                else if (widget.sponsoredMission.submissionType == "photo")
+                  GestureDetector(
+                    onTap: () => pickImage(ImageSource.gallery),
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        vertical: 12,
+                        horizontal: 10,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Color(0xFFF9F9F9),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: Color(0xFFFE9E9E9)),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            pickedImage != null
+                                ? '${shortenFileName(p.basename(pickedImage!))}'
+                                : "Upload screenshot",
+                            style: GoogleFonts.manrope(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w400,
+                              color: Colors.black,
+                            ),
                           ),
-                        ),
-                        HugeIcon(icon: HugeIcons.strokeRoundedImageCrop),
-                      ],
+                          HugeIcon(icon: HugeIcons.strokeRoundedImageCrop),
+                        ],
+                      ),
                     ),
                   ),
-                ),
               ],
             )
           : MarkdownBody(
