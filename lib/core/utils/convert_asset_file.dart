@@ -2,23 +2,45 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 
 Future<String> assetToFile(String assetPath) async {
-  final ByteData byteData = await rootBundle.load(assetPath);
+  try {
+    // Load the asset
+    final ByteData byteData = await rootBundle.load(assetPath);
 
-  // final Directory tempDir = await getTemporaryDirectory();
-  final Directory dir = await getApplicationDocumentsDirectory().timeout(
-    const Duration(seconds: 5),
-    onTimeout: () {
-      throw Exception('getApplicationDocumentsDirectory timed out on iPad');
-    },
-  );
+    // Get the directory (with timeout for iOS issues)
+    final Directory dir = await getApplicationDocumentsDirectory().timeout(
+      const Duration(seconds: 10), // Increased timeout
+      onTimeout: () {
+        throw Exception('Directory access timed out');
+      },
+    );
 
-  final String fileName = assetPath.split('/').last;
-  final File file = File('${dir.path}/$fileName');
+    // Create a unique filename to avoid conflicts
+    final String fileName = path.basename(assetPath);
+    final String timestamp = DateTime.now().millisecondsSinceEpoch.toString();
+    final File file = File('${dir.path}/${timestamp}_$fileName');
 
-  await file.writeAsBytes(byteData.buffer.asUint8List(), flush: true);
+    // Write the file with error handling
+    await file
+        .writeAsBytes(byteData.buffer.asUint8List(), flush: true)
+        .timeout(
+          const Duration(seconds: 10),
+          onTimeout: () {
+            throw Exception('File write timed out');
+          },
+        );
 
-  return file.path;
+    // Verify the file was created
+    if (!await file.exists()) {
+      throw Exception('File was not created successfully');
+    }
+
+    return file.path;
+  } catch (e) {
+    print('Error in assetToFile: $e');
+    rethrow; // Re-throw to be caught by the caller
+  }
 }

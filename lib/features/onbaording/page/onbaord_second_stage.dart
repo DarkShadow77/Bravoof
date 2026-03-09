@@ -6,7 +6,6 @@ import 'package:bravoo/features/common/data/constants.dart';
 import 'package:bravoo/features/common/ui_tool_mixin/ui_tool_mixin.dart';
 import 'package:bravoo/features/dashboard/profile/data/model/user_profile.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:form_field_validator/form_field_validator.dart';
@@ -16,7 +15,6 @@ import 'package:image_picker/image_picker.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/utils/convert_asset_file.dart';
-import '../../auth/presentation/bloc/auth_bloc.dart';
 import '../../auth/presentation/page/verify_otp_page.dart';
 import '../data/model/data.dart';
 
@@ -99,13 +97,12 @@ class _OnboardSecondStageState extends State<OnboardSecondStage>
   }
 
   _proceedToOnboard() async {
-    FocusScope.of(context).unfocus(); // dismiss keyboard first
-    await Future.delayed(
-      const Duration(milliseconds: 300),
-    ); // let keyboard dismiss
+    FocusScope.of(context).unfocus();
+    await Future.delayed(const Duration(milliseconds: 300));
 
     if (!mounted) return;
-    if (currentPage == 1 && _usernameController.text.isEmpty)
+
+    if (currentPage == 1 && _usernameController.text.isEmpty) {
       return showMessage(
         "Please Choose a user name to continue",
         context,
@@ -114,8 +111,10 @@ class _OnboardSecondStageState extends State<OnboardSecondStage>
         iconColor: Colors.red,
         status: true,
       );
+    }
+
     if (currentPage == 2) {
-      if (selectedToConvert == null && pickedImage == null)
+      if (selectedToConvert == null && pickedImage == null) {
         return showMessage(
           "Add or select an image to continue",
           context,
@@ -124,41 +123,74 @@ class _OnboardSecondStageState extends State<OnboardSecondStage>
           iconColor: Colors.red,
           status: true,
         );
-      else {
-        try {
-          final profilePic = selectedAvatar != null
-              ? await assetToFile(selectedToConvert!)
-              : pickedImage;
+      }
 
-          if (!mounted) return;
+      try {
+        String? profilePic;
 
-          context.read<AuthBloc>().add(
-            SendOtpEvent(email: widget.data['email']),
-          );
-
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => VerifyOtpPage(
-                data: {
-                  "name": _usernameController.text,
-                  "email": widget.data['email'],
-                  "referral_code": widget.data['referral_code'],
-                  "pass": widget.data['pass'],
-                  "goals": goals,
-                  "profilePic": profilePic,
-                },
-              ),
-            ),
-          );
-        } catch (e) {
-          log("Error in _proceedToOnboard: $e");
-          showMessage(
-            "Something went wrong, please try again",
-            context,
-            status: true,
-          );
+        if (selectedAvatar != null) {
+          // Converting asset to file
+          print('Converting asset to file: $selectedToConvert');
+          profilePic = await assetToFile(selectedToConvert!);
+          print('Asset converted successfully: $profilePic');
+        } else if (pickedImage != null) {
+          // Using picked image directly
+          print('Using picked image: $pickedImage');
+          profilePic = pickedImage;
         }
+
+        if (profilePic == null) {
+          throw Exception('No profile picture available');
+        }
+
+        // Verify file exists
+        final file = File(profilePic);
+        if (!await file.exists()) {
+          throw Exception('Profile picture file does not exist');
+        }
+
+        print('Profile picture ready: $profilePic');
+
+        if (!mounted) return;
+
+        // Navigate to verify OTP page
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => VerifyOtpPage(
+              data: {
+                "name": _usernameController.text,
+                "email": widget.data['email'],
+                "referral_code": widget.data['referral_code'],
+                "pass": widget.data['pass'],
+                "goals": goals,
+                "profilePic": profilePic,
+              },
+            ),
+          ),
+        );
+      } /*on TimeoutException catch (e) {
+        log("Timeout error in _proceedToOnboard: $e");
+        showMessage(
+          "File processing took too long. Please try again.",
+          context,
+          status: true,
+        );
+      } */ on FileSystemException catch (e) {
+        log("File system error in _proceedToOnboard: $e");
+        showMessage(
+          "Could not save profile picture. Please try again.",
+          context,
+          status: true,
+        );
+      } catch (e, stackTrace) {
+        log("Error in _proceedToOnboard: $e");
+        log("Stack trace: $stackTrace");
+        showMessage(
+          "Something went wrong: ${e.toString()}",
+          context,
+          status: true,
+        );
       }
     } else {
       _pageController.nextPage(

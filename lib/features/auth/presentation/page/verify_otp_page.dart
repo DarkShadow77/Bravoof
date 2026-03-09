@@ -43,6 +43,7 @@ class _VerifyOtpPageState extends State<VerifyOtpPage> with UIToolMixin {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<AuthBloc>().add(SendOtpEvent(email: widget.data['email']));
       FocusScope.of(context).requestFocus(focusNode);
     });
   }
