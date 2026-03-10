@@ -22,6 +22,7 @@ class HomeState extends Equatable {
   final LeaderboardResponseModel leaderboard;
   final HomeMessageModel homeMessage;
   final bool updateLater;
+  final bool hasIncompleteMissions;
 
   HomeState({
     required this.campaign,
@@ -33,6 +34,7 @@ class HomeState extends Equatable {
     required this.leaderboard,
     required this.homeMessage,
     required this.updateLater,
+    required this.hasIncompleteMissions,
   });
 
   HomeState copyWith({
@@ -45,6 +47,7 @@ class HomeState extends Equatable {
     LeaderboardResponseModel? leaderboard,
     HomeMessageModel? homeMessage,
     bool? updateLater,
+    bool? hasIncompleteMissions,
   }) {
     return HomeState(
       campaign: campaign ?? this.campaign,
@@ -56,6 +59,8 @@ class HomeState extends Equatable {
       leaderboard: leaderboard ?? this.leaderboard,
       homeMessage: homeMessage ?? this.homeMessage,
       updateLater: updateLater ?? this.updateLater,
+      hasIncompleteMissions:
+          hasIncompleteMissions ?? this.hasIncompleteMissions,
     );
   }
 
@@ -70,6 +75,7 @@ class HomeState extends Equatable {
     leaderboard,
     homeMessage,
     updateLater,
+    hasIncompleteMissions,
   ];
 }
 
@@ -84,6 +90,7 @@ final class HomeInitialState extends HomeState {
     required super.leaderboard,
     required super.homeMessage,
     required super.updateLater,
+    required super.hasIncompleteMissions,
   });
 
   @override
@@ -103,6 +110,7 @@ final class HomeLoadingState extends HomeState {
     required super.leaderboard,
     required super.homeMessage,
     required super.updateLater,
+    required super.hasIncompleteMissions,
   });
 
   @override
@@ -124,6 +132,7 @@ final class HomeSuccessState extends HomeState {
     required super.leaderboard,
     required super.homeMessage,
     required super.updateLater,
+    required super.hasIncompleteMissions,
   });
 
   @override
@@ -145,6 +154,7 @@ final class HomeFailureState extends HomeState {
     required super.leaderboard,
     required super.homeMessage,
     required super.updateLater,
+    required super.hasIncompleteMissions,
   });
 
   @override

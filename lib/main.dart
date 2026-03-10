@@ -134,7 +134,6 @@ class _MyAppState extends State<MyApp> {
     return MultiBlocProvider(
       providers: [
         BlocProvider(create: (_) => sl<AuthBloc>()),
-        BlocProvider(create: (_) => sl<HomeCubit>()),
         BlocProvider(create: (_) => sl<ProfileBloc>()),
         BlocProvider(create: (_) => sl<AuthLinkBloc>()),
         BlocProvider(create: (_) => sl<CommunityMissionBloc>()),
@@ -149,6 +148,15 @@ class _MyAppState extends State<MyApp> {
         BlocProvider(create: (_) => sl<JackpotBloc>()),
         BlocProvider(create: (_) => sl<NotificationBloc>()),
         BlocProvider(create: (_) => sl<FeedbackBloc>()),
+        BlocProvider(
+          create: (_) => sl<HomeCubit>()
+            ..communityMissionBloc = sl<CommunityMissionBloc>()
+            ..featuredMissionBloc = sl<FeaturedMissionBloc>()
+            ..newSocialMissionBloc = sl<NewSocialMissionBloc>()
+            ..socialMissionBloc = sl<SocialMissionBloc>()
+            ..sponsoredMissionBloc = sl<SponsoredMissionBloc>()
+            ..communityMissionBloc = sl<CommunityMissionBloc>(),
+        ),
       ],
       child: ScreenUtilInit(
         designSize: const Size(375, 815),

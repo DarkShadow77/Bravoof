@@ -108,6 +108,7 @@ class _AppState extends State<App> {
             session != null &&
             profileId.isNotEmpty &&
             session.user.id == profileId;
+        if (completed) context.read<HomeCubit>().checkIncompleteMissions();
         return Scaffold(body: completed ? BottomNavBar() : OnboardingScreen());
       },
     );

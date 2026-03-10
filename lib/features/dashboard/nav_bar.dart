@@ -104,6 +104,8 @@ class _BottomNavBarState extends State<BottomNavBar> {
       context.read<HomeCubit>().getUserReferrals();
       context.read<HomeCubit>().fetchHomeMessage();
       context.read<HomeCubit>().fetchExtraHomeCard();
+    } else if (currentIndex == 1) {
+      context.read<HomeCubit>().checkComplete();
     }
   }
 
@@ -127,77 +129,102 @@ class _BottomNavBarState extends State<BottomNavBar> {
               top: BorderSide(color: AppColors.grey100, width: 1.r),
             ),
           ),
-          child: BottomNavigationBar(
-            backgroundColor: Colors.white,
-            type: BottomNavigationBarType.fixed,
-            selectedItemColor: Colors.black,
-            currentIndex: currentIndex,
-            selectedLabelStyle: GoogleFonts.manrope(
-              fontSize: 10,
-              fontWeight: FontWeight.w500,
-              color: Color(0xFFF2B2B2B),
-            ),
-            unselectedLabelStyle: GoogleFonts.manrope(
-              fontSize: 10,
-              fontWeight: FontWeight.w500,
-              color: Color(0xFFA5A5A5),
-            ),
-            onTap: (index) {
-              setState(() {
-                currentIndex = index;
-              });
-              _fetchDetails();
+          child: BlocBuilder<HomeCubit, HomeState>(
+            builder: (context, state) {
+              final hasIncomplete = state.hasIncompleteMissions;
+              return BottomNavigationBar(
+                backgroundColor: Colors.white,
+                type: BottomNavigationBarType.fixed,
+                selectedItemColor: Colors.black,
+                currentIndex: currentIndex,
+                selectedLabelStyle: GoogleFonts.manrope(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w500,
+                  color: Color(0xFFF2B2B2B),
+                ),
+                unselectedLabelStyle: GoogleFonts.manrope(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w500,
+                  color: Color(0xFFA5A5A5),
+                ),
+                onTap: (index) {
+                  setState(() {
+                    currentIndex = index;
+                  });
+                  _fetchDetails();
+                },
+                items: [
+                  BottomNavigationBarItem(
+                    icon: currentIndex == 0
+                        ? SvgPicture.asset(
+                            AssetsNavbar.homeActive,
+                            width: 24.w,
+                            height: 24.h,
+                            fit: BoxFit.contain,
+                          )
+                        : SvgPicture.asset(
+                            AssetsNavbar.home,
+                            width: 24.w,
+                            height: 24.h,
+                            fit: BoxFit.contain,
+                          ),
+                    label: "Home",
+                  ),
+                  BottomNavigationBarItem(
+                    icon: SizedBox(
+                      width: 24.w,
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          currentIndex == 0
+                              ? SvgPicture.asset(
+                                  AssetsNavbar.missionActive,
+                                  width: 24.w,
+                                  height: 24.h,
+                                  fit: BoxFit.contain,
+                                )
+                              : SvgPicture.asset(
+                                  AssetsNavbar.mission,
+                                  width: 24.w,
+                                  height: 24.h,
+                                  fit: BoxFit.contain,
+                                ),
+                          if (hasIncomplete)
+                            Align(
+                              alignment: Alignment.topRight,
+                              child: Container(
+                                width: 5.r,
+                                height: 5.r,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: AppColors.redBrown,
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                    label: "Mission",
+                  ),
+                  BottomNavigationBarItem(
+                    icon: currentIndex == 2
+                        ? SvgPicture.asset(
+                            AssetsNavbar.redeemActive,
+                            width: 24.w,
+                            height: 24.h,
+                            fit: BoxFit.contain,
+                          )
+                        : SvgPicture.asset(
+                            AssetsNavbar.redeem,
+                            width: 24.w,
+                            height: 24.h,
+                            fit: BoxFit.contain,
+                          ),
+                    label: "Redeem",
+                  ),
+                ],
+              );
             },
-            items: [
-              BottomNavigationBarItem(
-                icon: currentIndex == 0
-                    ? SvgPicture.asset(
-                        AssetsNavbar.homeActive,
-                        width: 24.w,
-                        height: 24.h,
-                        fit: BoxFit.contain,
-                      )
-                    : SvgPicture.asset(
-                        AssetsNavbar.home,
-                        width: 24.w,
-                        height: 24.h,
-                        fit: BoxFit.contain,
-                      ),
-                label: "Home",
-              ),
-              BottomNavigationBarItem(
-                icon: currentIndex == 1
-                    ? SvgPicture.asset(
-                        AssetsNavbar.missionActive,
-                        width: 24.w,
-                        height: 24.h,
-                        fit: BoxFit.contain,
-                      )
-                    : SvgPicture.asset(
-                        AssetsNavbar.mission,
-                        width: 24.w,
-                        height: 24.h,
-                        fit: BoxFit.contain,
-                      ),
-                label: "Mission",
-              ),
-              BottomNavigationBarItem(
-                icon: currentIndex == 2
-                    ? SvgPicture.asset(
-                        AssetsNavbar.redeemActive,
-                        width: 24.w,
-                        height: 24.h,
-                        fit: BoxFit.contain,
-                      )
-                    : SvgPicture.asset(
-                        AssetsNavbar.redeem,
-                        width: 24.w,
-                        height: 24.h,
-                        fit: BoxFit.contain,
-                      ),
-                label: "Redeem",
-              ),
-            ],
           ),
         ),
       ),
@@ -213,7 +240,8 @@ class _BottomNavBarState extends State<BottomNavBar> {
           content: Text('Do you want to exit this app'),
           actions: <Widget>[
             TextButton(
-              onPressed: () => Navigator.of(context).pop(false), //<-- SEE HERE
+              onPressed: () => Navigator.of(context).pop(false),
+              //<-- SEE HERE
               child: new Text('No'),
             ),
             TextButton(onPressed: () => exit(0), child: new Text('Yes')),

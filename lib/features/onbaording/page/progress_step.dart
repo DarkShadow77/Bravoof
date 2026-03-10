@@ -122,6 +122,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:page_transition/page_transition.dart';
 
 import '../../../session/session_manager.dart';
+import '../../dashboard/home/presentation/bloc/home_cubit.dart';
 import '../../dashboard/profile/presentation/bloc/profile_bloc.dart';
 
 class StepProgressPage extends StatefulWidget {
@@ -230,6 +231,7 @@ class _StepProgressPageState extends State<StepProgressPage>
     context.read<ProfileBloc>().add(GetProfileEvent());
     context.read<ProfileBloc>().add(SaveFCMTokenEvent());
     context.read<ProfileBloc>().add(UpdateLocationEvent());
+    context.read<HomeCubit>().checkIncompleteMissions();
     Navigator.of(context).pushAndRemoveUntil(
       PageTransition(
         type: PageTransitionType.fade,
