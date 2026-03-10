@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hugeicons/hugeicons.dart';
 
+import '../../../../../app/view/widgets/button/icon_text_button.dart';
 import '../../../../../core/constants/app_colors.dart';
 
 class ShowAdMessage extends StatelessWidget {
@@ -131,6 +132,21 @@ class ShowWelcomeMessage extends StatelessWidget {
                         );
                       },
                       name: "Claim your rewards now",
+                    ),
+                    SizedBox(height: 6.h),
+                    IconTextButton(
+                      text: "Take Me Home",
+                      color: AppColors.white,
+                      onPressed: () {
+                        SessionManager().firstWelcomeUserVal = "NO";
+                        Navigator.pop(context);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => BottomNavBar(index: 0),
+                          ),
+                        );
+                      },
                     ),
                   ],
                 ),

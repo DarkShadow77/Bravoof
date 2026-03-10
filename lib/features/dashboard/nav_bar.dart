@@ -192,11 +192,11 @@ class _BottomNavBarState extends State<BottomNavBar> {
                             Align(
                               alignment: Alignment.topRight,
                               child: Container(
-                                width: 8.r,
-                                height: 8.r,
+                                width: 12.r,
+                                height: 12.r,
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
-                                  color: AppColors.redBrown,
+                                  color: AppColors.orange,
                                 ),
                               ),
                             ),
