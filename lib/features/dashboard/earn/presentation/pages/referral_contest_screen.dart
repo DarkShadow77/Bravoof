@@ -25,6 +25,7 @@ import '../../../../../core/constants/app_assets.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/fonts.dart';
 import '../../../../../core/di/service_locator.dart';
+import '../../../../../core/utils/helpers.dart';
 import '../../../../../utility/ui_tool_mix.dart';
 import '../../../home/data/model/campaign_response.dart';
 import '../../../nav_bar.dart';
@@ -32,10 +33,6 @@ import '../../../profile/data/model/user_profile.dart';
 import '../../../profile/presentation/bloc/profile_bloc.dart';
 import '../widgets/price_details_dialog.dart';
 import 'invite_earn.dart';
-
-Color hexToColor(String hex) {
-  return Color(int.parse(hex.replaceFirst('#', '0xff')));
-}
 
 class ReferralContestScreen extends StatefulWidget {
   const ReferralContestScreen({super.key, required this.campaign});

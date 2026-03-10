@@ -13,8 +13,7 @@ import '../../../../../core/constants/app_assets.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/di/service_locator.dart';
 import '../../../../../core/utils/helpers.dart';
-import '../../../earn/presentation/pages/referral_contest_screen.dart'
-    hide hexToColor;
+import '../../../earn/presentation/pages/referral_contest_screen.dart';
 import '../bloc/campaign_bloc.dart';
 import '../bloc/home_cubit.dart';
 
@@ -40,7 +39,7 @@ class _PastCampaignPageState extends State<PastCampaignPage>
         .toList();
     campaigns.sort((a, b) => b.campaignEndDate.compareTo(a.campaignEndDate));
     if (campaigns.isNotEmpty) {
-      campaign = campaigns.last;
+      campaign = campaigns.first;
     }
     homeBloc.fetchCampaigns();
 
@@ -64,7 +63,7 @@ class _PastCampaignPageState extends State<PastCampaignPage>
           (a, b) => b.campaignEndDate.compareTo(a.campaignEndDate),
         );
         if (campaigns.isNotEmpty) {
-          campaign = campaigns.last;
+          campaign = campaigns.first;
         }
         return Scaffold(
           body: Stack(

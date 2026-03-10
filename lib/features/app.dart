@@ -32,6 +32,7 @@ class _AppState extends State<App> {
     final session = Supabase.instance.client.auth.currentSession;
     if (session != null) {
       profileBloc.add(LogUserLoginActivityEvent(eventType: "app_open"));
+      context.read<HomeCubit>().checkIncompleteMissions();
     }
 
     Supabase.instance.client.auth.onAuthStateChange.listen((data) {
@@ -108,7 +109,7 @@ class _AppState extends State<App> {
             session != null &&
             profileId.isNotEmpty &&
             session.user.id == profileId;
-        if (completed) context.read<HomeCubit>().checkIncompleteMissions();
+
         return Scaffold(body: completed ? BottomNavBar() : OnboardingScreen());
       },
     );

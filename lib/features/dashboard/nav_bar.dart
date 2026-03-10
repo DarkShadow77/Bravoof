@@ -174,9 +174,8 @@ class _BottomNavBarState extends State<BottomNavBar> {
                     icon: SizedBox(
                       width: 24.w,
                       child: Stack(
-                        alignment: Alignment.center,
                         children: [
-                          currentIndex == 0
+                          currentIndex == 1
                               ? SvgPicture.asset(
                                   AssetsNavbar.missionActive,
                                   width: 24.w,
@@ -193,8 +192,8 @@ class _BottomNavBarState extends State<BottomNavBar> {
                             Align(
                               alignment: Alignment.topRight,
                               child: Container(
-                                width: 5.r,
-                                height: 5.r,
+                                width: 8.r,
+                                height: 8.r,
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
                                   color: AppColors.redBrown,

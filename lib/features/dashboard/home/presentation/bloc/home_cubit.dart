@@ -47,7 +47,7 @@ class HomeCubit extends Cubit<HomeState> {
            leaderboard: LeaderboardResponseModel.empty(),
            homeMessage: HomeMessageModel.empty(),
            updateLater: false,
-           hasIncompleteMissions: true,
+           hasIncompleteMissions: false,
          ),
        );
 
