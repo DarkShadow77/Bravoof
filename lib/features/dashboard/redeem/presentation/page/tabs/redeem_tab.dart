@@ -36,6 +36,9 @@ class _RedeemTabState extends State<RedeemTab>
 
   @override
   Widget build(BuildContext context) {
+    _pageHeight = _currentPage == 1
+        ? 280
+        : (MediaQuery.of(context).size.height * 0.7);
     return SingleChildScrollView(
       child: Column(
         children: [
@@ -97,8 +100,16 @@ class _RedeemTabState extends State<RedeemTab>
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _buildTabTitle(context, index: 0, text: 'JACKPOT & GIVEAWAYS'),
-              _buildTabTitle(context, index: 1, text: 'GIFTS & VIRTUAL CARDS'),
+              _buildTabTitle(
+                context,
+                index: 0,
+                text: 'Redeem Coins'.toUpperCase(),
+              ),
+              _buildTabTitle(
+                context,
+                index: 1,
+                text: 'Win Jackpot'.toUpperCase(),
+              ),
             ],
           ),
           SizedBox(height: 10.h),
@@ -114,12 +125,12 @@ class _RedeemTabState extends State<RedeemTab>
                 setState(() {
                   _currentPage = index;
                   // 👇 set different heights for different pages
-                  _pageHeight = index == 0
+                  _pageHeight = index == 1
                       ? 280
                       : (MediaQuery.of(context).size.height * 0.7);
                 });
               },
-              children: [JackpotCard(), RewardCard()],
+              children: [RewardCard(), JackpotCard()],
             ),
           ),
           SizedBox(height: 10.h + MediaQuery.of(context).padding.bottom),
@@ -178,7 +189,8 @@ class RewardCard extends StatefulWidget {
 class _RewardCardState extends State<RewardCard> with UIToolMixin {
   _loadingState(BuildContext context, RedeemLoadingState state) {
     if (state.type == RedeemType.redeemAirtimeData ||
-        state.type == RedeemType.redeemGiftcard) {
+        state.type == RedeemType.redeemGiftcard ||
+        state.type == RedeemType.redeemPaypal) {
       outerLoadingDialog(text: "Redeeming");
     }
   }
@@ -227,12 +239,35 @@ class _RewardCardState extends State<RewardCard> with UIToolMixin {
         mainBtnText: "Close",
         mainBtnPressed: () => Navigator.of(context, rootNavigator: true).pop(),
       );
+    } else if (state.type == RedeemType.redeemPaypal) {
+      if (Get.isDialogOpen == true) {
+        Navigator.of(context, rootNavigator: true).pop();
+      }
+      if (Get.isBottomSheetOpen ?? false)
+        Navigator.of(context, rootNavigator: true).pop();
+
+      context.read<ProfileBloc>().add(GetProfileEvent());
+      context.read<RedeemBloc>().add(LoadRedeemHistory());
+
+      showMessage(
+        state.message,
+        context,
+        color: Colors.white,
+        styleColor: Colors.black,
+      );
+      successDialog(
+        title: "Paypal Reward unlocked! 🎉",
+        subTitle: "Your cash would be sent to your email once approved!",
+        mainBtnText: "Close",
+        mainBtnPressed: () => Navigator.of(context, rootNavigator: true).pop(),
+      );
     }
   }
 
   _failureState(BuildContext context, RedeemFailureState state) {
     if (state.type == RedeemType.redeemAirtimeData ||
-        state.type == RedeemType.redeemGiftcard) {
+        state.type == RedeemType.redeemGiftcard ||
+        state.type == RedeemType.redeemPaypal) {
       if (Get.isDialogOpen == true) {
         Navigator.of(context, rootNavigator: true).pop();
       }
@@ -298,11 +333,11 @@ class _RewardCardState extends State<RewardCard> with UIToolMixin {
               ),
               buildRewardCard(
                 title: "Paypal",
-                value: 20,
+                value: 15,
                 imagePath: AssetsPngImages.cash,
                 coins: 20000,
-                isActive: false,
-                isComingSoon: true,
+                isActive: (profile.totalPoints) >= 20000,
+                isComingSoon: false,
               ),
             ]),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -424,7 +459,7 @@ class _RewardCardState extends State<RewardCard> with UIToolMixin {
                                 ),
                               );
                             }
-                          } else {
+                          } else if (["Giftcard"].contains(title)) {
                             context.read<RedeemBloc>().add(
                               RedeemGiftcard(
                                 rewardType: title.toLowerCase(),
@@ -432,6 +467,13 @@ class _RewardCardState extends State<RewardCard> with UIToolMixin {
                                 userName: profile.name,
                                 email: profile.email,
                                 coins: coins,
+                              ),
+                            );
+                          } else if (["Paypal"].contains(title)) {
+                            context.read<RedeemBloc>().add(
+                              RedeemPaypal(
+                                userName: profile.name,
+                                email: profile.email,
                               ),
                             );
                           }

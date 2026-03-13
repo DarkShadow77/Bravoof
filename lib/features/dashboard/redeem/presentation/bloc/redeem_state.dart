@@ -1,6 +1,11 @@
 part of 'redeem_bloc.dart';
 
-enum RedeemType { fetchRedeemHistory, redeemAirtimeData, redeemGiftcard }
+enum RedeemType {
+  fetchRedeemHistory,
+  redeemAirtimeData,
+  redeemGiftcard,
+  redeemPaypal,
+}
 
 @immutable
 class RedeemState {

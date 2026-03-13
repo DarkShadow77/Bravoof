@@ -84,4 +84,17 @@ class RedeemRepositoryImpl extends RedeemRepository {
       onSuccess: (data) => data['message'],
     );
   }
+
+  Future<Either<String, String>> redeemPaypal({
+    required String userId,
+    required String userName,
+    required String email,
+  }) async {
+    return ApiService.instance!.invokeEdgeFunction<String>(
+      functionName: 'redeem-paypal',
+      body: {'userId': userId, 'name': userName, 'email': email},
+      fallbackErrorMessage: 'Paypal redemption failed',
+      onSuccess: (data) => data['message'],
+    );
+  }
 }

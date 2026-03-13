@@ -46,38 +46,43 @@ class _BottomNavBarState extends State<BottomNavBar> {
   int currentIndex = 0;
   int currentI = 0;
 
+  bool _fetchDetailsCalled = false;
+
   @override
   void initState() {
     // currentI=widget.i;
     super.initState();
     currentIndex = widget.index;
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      SessionManager().firstWelcomeUserVal == "YES"
-          ? Future.delayed(
-              Duration(milliseconds: 500),
-              () => showGeneralDialog(
-                context: context,
-                barrierDismissible: false,
-                barrierLabel: "",
-                barrierColor: Colors.transparent,
-                pageBuilder: (_, _, _) => ShowWelcomeMessage(),
-              ),
-            )
-          : null;
+      // Show welcome/reward dialogs
+      if (SessionManager().firstWelcomeUserVal == "YES") {
+        Future.delayed(Duration(milliseconds: 500), () {
+          showGeneralDialog(
+            context: context,
+            barrierDismissible: false,
+            barrierLabel: "",
+            barrierColor: Colors.transparent,
+            pageBuilder: (_, _, _) => ShowWelcomeMessage(),
+          );
+        });
+      }
 
-      SessionManager().isNewUserVal == "YES"
-          ? showDialog(
-              context: context,
-              barrierDismissible: true,
-              barrierColor: Colors.transparent,
-              builder: (_) => const RewardWidget(),
-            )
-          : null;
+      if (SessionManager().isNewUserVal == "YES") {
+        showDialog(
+          context: context,
+          barrierDismissible: true,
+          barrierColor: Colors.transparent,
+          builder: (_) => const RewardWidget(),
+        );
+      }
 
       SessionManager().isNewUserVal = "NO";
-      Future.delayed((Duration(milliseconds: 500)), () {
+
+      final profileState = context.read<ProfileBloc>().state;
+      if (profileState.profile.userId.isNotEmpty) {
+        _fetchDetailsCalled = true;
         _fetchDetails();
-      });
+      }
     });
   }
 
@@ -114,116 +119,127 @@ class _BottomNavBarState extends State<BottomNavBar> {
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (canPop, result) => _onWillPop(),
-      child: Scaffold(
-        body: IndexedStack(
-          index: currentIndex,
-          children: [
-            FlowvaHomePage(),
-            MissionPage(index: widget.missionIndex),
-            RedeemScreen(index: widget.missionIndex),
-          ],
-        ),
-        bottomNavigationBar: Container(
-          decoration: BoxDecoration(
-            border: Border(
-              top: BorderSide(color: AppColors.grey100, width: 1.r),
-            ),
+      child: BlocListener<ProfileBloc, ProfileState>(
+        listenWhen: (previous, current) =>
+            !_fetchDetailsCalled &&
+            previous.profile.userId.isEmpty &&
+            current.profile.userId.isNotEmpty,
+        listener: (context, state) {
+          if (_fetchDetailsCalled) return;
+          _fetchDetailsCalled = true;
+          _fetchDetails();
+        },
+        child: Scaffold(
+          body: IndexedStack(
+            index: currentIndex,
+            children: [
+              FlowvaHomePage(),
+              MissionPage(index: widget.missionIndex),
+              RedeemScreen(index: widget.missionIndex),
+            ],
           ),
-          child: BlocBuilder<HomeCubit, HomeState>(
-            builder: (context, state) {
-              final hasIncomplete = state.hasIncompleteMissions;
-              return BottomNavigationBar(
-                backgroundColor: Colors.white,
-                type: BottomNavigationBarType.fixed,
-                selectedItemColor: Colors.black,
-                currentIndex: currentIndex,
-                selectedLabelStyle: GoogleFonts.manrope(
-                  fontSize: 10,
-                  fontWeight: FontWeight.w500,
-                  color: Color(0xFFF2B2B2B),
-                ),
-                unselectedLabelStyle: GoogleFonts.manrope(
-                  fontSize: 10,
-                  fontWeight: FontWeight.w500,
-                  color: Color(0xFFA5A5A5),
-                ),
-                onTap: (index) {
-                  setState(() {
-                    currentIndex = index;
-                  });
-                  _fetchDetails();
-                },
-                items: [
-                  BottomNavigationBarItem(
-                    icon: currentIndex == 0
-                        ? SvgPicture.asset(
-                            AssetsNavbar.homeActive,
-                            width: 24.w,
-                            height: 24.h,
-                            fit: BoxFit.contain,
-                          )
-                        : SvgPicture.asset(
-                            AssetsNavbar.home,
-                            width: 24.w,
-                            height: 24.h,
-                            fit: BoxFit.contain,
-                          ),
-                    label: "Home",
+          bottomNavigationBar: Container(
+            decoration: BoxDecoration(
+              border: Border(
+                top: BorderSide(color: AppColors.grey100, width: 1.r),
+              ),
+            ),
+            child: BlocBuilder<HomeCubit, HomeState>(
+              builder: (context, state) {
+                final hasIncomplete = state.hasIncompleteMissions;
+                return BottomNavigationBar(
+                  backgroundColor: Colors.white,
+                  type: BottomNavigationBarType.fixed,
+                  selectedItemColor: Colors.black,
+                  currentIndex: currentIndex,
+                  selectedLabelStyle: GoogleFonts.manrope(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w500,
+                    color: Color(0xFFF2B2B2B),
                   ),
-                  BottomNavigationBarItem(
-                    icon: SizedBox(
-                      width: 24.w,
-                      child: Stack(
-                        children: [
-                          currentIndex == 1
-                              ? SvgPicture.asset(
-                                  AssetsNavbar.missionActive,
-                                  width: 24.w,
-                                  height: 24.h,
-                                  fit: BoxFit.contain,
-                                )
-                              : SvgPicture.asset(
-                                  AssetsNavbar.mission,
-                                  width: 24.w,
-                                  height: 24.h,
-                                  fit: BoxFit.contain,
-                                ),
-                          if (hasIncomplete)
-                            Align(
-                              alignment: Alignment.topRight,
-                              child: Container(
-                                width: 12.r,
-                                height: 12.r,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: AppColors.orange,
+                  unselectedLabelStyle: GoogleFonts.manrope(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w500,
+                    color: Color(0xFFA5A5A5),
+                  ),
+                  onTap: (index) {
+                    setState(() {
+                      currentIndex = index;
+                    });
+                    _fetchDetails();
+                  },
+                  items: [
+                    BottomNavigationBarItem(
+                      icon: currentIndex == 0
+                          ? SvgPicture.asset(
+                              AssetsNavbar.homeActive,
+                              width: 24.w,
+                              height: 24.h,
+                              fit: BoxFit.contain,
+                            )
+                          : SvgPicture.asset(
+                              AssetsNavbar.home,
+                              width: 24.w,
+                              height: 24.h,
+                              fit: BoxFit.contain,
+                            ),
+                      label: "Home",
+                    ),
+                    BottomNavigationBarItem(
+                      icon: SizedBox(
+                        width: 24.w,
+                        child: Stack(
+                          children: [
+                            currentIndex == 1
+                                ? SvgPicture.asset(
+                                    AssetsNavbar.missionActive,
+                                    width: 24.w,
+                                    height: 24.h,
+                                    fit: BoxFit.contain,
+                                  )
+                                : SvgPicture.asset(
+                                    AssetsNavbar.mission,
+                                    width: 24.w,
+                                    height: 24.h,
+                                    fit: BoxFit.contain,
+                                  ),
+                            if (hasIncomplete)
+                              Align(
+                                alignment: Alignment.topRight,
+                                child: Container(
+                                  width: 12.r,
+                                  height: 12.r,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: AppColors.orange,
+                                  ),
                                 ),
                               ),
-                            ),
-                        ],
+                          ],
+                        ),
                       ),
+                      label: "Mission",
                     ),
-                    label: "Mission",
-                  ),
-                  BottomNavigationBarItem(
-                    icon: currentIndex == 2
-                        ? SvgPicture.asset(
-                            AssetsNavbar.redeemActive,
-                            width: 24.w,
-                            height: 24.h,
-                            fit: BoxFit.contain,
-                          )
-                        : SvgPicture.asset(
-                            AssetsNavbar.redeem,
-                            width: 24.w,
-                            height: 24.h,
-                            fit: BoxFit.contain,
-                          ),
-                    label: "Redeem",
-                  ),
-                ],
-              );
-            },
+                    BottomNavigationBarItem(
+                      icon: currentIndex == 2
+                          ? SvgPicture.asset(
+                              AssetsNavbar.redeemActive,
+                              width: 24.w,
+                              height: 24.h,
+                              fit: BoxFit.contain,
+                            )
+                          : SvgPicture.asset(
+                              AssetsNavbar.redeem,
+                              width: 24.w,
+                              height: 24.h,
+                              fit: BoxFit.contain,
+                            ),
+                      label: "Redeem",
+                    ),
+                  ],
+                );
+              },
+            ),
           ),
         ),
       ),

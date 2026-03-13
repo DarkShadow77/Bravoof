@@ -243,10 +243,10 @@ Widget _buildReferralCard(
       SizedBox(height: 10.h),
       ...items.map((e) {
         return Container(
-          margin: const EdgeInsets.only(bottom: 15),
+          margin: EdgeInsets.only(bottom: 15.h),
           decoration: BoxDecoration(
             color: AppColors.grey100.withValues(alpha: .6),
-            borderRadius: BorderRadius.circular(14),
+            borderRadius: BorderRadius.circular(14.r),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withValues(alpha: 0.03),
@@ -255,7 +255,7 @@ Widget _buildReferralCard(
               ),
             ],
           ),
-          padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 14),
+          padding: EdgeInsets.symmetric(vertical: 14.w, horizontal: 14.w),
           child: Row(
             spacing: 12.w,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -286,7 +286,7 @@ Widget _buildReferralCard(
                         vertical: 6.h,
                       ),
                       decoration: BoxDecoration(
-                        color: AppColors.green500.withValues(alpha: .1),
+                        color: AppColors.green100,
                         borderRadius: BorderRadius.circular(16),
                       ),
                       child: RichText(

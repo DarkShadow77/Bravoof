@@ -28,4 +28,10 @@ abstract class RedeemRepository {
     required String email,
     required int coins,
   });
+
+  Future<Either<String, String>> redeemPaypal({
+    required String userId,
+    required String userName,
+    required String email,
+  });
 }

@@ -9,6 +9,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../../../../../app/view/widgets/cached_image_widget.dart';
 import '../../../home/presentation/bloc/home_cubit.dart';
 import '../../../profile/data/model/user_profile.dart';
 import '../../../profile/presentation/bloc/profile_bloc.dart';
@@ -243,9 +244,6 @@ class _InviteAndEarnPageState extends State<InviteAndEarnPage> {
                                 return _buildReferralCard(
                                   avatar: user.profilePic,
                                   name: user.name,
-                                  statusLabel: "Joined",
-                                  statusColor: const Color(0xFFE3FAE1),
-                                  textColor: const Color(0xFF008753),
                                   time: user.createdAt.toIso8601String(),
                                 );
                               },
@@ -374,15 +372,12 @@ class _InviteAndEarnPageState extends State<InviteAndEarnPage> {
   Widget _buildReferralCard({
     required String avatar,
     required String name,
-    required String statusLabel,
-    Color statusColor = Colors.grey,
-    Color textColor = Colors.black87,
     required String time,
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: Color(0xFFF9F9F9),
-        borderRadius: BorderRadius.circular(14),
+        color: AppColors.grey100.withValues(alpha: .6),
+        borderRadius: BorderRadius.circular(14.r),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.03),
@@ -393,71 +388,58 @@ class _InviteAndEarnPageState extends State<InviteAndEarnPage> {
       ),
       padding: EdgeInsets.symmetric(vertical: 14.h, horizontal: 14.w),
       child: Row(
+        spacing: 12.w,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          CircleAvatar(
-            radius: 22.r,
-            backgroundImage: NetworkImage(avatar),
-            backgroundColor: AppColors.grey300.withValues(alpha: .5),
+          CachedImageRadius(
+            imageUrl: avatar,
+            size: 44,
+            fit: BoxFit.cover,
+            circle: true,
+            color: AppColors.grey300.withValues(alpha: .5),
           ),
-          const SizedBox(width: 12),
           Expanded(
             child: Column(
+              spacing: 4.h,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  name,
-                  style: GoogleFonts.manrope(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 12,
-                    color: Colors.black,
+                RichText(
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  text: TextSpan(
+                    text: name,
+                    style: TextStyles.smallSemibold12(context),
                   ),
                 ),
-                const SizedBox(height: 8),
-                // status chip
                 Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 6,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 12.w,
+                    vertical: 6.h,
                   ),
                   decoration: BoxDecoration(
-                    color: statusColor,
+                    color: AppColors.green100,
                     borderRadius: BorderRadius.circular(16),
                   ),
-                  child: Text(
-                    statusLabel,
-                    style: GoogleFonts.manrope(
-                      color: textColor,
-                      fontSize: 10,
-                      fontWeight: FontWeight.w600,
+                  child: RichText(
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    text: TextSpan(
+                      text: "Joined",
+                      style: TextStyles.cardSemibold10(
+                        context,
+                      ).copyWith(color: AppColors.green500),
                     ),
                   ),
                 ),
               ],
             ),
           ),
-
-          // right side small circle icon and time
-          Column(
-            spacing: 8.h,
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Container(
-                height: 30,
-                width: 30,
-                decoration: BoxDecoration(
-                  color: const Color(0xFFF5F5FF),
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(Icons.person, size: 16, color: Colors.purple),
-              ),
-              RichText(
-                textAlign: TextAlign.end,
-                text: TextSpan(
-                  text: formatSmartDate(time),
-                  style: TextStyles.cardSemibold10(context, opacity: .65),
-                ),
-              ),
-            ],
+          RichText(
+            textAlign: TextAlign.end,
+            text: TextSpan(
+              text: formatSmartDate(time),
+              style: TextStyles.cardSemibold10(context, opacity: .65),
+            ),
           ),
         ],
       ),

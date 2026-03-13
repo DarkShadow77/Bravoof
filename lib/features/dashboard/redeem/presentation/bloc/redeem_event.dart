@@ -38,3 +38,10 @@ class RedeemGiftcard extends RedeemEvent {
     required this.coins,
   });
 }
+
+class RedeemPaypal extends RedeemEvent {
+  final String userName;
+  final String email;
+
+  RedeemPaypal({required this.userName, required this.email});
+}

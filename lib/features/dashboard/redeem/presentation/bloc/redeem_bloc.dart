@@ -1,5 +1,5 @@
-import 'package:bravoo/features/dashboard/redeem/data/redeem_history_model.dart';
 import 'package:bloc/bloc.dart';
+import 'package:bravoo/features/dashboard/redeem/data/redeem_history_model.dart';
 import 'package:logger/logger.dart';
 import 'package:meta/meta.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -19,6 +19,7 @@ class RedeemBloc extends Bloc<RedeemEvent, RedeemState> {
     on<LoadRedeemHistory>(_loadMission);
     on<RedeemAirtimeData>(_redeemAirtimeData);
     on<RedeemGiftcard>(_redeemGiftcard);
+    on<RedeemPaypal>(_redeemPaypal);
   }
 
   Future<void> _loadMission(LoadRedeemHistory event, Emitter emit) async {
@@ -123,6 +124,40 @@ class RedeemBloc extends Bloc<RedeemEvent, RedeemState> {
       (success) => emit(
         RedeemSuccessState(
           type: RedeemType.redeemGiftcard,
+          message: success,
+          redeemHistory: state.redeemHistory,
+        ),
+      ),
+    );
+  }
+
+  Future<void> _redeemPaypal(RedeemPaypal event, Emitter emit) async {
+    emit(
+      RedeemLoadingState(
+        type: RedeemType.redeemPaypal,
+        redeemHistory: state.redeemHistory,
+      ),
+    );
+
+    final res = await repo.redeemPaypal(
+      userId: supabase.auth.currentUser!.id,
+      userName: event.userName,
+      email: event.email,
+    );
+
+    Logger().d("Redeem Paypal Response $res");
+
+    res.fold(
+      (err) => emit(
+        RedeemFailureState(
+          type: RedeemType.redeemPaypal,
+          message: err,
+          redeemHistory: state.redeemHistory,
+        ),
+      ),
+      (success) => emit(
+        RedeemSuccessState(
+          type: RedeemType.redeemPaypal,
           message: success,
           redeemHistory: state.redeemHistory,
         ),

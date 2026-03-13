@@ -64,6 +64,7 @@ class AppColors {
   static const Color grey100 = Color(0xFFF1F1F1);
 
   //State-Colors ---Green
+  static const Color green100 = Color(0xFFE3FAE1);
   static const Color green500 = Color(0xFF008753);
 
   //State-Colors ---Black
