@@ -9,6 +9,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../session/session_manager.dart';
 import '../onbaording/widget/reward.dart';
@@ -44,16 +45,16 @@ class BottomNavBar extends StatefulWidget {
 
 class _BottomNavBarState extends State<BottomNavBar> {
   int currentIndex = 0;
-  int currentI = 0;
-
-  bool _fetchDetailsCalled = false;
 
   @override
   void initState() {
-    // currentI=widget.i;
     super.initState();
+    _initData();
+  }
+
+  _initData() async {
     currentIndex = widget.index;
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       // Show welcome/reward dialogs
       if (SessionManager().firstWelcomeUserVal == "YES") {
         Future.delayed(Duration(milliseconds: 500), () {
@@ -78,11 +79,20 @@ class _BottomNavBarState extends State<BottomNavBar> {
 
       SessionManager().isNewUserVal = "NO";
 
-      final profileState = context.read<ProfileBloc>().state;
-      if (profileState.profile.userId.isNotEmpty) {
-        _fetchDetailsCalled = true;
+      // Use Supabase session as source of truth
+      final session = Supabase.instance.client.auth.currentSession;
+      if (session != null) {
+        // Force refresh the session before fetching anything
+        try {
+          await Supabase.instance.client.auth.refreshSession();
+        } catch (_) {}
+      }
+
+      final profileUserId = context.read<ProfileBloc>().state.profile.userId;
+      if (session != null && profileUserId.isNotEmpty) {
         _fetchDetails();
       }
+      ;
     });
   }
 
@@ -121,12 +131,9 @@ class _BottomNavBarState extends State<BottomNavBar> {
       onPopInvokedWithResult: (canPop, result) => _onWillPop(),
       child: BlocListener<ProfileBloc, ProfileState>(
         listenWhen: (previous, current) =>
-            !_fetchDetailsCalled &&
             previous.profile.userId.isEmpty &&
             current.profile.userId.isNotEmpty,
         listener: (context, state) {
-          if (_fetchDetailsCalled) return;
-          _fetchDetailsCalled = true;
           _fetchDetails();
         },
         child: Scaffold(
@@ -266,7 +273,6 @@ class _BottomNavBarState extends State<BottomNavBar> {
     } else {
       setState(() {
         currentIndex = 0;
-        currentI = 0;
       });
     }
   }

@@ -146,13 +146,6 @@ class _ReferralContestScreenState extends State<ReferralContestScreen>
         ? campaign.winners.first.profileImage
         : campaign.winnerProfileImage;
 
-    // Display name
-    final displayName = hasEnded && isWinner && currentUserWinner != null
-        ? currentUserWinner.name
-        : campaign.winners.isNotEmpty
-        ? campaign.winners.first.name
-        : campaign.winnerName;
-
     return BlocListener<CampaignBloc, CampaignState>(
       listener: (context, state) {
         if (state is CampaignLoadingState) {
@@ -193,8 +186,8 @@ class _ReferralContestScreenState extends State<ReferralContestScreen>
             ),
           ),
           actions: [
-            Visibility(
-              visible: false,
+            Opacity(
+              opacity: 0,
               child: IconButton(
                 onPressed: () {},
                 icon: Icon(

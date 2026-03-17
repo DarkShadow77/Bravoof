@@ -390,7 +390,7 @@ class MessageContainer extends StatelessWidget {
                         text: homeMessage.title,
                         style: TextStyles.normalBold14(
                           context,
-                        ).copyWith(color: hexToColor(homeMessage.textColor)),
+                        ).copyWith(color: hexToColor(homeMessage.mainTextColor)),
                       ),
                     ),
                   ),

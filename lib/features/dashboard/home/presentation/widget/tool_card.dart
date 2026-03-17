@@ -306,7 +306,7 @@ class _QuoteCardState extends State<QuoteCard> {
                       RichText(
                         textAlign: TextAlign.center,
                         text: TextSpan(
-                          text: "“${quotes.quote}“",
+                          text: quotes.quote,
                           style: TextStyles.titleSemiBold20(context).copyWith(
                             fontFamily: AppFonts.baloo2,
                             fontStyle: FontStyle.italic,

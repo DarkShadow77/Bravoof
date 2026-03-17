@@ -6,6 +6,7 @@ class HomeMessageModel {
   final String message;
   final MissionGradient gradientColor;
   final String textColor;
+  final String mainTextColor;
 
   HomeMessageModel({
     required this.id,
@@ -13,6 +14,7 @@ class HomeMessageModel {
     required this.message,
     required this.gradientColor,
     required this.textColor,
+    required this.mainTextColor,
   });
 
   factory HomeMessageModel.fromJson(Map<String, dynamic> json) {
@@ -22,6 +24,7 @@ class HomeMessageModel {
       message: json['message'] ?? '',
       gradientColor: MissionGradient.fromJson(json['gradient_color']),
       textColor: json['text_color'] ?? '#000000',
+      mainTextColor: json['main_text_color'] ?? '#000000',
     );
   }
 
@@ -32,6 +35,7 @@ class HomeMessageModel {
       message: '',
       gradientColor: MissionGradient.fallback(),
       textColor: '#000000',
+      mainTextColor: '#000000',
     );
   }
 }

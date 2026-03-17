@@ -33,7 +33,21 @@ class ApiService {
   }) async {
     try {
       // IMPORTANT: Check if user is authenticated
-      final session = supabase.auth.currentSession;
+      Session? session = supabase.auth.currentSession;
+
+      // If session exists but token is expired or about to expire, refresh it
+      if (session != null) {
+        final expiresAt = session.expiresAt;
+        final now = DateTime.now().millisecondsSinceEpoch ~/ 1000;
+        final isExpired =
+            expiresAt != null && expiresAt <= now + 60; // 60s buffer
+
+        if (isExpired) {
+          Logger().i('Token expired or expiring soon, refreshing...');
+          final refreshed = await supabase.auth.refreshSession();
+          session = refreshed.session;
+        }
+      }
 
       // Only enforce auth check for protected functions
       if (requiresAuth && session == null) {
@@ -95,21 +109,55 @@ class ApiService {
 
       // Convert raw JSON to your type T
       return Right(onSuccess(data));
+    } on SocketException catch (e) {
+      // No internet connection
+      Logger().e('🌐 No internet connection for "$functionName"', error: e);
+      return const Left(
+        'No internet connection. Please check your network and try again.',
+      );
+    } on HttpException catch (e) {
+      // Server unreachable
+      Logger().e('🌐 HTTP error for "$functionName"', error: e);
+      return const Left('Unable to reach the server. Please try again later.');
     } on AuthException catch (e) {
       Logger().e('🔥 Auth error in "$functionName"', error: e);
       return Left('Authentication error: ${e.message}');
     } on FunctionException catch (e) {
+      // Check if it's actually a network issue disguised as a function exception
+      final details = e.details;
+      final message = details is Map ? details['message'] as String? : null;
+
+      if (message?.toLowerCase().contains('network') == true) {
+        Logger().e(
+          '🌐 Network-related function exception in "$functionName"',
+          error: e,
+        );
+        return const Left(
+          'No internet connection. Please check your network and try again.',
+        );
+      }
+
       Logger().e('🔥 Function exception in "$functionName"', error: e);
       return Left(
         _extractFunctionError(e, fallbackErrorMessage ?? 'Request failed'),
       );
     } catch (e, s) {
+      // Catch SocketException that might be wrapped
+      if (e.toString().toLowerCase().contains('socketexception') ||
+          e.toString().toLowerCase().contains('network is unreachable') ||
+          e.toString().toLowerCase().contains('connection refused') ||
+          e.toString().toLowerCase().contains('no route to host')) {
+        Logger().e('🌐 Network error for "$functionName"', error: e);
+        return const Left(
+          'No internet connection. Please check your network and try again.',
+        );
+      }
+
       Logger().e(
         '🔥 Edge Function "$functionName" crashed',
         error: e,
         stackTrace: s,
       );
-
       return Left(fallbackErrorMessage ?? 'Something went wrong');
     }
   }
@@ -189,20 +237,38 @@ class ApiService {
       Logger().i("Response Message: ${apiResponse.responseMessage}");
       Logger().i("Response Body: ${apiResponse.responseBody}");
     } on DioException catch (e) {
-      Logger().i("Dio Response Full Message: ${e.response?.data}");
+      Logger().e("Dio Response Full Message: ${e.response?.data}", error: e);
       apiResponse.responseSuccessful = false;
 
+      // ─── Check for network/connectivity errors first ───────────
+      if (e.type == DioExceptionType.connectionError ||
+          e.type == DioExceptionType.connectionTimeout ||
+          e.type == DioExceptionType.receiveTimeout ||
+          e.type == DioExceptionType.sendTimeout) {
+        apiResponse.responseMessage =
+            'No internet connection. Please check your network and try again.';
+        Logger().e('🌐 Network error: ${e.type}');
+        return apiResponse;
+      }
+
+      // ─── Check inner error for SocketException ─────────────────
+      if (e.error is SocketException) {
+        apiResponse.responseMessage =
+            'No internet connection. Please check your network and try again.';
+        Logger().e('🌐 SocketException wrapped in DioException');
+        return apiResponse;
+      }
+
+      // ─── Parse response body for error message ─────────────────
       dynamic data = e.response?.data;
       String message = 'An error occurred';
 
       if (data is Map<String, dynamic>) {
-        // ✅ Handle normal JSON errors
         final msg = data['message'];
         message = msg is String ? msg : message;
       } else if (data is String) {
-        // ✅ Handle HTML or text responses (like 502 Bad Gateway)
         if (data.contains('502 Bad Gateway')) {
-          message = 'Server temporarily unavailable (502 Bad Gateway)';
+          message = 'Server temporarily unavailable. Please try again later.';
         } else if (data.contains('html')) {
           message = 'Unexpected server error. Please try again later.';
         } else {
@@ -214,14 +280,30 @@ class ApiService {
 
       Logger().i("Dio Response Successful: ${apiResponse.responseSuccessful}");
       Logger().i("Dio Response Message: ${apiResponse.responseMessage}");
-    } on SocketException catch (_) {
+    } on SocketException catch (e) {
+      Logger().e('🌐 SocketException in request', error: e);
       apiResponse.responseSuccessful = false;
-      apiResponse.responseMessage = "An Error occurred";
+      apiResponse.responseMessage =
+          'No internet connection. Please check your network and try again.';
+    } on HttpException catch (e) {
+      Logger().e('🌐 HttpException in request', error: e);
+      apiResponse.responseSuccessful = false;
+      apiResponse.responseMessage =
+          'Unable to reach the server. Please try again later.';
+    } catch (e, s) {
+      Logger().e('🔥 Unexpected error in request', error: e, stackTrace: s);
+      apiResponse.responseSuccessful = false;
 
-      Logger().i(
-        "Socket Response Successful: ${apiResponse.responseSuccessful}",
-      );
-      Logger().i("Socket Response Successful: ${apiResponse.responseMessage}");
+      if (e.toString().toLowerCase().contains('socketexception') ||
+          e.toString().toLowerCase().contains('network is unreachable') ||
+          e.toString().toLowerCase().contains('connection refused') ||
+          e.toString().toLowerCase().contains('no route to host')) {
+        apiResponse.responseMessage =
+            'No internet connection. Please check your network and try again.';
+      } else {
+        apiResponse.responseMessage =
+            'An unexpected error occurred. Please try again.';
+      }
     }
     return apiResponse;
   }
@@ -296,20 +378,38 @@ class ApiService {
       Logger().i("Response Message: ${apiResponse.responseMessage}");
       Logger().i("Response Body: ${apiResponse.responseBody}");
     } on DioException catch (e) {
-      Logger().i("Dio Response Full Message: ${e.response?.data}");
+      Logger().e("Dio Response Full Message: ${e.response?.data}", error: e);
       apiResponse.responseSuccessful = false;
 
+      // ─── Check for network/connectivity errors first ───────────
+      if (e.type == DioExceptionType.connectionError ||
+          e.type == DioExceptionType.connectionTimeout ||
+          e.type == DioExceptionType.receiveTimeout ||
+          e.type == DioExceptionType.sendTimeout) {
+        apiResponse.responseMessage =
+            'No internet connection. Please check your network and try again.';
+        Logger().e('🌐 Network error: ${e.type}');
+        return apiResponse;
+      }
+
+      // ─── Check inner error for SocketException ─────────────────
+      if (e.error is SocketException) {
+        apiResponse.responseMessage =
+            'No internet connection. Please check your network and try again.';
+        Logger().e('🌐 SocketException wrapped in DioException');
+        return apiResponse;
+      }
+
+      // ─── Parse response body for error message ─────────────────
       dynamic data = e.response?.data;
       String message = 'An error occurred';
 
       if (data is Map<String, dynamic>) {
-        // ✅ Handle normal JSON errors
         final msg = data['message'];
         message = msg is String ? msg : message;
       } else if (data is String) {
-        // ✅ Handle HTML or text responses (like 502 Bad Gateway)
         if (data.contains('502 Bad Gateway')) {
-          message = 'Server temporarily unavailable (502 Bad Gateway)';
+          message = 'Server temporarily unavailable. Please try again later.';
         } else if (data.contains('html')) {
           message = 'Unexpected server error. Please try again later.';
         } else {
@@ -321,14 +421,30 @@ class ApiService {
 
       Logger().i("Dio Response Successful: ${apiResponse.responseSuccessful}");
       Logger().i("Dio Response Message: ${apiResponse.responseMessage}");
-    } on SocketException catch (_) {
+    } on SocketException catch (e) {
+      Logger().e('🌐 SocketException in request', error: e);
       apiResponse.responseSuccessful = false;
-      apiResponse.responseMessage = "An Error occurred";
+      apiResponse.responseMessage =
+          'No internet connection. Please check your network and try again.';
+    } on HttpException catch (e) {
+      Logger().e('🌐 HttpException in request', error: e);
+      apiResponse.responseSuccessful = false;
+      apiResponse.responseMessage =
+          'Unable to reach the server. Please try again later.';
+    } catch (e, s) {
+      Logger().e('🔥 Unexpected error in request', error: e, stackTrace: s);
+      apiResponse.responseSuccessful = false;
 
-      Logger().i(
-        "Socket Response Successful: ${apiResponse.responseSuccessful}",
-      );
-      Logger().i("Socket Response Successful: ${apiResponse.responseMessage}");
+      if (e.toString().toLowerCase().contains('socketexception') ||
+          e.toString().toLowerCase().contains('network is unreachable') ||
+          e.toString().toLowerCase().contains('connection refused') ||
+          e.toString().toLowerCase().contains('no route to host')) {
+        apiResponse.responseMessage =
+            'No internet connection. Please check your network and try again.';
+      } else {
+        apiResponse.responseMessage =
+            'An unexpected error occurred. Please try again.';
+      }
     }
     return apiResponse;
   }
@@ -383,20 +499,38 @@ class ApiService {
       Logger().i("Response Message: ${apiResponse.responseMessage}");
       Logger().i("Response Body: ${apiResponse.responseBody}");
     } on DioException catch (e) {
-      Logger().i("Dio Response Full Message: ${e.response?.data}");
+      Logger().e("Dio Response Full Message: ${e.response?.data}", error: e);
       apiResponse.responseSuccessful = false;
 
+      // ─── Check for network/connectivity errors first ───────────
+      if (e.type == DioExceptionType.connectionError ||
+          e.type == DioExceptionType.connectionTimeout ||
+          e.type == DioExceptionType.receiveTimeout ||
+          e.type == DioExceptionType.sendTimeout) {
+        apiResponse.responseMessage =
+            'No internet connection. Please check your network and try again.';
+        Logger().e('🌐 Network error: ${e.type}');
+        return apiResponse;
+      }
+
+      // ─── Check inner error for SocketException ─────────────────
+      if (e.error is SocketException) {
+        apiResponse.responseMessage =
+            'No internet connection. Please check your network and try again.';
+        Logger().e('🌐 SocketException wrapped in DioException');
+        return apiResponse;
+      }
+
+      // ─── Parse response body for error message ─────────────────
       dynamic data = e.response?.data;
       String message = 'An error occurred';
 
       if (data is Map<String, dynamic>) {
-        // ✅ Handle normal JSON errors
         final msg = data['message'];
         message = msg is String ? msg : message;
       } else if (data is String) {
-        // ✅ Handle HTML or text responses (like 502 Bad Gateway)
         if (data.contains('502 Bad Gateway')) {
-          message = 'Server temporarily unavailable (502 Bad Gateway)';
+          message = 'Server temporarily unavailable. Please try again later.';
         } else if (data.contains('html')) {
           message = 'Unexpected server error. Please try again later.';
         } else {
@@ -408,14 +542,30 @@ class ApiService {
 
       Logger().i("Dio Response Successful: ${apiResponse.responseSuccessful}");
       Logger().i("Dio Response Message: ${apiResponse.responseMessage}");
-    } on SocketException catch (_) {
+    } on SocketException catch (e) {
+      Logger().e('🌐 SocketException in request', error: e);
       apiResponse.responseSuccessful = false;
-      apiResponse.responseMessage = "An Error occurred";
+      apiResponse.responseMessage =
+          'No internet connection. Please check your network and try again.';
+    } on HttpException catch (e) {
+      Logger().e('🌐 HttpException in request', error: e);
+      apiResponse.responseSuccessful = false;
+      apiResponse.responseMessage =
+          'Unable to reach the server. Please try again later.';
+    } catch (e, s) {
+      Logger().e('🔥 Unexpected error in request', error: e, stackTrace: s);
+      apiResponse.responseSuccessful = false;
 
-      Logger().i(
-        "Socket Response Successful: ${apiResponse.responseSuccessful}",
-      );
-      Logger().i("Socket Response Successful: ${apiResponse.responseMessage}");
+      if (e.toString().toLowerCase().contains('socketexception') ||
+          e.toString().toLowerCase().contains('network is unreachable') ||
+          e.toString().toLowerCase().contains('connection refused') ||
+          e.toString().toLowerCase().contains('no route to host')) {
+        apiResponse.responseMessage =
+            'No internet connection. Please check your network and try again.';
+      } else {
+        apiResponse.responseMessage =
+            'An unexpected error occurred. Please try again.';
+      }
     }
     return apiResponse;
   }
@@ -468,20 +618,38 @@ class ApiService {
       Logger().i("Response Message: ${apiResponse.responseMessage}");
       Logger().i("Response Body: ${apiResponse.responseBody}");
     } on DioException catch (e) {
-      Logger().i("Dio Response Full Message: ${e.response?.data}");
+      Logger().e("Dio Response Full Message: ${e.response?.data}", error: e);
       apiResponse.responseSuccessful = false;
 
+      // ─── Check for network/connectivity errors first ───────────
+      if (e.type == DioExceptionType.connectionError ||
+          e.type == DioExceptionType.connectionTimeout ||
+          e.type == DioExceptionType.receiveTimeout ||
+          e.type == DioExceptionType.sendTimeout) {
+        apiResponse.responseMessage =
+            'No internet connection. Please check your network and try again.';
+        Logger().e('🌐 Network error: ${e.type}');
+        return apiResponse;
+      }
+
+      // ─── Check inner error for SocketException ─────────────────
+      if (e.error is SocketException) {
+        apiResponse.responseMessage =
+            'No internet connection. Please check your network and try again.';
+        Logger().e('🌐 SocketException wrapped in DioException');
+        return apiResponse;
+      }
+
+      // ─── Parse response body for error message ─────────────────
       dynamic data = e.response?.data;
       String message = 'An error occurred';
 
       if (data is Map<String, dynamic>) {
-        // ✅ Handle normal JSON errors
         final msg = data['message'];
         message = msg is String ? msg : message;
       } else if (data is String) {
-        // ✅ Handle HTML or text responses (like 502 Bad Gateway)
         if (data.contains('502 Bad Gateway')) {
-          message = 'Server temporarily unavailable (502 Bad Gateway)';
+          message = 'Server temporarily unavailable. Please try again later.';
         } else if (data.contains('html')) {
           message = 'Unexpected server error. Please try again later.';
         } else {
@@ -493,14 +661,30 @@ class ApiService {
 
       Logger().i("Dio Response Successful: ${apiResponse.responseSuccessful}");
       Logger().i("Dio Response Message: ${apiResponse.responseMessage}");
-    } on SocketException catch (_) {
+    } on SocketException catch (e) {
+      Logger().e('🌐 SocketException in request', error: e);
       apiResponse.responseSuccessful = false;
-      apiResponse.responseMessage = "An Error occurred";
+      apiResponse.responseMessage =
+          'No internet connection. Please check your network and try again.';
+    } on HttpException catch (e) {
+      Logger().e('🌐 HttpException in request', error: e);
+      apiResponse.responseSuccessful = false;
+      apiResponse.responseMessage =
+          'Unable to reach the server. Please try again later.';
+    } catch (e, s) {
+      Logger().e('🔥 Unexpected error in request', error: e, stackTrace: s);
+      apiResponse.responseSuccessful = false;
 
-      Logger().i(
-        "Socket Response Successful: ${apiResponse.responseSuccessful}",
-      );
-      Logger().i("Socket Response Successful: ${apiResponse.responseMessage}");
+      if (e.toString().toLowerCase().contains('socketexception') ||
+          e.toString().toLowerCase().contains('network is unreachable') ||
+          e.toString().toLowerCase().contains('connection refused') ||
+          e.toString().toLowerCase().contains('no route to host')) {
+        apiResponse.responseMessage =
+            'No internet connection. Please check your network and try again.';
+      } else {
+        apiResponse.responseMessage =
+            'An unexpected error occurred. Please try again.';
+      }
     }
     return apiResponse;
   }
@@ -553,20 +737,38 @@ class ApiService {
       Logger().i("Response Message: ${apiResponse.responseMessage}");
       Logger().i("Response Body: ${apiResponse.responseBody}");
     } on DioException catch (e) {
-      Logger().i("Dio Response Full Message: ${e.response?.data}");
+      Logger().e("Dio Response Full Message: ${e.response?.data}", error: e);
       apiResponse.responseSuccessful = false;
 
+      // ─── Check for network/connectivity errors first ───────────
+      if (e.type == DioExceptionType.connectionError ||
+          e.type == DioExceptionType.connectionTimeout ||
+          e.type == DioExceptionType.receiveTimeout ||
+          e.type == DioExceptionType.sendTimeout) {
+        apiResponse.responseMessage =
+            'No internet connection. Please check your network and try again.';
+        Logger().e('🌐 Network error: ${e.type}');
+        return apiResponse;
+      }
+
+      // ─── Check inner error for SocketException ─────────────────
+      if (e.error is SocketException) {
+        apiResponse.responseMessage =
+            'No internet connection. Please check your network and try again.';
+        Logger().e('🌐 SocketException wrapped in DioException');
+        return apiResponse;
+      }
+
+      // ─── Parse response body for error message ─────────────────
       dynamic data = e.response?.data;
       String message = 'An error occurred';
 
       if (data is Map<String, dynamic>) {
-        // ✅ Handle normal JSON errors
         final msg = data['message'];
         message = msg is String ? msg : message;
       } else if (data is String) {
-        // ✅ Handle HTML or text responses (like 502 Bad Gateway)
         if (data.contains('502 Bad Gateway')) {
-          message = 'Server temporarily unavailable (502 Bad Gateway)';
+          message = 'Server temporarily unavailable. Please try again later.';
         } else if (data.contains('html')) {
           message = 'Unexpected server error. Please try again later.';
         } else {
@@ -578,14 +780,30 @@ class ApiService {
 
       Logger().i("Dio Response Successful: ${apiResponse.responseSuccessful}");
       Logger().i("Dio Response Message: ${apiResponse.responseMessage}");
-    } on SocketException catch (_) {
+    } on SocketException catch (e) {
+      Logger().e('🌐 SocketException in request', error: e);
       apiResponse.responseSuccessful = false;
-      apiResponse.responseMessage = "An Error occurred";
+      apiResponse.responseMessage =
+          'No internet connection. Please check your network and try again.';
+    } on HttpException catch (e) {
+      Logger().e('🌐 HttpException in request', error: e);
+      apiResponse.responseSuccessful = false;
+      apiResponse.responseMessage =
+          'Unable to reach the server. Please try again later.';
+    } catch (e, s) {
+      Logger().e('🔥 Unexpected error in request', error: e, stackTrace: s);
+      apiResponse.responseSuccessful = false;
 
-      Logger().i(
-        "Socket Response Successful: ${apiResponse.responseSuccessful}",
-      );
-      Logger().i("Socket Response Successful: ${apiResponse.responseMessage}");
+      if (e.toString().toLowerCase().contains('socketexception') ||
+          e.toString().toLowerCase().contains('network is unreachable') ||
+          e.toString().toLowerCase().contains('connection refused') ||
+          e.toString().toLowerCase().contains('no route to host')) {
+        apiResponse.responseMessage =
+            'No internet connection. Please check your network and try again.';
+      } else {
+        apiResponse.responseMessage =
+            'An unexpected error occurred. Please try again.';
+      }
     }
     return apiResponse;
   }
@@ -638,20 +856,38 @@ class ApiService {
       Logger().i("Response Message: ${apiResponse.responseMessage}");
       Logger().i("Response Body: ${apiResponse.responseBody}");
     } on DioException catch (e) {
-      Logger().i("Dio Response Full Message: ${e.response?.data}");
+      Logger().e("Dio Response Full Message: ${e.response?.data}", error: e);
       apiResponse.responseSuccessful = false;
 
+      // ─── Check for network/connectivity errors first ───────────
+      if (e.type == DioExceptionType.connectionError ||
+          e.type == DioExceptionType.connectionTimeout ||
+          e.type == DioExceptionType.receiveTimeout ||
+          e.type == DioExceptionType.sendTimeout) {
+        apiResponse.responseMessage =
+            'No internet connection. Please check your network and try again.';
+        Logger().e('🌐 Network error: ${e.type}');
+        return apiResponse;
+      }
+
+      // ─── Check inner error for SocketException ─────────────────
+      if (e.error is SocketException) {
+        apiResponse.responseMessage =
+            'No internet connection. Please check your network and try again.';
+        Logger().e('🌐 SocketException wrapped in DioException');
+        return apiResponse;
+      }
+
+      // ─── Parse response body for error message ─────────────────
       dynamic data = e.response?.data;
       String message = 'An error occurred';
 
       if (data is Map<String, dynamic>) {
-        // ✅ Handle normal JSON errors
         final msg = data['message'];
         message = msg is String ? msg : message;
       } else if (data is String) {
-        // ✅ Handle HTML or text responses (like 502 Bad Gateway)
         if (data.contains('502 Bad Gateway')) {
-          message = 'Server temporarily unavailable (502 Bad Gateway)';
+          message = 'Server temporarily unavailable. Please try again later.';
         } else if (data.contains('html')) {
           message = 'Unexpected server error. Please try again later.';
         } else {
@@ -663,14 +899,30 @@ class ApiService {
 
       Logger().i("Dio Response Successful: ${apiResponse.responseSuccessful}");
       Logger().i("Dio Response Message: ${apiResponse.responseMessage}");
-    } on SocketException catch (_) {
+    } on SocketException catch (e) {
+      Logger().e('🌐 SocketException in request', error: e);
       apiResponse.responseSuccessful = false;
-      apiResponse.responseMessage = "An Error occurred";
+      apiResponse.responseMessage =
+          'No internet connection. Please check your network and try again.';
+    } on HttpException catch (e) {
+      Logger().e('🌐 HttpException in request', error: e);
+      apiResponse.responseSuccessful = false;
+      apiResponse.responseMessage =
+          'Unable to reach the server. Please try again later.';
+    } catch (e, s) {
+      Logger().e('🔥 Unexpected error in request', error: e, stackTrace: s);
+      apiResponse.responseSuccessful = false;
 
-      Logger().i(
-        "Socket Response Successful: ${apiResponse.responseSuccessful}",
-      );
-      Logger().i("Socket Response Successful: ${apiResponse.responseMessage}");
+      if (e.toString().toLowerCase().contains('socketexception') ||
+          e.toString().toLowerCase().contains('network is unreachable') ||
+          e.toString().toLowerCase().contains('connection refused') ||
+          e.toString().toLowerCase().contains('no route to host')) {
+        apiResponse.responseMessage =
+            'No internet connection. Please check your network and try again.';
+      } else {
+        apiResponse.responseMessage =
+            'An unexpected error occurred. Please try again.';
+      }
     }
     return apiResponse;
   }

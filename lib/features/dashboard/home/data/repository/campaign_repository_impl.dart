@@ -59,7 +59,7 @@ class CampaignRepositoryImpl extends CampaignRepository {
       functionName: 'check-campaign-reward-claimed',
       body: {'userId': userId, 'campaignId': campaignId},
       fallbackErrorMessage: 'Failed to check reward claim status',
-      onSuccess: (data) => data['data'] as bool,
+      onSuccess: (data) => data['data']["hasClaimed"] as bool,
     );
   }
 
