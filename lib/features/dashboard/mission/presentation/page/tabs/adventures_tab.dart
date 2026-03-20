@@ -138,7 +138,7 @@ class _AdventuresTabState extends State<AdventuresTab> with UIToolMixin {
           ),
           SizedBox(height: 14.h),
           Text(
-            "Unlock Spins by completing Missions. Keep going !",
+            "Unlock Coins by completing Missions. Keep going",
             textAlign: TextAlign.center,
             style: GoogleFonts.manrope(
               fontSize: 14,

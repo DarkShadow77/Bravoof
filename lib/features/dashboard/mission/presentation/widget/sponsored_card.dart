@@ -2,10 +2,12 @@ import 'package:fade_shimmer/fade_shimmer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 
 import '../../../../../app/styles/text_styles.dart';
 import '../../../../../app/view/widgets/button/icon_text_button.dart';
 import '../../../../../app/view/widgets/cached_image_widget.dart';
+import '../../../../../core/constants/app_assets.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/fonts.dart';
 import '../../../../../utility/ui_tool_mix.dart';
@@ -73,12 +75,11 @@ class _SponsoredCardState extends State<SponsoredCard> with UIToolMixin {
             baseColor: AppColors.darkPrimary05,
             highlightColor: AppColors.grey300.withValues(alpha: .25),
           );
-          ;
         } else if (sponsoredMissions.isNotEmpty) {
           return Column(
             children: [
               Container(
-                height: 326.h,
+                height: 328.h,
                 child: PageView.builder(
                   padEnds: true,
                   controller: _pageController,
@@ -135,7 +136,7 @@ class _SponsoredCardState extends State<SponsoredCard> with UIToolMixin {
                     return Transform(
                       transform: matrix,
                       child: Container(
-                        height: 326.h,
+                        height: 328.h,
                         margin: EdgeInsets.symmetric(horizontal: 16.w),
                         padding: EdgeInsets.symmetric(
                           horizontal: 14.w,
@@ -191,24 +192,84 @@ class _SponsoredCardState extends State<SponsoredCard> with UIToolMixin {
                                         CrossAxisAlignment.center,
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      Image.asset(
-                                        "assets/images/one_50.png",
-                                        height: 16.r,
-                                        width: 16.r,
-                                      ),
-                                      RichText(
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        text: TextSpan(
-                                          text: "${sponsoredMission.points}",
-                                          style:
-                                              TextStyles.smallSemibold12(
-                                                context,
-                                              ).copyWith(
+                                      Flexible(
+                                        child: Row(
+                                          spacing: 2.w,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Container(
+                                              width: 20.r,
+                                              height: 20.r,
+                                              decoration: BoxDecoration(
+                                                shape: BoxShape.circle,
                                                 color: hexToColor(
                                                   sponsoredMission.textColor,
                                                 ),
                                               ),
+                                              child: Center(
+                                                child: SvgPicture.asset(
+                                                  AssetsSvgIcons.userMultiple,
+                                                  width: 12.w,
+                                                  height: 12.h,
+                                                  colorFilter: ColorFilter.mode(
+                                                    AppColors.black,
+                                                    BlendMode.srcIn,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            RichText(
+                                              text: TextSpan(
+                                                text:
+                                                    "${sponsoredMission.usersJoined} / ${sponsoredMission.maxUsers}",
+                                                style:
+                                                    TextStyles.cardRegular10(
+                                                      context,
+                                                    ).copyWith(
+                                                      fontFamily:
+                                                          AppFonts.baloo,
+                                                      color: hexToColor(
+                                                        sponsoredMission
+                                                            .textColor,
+                                                      ),
+                                                    ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      Flexible(
+                                        child: Row(
+                                          spacing: 2.w,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Image.asset(
+                                              "assets/images/one_50.png",
+                                              height: 16.r,
+                                              width: 16.r,
+                                            ),
+                                            RichText(
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                              text: TextSpan(
+                                                text:
+                                                    "${sponsoredMission.points}",
+                                                style:
+                                                    TextStyles.smallSemibold12(
+                                                      context,
+                                                    ).copyWith(
+                                                      color: hexToColor(
+                                                        sponsoredMission
+                                                            .textColor,
+                                                      ),
+                                                    ),
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ),
                                     ],

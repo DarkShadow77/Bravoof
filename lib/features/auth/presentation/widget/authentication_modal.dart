@@ -136,24 +136,71 @@ class _AuthenticationModalState extends State<AuthenticationModal>
   }
 
   _proceedToOnboard(bool isSignUp) async {
-    var userProfile = await Constants().getUser();
-    final email = userProfile['email'];
-    // Send them to your onboarding stage
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      barrierColor: Colors.transparent,
-      backgroundColor: Colors.transparent,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
-      ),
-      builder: (_) => ReferralCode(
-        data: {
-          'email': isSignUp ? _emailController.text.trim() : email,
-          'pass': isSignUp ? _passController.text.trim() : null,
-        },
-      ),
-    );
+    if (isSignUp) {
+      // Email signup — use field values directly, no cache read needed
+      showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        barrierColor: Colors.transparent,
+        backgroundColor: Colors.transparent,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+        ),
+        builder: (_) => ReferralCode(
+          data: {
+            'email': _emailController.text.trim(),
+            'pass': _passController.text.trim(),
+          },
+        ),
+      );
+    } else {
+      // Social signup — read cache but wait for it properly
+      final userProfile = await Constants().getUser();
+      final email = userProfile['email'] ?? '';
+
+      if (!mounted) return;
+
+      if (email.isEmpty) {
+        // Cache not ready yet — retry once after short delay
+        await Future.delayed(const Duration(milliseconds: 300));
+        if (!mounted) return;
+        final retried = await Constants().getUser();
+        final retriedEmail = retried['email'] ?? '';
+
+        if (retriedEmail.isEmpty) {
+          showMessage(
+            'Could not retrieve account details. Please try again.',
+            context,
+            status: true,
+          );
+          return;
+        }
+
+        showModalBottomSheet(
+          context: context,
+          isScrollControlled: true,
+          barrierColor: Colors.transparent,
+          backgroundColor: Colors.transparent,
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+          ),
+          builder: (_) =>
+              ReferralCode(data: {'email': retriedEmail, 'pass': null}),
+        );
+        return;
+      }
+
+      showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        barrierColor: Colors.transparent,
+        backgroundColor: Colors.transparent,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+        ),
+        builder: (_) => ReferralCode(data: {'email': email, 'pass': null}),
+      );
+    }
   }
 
   @override

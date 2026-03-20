@@ -1,7 +1,9 @@
+import 'package:bravoo/core/constants/app_assets.dart';
 import 'package:fade_shimmer/fade_shimmer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../../app/styles/text_styles.dart';
 import '../../../../../app/view/widgets/button/icon_text_button.dart';
@@ -191,24 +193,82 @@ class _FeaturedCardState extends State<FeaturedCard> with UIToolMixin {
                                         CrossAxisAlignment.center,
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      Image.asset(
-                                        "assets/images/one_50.png",
-                                        height: 16.r,
-                                        width: 16.r,
-                                      ),
-                                      RichText(
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        text: TextSpan(
-                                          text: "${featuredMission.points}",
-                                          style:
-                                              TextStyles.smallSemibold12(
-                                                context,
-                                              ).copyWith(
+                                      Flexible(
+                                        child: Row(
+                                          spacing: 2.w,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Container(
+                                              width: 20.r,
+                                              height: 20.r,
+                                              decoration: BoxDecoration(
+                                                shape: BoxShape.circle,
                                                 color: hexToColor(
                                                   featuredMission.textColor,
                                                 ),
                                               ),
+                                              child: Center(
+                                                child: SvgPicture.asset(
+                                                  AssetsSvgIcons.userMultiple,
+                                                  width: 12.w,
+                                                  height: 12.h,
+                                                  colorFilter: ColorFilter.mode(
+                                                    AppColors.black,
+                                                    BlendMode.srcIn,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            RichText(
+                                              text: TextSpan(
+                                                text:
+                                                    "${featuredMission.usersJoined}/${featuredMission.maxUsers}",
+                                                style:
+                                                    TextStyles.smallRegular12(
+                                                      context,
+                                                    ).copyWith(
+                                                      color: hexToColor(
+                                                        featuredMission
+                                                            .textColor,
+                                                      ),
+                                                    ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      Flexible(
+                                        child: Row(
+                                          spacing: 2.w,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Image.asset(
+                                              "assets/images/one_50.png",
+                                              height: 16.r,
+                                              width: 16.r,
+                                            ),
+                                            RichText(
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                              text: TextSpan(
+                                                text:
+                                                    "${featuredMission.points}",
+                                                style:
+                                                    TextStyles.smallSemibold12(
+                                                      context,
+                                                    ).copyWith(
+                                                      color: hexToColor(
+                                                        featuredMission
+                                                            .textColor,
+                                                      ),
+                                                    ),
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ),
                                     ],

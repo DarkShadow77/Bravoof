@@ -13,6 +13,8 @@ class FeaturedMission {
   final DateTime createdAt;
   final List<MissionInstruction> instructions;
   final String submissionType;
+  final int maxUsers;
+  final int usersJoined;
 
   FeaturedMission({
     required this.id,
@@ -27,6 +29,8 @@ class FeaturedMission {
     required this.createdAt,
     required this.instructions,
     required this.submissionType,
+    required this.maxUsers,
+    required this.usersJoined,
   });
 
   factory FeaturedMission.fromJson(Map<String, dynamic> json) {
@@ -45,6 +49,8 @@ class FeaturedMission {
           .map((e) => MissionInstruction.fromJson(e))
           .toList(),
       submissionType: json['submission_type'] ?? '',
+      maxUsers: json['max_users'] ?? 0,
+      usersJoined: json['users_joined'] ?? 0,
     );
   }
 }

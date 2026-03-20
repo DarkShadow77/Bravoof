@@ -10,6 +10,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 
 import '../../../../../app/view/widgets/button/icon_text_button.dart';
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../../core/utils/helpers.dart';
 import '../../data/model/mission_status_enum.dart';
 import '../../data/model/social_mission_model.dart';
 import '../bloc/social_mission_bloc.dart';
@@ -81,7 +82,6 @@ class _FollowUsCardState extends State<FollowUsCard> {
           final int total = socialMissions.length;
 
           final double progress = total == 0 ? 0.0 : activeStatusLength / total;
-
           final double safeProgress = progress.clamp(0.0, 1.0);
 
           return Column(
@@ -150,7 +150,7 @@ class _FollowUsCardState extends State<FollowUsCard> {
               SizedBox(height: 16.h),
               RichText(
                 text: TextSpan(
-                  text: "Total Progress 0%",
+                  text: "Total Progress ${formatAmount(safeProgress * 100)}%",
                   style: TextStyles.cardSemibold10(
                     context,
                   ).copyWith(color: AppColors.white),

@@ -157,7 +157,7 @@ class _RedeemTabState extends State<RedeemTab>
             child: RichText(
               text: TextSpan(
                 text: text,
-                style: TextStyles.smallRegular12(context).copyWith(
+                style: TextStyles.smallSemibold12(context).copyWith(
                   color: _currentPage != index ? AppColors.grey600 : null,
                   fontWeight: _currentPage == index ? FontWeight.bold : null,
                 ),

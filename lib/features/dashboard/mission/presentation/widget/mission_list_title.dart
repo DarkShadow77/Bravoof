@@ -13,8 +13,7 @@ import '../../../../../utility/in_app_review.dart';
 import '../../../../../utility/ui_tool_mix.dart';
 import '../../../../common/flowva_button.dart';
 import '../../../../dashboard/earn/data/models/mission_res.dart';
-import '../../../../dashboard/earn/presentation/pages/invite_earn.dart'
-    hide MissionTile;
+import '../../../../dashboard/earn/presentation/pages/invite_earn.dart';
 import '../../../../dashboard/profile/presentation/bloc/profile_bloc.dart';
 import '../bloc/growth_mission_bloc.dart';
 
