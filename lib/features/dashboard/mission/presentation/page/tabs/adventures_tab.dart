@@ -71,6 +71,11 @@ class _AdventuresTabState extends State<AdventuresTab> with UIToolMixin {
 
   Widget _buildGrowthMission() {
     int sum = missions.where((e) => e.completed == true).length;
+
+    final int total = missions.length;
+
+    final double progress = total == 0 ? 0.0 : sum / total;
+    final double safeProgress = progress.clamp(0.0, 1.0);
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 16.w),
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
@@ -113,7 +118,7 @@ class _AdventuresTabState extends State<AdventuresTab> with UIToolMixin {
                         child: Transform.rotate(
                           angle: -0.14 / 2,
                           child: CircularProgressIndicator(
-                            value: sum / missions.length,
+                            value: safeProgress,
                             strokeWidth: 6,
                             valueColor: const AlwaysStoppedAnimation(
                               Color(0xFF9013FE),

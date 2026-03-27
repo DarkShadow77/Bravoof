@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:logger/logger.dart';
 
 import '../../../../../app/view/widgets/button/icon_text_button.dart';
 import '../../../../../core/constants/app_colors.dart';
@@ -42,7 +43,8 @@ class _FollowUsCardState extends State<FollowUsCard> {
         .toList();
 
     if (points.isEmpty) {
-      throw Exception('No point-based missions found');
+      Logger().w('No point-based missions found');
+      return "0";
     }
 
     final min = points.reduce((a, b) => a < b ? a : b);

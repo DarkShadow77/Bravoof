@@ -242,6 +242,12 @@ class _TimeSectionState extends State<_TimeSection> with UIToolMixin {
                 .inSeconds
                 .clamp(0, double.infinity)
                 .toInt();
+
+        final double progress =
+            (communityMission?.usersJoined ?? 0) /
+            (communityMission?.maxUsers ?? 1);
+
+        final double safeProgress = progress.clamp(0.0, 1.0);
         return Container(
           width: double.infinity,
           decoration: BoxDecoration(
@@ -291,40 +297,8 @@ class _TimeSectionState extends State<_TimeSection> with UIToolMixin {
                       child: Stack(
                         alignment: Alignment.center,
                         children: [
-                          GradientProgress(
-                            height: 23,
-                            progress:
-                                (communityMission?.usersJoined ?? 0) /
-                                (communityMission?.maxUsers ?? 1),
-                          ),
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(100.r),
-                            child: Container(
-                              height: 23.h,
-                              width: double.infinity,
-                              color: AppColors.grey200, // background
-                              child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: FractionallySizedBox(
-                                  widthFactor:
-                                      (communityMission?.usersJoined ?? 0) /
-        (communityMission?.maxUsers ?? 0),
-                                  child: Container(
-                                    decoration: const BoxDecoration(
-                                      gradient: LinearGradient(
-                                        colors: [
-                                          Color(0xFFA259FF),
-                                          Color(0xFFDEC4FF),
-                                        ],
-                                        begin: Alignment.topCenter,
-                                        end: Alignment.bottomCenter,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
+                          GradientProgress(height: 23, progress: safeProgress),
+
                           RichText(
                             textAlign: TextAlign.center,
                             text: TextSpan(

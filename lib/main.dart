@@ -66,7 +66,7 @@ void main() async {
   await dotenv.load(fileName: ".env.development");
 
   await Supabase.initialize(
-    url: dotenv.env["BASE_URL"] ?? "",
+    url: dotenv.env["SUPABASE_URL"] ?? "",
     anonKey: dotenv.env["ANON_KEY"] ?? "",
   );
 
@@ -112,7 +112,6 @@ class _MyAppState extends State<MyApp> {
   @override
   void dispose() {
     _linkSubscription?.cancel();
-
     super.dispose();
   }
 
