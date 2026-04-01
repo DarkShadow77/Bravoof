@@ -28,15 +28,20 @@ Route<dynamic> generateRoute(RouteSettings settings) {
         routeName: settings.name!,
         viewToShow: BottomNavBar(index: 1, missionIndex: 2),
       );
-    case RouteName.redeemPage:
+    case RouteName.squadPage:
       return _getPageRoute(
         routeName: settings.name!,
         viewToShow: BottomNavBar(index: 2, missionIndex: 0, redeemIndex: 0),
       );
+    case RouteName.redeemPage:
+      return _getPageRoute(
+        routeName: settings.name!,
+        viewToShow: BottomNavBar(index: 3, missionIndex: 0, redeemIndex: 0),
+      );
     case RouteName.redeemHistoryPage:
       return _getPageRoute(
         routeName: settings.name!,
-        viewToShow: BottomNavBar(index: 2, missionIndex: 0, redeemIndex: 1),
+        viewToShow: BottomNavBar(index: 3, missionIndex: 0, redeemIndex: 1),
       );
     default:
       return MaterialPageRoute<dynamic>(

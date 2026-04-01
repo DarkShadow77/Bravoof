@@ -40,6 +40,9 @@ import 'features/dashboard/mission/presentation/bloc/streak_bloc.dart';
 import 'features/dashboard/profile/presentation/bloc/auth_link_bloc.dart';
 import 'features/dashboard/profile/presentation/bloc/feedback_bloc.dart';
 import 'features/dashboard/profile/presentation/bloc/profile_bloc.dart';
+import 'features/dashboard/squad/presentation/bloc/activity_bloc.dart';
+import 'features/dashboard/squad/presentation/bloc/brand_bloc.dart';
+import 'features/dashboard/squad/presentation/bloc/squad_bloc.dart';
 import 'firebase_options.dart';
 import 'utility/navigation.dart';
 
@@ -140,6 +143,9 @@ class _MyAppState extends State<MyApp> {
         BlocProvider(create: (_) => sl<NewSocialMissionBloc>()),
         BlocProvider(create: (_) => sl<FeaturedMissionBloc>()),
         BlocProvider(create: (_) => sl<SponsoredMissionBloc>()),
+        BlocProvider(create: (_) => sl<SquadBloc>()),
+        BlocProvider(create: (_) => sl<BrandBloc>()),
+        BlocProvider(create: (_) => sl<RecentActivityBloc>()),
         BlocProvider(create: (_) => sl<SkillUpBloc>()),
         BlocProvider(create: (_) => sl<StreakBloc>()),
         BlocProvider(create: (_) => sl<GrowthMissionBloc>()),

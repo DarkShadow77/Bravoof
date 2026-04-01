@@ -27,6 +27,7 @@ class ApiService {
   Future<Either<String, T>> invokeEdgeFunction<T>({
     required String functionName,
     required Map<String, dynamic> body,
+    Map<String, dynamic>? queryParams,
     required T Function(dynamic data) onSuccess,
     String? fallbackErrorMessage,
     bool requiresAuth = true,
@@ -66,6 +67,7 @@ class ApiService {
       final res = await supabase.functions.invoke(
         functionName,
         body: body,
+        queryParameters: queryParams,
         headers: {'Authorization': 'Bearer ${authToken}'},
       );
 

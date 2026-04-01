@@ -30,6 +30,7 @@ import '../../../../../utility/ui_tool_mix.dart';
 import '../../../home/data/model/campaign_response.dart';
 import '../../../nav_bar.dart';
 import '../../../profile/data/model/user_profile.dart';
+import '../../../profile/data/model/users_model.dart';
 import '../../../profile/presentation/bloc/profile_bloc.dart';
 import '../widgets/price_details_dialog.dart';
 import 'invite_earn.dart';
@@ -113,7 +114,7 @@ class _ReferralContestScreenState extends State<ReferralContestScreen>
     }
   }
 
-  CampaignWinner? _getCurrentUserWinnerDetails() {
+  Users? _getCurrentUserWinnerDetails() {
     final currentUserId = supabase.auth.currentUser?.id;
     if (currentUserId == null) return null;
 
@@ -1129,7 +1130,8 @@ class _ReferralContainerState extends State<ReferralContainer> {
                                   ),
                                   RichText(
                                     text: TextSpan(
-                                      text: "${referredUsers.length - 5}",
+                                      text:
+                                          "${formatAmount(referredUsers.length - 5, uniComp: true)}",
                                       style: TextStyles.smallSemibold12(
                                         context,
                                       ).copyWith(color: textColor),

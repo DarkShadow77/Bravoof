@@ -45,3 +45,31 @@ DateTime _startOfWeek(DateTime date) {
   final normalized = DateTime(date.year, date.month, date.day);
   return normalized.subtract(Duration(days: normalized.weekday - 1));
 }
+
+String formatSMHDTime(String rawDate) {
+  try {
+    // Parse the ISO 8601 formatted date string
+    final date = DateTime.parse(rawDate).toLocal();
+
+    // Get the current time
+    final now = DateTime.now();
+
+    // Calculate the time difference
+    final diff = now.difference(date);
+
+    // Return the formatted time based on the difference
+    if (diff.inSeconds < 60) {
+      return '${diff.inSeconds}s ago';
+    } else if (diff.inMinutes < 60) {
+      return '${diff.inMinutes}m ago';
+    } else if (diff.inHours < 24) {
+      return '${diff.inHours}h ago';
+    } else if (diff.inDays <= 3) {
+      return '${diff.inDays}d ago';
+    } else {
+      return DateFormat('dd MMM yy').format(date); // e.g. 05 Nov 25
+    }
+  } catch (e) {
+    return 'Invalid date';
+  }
+}

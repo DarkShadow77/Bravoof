@@ -1,3 +1,5 @@
+import '../../../profile/data/model/users_model.dart';
+
 class CampaignResponseModel {
   CampaignResponseModel({
     required this.id,
@@ -52,7 +54,7 @@ class CampaignResponseModel {
   bool isMultipleWinner;
   int numberOfWinners;
   List<String> winnerUserIds;
-  List<CampaignWinner> winners; // NEW: Full winner details
+  List<Users> winners; // NEW: Full winner details
   List<CampaignReward> rewardList; // NEW: Reward list
 
   factory CampaignResponseModel.fromJson(Map<String, dynamic> json) {
@@ -68,10 +70,10 @@ class CampaignResponseModel {
     }
 
     // Parse full winner details
-    List<CampaignWinner> winners = [];
+    List<Users> winners = [];
     if (json['winners'] != null) {
       winners = (json['winners'] as List<dynamic>)
-          .map((w) => CampaignWinner.fromJson(w))
+          .map((w) => Users.fromJson(w))
           .toList();
     }
 
@@ -154,39 +156,12 @@ class CampaignResponseModel {
   }
 
   // Helper to get current user's winner details
-  CampaignWinner? getWinnerDetails(String userId) {
+  Users? getWinnerDetails(String userId) {
     try {
       return winners.firstWhere((w) => w.userId == userId);
     } catch (e) {
       return null;
     }
-  }
-}
-
-// NEW: Winner details model
-class CampaignWinner {
-  final String userId;
-  final String name;
-  final String profileImage;
-  final String bio;
-  final int totalEarned;
-
-  CampaignWinner({
-    required this.userId,
-    required this.name,
-    required this.profileImage,
-    required this.bio,
-    required this.totalEarned,
-  });
-
-  factory CampaignWinner.fromJson(Map<String, dynamic> json) {
-    return CampaignWinner(
-      userId: json['user_id'] ?? '',
-      name: json['name'] ?? '',
-      profileImage: json['profile_image'] ?? '',
-      bio: json['bio'] ?? '',
-      totalEarned: json['total_earned'] ?? 0,
-    );
   }
 }
 

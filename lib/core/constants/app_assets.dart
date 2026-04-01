@@ -19,6 +19,8 @@ class AssetsNavbar {
   static String missionActive = "$baseSvgNavbarPath/mission_active.svg";
   static String redeem = "$baseSvgNavbarPath/redeem.svg";
   static String redeemActive = "$baseSvgNavbarPath/redeem_active.svg";
+  static String squad = "$baseSvgNavbarPath/squad.svg";
+  static String squadActive = "$baseSvgNavbarPath/squad_active.svg";
 }
 
 class AssetsPngImages {
@@ -98,4 +100,10 @@ class AssetsSvgIcons {
   static String google = "$baseSvgIconsPath/google.svg";
   static String apple = "$baseSvgIconsPath/apple.svg";
   static String crown = "$baseSvgIconsPath/crown.svg";
+  static String heart = "$baseSvgIconsPath/heart.svg";
+  static String heartFilled = "$baseSvgIconsPath/heart_filled.svg";
+  static String fire = "$baseSvgIconsPath/fire.svg";
+  static String fireFilled = "$baseSvgIconsPath/fire_filled.svg";
+  static String hundred = "$baseSvgIconsPath/hundred.svg";
+  static String clap = "$baseSvgIconsPath/clap.svg";
 }

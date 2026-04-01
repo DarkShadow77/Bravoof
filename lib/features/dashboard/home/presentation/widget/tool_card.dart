@@ -191,7 +191,7 @@ class _ToolCardCarouselState extends State<ToolCardCarousel> {
       endedCampaigns.sort(
         (a, b) => b.campaignEndDate.compareTo(a.campaignEndDate),
       );
-      items.add(CampaignWinnerCard());
+      items.add(CampaignWinnerCard(campaign: endedCampaigns[0]));
     }
 
     // Dynamic carousel items

@@ -26,6 +26,10 @@ import 'mission/presentation/bloc/streak_bloc.dart';
 import 'mission/presentation/page/mission_page.dart';
 import 'profile/presentation/bloc/profile_bloc.dart';
 import 'redeem/presentation/bloc/redeem_bloc.dart';
+import 'squad/presentation/bloc/activity_bloc.dart';
+import 'squad/presentation/bloc/brand_bloc.dart';
+import 'squad/presentation/bloc/squad_bloc.dart';
+import 'squad/presentation/page/squad_page.dart';
 
 class BottomNavBar extends StatefulWidget {
   BottomNavBar({
@@ -107,6 +111,9 @@ class _BottomNavBarState extends State<BottomNavBar> {
     context.read<StreakBloc>().add(LoadStreaksEvent());
     context.read<RedeemBloc>().add(LoadRedeemHistory());
     context.read<NotificationBloc>().add(LoadNotifications());
+    context.read<SquadBloc>().add(FetchSquadsEvent());
+    context.read<BrandBloc>().add(FetchBrandsEvent());
+    context.read<RecentActivityBloc>().add(FetchActivityEvent());
 
     // Refresh home data
     context.read<HomeCubit>().fetchCampaigns();
@@ -142,6 +149,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
             children: [
               FlowvaHomePage(),
               MissionPage(index: widget.missionIndex),
+              SquadPage(),
               RedeemScreen(index: widget.missionIndex),
             ],
           ),
@@ -229,6 +237,22 @@ class _BottomNavBarState extends State<BottomNavBar> {
                     ),
                     BottomNavigationBarItem(
                       icon: currentIndex == 2
+                          ? SvgPicture.asset(
+                              AssetsNavbar.squadActive,
+                              width: 24.w,
+                              height: 24.h,
+                              fit: BoxFit.contain,
+                            )
+                          : SvgPicture.asset(
+                              AssetsNavbar.squad,
+                              width: 24.w,
+                              height: 24.h,
+                              fit: BoxFit.contain,
+                            ),
+                      label: "Squad",
+                    ),
+                    BottomNavigationBarItem(
+                      icon: currentIndex == 3
                           ? SvgPicture.asset(
                               AssetsNavbar.redeemActive,
                               width: 24.w,

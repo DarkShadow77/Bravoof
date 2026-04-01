@@ -51,6 +51,15 @@ import '../../features/dashboard/profile/presentation/bloc/profile_bloc.dart';
 import '../../features/dashboard/redeem/data/repository/redeem_repository.dart';
 import '../../features/dashboard/redeem/data/repository/reward_repository_impl.dart';
 import '../../features/dashboard/redeem/presentation/bloc/redeem_bloc.dart';
+import '../../features/dashboard/squad/data/repository/activity_repository.dart';
+import '../../features/dashboard/squad/data/repository/activity_repository_impl.dart';
+import '../../features/dashboard/squad/data/repository/brand_repository.dart';
+import '../../features/dashboard/squad/data/repository/brand_repository_impl.dart';
+import '../../features/dashboard/squad/data/repository/squad_repository.dart';
+import '../../features/dashboard/squad/data/repository/squad_repository_impl.dart';
+import '../../features/dashboard/squad/presentation/bloc/activity_bloc.dart';
+import '../../features/dashboard/squad/presentation/bloc/brand_bloc.dart';
+import '../../features/dashboard/squad/presentation/bloc/squad_bloc.dart';
 
 final sl = GetIt.instance;
 
@@ -86,6 +95,11 @@ Future<void> initDI() async {
   );
   sl.registerLazySingleton<FeedbackRepository>(() => FeedbackRepositoryImpl());
   sl.registerLazySingleton<AuthLinkRepository>(() => AuthLinkRepositoryImpl());
+  sl.registerLazySingleton<SquadRepository>(() => SquadRepositoryImpl());
+  sl.registerLazySingleton<BrandRepository>(() => BrandRepositoryImpl());
+  sl.registerLazySingleton<RecentActivityRepository>(
+    () => RecentActivityRepositoryImpl(),
+  );
 
   //Blocs
   sl.registerSingleton<AuthBloc>(AuthBloc(repo: sl<AuthRepository>()));
@@ -125,5 +139,10 @@ Future<void> initDI() async {
   );
   sl.registerSingleton<AuthLinkBloc>(
     AuthLinkBloc(repo: sl<AuthLinkRepository>()),
+  );
+  sl.registerSingleton<SquadBloc>(SquadBloc(repo: sl<SquadRepository>()));
+  sl.registerSingleton<BrandBloc>(BrandBloc(repo: sl<BrandRepository>()));
+  sl.registerSingleton<RecentActivityBloc>(
+    RecentActivityBloc(repo: sl<RecentActivityRepository>()),
   );
 }

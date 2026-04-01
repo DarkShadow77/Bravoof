@@ -14,6 +14,7 @@ import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/di/service_locator.dart';
 import '../../../../../core/utils/helpers.dart';
 import '../../../earn/presentation/pages/referral_contest_screen.dart';
+import '../../../profile/data/model/users_model.dart';
 import '../bloc/campaign_bloc.dart';
 import '../bloc/home_cubit.dart';
 
@@ -262,10 +263,7 @@ class WinnersPyramidWidget extends StatelessWidget {
     final currentUserId = supabase.auth.currentUser!.id;
 
     // Reorder winners to put current user in middle
-    List<CampaignWinner> orderedWinners = _orderWinners(
-      campaign.winners,
-      currentUserId,
-    );
+    List<Users> orderedWinners = _orderWinners(campaign.winners, currentUserId);
 
     // Take max 5 winners for display
     final displayWinners = orderedWinners.take(5).toList();
@@ -309,10 +307,7 @@ class WinnersPyramidWidget extends StatelessWidget {
     );
   }
 
-  List<CampaignWinner> _orderWinners(
-    List<CampaignWinner> winners,
-    String currentUserId,
-  ) {
+  List<Users> _orderWinners(List<Users> winners, String currentUserId) {
     if (currentUserId.isEmpty) return winners;
 
     final currentUserIndex = winners.indexWhere(
@@ -321,7 +316,7 @@ class WinnersPyramidWidget extends StatelessWidget {
     if (currentUserIndex == -1) return winners;
 
     // Move current user to middle
-    final List<CampaignWinner> reordered = [...winners];
+    final List<Users> reordered = [...winners];
     final currentUser = reordered.removeAt(currentUserIndex);
     final middleIndex = (reordered.length / 2).floor();
     reordered.insert(middleIndex, currentUser);
@@ -329,10 +324,7 @@ class WinnersPyramidWidget extends StatelessWidget {
     return reordered;
   }
 
-  List<Widget> _buildPyramidLayout(
-    BuildContext context,
-    List<CampaignWinner> winners,
-  ) {
+  List<Widget> _buildPyramidLayout(BuildContext context, List<Users> winners) {
     if (winners.isEmpty) return [];
 
     switch (winners.length) {
@@ -381,11 +373,7 @@ class WinnersPyramidWidget extends StatelessWidget {
     }
   }
 
-  Widget _buildWinnerAvatar(
-    BuildContext context,
-    CampaignWinner winner,
-    double size,
-  ) {
+  Widget _buildWinnerAvatar(BuildContext context, Users winner, double size) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -449,7 +437,7 @@ class _PastCampaignTileState extends State<PastCampaignTile> {
   bool isExpanded = false;
 
   // NEW: Get current user's profile if they're a winner
-  CampaignWinner? _getCurrentUserWinner() {
+  Users? _getCurrentUserWinner() {
     final supabase = Supabase.instance.client;
     final currentUserId = supabase.auth.currentUser?.id;
     if (currentUserId == null) return null;

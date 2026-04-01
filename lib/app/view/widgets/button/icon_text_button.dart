@@ -27,6 +27,7 @@ class IconTextButton extends StatelessWidget {
     this.paddingW = 2.5,
     this.paddingH = 2.5,
     this.buttonState = AppButtonState.idle,
+    this.innerShadowOffset = const Offset(-4, 8),
   });
 
   final VoidCallback onPressed;
@@ -39,6 +40,7 @@ class IconTextButton extends StatelessWidget {
   final Color? borderColor;
   final Color shadowColor;
   final Color? innerShadow;
+  final Offset innerShadowOffset;
   final double? height;
   final double? textSize;
   final double paddingW;
@@ -68,13 +70,17 @@ class IconTextButton extends StatelessWidget {
           ),
         ),
         child: InnerShadowContainer(
-          offset: Offset(-4, 10),
+          offset: innerShadowOffset,
           blur: 9.r,
           borderRadius: 100.r,
           backgroundColor: nullColor,
           shadowColor: innerShadow ?? AppColors.white.withValues(alpha: .35),
+          height: buttonHeight,
+          alignment: Alignment.topCenter,
           isShadowTopLeft: true,
           isShadowTopRight: true,
+          isShadowBottomLeft: false,
+          isShadowBottomRight: false,
           child: Container(
             alignment: Alignment.center,
             decoration: BoxDecoration(
@@ -105,8 +111,8 @@ class IconTextButton extends StatelessWidget {
               children: [
                 if (buttonState == AppButtonState.loading)
                   SizedBox(
-                    height: 20.h,
-                    width: 20.w,
+                    height: iconSize.h,
+                    width: iconSize.w,
                     child: CircularProgressIndicator(
                       color: textColor ?? AppColors.black,
                       strokeWidth: 2,

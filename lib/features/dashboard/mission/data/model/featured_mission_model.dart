@@ -39,7 +39,7 @@ class FeaturedMission {
       by: json['by'] ?? '',
       title: json['title'] ?? '',
       subtitle: json['subtitle'] ?? '',
-      color: MissionGradient.fromJson(json['color']),
+      color: MissionGradient.fromJson(json['color'] ?? {}),
       textColor: json['text_color'] ?? '#ffffff',
       image: json['image'] ?? '',
       points: json['points'] ?? 0,
