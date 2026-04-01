@@ -8,6 +8,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import '../../../../../core/constants/app_colors.dart';
+import '../../../../../core/utils/helpers.dart';
 import '../page/leaderboard_screen.dart';
 
 class TopLeaderboard extends StatelessWidget {
@@ -135,7 +136,7 @@ class TopLeaderboard extends StatelessWidget {
                             ),
                             RichText(
                               text: TextSpan(
-                                text: second.totalEarned.toString(),
+                                text: formatAmount(second.totalEarned),
                                 style: TextStyles.cardBold10(
                                   context,
                                 ).copyWith(color: AppColors.white),
@@ -218,7 +219,7 @@ class TopLeaderboard extends StatelessWidget {
                             ),
                             RichText(
                               text: TextSpan(
-                                text: first.totalEarned.toString(),
+                                text: formatAmount(first.totalEarned),
                                 style: TextStyles.cardBold10(
                                   context,
                                 ).copyWith(color: AppColors.white),
@@ -304,7 +305,7 @@ class TopLeaderboard extends StatelessWidget {
                             ),
                             RichText(
                               text: TextSpan(
-                                text: third.totalEarned.toString(),
+                                text: formatAmount(third.totalEarned),
                                 style: TextStyles.cardBold10(
                                   context,
                                 ).copyWith(color: AppColors.white),

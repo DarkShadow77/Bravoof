@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:get/get.dart';
 
 import '../../../../../app/styles/text_styles.dart';
 import '../../../../../app/view/widgets/button/icon_text_button.dart';
@@ -11,10 +12,13 @@ import '../../../../../core/constants/app_assets.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/di/service_locator.dart';
 import '../../../../../core/utils/helpers.dart';
+import '../../../../../utility/ui_tool_mix.dart';
 import '../../data/model/response/squad_model.dart';
 import '../bloc/squad_bloc.dart';
 import '../bloc/squad_mission_bloc.dart';
 import '../page/squad_details_page.dart';
+import 'join_squad_dialog.dart';
+import 'leave_squad_dialog.dart';
 
 class SquadsCard extends StatelessWidget {
   const SquadsCard({super.key});
@@ -78,7 +82,7 @@ class SquadsCard extends StatelessWidget {
   }
 }
 
-class SquadTile extends StatelessWidget {
+class SquadTile extends StatelessWidget with UIToolMixin {
   const SquadTile({super.key, required this.squad});
 
   final Squad squad;
@@ -166,7 +170,27 @@ class SquadTile extends StatelessWidget {
             ),
             IconTextButton(
               height: 24,
-              onPressed: () {},
+              onPressed: () {
+                if (squad.isFull) {
+                  showMessage(
+                    "${squad.name.capitalize} Squad is Full",
+                    context,
+                    status: true,
+                  );
+                } else if (squad.isJoined) {
+                  showMessage("You have already Joined this Squad", context);
+                } else if (squad.cooldownDaysRemaining > 1) {
+                  showMessage(
+                    "Please wait ${squad.cooldownDaysRemaining} more day(s) before joining",
+                    context,
+                    status: true,
+                  );
+                } else if (squad.canJoin) {
+                  joinSquadDialog(squad: squad);
+                } else if (squad.isJoined) {
+                  leaveSquadDialog(squad: squad);
+                }
+              },
               text: squad.isFull
                   ? "Full"
                   : squad.isJoined
