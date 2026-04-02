@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
 
 import '../../../../../app/styles/text_styles.dart';
+import '../../../../../app/view/widgets/cached_image_widget.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/utils/date_time_helper.dart';
 
@@ -93,9 +94,19 @@ class _SquadDetailsPageState extends State<SquadDetailsPage> {
                               color: AppColors.white,
                             ),
                           ),
+                          child: Center(
+                            child: CachedImageRadius(
+                              imageUrl: widget.squad.image,
+                              circle: true,
+                              size: 80,
+                              fit: BoxFit.cover,
+                              color: Colors.transparent,
+                            ),
+                          ),
                         ),
                       ],
                     ),
+                    SizedBox(height: 8.h),
                     RichText(
                       textAlign: TextAlign.center,
                       text: TextSpan(
