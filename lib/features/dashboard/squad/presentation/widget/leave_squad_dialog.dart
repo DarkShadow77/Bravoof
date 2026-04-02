@@ -52,10 +52,15 @@ class _LeaveSquadDialogState extends State<LeaveSquadDialog> with UIToolMixin {
       context.read<SquadBloc>().add(FetchSquadsEvent());
       context.read<RecentActivityBloc>().add(FetchActivityEvent());
 
+      Navigator.of(context, rootNavigator: true).pop();
       showMessage(
         "Successfully left ${widget.squad.name.capitalize} squad",
         context,
       );
+
+      if (Get.isDialogOpen == true) {
+        Navigator.of(context, rootNavigator: true).pop();
+      }
     }
   }
 

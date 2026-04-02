@@ -1,6 +1,10 @@
 import 'package:intl/intl.dart';
 
-String formatSmartDate(String isoDate, {String locale = 'en_US'}) {
+String formatSmartDate(
+  String isoDate, {
+  String locale = 'en_US',
+  bool showTime = true,
+}) {
   final date = DateTime.parse(isoDate).toLocal();
   final now = DateTime.now();
 
@@ -12,26 +16,31 @@ String formatSmartDate(String isoDate, {String locale = 'en_US'}) {
 
   // Today
   if (difference == 0) {
+    if (!showTime) return 'Today';
     return 'Today, $time';
   }
 
   // Yesterday
   if (difference == 1) {
+    if (!showTime) return 'Yesterday';
     return 'Yesterday, $time';
   }
 
   // Same calendar week
   if (_isSameWeek(date, now)) {
     final dayName = DateFormat('EEE', locale).format(date);
+    if (!showTime) return dayName;
     return '$dayName, $time';
   }
 
   // Same year
   if (date.year == now.year) {
+    if (!showTime) return DateFormat('d MMM', locale).format(date);
     return '${DateFormat('d MMM', locale).format(date)}, $time';
   }
 
   // Different year
+  if (!showTime) return DateFormat('d MMM yyyy', locale).format(date);
   return '${DateFormat('d MMM yyyy', locale).format(date)}, $time';
 }
 

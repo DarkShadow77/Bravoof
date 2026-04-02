@@ -254,7 +254,7 @@ class RecentActivityTile extends StatelessWidget {
             child: CachedImageRadius(
               imageUrl: activity.squad?.image ?? "",
               circle: true,
-              size: 66,
+              size: 50,
               fit: BoxFit.cover,
               color: Colors.transparent,
             ),
@@ -441,6 +441,7 @@ class ReactionRow extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         _ReactionButton(
+          emoji: ReactionEmoji.heart,
           icon: AssetsSvgIcons.heart,
           iconActive: AssetsSvgIcons.heartFilled,
           count: activity.reactions.heart,
@@ -448,6 +449,7 @@ class ReactionRow extends StatelessWidget {
           onTap: () => onReact(ReactionEmoji.heart),
         ),
         _ReactionButton(
+          emoji: ReactionEmoji.fire,
           icon: AssetsSvgIcons.fire,
           iconActive: AssetsSvgIcons.fireFilled,
           count: activity.reactions.fire,
@@ -455,6 +457,8 @@ class ReactionRow extends StatelessWidget {
           onTap: () => onReact(ReactionEmoji.fire),
         ),
         _ReactionButton(
+          isTextEmoji: true,
+          emoji: ReactionEmoji.hundred,
           icon: AssetsSvgIcons.hundred,
           iconActive: AssetsSvgIcons.hundred,
           count: activity.reactions.hundred,
@@ -462,6 +466,8 @@ class ReactionRow extends StatelessWidget {
           onTap: () => onReact(ReactionEmoji.hundred),
         ),
         _ReactionButton(
+          isTextEmoji: true,
+          emoji: ReactionEmoji.clap,
           icon: AssetsSvgIcons.clap,
           iconActive: AssetsSvgIcons.clap,
           count: activity.reactions.clap,
@@ -475,6 +481,8 @@ class ReactionRow extends StatelessWidget {
 
 class _ReactionButton extends StatefulWidget {
   const _ReactionButton({
+    this.isTextEmoji = false,
+    required this.emoji,
     required this.icon,
     required this.iconActive,
     required this.count,
@@ -482,6 +490,8 @@ class _ReactionButton extends StatefulWidget {
     required this.onTap,
   });
 
+  final bool isTextEmoji;
+  final ReactionEmoji emoji;
   final String icon;
   final String iconActive;
   final int count;
@@ -556,12 +566,20 @@ class _ReactionButtonState extends State<_ReactionButton>
               alignment: Alignment.center,
               child: ScaleTransition(
                 scale: _scale,
-                child: SvgPicture.asset(
-                  _isActive ? widget.iconActive : widget.icon,
-                  width: 16.w,
-                  height: 16.h,
-                  fit: BoxFit.contain,
-                ),
+                child: widget.isTextEmoji
+                    ? RichText(
+                        maxLines: 1,
+                        text: TextSpan(
+                          text: widget.emoji.emoji,
+                          style: TextStyles.smallMedium12(context),
+                        ),
+                      )
+                    : SvgPicture.asset(
+                        _isActive ? widget.iconActive : widget.icon,
+                        width: 16.w,
+                        height: 16.h,
+                        fit: BoxFit.contain,
+                      ),
               ),
             ),
             Align(

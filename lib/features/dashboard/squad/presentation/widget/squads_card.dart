@@ -177,8 +177,6 @@ class SquadTile extends StatelessWidget with UIToolMixin {
                     context,
                     status: true,
                   );
-                } else if (squad.isJoined) {
-                  showMessage("You have already Joined this Squad", context);
                 } else if (squad.cooldownDaysRemaining > 1) {
                   showMessage(
                     "Please wait ${squad.cooldownDaysRemaining} more day(s) before joining",
@@ -194,13 +192,15 @@ class SquadTile extends StatelessWidget with UIToolMixin {
               text: squad.isFull
                   ? "Full"
                   : squad.isJoined
-                  ? "Joined"
+                  ? "Leave Squad"
                   : "Join Squad",
               textColor: AppColors.white,
               textSize: 9,
               paddingW: .25,
               paddingH: .25,
-              color: squad.isFull || squad.isJoined
+              color: squad.isJoined
+                  ? AppColors.error
+                  : squad.isFull
                   ? AppColors.grey550
                   : textColor,
               innerShadowOffset: Offset(-1, 0),

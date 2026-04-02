@@ -54,6 +54,10 @@ class _JoinSquadDialogState extends State<JoinSquadDialog> with UIToolMixin {
         "Successfully joined ${widget.squad.name.capitalize} squad",
         context,
       );
+
+      if (Get.isDialogOpen == true) {
+        Navigator.of(context, rootNavigator: true).pop();
+      }
     }
   }
 
