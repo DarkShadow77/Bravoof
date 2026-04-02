@@ -321,17 +321,35 @@ class _SquadDetailsPageState extends State<SquadDetailsPage> with UIToolMixin {
                             physics: BouncingScrollPhysics(),
                             itemBuilder: (context, index) {
                               final member = squad.members[index];
-                              return Column(
-                                spacing: 4.h,
-                                mainAxisSize: MainAxisSize.min,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  CachedImageRadius(
-                                    imageUrl: member.profileImage,
-                                    size: 60,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ],
+                              return SizedBox(
+                                width: 60.w,
+                                child: Column(
+                                  spacing: 4.h,
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    CachedImageRadius(
+                                      imageUrl: member.profileImage,
+                                      size: 60,
+                                      fit: BoxFit.cover,
+                                      circle: true,
+                                      color: AppColors.grey200,
+                                    ),
+                                    RichText(
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      textAlign: TextAlign.center,
+                                      text: TextSpan(
+                                        text: "${member.name.capitalize}",
+                                        style: TextStyles.smallBold12(context)
+                                            .copyWith(
+                                              fontFamily: AppFonts.baloo2,
+                                              height: 1.h,
+                                            ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               );
                             },
                             separatorBuilder: (_, _) => SizedBox(width: 8.w),
