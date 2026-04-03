@@ -15,7 +15,8 @@ class SquadRepositoryImpl extends SquadRepository {
   Future<Either<String, List<Squad>>> fetchSquads({String? squadId}) async {
     return ApiService.instance!.invokeEdgeFunction<List<Squad>>(
       functionName: 'fetch-squads',
-      body: {"squadId": squadId},
+      body: {},
+      queryParams: {"squadId": squadId},
       fallbackErrorMessage: 'Failed to Fetch Squads',
       onSuccess: (data) {
         final mission = data["data"] as List;

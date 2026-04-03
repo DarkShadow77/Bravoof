@@ -5,6 +5,8 @@ import 'package:bravoo/app/view/widgets/button/icon_text_button.dart';
 import 'package:bravoo/features/common/data/constants.dart';
 import 'package:bravoo/features/common/ui_tool_mixin/ui_tool_mixin.dart';
 import 'package:bravoo/features/dashboard/profile/data/model/user_profile.dart';
+import 'package:country_state_city/models/country.dart';
+import 'package:country_state_city/utils/country_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -35,6 +37,7 @@ class _OnboardSecondStageState extends State<OnboardSecondStage>
   Set<String> selectedOption2 = {};
 
   final _usernameController = TextEditingController();
+
   final _pageController = PageController(initialPage: 0);
   final ImagePicker _picker = ImagePicker();
   UserProfile profile = UserProfile.empty();
@@ -60,6 +63,17 @@ class _OnboardSecondStageState extends State<OnboardSecondStage>
     "assets/avatar/15.png",
   ];
 
+  List<Country> countriesList = [];
+  Country country = Country(
+    name: "United States",
+    flag: "🇺🇸",
+    isoCode: "US",
+    currency: "USD",
+    phoneCode: "+1",
+    longitude: "-97.00000000",
+    latitude: "38.00000000",
+  );
+
   @override
   void initState() {
     super.initState();
@@ -67,6 +81,7 @@ class _OnboardSecondStageState extends State<OnboardSecondStage>
       setState(() {}); // rebuild whenever text changes
     });
     intiData();
+    getCountries();
   }
 
   @override
@@ -79,6 +94,11 @@ class _OnboardSecondStageState extends State<OnboardSecondStage>
   intiData() async {
     profile = UserProfile.fromJson(await Constants().getUser());
     _usernameController.text = profile.name;
+  }
+
+  Future<void> getCountries() async {
+    countriesList = await getAllCountries();
+    setState(() {});
   }
 
   pickImage(ImageSource imageSource) async {
@@ -409,7 +429,7 @@ class _OnboardSecondStageState extends State<OnboardSecondStage>
                         color: AppColors.white50,
                         borderRadius: BorderRadius.circular(16),
                         border: selectedOption1.contains(e["label"])
-                            ? Border.all(width: 0.5, color: Colors.purple)
+                            ? Border.all(width: 1, color: Colors.purple)
                             : null,
                         boxShadow: [
                           BoxShadow(

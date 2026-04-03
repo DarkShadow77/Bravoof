@@ -58,3 +58,32 @@ class Squad {
     );
   }
 }
+
+class UserSquad {
+  final String id;
+  final String name;
+  final String about;
+  final String image;
+  final MissionGradient gradientColor;
+  final String textColor;
+
+  UserSquad({
+    required this.id,
+    required this.name,
+    required this.about,
+    required this.image,
+    required this.gradientColor,
+    required this.textColor,
+  });
+
+  factory UserSquad.fromJson(Map<String, dynamic> json) {
+    return UserSquad(
+      id: json['id'] ?? "",
+      name: json['name'] ?? '',
+      about: json['about'] ?? "",
+      image: json['image'] ?? "",
+      gradientColor: MissionGradient.fromJson(json['gradient_color'] ?? {}),
+      textColor: json['text_color'] ?? '#FFFFFF',
+    );
+  }
+}

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:bravoo/features/dashboard/profile/data/model/user_profile.dart';
@@ -17,7 +18,7 @@ class ProfileRepositoryImpl extends ProfileRepository {
   final supabase = Supabase.instance.client;
   final firebase = FirebaseMessagingService.instance();
 
-  Future<Either<String, UserProfile>> fetchUserProfile() async {
+  /*Future<Either<String, UserProfile>> fetchUserProfile() async {
     try {
       final response = await supabase
           .from('user_profile')
@@ -30,6 +31,18 @@ class ProfileRepositoryImpl extends ProfileRepository {
     } catch (e) {
       return Left(e.toString());
     }
+  }*/
+
+  Future<Either<String, UserProfile>> fetchUserProfile() async {
+    return ApiService.instance!.invokeEdgeFunction<UserProfile>(
+      functionName: 'get-profile',
+      body: {},
+      fallbackErrorMessage: 'Failed to Fetch Profile',
+      onSuccess: (data) {
+        log("Profile: ${data["data"]}");
+        return UserProfile.fromJson(data["data"]);
+      },
+    );
   }
 
   Future<Either<String, UserProfile>> updateProfile({

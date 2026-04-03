@@ -1,5 +1,6 @@
 import 'package:bravoo/app/view/widgets/cached_image_widget.dart';
 import 'package:bravoo/core/constants/app_assets.dart';
+import 'package:bravoo/core/constants/fonts.dart';
 import 'package:bravoo/core/utils/helpers.dart';
 import 'package:bravoo/features/common/flowva_button.dart';
 import 'package:bravoo/features/dashboard/profile/data/model/user_profile.dart';
@@ -8,8 +9,10 @@ import 'package:bravoo/features/dashboard/profile/presentation/widgets/edit_prof
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../../app/styles/text_styles.dart';
@@ -69,6 +72,8 @@ class _ProfilePageState extends State<ProfilePage> {
       "name": "Tiktok",
     },
   ];
+
+  String get createdAt => DateFormat('MMMM yyyy').format(userProfile.createdAt);
 
   @override
   Widget build(BuildContext context) {
@@ -242,48 +247,161 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                 ),
                 SizedBox(height: 15.h),
-                Container(
-                  // width: double.infinity,
-                  padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: AppColors.black10),
-                    borderRadius: BorderRadius.circular(50.r),
-                  ),
-                  child: ShaderMask(
-                    shaderCallback: (bounds) =>
-                        LinearGradient(
-                          colors: [Color(0xFF9013FE), Color(0xFFFF8687)],
-                        ).createShader(
-                          Rect.fromLTWH(0, 0, bounds.width, bounds.height),
+                Row(
+                  spacing: 10.w,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Container(
+                      // width: double.infinity,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 8.w,
+                        vertical: 6.h,
+                      ),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: AppColors.black10),
+                        borderRadius: BorderRadius.circular(50.r),
+                      ),
+                      child: ShaderMask(
+                        shaderCallback: (bounds) =>
+                            LinearGradient(
+                              colors: [Color(0xFF9013FE), Color(0xFFFF8687)],
+                            ).createShader(
+                              Rect.fromLTWH(0, 0, bounds.width, bounds.height),
+                            ),
+                        blendMode: BlendMode.srcIn,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            BlocBuilder<HomeCubit, HomeState>(
+                              builder: (context, state) {
+                                final currentRank =
+                                    state.leaderboard.currentUser;
+                                final rank = currentRank.rank;
+                                return Flexible(
+                                  child: RichText(
+                                    text: TextSpan(
+                                      text: "Top $rank on Leaderboard",
+                                      style: TextStyles.cardBold10(
+                                        context,
+                                      ).copyWith(color: AppColors.primary),
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                            HugeIcon(
+                              icon: HugeIcons.strokeRoundedArrowUpRight03,
+                              size: 15.sp,
+                            ),
+                          ],
                         ),
-                    blendMode: BlendMode.srcIn,
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        BlocBuilder<HomeCubit, HomeState>(
-                          builder: (context, state) {
-                            final currentRank = state.leaderboard.currentUser;
-                            final rank = currentRank.rank;
-                            return Flexible(
-                              child: Text(
-                                "Top $rank on Leaderboard",
-                                style: GoogleFonts.manrope(
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w700,
-                                  color: Color(0xFF9013FE),
+                      ),
+                    ),
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 4.w,
+                        vertical: 4.h,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.primary05,
+                        borderRadius: BorderRadius.circular(50.r),
+                      ),
+                      child: Row(
+                        spacing: 2.w,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          HugeIcon(
+                            icon: HugeIcons.strokeRoundedCalendar02,
+                            size: 16.sp,
+                            color: AppColors.grey500,
+                          ),
+                          RichText(
+                            text: TextSpan(
+                              text: createdAt,
+                              style: TextStyles.cardMedium10(context).copyWith(
+                                fontFamily: AppFonts.baloo2,
+                                height: 0.h,
+                                color: AppColors.grey550,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    if (userProfile.squad != null)
+                      Flexible(
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 4.w,
+                            vertical: 4.h,
+                          ),
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [AppColors.primary, Color(0xffE99EC7)],
+                              begin: Alignment.bottomCenter,
+                              end: Alignment.topCenter,
+                            ),
+                            borderRadius: BorderRadius.circular(50.r),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            spacing: 2.w,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Container(
+                                height: 18.h,
+                                width: 18.w,
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      hexToColor(
+                                        userProfile.squad!.gradientColor.end,
+                                      ),
+                                      hexToColor(
+                                        userProfile.squad!.gradientColor.start,
+                                      ),
+                                    ],
+                                    begin: Alignment.bottomCenter,
+                                    end: Alignment.topCenter,
+                                  ),
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: AppColors.white50,
+                                    width: .5.w,
+                                  ),
+                                ),
+                                child: Center(
+                                  child: CachedImageRadius(
+                                    imageUrl: userProfile.squad?.image ?? "",
+                                    circle: true,
+                                    size: 12,
+                                    fit: BoxFit.cover,
+                                    color: Colors.transparent,
+                                  ),
                                 ),
                               ),
-                            );
-                          },
+                              Flexible(
+                                child: RichText(
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  text: TextSpan(
+                                    text:
+                                        "${userProfile.squad?.name.capitalize ?? ""} Squad",
+                                    style: TextStyles.cardMedium10(context)
+                                        .copyWith(
+                                          fontFamily: AppFonts.baloo2,
+                                          height: 0.h,
+                                          color: AppColors.white,
+                                        ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                        HugeIcon(
-                          icon: HugeIcons.strokeRoundedArrowUpRight03,
-                          size: 15,
-                        ),
-                      ],
-                    ),
-                  ),
+                      ),
+                  ],
                 ),
                 SizedBox(height: 30.h),
                 Row(

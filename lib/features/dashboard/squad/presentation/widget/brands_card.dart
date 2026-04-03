@@ -20,7 +20,7 @@ class BrandsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 100.h,
+      height: 150.h,
       child: BlocBuilder<BrandBloc, BrandState>(
         builder: (context, state) {
           List<Brand> brands = state.brands;
@@ -32,21 +32,21 @@ class BrandsCard extends StatelessWidget {
             return Center(
               child: ListView.separated(
                 shrinkWrap: true,
-                itemCount: 4,
+                itemCount: 3,
                 scrollDirection: Axis.horizontal,
                 padding: EdgeInsets.symmetric(horizontal: 16.w),
                 itemBuilder: (context, index) {
                   return SizedBox(
-                    width: 79.w,
-                    height: 100.h,
+                    width: 120.w,
+                    height: 150.h,
                     child: Stack(
                       children: [
                         Align(
                           alignment: Alignment.bottomCenter,
                           child: FadeShimmer(
-                            width: 79.w,
-                            height: 84.h,
-                            radius: 12.r,
+                            width: 120.w,
+                            height: 132.h,
+                            radius: 14.r,
                             baseColor: AppColors.darkPrimary05,
                             highlightColor: AppColors.grey300.withValues(
                               alpha: .25,
@@ -56,8 +56,8 @@ class BrandsCard extends StatelessWidget {
                         Align(
                           alignment: Alignment.topCenter,
                           child: FadeShimmer(
-                            width: 32.w,
-                            height: 32.h,
+                            width: 50.w,
+                            height: 50.h,
                             radius: 10000.r,
                             baseColor: AppColors.darkPrimary05,
                             highlightColor: AppColors.grey300.withValues(
@@ -120,19 +120,16 @@ class BrandTile extends StatelessWidget {
             state.type == BrandType.followUnfollowBrand &&
             state.brandId == brand.id;
         return SizedBox(
-          width: 79.w,
-          height: 100.h,
+          width: 120.w,
+          height: 150.h,
           child: Stack(
             children: [
               Align(
                 alignment: Alignment.bottomCenter,
                 child: Container(
-                  height: 84.h,
+                  height: 132.h,
                   width: double.infinity,
-                  padding: EdgeInsets.symmetric(
-                    vertical: 5.5.h,
-                    horizontal: 6.25.w,
-                  ),
+                  padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 9.w),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
@@ -142,21 +139,21 @@ class BrandTile extends StatelessWidget {
                       begin: Alignment.bottomCenter,
                       end: Alignment.topCenter,
                     ),
-                    borderRadius: BorderRadius.circular(12.r),
+                    borderRadius: BorderRadius.circular(14.r),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      SizedBox(height: 10.h),
+                      SizedBox(height: 15.h),
                       RichText(
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         text: TextSpan(
                           text: brand.name,
-                          style: TextStyles.smallBold12(
+                          style: TextStyles.bodyBold16(
                             context,
-                          ).copyWith(color: textColor),
+                          ).copyWith(fontSize: 18.sp, color: textColor),
                         ),
                       ),
                       RichText(
@@ -167,7 +164,7 @@ class BrandTile extends StatelessWidget {
                               "${formatAmount(brand.missionCount, uniComp: true)} missions",
                           style: TextStyles.smallCardBold8(
                             context,
-                          ).copyWith(fontSize: 5.sp, color: textColor),
+                          ).copyWith(color: textColor),
                         ),
                       ),
                       Row(
@@ -175,15 +172,15 @@ class BrandTile extends StatelessWidget {
                         children: [
                           Container(
                             padding: EdgeInsets.symmetric(
-                              vertical: 2.h,
-                              horizontal: 3.w,
+                              vertical: 3.h,
+                              horizontal: 4.w,
                             ),
                             decoration: BoxDecoration(
                               color: textColor.withValues(alpha: .05),
                               borderRadius: BorderRadius.circular(100.r),
                             ),
                             child: Row(
-                              spacing: 2.w,
+                              spacing: 3.w,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -197,14 +194,14 @@ class BrandTile extends StatelessWidget {
                                     children: [
                                       CachedImageRadius(
                                         imageUrl: user.profileImage,
-                                        size: 6.r,
+                                        size: 9.1.r,
                                         circle: true,
                                         color: textColor.withValues(alpha: .1),
                                       ),
                                       if (index != displayCount - 1)
                                         Container(
                                           width: 1.w,
-                                          height: 5.h,
+                                          height: 9.h,
                                           color: textColor.withValues(
                                             alpha: .1,
                                           ),
@@ -216,13 +213,13 @@ class BrandTile extends StatelessWidget {
                                   if (brand.followers.length > 0)
                                     Container(
                                       width: 1.w,
-                                      height: 5.h,
+                                      height: 9.h,
                                       color: textColor.withValues(alpha: .1),
                                     ),
                                   SvgPicture.asset(
                                     AssetsSvgIcons.user,
-                                    width: 6.w,
-                                    height: 6.h,
+                                    width: 8.w,
+                                    height: 8.h,
                                     fit: BoxFit.contain,
                                     colorFilter: ColorFilter.mode(
                                       textColor,
@@ -233,13 +230,13 @@ class BrandTile extends StatelessWidget {
                                 if (brand.followers.length > 5) ...[
                                   Container(
                                     width: 1.w,
-                                    height: 5.h,
+                                    height: 9.h,
                                     color: textColor.withValues(alpha: .1),
                                   ),
                                   Container(
                                     padding: EdgeInsets.symmetric(
-                                      horizontal: 1.45.w,
-                                      vertical: 1.27.h,
+                                      horizontal: 2.28.w,
+                                      vertical: 1.52.h,
                                     ),
                                     decoration: BoxDecoration(
                                       color: textColor.withValues(alpha: .08),
@@ -248,14 +245,14 @@ class BrandTile extends StatelessWidget {
                                       ),
                                     ),
                                     child: Row(
-                                      spacing: 1.w,
+                                      spacing: 1.5.w,
                                       crossAxisAlignment:
                                           CrossAxisAlignment.center,
                                       children: [
                                         SvgPicture.asset(
                                           AssetsSvgIcons.userMultiple,
-                                          width: 4.w,
-                                          height: 4.h,
+                                          width: 5.32.w,
+                                          height: 5.32.h,
                                           fit: BoxFit.contain,
                                           colorFilter: ColorFilter.mode(
                                             textColor,
@@ -270,7 +267,7 @@ class BrandTile extends StatelessWidget {
                                                 TextStyles.smallCardSemibold8(
                                                   context,
                                                 ).copyWith(
-                                                  fontSize: 3.5.sp,
+                                                  fontSize: 4.6.sp,
                                                   color: textColor,
                                                 ),
                                           ),
@@ -285,8 +282,8 @@ class BrandTile extends StatelessWidget {
                         ],
                       ),
                       IconTextButton(
-                        height: 20,
-                        iconSize: 10,
+                        height: 25,
+                        iconSize: 12,
                         onPressed: () {
                           if (!isLoading)
                             context.read<BrandBloc>().add(
@@ -294,7 +291,7 @@ class BrandTile extends StatelessWidget {
                             );
                         },
                         text: brand.isFollowing ? "Following" : "Follow Brand",
-                        textSize: 5,
+                        textSize: 7,
                         textColor: AppColors.white,
                         paddingW: .25,
                         paddingH: .25,
@@ -314,8 +311,8 @@ class BrandTile extends StatelessWidget {
               Align(
                 alignment: Alignment.topCenter,
                 child: Container(
-                  width: 32.w,
-                  height: 32.h,
+                  width: 50.w,
+                  height: 50.h,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     color: hexToColor(brand.logoBgColor),
@@ -323,7 +320,7 @@ class BrandTile extends StatelessWidget {
                   child: Center(
                     child: CachedImageRadius(
                       imageUrl: brand.logo,
-                      size: 20,
+                      size: 30,
                       color: Colors.transparent,
                       fit: BoxFit.contain,
                     ),

@@ -1,3 +1,5 @@
+import '../../../squad/data/model/response/squad_model.dart';
+
 class UserProfile {
   String id;
   String userId;
@@ -35,6 +37,7 @@ class UserProfile {
   List<String> allEmails;
   String primaryEmail;
   bool hasPassword;
+  UserSquad? squad;
 
   UserProfile({
     required this.id,
@@ -73,6 +76,7 @@ class UserProfile {
     required this.allEmails,
     required this.primaryEmail,
     required this.hasPassword,
+    this.squad,
   });
 
   factory UserProfile.empty() {
@@ -113,6 +117,7 @@ class UserProfile {
       allEmails: const [],
       primaryEmail: '',
       hasPassword: false,
+      squad: null,
     );
   }
 
@@ -154,6 +159,7 @@ class UserProfile {
     List<String>? allEmails,
     String? primaryEmail,
     bool? hasPassword,
+    UserSquad? squad,
   }) {
     return UserProfile(
       id: id ?? this.id,
@@ -192,6 +198,7 @@ class UserProfile {
       allEmails: allEmails ?? this.allEmails,
       primaryEmail: primaryEmail ?? this.primaryEmail,
       hasPassword: hasPassword ?? this.hasPassword,
+      squad: squad ?? this.squad,
     );
   }
 
@@ -251,33 +258,27 @@ class UserProfile {
           [],
       primaryEmail: json['primary_email'] ?? '',
       hasPassword: json['has_password'] ?? false,
+      squad: json['squad'] != null
+          ? UserSquad.fromJson(json['squad'] as Map<String, dynamic>)
+          : null,
     );
   }
 
   Map<String, dynamic> toJson() {
-    Map<String, dynamic> data = {};
-
-    if (name.isNotEmpty) {
-      data["name"] = name;
-    }
-    data["isLogin"] = isLogin;
-  
-    if (bio.isNotEmpty) {
-      data["bio"] = bio;
-    }
+    final data = <String, dynamic>{};
+    data['isLogin'] = isLogin;
     data['pass'] = pass;
-      if (fullName.isNotEmpty) {
-      data["full_name"] = fullName;
-    }
-    if (email.isNotEmpty) {
-      data["email"] = email;
-    }
-    data["goals"] = goals;
-      data["referral_count"] = referralCount;
-      data["referral_code"] = referralCode;
-      data["profile_image"] = profilePic;
-      data["user_id"] = userId;
-      return data;
+    data['goals'] = goals;
+    data['referral_count'] = referralCount;
+    data['referral_code'] = referralCode;
+    data['profile_image'] = profilePic;
+    data['user_id'] = userId;
+    if (id.isNotEmpty) data['id'] = id;
+    if (name.isNotEmpty) data['name'] = name;
+    if (bio.isNotEmpty) data['bio'] = bio;
+    if (fullName.isNotEmpty) data['full_name'] = fullName;
+    if (email.isNotEmpty) data['email'] = email;
+    return data;
   }
 }
 

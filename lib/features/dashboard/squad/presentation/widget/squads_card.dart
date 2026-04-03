@@ -26,7 +26,7 @@ class SquadsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 100.h,
+      height: 150.h,
       child: BlocBuilder<SquadBloc, SquadState>(
         builder: (context, state) {
           List<Squad> squads = state.squads;
@@ -43,8 +43,8 @@ class SquadsCard extends StatelessWidget {
                 padding: EdgeInsets.symmetric(horizontal: 16.w),
                 itemBuilder: (context, index) {
                   return FadeShimmer(
-                    width: 108.w,
-                    height: 100.h,
+                    width: 161.w,
+                    height: 150.h,
                     radius: 12.r,
                     baseColor: AppColors.darkPrimary05,
                     highlightColor: AppColors.grey300.withValues(alpha: .25),
@@ -104,8 +104,8 @@ class SquadTile extends StatelessWidget with UIToolMixin {
       },
       behavior: HitTestBehavior.opaque,
       child: Container(
-        width: 108.w,
-        height: 100.h,
+        width: 161.w,
+        height: 150.h,
         padding: EdgeInsets.symmetric(vertical: 6.5.h, horizontal: 10.w),
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -125,7 +125,7 @@ class SquadTile extends StatelessWidget with UIToolMixin {
             CachedImageSize(
               imageUrl: squad.image,
               width: 60,
-              height: 40,
+              height: 55,
               fit: BoxFit.contain,
               color: Colors.transparent,
             ),
@@ -134,9 +134,9 @@ class SquadTile extends StatelessWidget with UIToolMixin {
               overflow: TextOverflow.ellipsis,
               text: TextSpan(
                 text: squad.name,
-                style: TextStyles.cardSemibold10(
+                style: TextStyles.bodySemiBold16(
                   context,
-                ).copyWith(color: hexToColor(squad.textColor)),
+                ).copyWith(fontSize: 15.sp, color: hexToColor(squad.textColor)),
               ),
             ),
             Row(
@@ -146,11 +146,11 @@ class SquadTile extends StatelessWidget with UIToolMixin {
               children: [
                 SvgPicture.asset(
                   AssetsSvgIcons.userFilled,
-                  width: 7.w,
-                  height: 7.h,
+                  width: 11.w,
+                  height: 11.h,
                   fit: BoxFit.contain,
                   colorFilter: ColorFilter.mode(
-                    textColor.withValues(alpha: .65),
+                    textColor.withValues(alpha: .5),
                     BlendMode.srcIn,
                   ),
                 ),
@@ -160,16 +160,15 @@ class SquadTile extends StatelessWidget with UIToolMixin {
                   text: TextSpan(
                     text:
                         "${formatAmount(squad.usersJoined, uniComp: true)}/${formatAmount(squad.maxUsers, uniComp: true)}",
-                    style: TextStyles.cardMedium10(context).copyWith(
-                      fontSize: 6.5.sp,
-                      color: textColor.withValues(alpha: .65),
-                    ),
+                    style: TextStyles.cardMedium10(
+                      context,
+                    ).copyWith(color: textColor.withValues(alpha: .5)),
                   ),
                 ),
               ],
             ),
             IconTextButton(
-              height: 24,
+              height: 34,
               onPressed: () {
                 if (squad.isFull) {
                   showMessage(
@@ -195,7 +194,7 @@ class SquadTile extends StatelessWidget with UIToolMixin {
                   ? "Leave Squad"
                   : "Join Squad",
               textColor: AppColors.white,
-              textSize: 9,
+              textSize: 12,
               paddingW: .25,
               paddingH: .25,
               color: squad.isJoined

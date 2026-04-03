@@ -64,7 +64,17 @@ class RecentActivityCard extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: 16.w),
             itemBuilder: (context, index) {
               RecentActivity activity = recentActivity[index];
-              return RecentActivityTile(activity: activity);
+              return RecentActivityTile(
+                activity: activity,
+                onReact: (reaction) {
+                  context.read<RecentActivityBloc>().add(
+                    ReactToActivityEvent(
+                      activityId: activity.id,
+                      emoji: reaction,
+                    ),
+                  );
+                },
+              );
             },
             separatorBuilder: (_, _) => SizedBox(height: 16.h),
           );
@@ -75,9 +85,14 @@ class RecentActivityCard extends StatelessWidget {
 }
 
 class RecentActivityTile extends StatelessWidget {
-  const RecentActivityTile({super.key, required this.activity});
+  const RecentActivityTile({
+    super.key,
+    required this.activity,
+    required this.onReact,
+  });
 
   final RecentActivity activity;
+  final Function(ReactionEmoji) onReact;
 
   @override
   Widget build(BuildContext context) {
@@ -162,17 +177,13 @@ class RecentActivityTile extends StatelessWidget {
                 color: AppColors.primary,
                 decoration: TextDecoration.underline,
               ),
-              p: TextStyles.smallMedium12(context),
-              strong: TextStyles.smallBold12(context),
+              p: TextStyles.normalMedium14(context),
+              strong: TextStyles.normalBold14(context),
             ),
           ),
           ReactionRow(
             activity: activity,
-            onReact: (reaction) {
-              context.read<RecentActivityBloc>().add(
-                ReactToActivityEvent(activityId: activity.id, emoji: reaction),
-              );
-            },
+            onReact: (reaction) => onReact(reaction),
           ),
         ],
       ),
