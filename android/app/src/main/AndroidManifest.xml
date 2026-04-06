@@ -47,11 +47,11 @@
                 />
 
             <!-- Deep links only on main activity -->
-            <intent-filter android:autoVerify="true">
-                <data android:scheme="com.flowva.hub" />
+            <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="com.flowvahub.bravoo" />
             </intent-filter>
 
             <intent-filter android:autoVerify="true">
@@ -61,6 +61,20 @@
                 <data
                     android:scheme="com.flowvahub.bravoo"
                     android:host="apple-login-callback" />
+            </intent-filter>
+
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https" android:host="yourdomain.com" />
+            </intent-filter>
+            <!-- Custom scheme fallback (works without domain verification) -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="bravoo" />
             </intent-filter>
         </activity>
 

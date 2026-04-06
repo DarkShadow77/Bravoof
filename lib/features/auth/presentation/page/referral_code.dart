@@ -9,6 +9,7 @@ import 'package:get/get.dart';
 import '../../../../app/styles/text_styles.dart';
 import '../../../../app/view/widgets/button/icon_text_button.dart';
 import '../../../../core/constants/app_colors.dart';
+import '../../../../core/utils/pending_referral_code.dart';
 import '../../../../utility/ui_tool_mix.dart';
 import '../../../onbaording/page/onbaord_second_stage.dart';
 import '../bloc/auth_bloc.dart';
@@ -27,6 +28,16 @@ class _ReferralCodeState extends State<ReferralCode> with UIToolMixin {
 
   final referralCode = TextEditingController();
   bool _isReferralCheck = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Pre-fill referral code if opened via deep link
+    final pending = PendingReferralCode.instance.consume();
+    if (pending != null) {
+      referralCode.text = pending;
+    }
+  }
 
   void _loadingAuthState(BuildContext context, AuthLoadingState state) {
     if (state.type == AuthType.verifyReferralCode) {

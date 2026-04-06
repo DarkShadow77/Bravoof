@@ -26,6 +26,7 @@ import 'core/constants/navigators/routeName.dart';
 import 'core/constants/navigators/router.dart';
 import 'core/constants/strings.dart';
 import 'core/di/service_locator.dart';
+import 'core/utils/deep_link_handler.dart';
 import 'features/auth/presentation/bloc/auth_bloc.dart';
 import 'features/dashboard/earn/presentation/bloc/jackpot_bloc.dart';
 import 'features/dashboard/home/presentation/bloc/notification_bloc.dart';
@@ -119,15 +120,27 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> initDeepLinks() async {
-    // Handle links
-    _linkSubscription = AppLinks().uriLinkStream.listen((uri) {
-      debugPrint('onAppLink: $uri');
-      openAppLink(uri);
-    });
-  }
+    final appLinks = AppLinks();
 
-  void openAppLink(Uri uri) {
-    navigatorKey.currentState?.pushNamed(uri.fragment);
+    // Cold start — app was launched via a deep link
+    try {
+      final initialUri = await appLinks.getInitialLink();
+      if (initialUri != null) {
+        debugPrint('Cold start deep link: $initialUri');
+        // Delay until the navigator is ready
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          DeepLinkHandler.handle(initialUri);
+        });
+      }
+    } catch (e) {
+      debugPrint('Error getting initial link: $e');
+    }
+
+    // Warm start — app was already running
+    _linkSubscription = appLinks.uriLinkStream.listen((uri) {
+      debugPrint('Warm start deep link: $uri');
+      DeepLinkHandler.handle(uri);
+    }, onError: (err) => debugPrint('Deep link stream error: $err'));
   }
 
   // This widget is the root of your application.

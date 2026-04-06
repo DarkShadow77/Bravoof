@@ -2,12 +2,18 @@ import 'package:flutter/material.dart';
 
 import '../../../features/app.dart';
 import '../../../features/dashboard/nav_bar.dart';
+import '../../../features/onbaording/page/onbaording_screen.dart';
 import 'routeName.dart';
 
 Route<dynamic> generateRoute(RouteSettings settings) {
   switch (settings.name) {
     case RouteName.indexPage:
       return _getPageRoute(routeName: settings.name!, viewToShow: App());
+    case RouteName.onboardingPage:
+      return _getPageRoute(
+        routeName: settings.name!,
+        viewToShow: OnboardingScreen(),
+      );
     case RouteName.homePage:
       return _getPageRoute(
         routeName: settings.name!,

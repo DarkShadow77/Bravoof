@@ -8,6 +8,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../app/view/page/maintenance_page.dart';
 import '../core/model/version_model.dart';
 import '../core/services/version_service.dart';
+import '../core/utils/deep_link_handler.dart';
 import 'dashboard/home/presentation/bloc/home_cubit.dart';
 import 'dashboard/nav_bar.dart';
 import 'dashboard/profile/presentation/bloc/profile_bloc.dart';
@@ -53,6 +54,9 @@ class _AppState extends State<App> {
         profileBloc.add(SaveFCMTokenEvent());
         profileBloc.add(LogUserLoginActivityEvent(eventType: "login"));
         _checkVersion();
+
+        // ✅ Consume any pending deep link after login
+        DeepLinkHandler.consumePendingLink();
       }
       if (event == AuthChangeEvent.userUpdated) {
         profileBloc.add(GetProfileEvent());

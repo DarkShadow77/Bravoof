@@ -23,22 +23,34 @@
 		<key>CFBundleSignature</key>
 		<string>????</string>
 		<key>CFBundleURLTypes</key>
-		<array>
-			<dict>
-				<key>CFBundleTypeRole</key>
-				<string>Editor</string>
-				<key>CFBundleURLName</key>
-				<string>google</string>
-				<key>CFBundleURLSchemes</key>
-				<array>
-					<string>com.googleusercontent.apps.413861787586-g0lkbu9m7nll0mrvm077fs15o9r0aq4q</string>
-				</array>
-			</dict>
-		</array>
+        <array>
+            <!-- Bravoo custom scheme -->
+            <dict>
+                <key>CFBundleTypeRole</key>
+                <string>Editor</string>
+                <key>CFBundleURLName</key>
+                <string>bravoo</string>
+                <key>CFBundleURLSchemes</key>
+                <array>
+                    <string>bravoo</string>
+                </array>
+            </dict>
+            <!-- Google Sign-In -->
+            <dict>
+                <key>CFBundleTypeRole</key>
+                <string>Editor</string>
+                <key>CFBundleURLName</key>
+                <string>google</string>
+                <key>CFBundleURLSchemes</key>
+                <array>
+                    <string>com.googleusercontent.apps.413861787586-g0lkbu9m7nll0mrvm077fs15o9r0aq4q</string>
+                </array>
+            </dict>
+        </array>
 		<key>CFBundleVersion</key>
 		<string>$(FLUTTER_BUILD_NUMBER)</string>
 		<key>FlutterDeepLinkingEnabled</key>
-		<false/>
+		<true/>
 		<key>LSApplicationQueriesSchemes</key>
 		<array>
 			<string>whatsapp</string>
@@ -93,9 +105,5 @@
 				</array>
 			</dict>
 		</dict>
-		<key>UIBackgroundModes</key>
-        <array>
-            <string>remote-notification</string>
-        </array>
 	</dict>
 </plist>

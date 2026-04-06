@@ -16,6 +16,7 @@ import 'package:timer_count_down/timer_controller.dart';
 import 'package:timer_count_down/timer_count_down.dart';
 
 import '../../../../app/view/widgets/button/icon_text_button.dart';
+import '../../../../core/utils/deep_link_handler.dart';
 import '../../../common/app_enum.dart';
 import '../../../onbaording/page/onbaording_screen.dart';
 import '../../../onbaording/page/progress_step.dart';
@@ -79,6 +80,9 @@ class _VerifyOtpPageState extends State<VerifyOtpPage> with UIToolMixin {
         context,
         MaterialPageRoute(builder: (context) => StepProgressPage()),
       );
+
+      // ✅ Consume after onboarding too
+      DeepLinkHandler.consumePendingLink();
     } else if (state.response.message == "ONBOARDED_NO_SESSION") {
       Navigator.pushAndRemoveUntil(
         context,
