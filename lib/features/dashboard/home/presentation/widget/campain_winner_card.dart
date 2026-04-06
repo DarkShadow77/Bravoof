@@ -91,33 +91,37 @@ class CampaignWinnerCard extends StatelessWidget {
                         color: Colors.transparent,
                         fit: BoxFit.cover,
                       ),
-                      RichText(
-                        text: TextSpan(
-                          text: campaign.name.toString(),
-                          style: TextStyles.smallBold12(
-                            context,
-                          ).copyWith(color: textColor),
+                      Expanded(
+                        child: RichText(
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          text: TextSpan(
+                            text: campaign.name.toString(),
+                            style: TextStyles.smallBold12(
+                              context,
+                            ).copyWith(color: textColor),
+                          ),
                         ),
                       ),
-                      Flexible(
-                        child: SizedBox(
-                          width: 126.w,
-                          child: IconTextButton(
-                            onPressed: () => Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (ctx) => PastCampaignPage(),
-                              ),
+                      SizedBox(
+                        width: 126.w,
+                        child: IconTextButton(
+                          onPressed: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (ctx) => PastCampaignPage(),
                             ),
-                            height: 35,
-                            textSize: 10,
-                            text: "${campaign.month} Winner(s)",
-                            textColor: hexToColor(campaign.textColor),
-                            color: hexToColor(campaign.inverseTextColor),
-                            innerShadow: hexToColor(
-                              campaign.textColor,
-                            ).withValues(alpha: .3),
                           ),
+                          height: 35,
+                          textSize: 10,
+                          text: "${campaign.month} Winner(s)",
+                          textColor: hexToColor(campaign.textColor),
+                          color: hexToColor(campaign.inverseTextColor),
+                          innerShadow: hexToColor(
+                            campaign.textColor,
+                          ).withValues(alpha: .3),
+                          paddingW: 0,
+                          paddingH: 0,
                         ),
                       ),
                     ],

@@ -77,12 +77,7 @@ class _VerifyForgotPasswordEmailPageState
   ) async {
     if (state.type == AuthType.verifyForgotPasswordOtp) {
       setState(() => _isLoading = false);
-      showMessage(
-        "OTP Verified Successfully",
-        context,
-        color: Colors.green,
-        styleColor: Colors.white,
-      );
+      showMessage("OTP Verified Successfully", context);
       showModalBottomSheet(
         context: context,
         isScrollControlled: true,
@@ -106,13 +101,7 @@ class _VerifyForgotPasswordEmailPageState
         if (Get.isDialogOpen == true)
           Navigator.of(context, rootNavigator: true).pop();
 
-        showMessage(
-          state.message,
-          context,
-          color: Colors.green,
-          styleColor: Colors.white,
-          status: true,
-        );
+        showMessage(state.message, context, status: true);
       });
     }
   }

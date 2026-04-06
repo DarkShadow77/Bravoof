@@ -41,12 +41,7 @@ class _ForgotPasswordState extends State<ForgotPassword> with UIToolMixin {
   void _successAuthState(BuildContext context, AuthTextSuccessState state) {
     if (state.type == AuthType.forgotPassword) {
       setState(() => _isLoading = false);
-      showMessage(
-        state.message,
-        context,
-        color: Colors.green,
-        styleColor: Colors.white,
-      );
+      showMessage(state.message, context);
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -65,13 +60,7 @@ class _ForgotPasswordState extends State<ForgotPassword> with UIToolMixin {
         if (Get.isDialogOpen == true)
           Navigator.of(context, rootNavigator: true).pop();
 
-        showMessage(
-          state.message,
-          context,
-          color: Colors.green,
-          styleColor: Colors.white,
-          status: true,
-        );
+        showMessage(state.message, context, status: true);
       });
     }
   }

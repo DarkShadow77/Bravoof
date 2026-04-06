@@ -92,7 +92,7 @@ class _AuthenticationModalState extends State<AuthenticationModal>
     setState(() => _isLoginLoading = false);
     if (state.response.message == "EXISTING_USER") {
       context.read<ProfileBloc>().add(GetProfileEvent());
-      context.read<ProfileBloc>().add(UpdateLocationEvent());
+      // context.read<ProfileBloc>().add(UpdateLocationEvent());
       context.read<ProfileBloc>().add(SaveFCMTokenEvent());
       SessionManager().firstWelcomeUserVal = "YES";
       SessionManager().firstTimeUserVal = "YES";

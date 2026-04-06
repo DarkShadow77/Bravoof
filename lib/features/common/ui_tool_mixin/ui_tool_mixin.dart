@@ -4,14 +4,10 @@ import 'package:hugeicons/hugeicons.dart';
 
 mixin UIToolMixin {
   void showMessage(
-      String message,
-      BuildContext context, {
-        Color color = Colors.red,
-        styleColor = Colors.white,
-        iconColor = Colors.black,
-        bool status = false,
-      }) {
-   
+    String message,
+    BuildContext context, {
+    bool status = false,
+  }) {
     final overlay = Overlay.of(context);
     final entry = OverlayEntry(
       builder: (context) => Positioned(
@@ -32,15 +28,22 @@ mixin UIToolMixin {
               ],
               color: Color(0xFFF1F1F1),
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(color:Color(0xFFCDCDCD) )
-                         ),
+              border: Border.all(color: Color(0xFFCDCDCD)),
+            ),
             child: Row(
               children: [
-                status? Container(
-                  height: 20,
-                    width: 20,
-                    color: Colors.white,
-                    child: HugeIcon(icon:HugeIcons.strokeRoundedCancel01,strokeWidth: 4,color: Color(0xFFB60000))): Icon(Icons.check_circle, color: Colors.green),
+                status
+                    ? Container(
+                        height: 20,
+                        width: 20,
+                        color: Colors.white,
+                        child: HugeIcon(
+                          icon: HugeIcons.strokeRoundedCancel01,
+                          strokeWidth: 4,
+                          color: Color(0xFFB60000),
+                        ),
+                      )
+                    : Icon(Icons.check_circle, color: Colors.green),
                 SizedBox(width: 8),
                 Expanded(
                   child: Text(
@@ -64,17 +67,21 @@ mixin UIToolMixin {
 
     Future.delayed(const Duration(seconds: 3)).then((_) => entry.remove());
   }
-  void showMessages(String message,
-      BuildContext context, {
-        Color color = Colors.red,
-        styleColor = Colors.white,
-        bool status = false,
-      }) {
+
+  void showMessages(
+    String message,
+    BuildContext context, {
+    Color color = Colors.red,
+    styleColor = Colors.white,
+    bool status = false,
+  }) {
     final snackBar = SnackBar(
       content: SizedBox(
         child: Row(
           children: [
-            status? Icon(Icons.close, color: Colors.red): Icon(Icons.check_circle, color: Colors.green),
+            status
+                ? Icon(Icons.close, color: Colors.red)
+                : Icon(Icons.check_circle, color: Colors.green),
             SizedBox(width: 4),
             SizedBox(
               width: 240,
@@ -96,7 +103,8 @@ mixin UIToolMixin {
         top: 50, // distance from top of screen
         left: 20,
         right: 20,
-        bottom: MediaQuery.of(context).size.height - 120,),
+        bottom: MediaQuery.of(context).size.height - 120,
+      ),
       padding: EdgeInsets.symmetric(horizontal: 20, vertical: 14),
     );
     ScaffoldMessenger.of(context).showSnackBar(snackBar);

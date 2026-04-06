@@ -22,9 +22,9 @@ class UpdateCoverPicEvent extends ProfileEvent {
   UpdateCoverPicEvent({required this.imageFile});
 }
 
-class UpdateLocationEvent extends ProfileEvent {
+/*class UpdateLocationEvent extends ProfileEvent {
   UpdateLocationEvent();
-}
+}*/
 
 class DeleteAccountEvent extends ProfileEvent {
   final String reason;

@@ -106,4 +106,5 @@ class AssetsSvgIcons {
   static String fireFilled = "$baseSvgIconsPath/fire_filled.svg";
   static String hundred = "$baseSvgIconsPath/hundred.svg";
   static String clap = "$baseSvgIconsPath/clap.svg";
+  static String star = "$baseSvgIconsPath/star.svg";
 }

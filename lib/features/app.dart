@@ -49,7 +49,7 @@ class _AppState extends State<App> {
 
       if (event == AuthChangeEvent.signedIn) {
         profileBloc.add(GetProfileEvent());
-        profileBloc.add(UpdateLocationEvent());
+        // profileBloc.add(UpdateLocationEvent());
         profileBloc.add(SaveFCMTokenEvent());
         profileBloc.add(LogUserLoginActivityEvent(eventType: "login"));
         _checkVersion();

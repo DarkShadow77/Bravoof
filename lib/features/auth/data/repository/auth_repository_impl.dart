@@ -197,7 +197,7 @@ class AuthRepositoryImpl extends AuthRepository {
       requiresAuth: false,
       body: {'email': email, 'context': context.value},
       fallbackErrorMessage: 'Failed to send verification code',
-      onSuccess: (data) => data['message'] ?? 'Verification code sent',
+      onSuccess: (data) => data['message'] ?? 'Verification code sent ',
     );
   }
 

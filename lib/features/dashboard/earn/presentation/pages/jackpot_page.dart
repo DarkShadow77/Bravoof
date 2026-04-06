@@ -91,13 +91,7 @@ class _JackpotScreenState extends State<JackpotScreen> with UIToolMixin {
   Future<void> startSpinWithServer() async {
     if (spinsLeft <= 0 || isSpinning) {
       if (spinsLeft <= 0) {
-        showMessage(
-          "Insufficient Spin Tokens",
-          context,
-          color: Colors.red,
-          styleColor: Colors.white,
-          status: true,
-        );
+        showMessage("Insufficient Spin Tokens", context, status: true);
       }
       return;
     }
@@ -149,13 +143,7 @@ class _JackpotScreenState extends State<JackpotScreen> with UIToolMixin {
     context.read<ProfileBloc>().add(GetProfileEvent());
     stopSpinning(force: true);
 
-    showMessage(
-      state.message,
-      context,
-      color: Colors.red,
-      styleColor: Colors.white,
-      status: true,
-    );
+    showMessage(state.message, context, status: true);
   }
 
   void _startFreeSpin() {
@@ -231,8 +219,6 @@ class _JackpotScreenState extends State<JackpotScreen> with UIToolMixin {
       showMessage(
         "${winner!.value} ${winner!.type == "gift" ? "Jackpot" : "Coins"} added to your winnings",
         context,
-        color: Colors.red,
-        styleColor: Colors.white,
       );
 
       /* showDialog(

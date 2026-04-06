@@ -1,6 +1,7 @@
 import 'package:bravoo/app/styles/text_styles.dart';
 import 'package:bravoo/app/view/widgets/cached_image_widget.dart';
 import 'package:bravoo/core/constants/app_assets.dart';
+import 'package:bravoo/core/constants/fonts.dart';
 import 'package:bravoo/core/utils/helpers.dart';
 import 'package:bravoo/features/common/flowva_button.dart';
 import 'package:flutter/material.dart';
@@ -77,17 +78,19 @@ class LeaderboardPage extends StatelessWidget {
                                 color: AppColors.white,
                               ),
                             ),
-                          Text(
-                            'Leaderboard',
-                            style: GoogleFonts.baloo2(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w700,
-                              color: Colors.white,
+                          RichText(
+                            text: TextSpan(
+                              text: 'Leaderboard',
+                              style: TextStyles.titleBold20(context).copyWith(
+                                fontFamily: AppFonts.baloo2,
+                                height: 0.h,
+                                color: AppColors.white,
+                              ),
                             ),
                           ),
                         ],
                       ),
-                      SizedBox(height: 12),
+                      SizedBox(height: 12.h),
                       Container(
                         padding: EdgeInsets.symmetric(
                           vertical: 10,
@@ -108,23 +111,26 @@ class LeaderboardPage extends StatelessWidget {
                                 color: Color(0xFFF77A38),
                                 borderRadius: BorderRadius.circular(8),
                               ),
-                              child: Text(
-                                '#${userIndex + 1}',
-                                style: GoogleFonts.baloo2(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w700,
-                                  color: Colors.white,
+                              child: RichText(
+                                text: TextSpan(
+                                  text: '#${userIndex + 1}',
+                                  style: TextStyles.titleBold20(context)
+                                      .copyWith(
+                                        fontSize: 18.sp,
+                                        fontFamily: AppFonts.baloo2,
+                                        height: 0.h,
+                                        color: AppColors.white,
+                                      ),
                                 ),
                               ),
                             ),
-                            SizedBox(width: 10),
+                            SizedBox(width: 10.w),
                             Expanded(
-                              child: Text(
-                                'Keep the momentum going! You are number ${userIndex + 1} this month!',
-                                style: GoogleFonts.manrope(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w700,
-                                  color: Color(0xFF111111),
+                              child: RichText(
+                                text: TextSpan(
+                                  text:
+                                      'Keep the momentum going! You are number ${userIndex + 1} this month!',
+                                  style: TextStyles.normalBold14(context),
                                 ),
                               ),
                             ),
@@ -140,27 +146,36 @@ class LeaderboardPage extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
-                        Top3Widget(
-                          isFullScreen: fullScreen,
-                          leaderboardDetails: second,
-                          position: 2,
-                          podiumHeight: 115,
-                          podiumColor: Color(0xFF6312A8),
+                        SizedBox(
+                          width: fullScreen ? 108.w : 98.w,
+                          child: Top3Widget(
+                            isFullScreen: fullScreen,
+                            leaderboardDetails: second,
+                            position: 2,
+                            podiumHeight: 115,
+                            podiumColor: Color(0xFF6312A8),
+                          ),
                         ),
-                        Top3Widget(
-                          isFullScreen: fullScreen,
-                          isFirst: true,
-                          leaderboardDetails: first,
-                          position: 1,
-                          podiumHeight: 140,
-                          podiumColor: Color(0xFF7B24E8),
+                        SizedBox(
+                          width: fullScreen ? 108.w : 98.w,
+                          child: Top3Widget(
+                            isFullScreen: fullScreen,
+                            isFirst: true,
+                            leaderboardDetails: first,
+                            position: 1,
+                            podiumHeight: 140,
+                            podiumColor: Color(0xFF7B24E8),
+                          ),
                         ),
-                        Top3Widget(
-                          isFullScreen: fullScreen,
-                          leaderboardDetails: third,
-                          position: 3,
-                          podiumHeight: 100,
-                          podiumColor: Color(0xFF6312A8),
+                        SizedBox(
+                          width: fullScreen ? 108.w : 98.w,
+                          child: Top3Widget(
+                            isFullScreen: fullScreen,
+                            leaderboardDetails: third,
+                            position: 3,
+                            podiumHeight: 100,
+                            podiumColor: Color(0xFF6312A8),
+                          ),
                         ),
                       ],
                     ),
@@ -177,9 +192,13 @@ class LeaderboardPage extends StatelessWidget {
                     ),
                     child: leaderboardList.isEmpty
                         ? Center(
-                            child: Text(
-                              'No more players yet',
-                              style: GoogleFonts.manrope(color: Colors.grey),
+                            child: RichText(
+                              text: TextSpan(
+                                text: 'No more players yet',
+                                style: TextStyles.normalBold14(
+                                  context,
+                                ).copyWith(color: AppColors.grey),
+                              ),
                             ),
                           )
                         : ListView.separated(
@@ -480,70 +499,70 @@ class Top3Widget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            CachedImageRadius(
-              imageUrl: leaderboardDetails?.profileImage ?? "",
-              size: isFirst ? 80 : 64,
-              circle: true,
-              color: AppColors.grey200,
-              fit: BoxFit.cover,
+        CachedImageRadius(
+          imageUrl: leaderboardDetails?.profileImage ?? "",
+          size: isFirst ? 80 : 64,
+          circle: true,
+          color: AppColors.grey200,
+          fit: BoxFit.cover,
+        ),
+        SizedBox(height: 8.h),
+        if (leaderboardDetails != null) ...[
+          RichText(
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            text: TextSpan(
+              text: leaderboardDetails?.name.capitalize ?? "--",
+              style: TextStyles.smallRegular12(context).copyWith(
+                color: AppColors.white,
+                fontWeight: isFirst ? FontWeight.bold : null,
+              ),
             ),
-            SizedBox(height: 8.h),
-            if (leaderboardDetails != null) ...[
-              RichText(
-                text: TextSpan(
-                  text: leaderboardDetails?.name.capitalize ?? "--",
-                  style: TextStyles.smallRegular12(context).copyWith(
-                    color: AppColors.white,
-                    fontWeight: isFirst ? FontWeight.bold : null,
-                  ),
-                ),
+          ),
+          SizedBox(height: 8.h),
+          Row(
+            spacing: 6.w,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                height: 12.h,
+                width: 12.w,
+                child: Image.asset(AssetsPngImages.one50, fit: BoxFit.contain),
               ),
-              SizedBox(height: 8.h),
-              Row(
-                spacing: 6.w,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  SizedBox(
-                    height: 12.h,
-                    width: 12.w,
-                    child: Image.asset(
-                      AssetsPngImages.one50,
-                      fit: BoxFit.contain,
-                    ),
+              Flexible(
+                child: RichText(
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  text: TextSpan(
+                    text: formatAmount(leaderboardDetails?.totalEarned ?? 0),
+                    style: TextStyles.cardSemibold10(
+                      context,
+                    ).copyWith(color: AppColors.white),
                   ),
-                  RichText(
-                    text: TextSpan(
-                      text: formatAmount(leaderboardDetails?.totalEarned ?? 0),
-                      style: TextStyles.cardSemibold10(
-                        context,
-                      ).copyWith(color: AppColors.white),
-                    ),
-                  ),
-                ],
-              ),
-            ] else ...[
-              RichText(
-                text: TextSpan(
-                  text: "No Record",
-                  style: TextStyles.cardSemibold10(
-                    context,
-                  ).copyWith(color: AppColors.white),
                 ),
               ),
             ],
-            SizedBox(height: 10.h),
-            podiumBlock(
-              position: position,
-              height: podiumHeight.h,
-              color: podiumColor,
-              isFull: isFullScreen,
+          ),
+        ] else ...[
+          RichText(
+            text: TextSpan(
+              text: "No Record",
+              style: TextStyles.cardSemibold10(
+                context,
+              ).copyWith(color: AppColors.white),
             ),
-          ],
+          ),
+        ],
+        SizedBox(height: 10.h),
+        podiumBlock(
+          position: position,
+          height: podiumHeight.h,
+          color: podiumColor,
+          isFull: isFullScreen,
         ),
       ],
     );

@@ -388,9 +388,9 @@ class MessageContainer extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       text: TextSpan(
                         text: homeMessage.title,
-                        style: TextStyles.normalBold14(
-                          context,
-                        ).copyWith(color: hexToColor(homeMessage.mainTextColor)),
+                        style: TextStyles.normalBold14(context).copyWith(
+                          color: hexToColor(homeMessage.mainTextColor),
+                        ),
                       ),
                     ),
                   ),
@@ -429,11 +429,13 @@ class MessageContainer extends StatelessWidget {
                     decoration: TextDecoration.underline,
                   ),
                   p: TextStyles.smallMedium12(context).copyWith(
+                    fontSize: 13.sp,
                     color: hexToColor(
                       homeMessage.textColor,
                     ).withValues(alpha: .65),
                   ),
                   strong: TextStyles.smallBold12(context).copyWith(
+                    fontSize: 13.sp,
                     color: hexToColor(
                       homeMessage.textColor,
                     ).withValues(alpha: .65),

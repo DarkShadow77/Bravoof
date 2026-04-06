@@ -98,13 +98,7 @@ class _VerifyOtpPageState extends State<VerifyOtpPage> with UIToolMixin {
         if (Get.isDialogOpen == true)
           Navigator.of(context, rootNavigator: true).pop();
 
-        showMessage(
-          state.message,
-          context,
-          color: Colors.green,
-          styleColor: Colors.white,
-          status: true,
-        );
+        showMessage(state.message, context, status: true);
       });
     }
   }
@@ -280,6 +274,14 @@ class _VerifyOtpPageState extends State<VerifyOtpPage> with UIToolMixin {
                             'goals': widget.data["goals"],
                             'referral_code': widget.data["referral_code"],
                             'pass': widget.data["pass"],
+                            'country': widget.data["country"],
+                            'city': widget.data["city"],
+                            'flag': widget.data["flag"],
+                            'country_code': widget.data["country_code"],
+                            'country_code_iso2':
+                                widget.data["country_code_iso2"],
+                            'country_code_iso3':
+                                widget.data["country_code_iso3"],
                           },
                           imageFile: File(widget.data['profilePic'] ?? ""),
                         ),

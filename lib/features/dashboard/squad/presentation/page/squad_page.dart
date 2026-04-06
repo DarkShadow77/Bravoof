@@ -1,4 +1,5 @@
 import 'package:bravoo/features/dashboard/home/data/model/campaign_response.dart';
+import 'package:bravoo/features/dashboard/squad/presentation/page/squad_rules_page.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -59,27 +60,35 @@ class _SquadPageState extends State<SquadPage> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
-                            Container(
-                              padding: EdgeInsets.symmetric(
-                                vertical: 8.h,
-                                horizontal: 25.w,
-                              ),
-                              decoration: BoxDecoration(
-                                color: AppColors.primary,
-                                borderRadius: BorderRadius.horizontal(
-                                  left: Radius.circular(12.r),
+                            GestureDetector(
+                              onTap: () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (ctx) => SquadRulesPage(),
                                 ),
                               ),
-                              child: RichText(
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                text: TextSpan(
-                                  text: 'Rules',
-                                  style: TextStyles.smallBold12(context)
-                                      .copyWith(
-                                        fontFamily: AppFonts.baloo2,
-                                        color: AppColors.white,
-                                      ),
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                  vertical: 8.h,
+                                  horizontal: 25.w,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: AppColors.primary,
+                                  borderRadius: BorderRadius.horizontal(
+                                    left: Radius.circular(12.r),
+                                  ),
+                                ),
+                                child: RichText(
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  text: TextSpan(
+                                    text: 'Rules',
+                                    style: TextStyles.smallBold12(context)
+                                        .copyWith(
+                                          fontFamily: AppFonts.baloo2,
+                                          color: AppColors.white,
+                                        ),
+                                  ),
                                 ),
                               ),
                             ),
@@ -96,7 +105,7 @@ class _SquadPageState extends State<SquadPage> {
                               style: TextStyles.titleRegular20(context)
                                   .copyWith(
                                     fontFamily: AppFonts.baloo,
-                                    height: 1.h,
+                                    height: 0.h,
                                   ),
                             ),
                           ),
@@ -118,7 +127,7 @@ class _SquadPageState extends State<SquadPage> {
                                   style: TextStyles.titleRegular20(context)
                                       .copyWith(
                                         fontFamily: AppFonts.baloo,
-                                        height: 1.h,
+                                        height: 0.h,
                                       ),
                                 ),
                               ),
@@ -149,7 +158,7 @@ class _SquadPageState extends State<SquadPage> {
                               style: TextStyles.titleRegular20(context)
                                   .copyWith(
                                     fontFamily: AppFonts.baloo,
-                                    height: 1.h,
+                                    height: 0.h,
                                   ),
                             ),
                           ),

@@ -22,7 +22,7 @@ class ProfileBloc extends HydratedBloc<ProfileEvent, ProfileState> {
     on<GetProfileEvent>(_onGetProfile);
     on<UpdateProfileEvent>(_onUpdateProfile);
     on<UpdateCoverPicEvent>(_onUpdateCoverPic);
-    on<UpdateLocationEvent>(_onUpdateLocation);
+    // on<UpdateLocationEvent>(_onUpdateLocation);
     on<DeleteAccountEvent>(_onDeleteAccount);
     on<LogUserHomeActivityEvent>(_onLogUserHomeActivity);
     on<LogUserLoginActivityEvent>(_onLogUserLoginActivity);
@@ -150,7 +150,7 @@ class ProfileBloc extends HydratedBloc<ProfileEvent, ProfileState> {
     );
   }
 
-  Future<void> _onUpdateLocation(
+  /*Future<void> _onUpdateLocation(
     UpdateLocationEvent event,
     Emitter<ProfileState> emit,
   ) async {
@@ -187,7 +187,7 @@ class ProfileBloc extends HydratedBloc<ProfileEvent, ProfileState> {
         );
       },
     );
-  }
+  }*/
 
   Future<void> _onDeleteAccount(
     DeleteAccountEvent event,
