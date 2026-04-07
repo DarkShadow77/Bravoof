@@ -15,7 +15,7 @@ import '../../../../../core/utils/helpers.dart';
 import '../../../../../utility/ui_tool_mix.dart';
 import '../../data/model/response/squad_model.dart';
 import '../bloc/squad_bloc.dart';
-import '../bloc/squad_mission_bloc.dart';
+import '../bloc/squad_individual_bloc.dart';
 import '../page/squad_details_page.dart';
 import 'join_squad_dialog.dart';
 import 'leave_squad_dialog.dart';
@@ -95,8 +95,8 @@ class SquadTile extends StatelessWidget with UIToolMixin {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (_) => BlocProvider<SquadMissionsBloc>(
-              create: (_) => sl<SquadMissionsBloc>(param1: squad.id),
+            builder: (_) => BlocProvider<SquadIndividualBloc>(
+              create: (_) => sl<SquadIndividualBloc>(param1: squad.id),
               child: SquadDetailsPage(squad: squad),
             ),
           ),

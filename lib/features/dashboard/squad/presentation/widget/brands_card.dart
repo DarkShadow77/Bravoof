@@ -23,7 +23,7 @@ class BrandsCard extends StatelessWidget {
       height: 150.h,
       child: BlocBuilder<BrandBloc, BrandState>(
         builder: (context, state) {
-          List<Brand> brands = state.brands;
+          List<Brand> brands = state.brands.take(5).toList();
 
           bool isLoading =
               state is BrandLoadingState && state.type == BrandType.fetchBrands;
@@ -145,7 +145,7 @@ class BrandTile extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      SizedBox(height: 15.h),
+                      SizedBox(height: 21.h),
                       RichText(
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -153,7 +153,7 @@ class BrandTile extends StatelessWidget {
                           text: brand.name,
                           style: TextStyles.bodyBold16(
                             context,
-                          ).copyWith(fontSize: 18.sp, color: textColor),
+                          ).copyWith(color: textColor),
                         ),
                       ),
                       RichText(
@@ -162,7 +162,7 @@ class BrandTile extends StatelessWidget {
                         text: TextSpan(
                           text:
                               "${formatAmount(brand.missionCount, uniComp: true)} missions",
-                          style: TextStyles.smallCardBold8(
+                          style: TextStyles.cardBold10(
                             context,
                           ).copyWith(color: textColor),
                         ),
@@ -194,7 +194,7 @@ class BrandTile extends StatelessWidget {
                                     children: [
                                       CachedImageRadius(
                                         imageUrl: user.profileImage,
-                                        size: 9.1.r,
+                                        size: 10.r,
                                         circle: true,
                                         color: textColor.withValues(alpha: .1),
                                       ),
@@ -291,7 +291,7 @@ class BrandTile extends StatelessWidget {
                             );
                         },
                         text: brand.isFollowing ? "Following" : "Follow Brand",
-                        textSize: 7,
+                        textSize: 8,
                         textColor: AppColors.white,
                         paddingW: .25,
                         paddingH: .25,

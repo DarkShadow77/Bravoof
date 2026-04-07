@@ -1,4 +1,7 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:logger/logger.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../features/auth/presentation/widget/authentication_modal.dart';
@@ -14,9 +17,14 @@ class DeepLinkHandler {
   static void handle(Uri uri) {
     debugPrint('DeepLink received: $uri');
 
-    final pathSegments = uri.pathSegments;
-    if (pathSegments.isEmpty) return;
+    var pathSegments = uri.pathSegments;
 
+    // Strip leading 'app' segment from https://joinbravoo.com/app/squad
+    if (pathSegments.isNotEmpty && pathSegments[0] == 'app') {
+      pathSegments = pathSegments.sublist(1);
+    }
+
+    if (pathSegments.isEmpty) return;
     final rootPath = pathSegments[0];
     final isLoggedIn = Supabase.instance.client.auth.currentSession != null;
 
@@ -65,6 +73,9 @@ class DeepLinkHandler {
   static void _navigate(Uri uri) {
     final pathSegments = uri.pathSegments;
     if (pathSegments.isEmpty) return;
+
+    Logger().f("Routing to ${pathSegments}, ${pathSegments[0]}");
+    log("Routing to ${pathSegments}, ${pathSegments[0]}");
 
     switch (pathSegments[0]) {
       case 'squad':

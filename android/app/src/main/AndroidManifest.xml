@@ -54,7 +54,7 @@
                 <data android:scheme="com.flowvahub.bravoo" />
             </intent-filter>
 
-            <intent-filter android:autoVerify="true">
+            <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
@@ -67,7 +67,7 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="https" android:host="yourdomain.com" />
+                <data android:scheme="https" android:host="joinbravoo.com" android:pathPrefix="/app" />
             </intent-filter>
             <!-- Custom scheme fallback (works without domain verification) -->
             <intent-filter>

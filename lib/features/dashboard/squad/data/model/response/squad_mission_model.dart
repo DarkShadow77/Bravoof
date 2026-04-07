@@ -6,6 +6,9 @@ class SquadMission {
   final String squadId;
   final String title;
   final String subtitle;
+  final String image;
+  final String about;
+  final String hashtags;
   final String instructionTitle;
   final List<MissionInstruction> instructions;
   final int points;
@@ -14,6 +17,7 @@ class SquadMission {
   final int usersJoined;
   final bool active;
   final DateTime createdAt;
+  final DateTime endsAt;
   final MissionStatus userStatus;
 
   SquadMission({
@@ -21,6 +25,9 @@ class SquadMission {
     required this.squadId,
     required this.title,
     required this.subtitle,
+    required this.image,
+    required this.about,
+    required this.hashtags,
     required this.instructionTitle,
     required this.instructions,
     required this.points,
@@ -29,6 +36,7 @@ class SquadMission {
     required this.usersJoined,
     required this.active,
     required this.createdAt,
+    required this.endsAt,
     required this.userStatus,
   });
 
@@ -38,6 +46,9 @@ class SquadMission {
       squadId: json['squad_id'] ?? "",
       title: json['title'] ?? '',
       subtitle: json['subtitle'] ?? "",
+      image: json['image'] ?? "",
+      about: json['about'] ?? "",
+      hashtags: json['hashtags'] ?? "",
       instructionTitle: json['instruction_title'] ?? "Mission Instructions",
       instructions: (json['instructions'] as List<dynamic>? ?? [])
           .map((e) => MissionInstruction.fromJson(e))
@@ -48,6 +59,7 @@ class SquadMission {
       usersJoined: json['users_joined'] ?? 0,
       active: json['active'] ?? true,
       createdAt: DateTime.parse(json['created_at']),
+      endsAt: DateTime.parse(json['ends_at']),
       userStatus: statusFromDb(json['user_status'] ?? ''),
     );
   }

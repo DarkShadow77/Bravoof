@@ -2,6 +2,8 @@ import 'package:bravoo/features/dashboard/squad/data/model/response/squad_missio
 import 'package:bravoo/features/dashboard/squad/data/model/response/squad_model.dart';
 import 'package:dartz/dartz.dart';
 
+import '../model/response/squad_mission_chat_model.dart';
+
 abstract class SquadRepository {
   Future<Either<String, List<Squad>>> fetchSquads({String? squadId});
 
@@ -13,9 +15,29 @@ abstract class SquadRepository {
     required String squadId,
   });
 
-  Future<Either<String, String>> completeMission({
+  Future<Either<String, String>> joinSquadMission({required int missionId});
+
+  Future<Either<String, List<MissionChatMember>>> fetchMissionMembers({
     required int missionId,
-    required String userId,
+  });
+
+  Future<Either<String, String>> leaveSquadMission({required int missionId});
+
+  Future<Either<String, MissionChatResponse>> fetchChat({
+    required int missionId,
+    String? before,
+  });
+
+  Future<Either<String, ChatMessage>> sendMissionChat({
+    required int missionId,
+    required int chatRoomId,
+    required String? content,
+    required String? replyToId,
+    required String? media,
+  });
+
+  Future<Either<String, String>> submitMission({
+    required int missionId,
     required String? image,
     required String text,
   });

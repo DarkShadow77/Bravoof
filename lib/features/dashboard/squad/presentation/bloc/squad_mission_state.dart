@@ -1,55 +1,77 @@
 part of 'squad_mission_bloc.dart';
 
-enum SquadMissionsType { fetch, complete }
+enum SquadMissionType {
+  joinMission,
+  fetchMissionMembers,
+  leaveMission,
+  fetchChat,
+  fetchMoreChat,
+  sendMissionChat,
+  retrySendMissionChat,
+  submitMission,
+}
 
 @immutable
-abstract class SquadMissionsState {
-  final List<SquadMission> missions;
+class SquadMissionState {
+  final List<MissionChatMember> missionMembers;
+  final MissionChatResponse? chatResponse;
 
-  const SquadMissionsState({required this.missions});
+  const SquadMissionState({required this.missionMembers, this.chatResponse});
+
+  SquadMissionState copWith({
+    List<MissionChatMember>? missionMembers,
+    MissionChatResponse? chatResponse,
+  }) {
+    return SquadMissionState(
+      missionMembers: missionMembers ?? this.missionMembers,
+      chatResponse: chatResponse ?? this.chatResponse,
+    );
+  }
 }
 
-class SquadMissionsInitialState extends SquadMissionsState {
-  const SquadMissionsInitialState({required super.missions});
-}
-
-class SquadMissionsLoadingState extends SquadMissionsState {
-  final SquadMissionsType type;
-  final int? missionId;
-
-  const SquadMissionsLoadingState({
-    required this.type,
-    this.missionId,
-    required super.missions,
+class SquadMissionInitialState extends SquadMissionState {
+  const SquadMissionInitialState({
+    required super.missionMembers,
+    required super.chatResponse,
   });
 }
 
-class SquadMissionsLoadedState extends SquadMissionsState {
-  const SquadMissionsLoadedState({required super.missions});
-}
+class SquadMissionLoadingState extends SquadMissionState {
+  final SquadMissionType type;
+  final int missionId;
 
-class SquadMissionsSuccessState extends SquadMissionsState {
-  final SquadMissionsType type;
-  final int? missionId;
-  final String message;
-
-  const SquadMissionsSuccessState({
+  const SquadMissionLoadingState({
     required this.type,
-    this.missionId,
-    required this.message,
-    required super.missions,
+    required this.missionId,
+    required super.missionMembers,
+    required super.chatResponse,
   });
 }
 
-class SquadMissionsErrorState extends SquadMissionsState {
-  final SquadMissionsType type;
-  final int? missionId;
+class SquadMissionSuccessState extends SquadMissionState {
+  final SquadMissionType type;
+  final int missionId;
   final String message;
 
-  const SquadMissionsErrorState({
+  const SquadMissionSuccessState({
     required this.type,
-    this.missionId,
+    required this.missionId,
     required this.message,
-    required super.missions,
+    required super.missionMembers,
+    required super.chatResponse,
+  });
+}
+
+class SquadMissionErrorState extends SquadMissionState {
+  final SquadMissionType type;
+  final int missionId;
+  final String message;
+
+  const SquadMissionErrorState({
+    required this.type,
+    required this.missionId,
+    required this.message,
+    required super.missionMembers,
+    required super.chatResponse,
   });
 }

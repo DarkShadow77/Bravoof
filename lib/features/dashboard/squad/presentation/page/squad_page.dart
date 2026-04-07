@@ -1,4 +1,5 @@
 import 'package:bravoo/features/dashboard/home/data/model/campaign_response.dart';
+import 'package:bravoo/features/dashboard/squad/presentation/page/recent_activity_page.dart';
 import 'package:bravoo/features/dashboard/squad/presentation/page/squad_rules_page.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -147,20 +148,43 @@ class _SquadPageState extends State<SquadPage> {
                         ),
                         BrandsCard(),
                         SizedBox(height: 10.h),
+
                         Padding(
                           padding: EdgeInsets.symmetric(
-                            vertical: 16.h,
+                            vertical: 12.h,
                             horizontal: 16.w,
                           ),
-                          child: RichText(
-                            text: TextSpan(
-                              text: 'Recent Activity',
-                              style: TextStyles.titleRegular20(context)
-                                  .copyWith(
-                                    fontFamily: AppFonts.baloo,
-                                    height: 0.h,
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              RichText(
+                                text: TextSpan(
+                                  text: 'Recent Activity',
+                                  style: TextStyles.titleRegular20(context)
+                                      .copyWith(
+                                        fontFamily: AppFonts.baloo,
+                                        height: 0.h,
+                                      ),
+                                ),
+                              ),
+                              RichText(
+                                text: TextSpan(
+                                  text: 'View all',
+                                  style: TextStyles.normalSemibold14(
+                                    context,
+                                    opacity: .67,
                                   ),
-                            ),
+                                  recognizer: TapGestureRecognizer()
+                                    ..onTap = () => Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (ctx) => RecentActivityPage(),
+                                      ),
+                                    ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                         RecentActivityCard(),
