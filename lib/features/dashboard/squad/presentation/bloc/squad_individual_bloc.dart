@@ -18,6 +18,7 @@ class SquadIndividualBloc
   SquadIndividualBloc({required this.repo, required this.squadId})
     : super(SquadIndividualInitialState(missions: [])) {
     on<FetchSquadMissionsEvent>(_fetchMissions);
+    add(FetchSquadMissionsEvent());
     // on<CompleteSquadMissionEvent>(_completeMission);
   }
 
@@ -42,7 +43,16 @@ class SquadIndividualBloc
           missions: state.missions,
         ),
       ),
-      (missions) => emit(SquadIndividualLoadedState(missions: missions)),
+      (missions) {
+        emit(state.copyWith(missions: missions));
+        emit(
+          SquadIndividualErrorState(
+            type: SquadIndividualType.fetch,
+            message: "Fetched Squad Missions Successfully",
+            missions: missions,
+          ),
+        );
+      },
     );
   }
 

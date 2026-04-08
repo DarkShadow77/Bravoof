@@ -3,10 +3,14 @@ part of 'squad_individual_bloc.dart';
 enum SquadIndividualType { fetch, complete }
 
 @immutable
-abstract class SquadIndividualState {
+class SquadIndividualState {
   final List<SquadMission> missions;
 
   const SquadIndividualState({required this.missions});
+
+  SquadIndividualState copyWith({List<SquadMission>? missions}) {
+    return SquadIndividualState(missions: missions ?? this.missions);
+  }
 }
 
 class SquadIndividualInitialState extends SquadIndividualState {

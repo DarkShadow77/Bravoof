@@ -9,8 +9,41 @@ import '../../data/model/response/recent_activity_model.dart';
 import '../bloc/activity_bloc.dart' hide ActivityType;
 import '../widget/recent_activity_tile.dart';
 
-class RecentActivityPage extends StatelessWidget {
+class RecentActivityPage extends StatefulWidget {
   const RecentActivityPage({super.key});
+
+  @override
+  State<RecentActivityPage> createState() => _RecentActivityPageState();
+}
+
+class _RecentActivityPageState extends State<RecentActivityPage> {
+  final _scrollController = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    final bloc = context.read<RecentActivityBloc>();
+    if (bloc.state.activities.isEmpty) {
+      bloc.add(FetchActivityEvent());
+    }
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController
+      ..removeListener(_onScroll)
+      ..dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    // Fire FetchMoreActivityEvent when within 200px of the bottom
+    final threshold = _scrollController.position.maxScrollExtent - 200;
+    if (_scrollController.position.pixels >= threshold) {
+      context.read<RecentActivityBloc>().add(FetchMoreActivityEvent());
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -72,6 +105,8 @@ class RecentActivityPage extends StatelessWidget {
                 child: BlocBuilder<RecentActivityBloc, RecentActivityState>(
                   builder: (context, state) {
                     List<RecentActivity> recentActivity = state.activities;
+                    final isLoadingMore = state is ActivityLoadingMoreState;
+
                     // ── Full screen loader on first fetch ──────────────────────
                     if (state is ActivityLoadingState &&
                         recentActivity.isEmpty) {
@@ -105,29 +140,75 @@ class RecentActivityPage extends StatelessWidget {
                         ),
                       );
                     } else {
-                      return ListView.separated(
-                        shrinkWrap: true,
-                        itemCount: recentActivity.length,
-                        physics: BouncingScrollPhysics(),
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 16.w,
-                          vertical: 16.h,
-                        ),
-                        itemBuilder: (context, index) {
-                          RecentActivity activity = recentActivity[index];
-                          return RecentActivityTile(
-                            activity: activity,
-                            onReact: (reaction) {
-                              context.read<RecentActivityBloc>().add(
-                                ReactToActivityEvent(
-                                  activityId: activity.id,
-                                  emoji: reaction,
-                                ),
-                              );
-                            },
+                      return RefreshIndicator(
+                        onRefresh: () async {
+                          context.read<RecentActivityBloc>().add(
+                            FetchActivityEvent(),
                           );
+                          // Wait until the bloc emits a non-loading state
+                          await context
+                              .read<RecentActivityBloc>()
+                              .stream
+                              .firstWhere(
+                                (s) =>
+                                    s is ActivityLoadedState ||
+                                    s is ActivityErrorState,
+                              );
                         },
-                        separatorBuilder: (_, _) => SizedBox(height: 16.h),
+                        child: ListView.separated(
+                          shrinkWrap: true,
+                          controller: _scrollController,
+                          itemCount: recentActivity.length + 1,
+                          physics: BouncingScrollPhysics(),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 16.w,
+                            vertical: 16.h,
+                          ),
+                          itemBuilder: (context, index) {
+                            // Last item = load-more indicator
+                            if (index == recentActivity.length) {
+                              if (isLoadingMore) {
+                                return Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 16.h),
+                                  child: const Center(
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                );
+                              }
+                              if (!state.hasMore) {
+                                return Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 16.h),
+                                  child: Center(
+                                    child: RichText(
+                                      text: TextSpan(
+                                        text: "You're all caught up 🎉",
+                                        style: TextStyles.normalRegular14(
+                                          context,
+                                          opacity: .5,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              }
+                              // More pages available but not loading yet
+                              return const SizedBox.shrink();
+                            }
+                            RecentActivity activity = recentActivity[index];
+                            return RecentActivityTile(
+                              activity: activity,
+                              onReact: (reaction) {
+                                context.read<RecentActivityBloc>().add(
+                                  ReactToActivityEvent(
+                                    activityId: activity.id,
+                                    emoji: reaction,
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                          separatorBuilder: (_, _) => SizedBox(height: 16.h),
+                        ),
                       );
                     }
                   },

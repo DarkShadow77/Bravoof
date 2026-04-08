@@ -14,8 +14,11 @@ class SquadMissionBloc extends Bloc<SquadMissionEvent, SquadMissionState> {
   final String squadId;
   final int missionId;
 
-  final supabase = Supabase.instance.client;
+  final _supabase = Supabase.instance.client;
   final _uuid = const Uuid();
+
+  RealtimeChannel? _messagesChannel;
+  RealtimeChannel? _membersChannel;
 
   SquadMissionBloc({
     required this.repo,
@@ -30,6 +33,212 @@ class SquadMissionBloc extends Bloc<SquadMissionEvent, SquadMissionState> {
     on<SendSquadMissionMessageEvent>(_sendMissionChat);
     on<RetrySendSquadMissionMessageEvent>(_retrySendMissionChat);
     on<SubmitSquadMissionEvent>(_submitMission);
+    // Internal events fired by Realtime — not dispatched by the UI
+    on<_NewRealtimeMessageEvent>(_onNewRealtimeMessage);
+    on<_MemberJoinedEvent>(_onMemberJoined);
+    on<_MemberLeftEvent>(_onMemberLeft);
+  }
+
+  void subscribeToChat(int chatRoomId) {
+    _messagesChannel?.unsubscribe();
+
+    _messagesChannel = _supabase
+        .channel('mission_chat_$missionId')
+        .onPostgresChanges(
+          event: PostgresChangeEvent.insert,
+          schema: 'public',
+          table: 'squad_mission_messages',
+          filter: PostgresChangeFilter(
+            type: PostgresChangeFilterType.eq,
+            column: 'chat_room_id',
+            value: chatRoomId,
+          ),
+          callback: (payload) {
+            // payload.newRecord is the raw row — no joins
+            // We enrich sender from the local members map
+            final raw = Map<String, dynamic>.from(payload.newRecord);
+            add(_NewRealtimeMessageEvent(raw: raw));
+          },
+        )
+        .subscribe();
+  }
+
+  void subscribeToMembers() {
+    _membersChannel?.unsubscribe();
+
+    _membersChannel = _supabase
+        .channel('mission_members_$missionId')
+        .onPostgresChanges(
+          event: PostgresChangeEvent.insert,
+          schema: 'public',
+          table: 'squad_mission_members',
+          filter: PostgresChangeFilter(
+            type: PostgresChangeFilterType.eq,
+            column: 'squad_mission_id',
+            value: missionId,
+          ),
+          callback: (payload) {
+            add(
+              _MemberJoinedEvent(
+                raw: Map<String, dynamic>.from(payload.newRecord),
+              ),
+            );
+          },
+        )
+        .onPostgresChanges(
+          event: PostgresChangeEvent.delete,
+          schema: 'public',
+          table: 'squad_mission_members',
+          filter: PostgresChangeFilter(
+            type: PostgresChangeFilterType.eq,
+            column: 'squad_mission_id',
+            value: missionId,
+          ),
+          callback: (payload) {
+            add(
+              _MemberLeftEvent(userId: payload.oldRecord['user_id'] as String),
+            );
+          },
+        )
+        .subscribe();
+  }
+
+  void unsubscribe() {
+    _messagesChannel?.unsubscribe();
+    _membersChannel?.unsubscribe();
+    _messagesChannel = null;
+    _membersChannel = null;
+  }
+
+  @override
+  Future<void> close() {
+    unsubscribe();
+    return super.close();
+  }
+
+  // ─── Internal realtime handlers ─────────────────────────────────────────
+
+  void _onNewRealtimeMessage(
+    _NewRealtimeMessageEvent event,
+    Emitter<SquadMissionState> emit,
+  ) {
+    final raw = event.raw;
+    final incomingUserId = raw['user_id'] as String?;
+
+    // Find sender from the local members list — avoids an extra network call
+    final senderMember = state.missionMembers.firstWhere(
+      (m) => m.userId == incomingUserId,
+      orElse: () => MissionChatMember(
+        userId: incomingUserId ?? '',
+        joinedAt: DateTime.now(),
+        isCaptain: false,
+      ),
+    );
+
+    final sender = incomingUserId != null
+        ? ChatMessageSender(
+            userId: incomingUserId,
+            name: senderMember.name,
+            profileImage: senderMember.profileImage,
+          )
+        : null;
+
+    final message = ChatMessage(
+      id: raw['id'] as int,
+      chatRoomId: raw['chat_room_id'] as int,
+      userId: incomingUserId ?? '',
+      isSystem: raw['is_system'] as bool? ?? false,
+      content: raw['content'] as String?,
+      mediaUrl: raw['media_url'] as String?,
+      mediaType: raw['media_type'] as String?,
+      replyToId: raw['reply_to_id'] as int?,
+      createdAt: DateTime.parse(raw['created_at'] as String),
+      sender: sender,
+      status: MessageStatus.sent,
+    );
+
+    final currentMessages = state.chatResponse?.messages ?? [];
+
+    // Skip if we already have this message (sent by current user — optimistic)
+    final alreadyExists = currentMessages.any(
+      (m) => m.id == message.id && m.status == MessageStatus.sent,
+    );
+    if (alreadyExists) return;
+
+    // Replace the matching optimistic message if one exists for this user
+    // (identified by pending status + same content + same userId)
+    List<ChatMessage> updated;
+    final optimisticIndex = currentMessages.indexWhere(
+      (m) =>
+          m.userId == message.userId &&
+          m.status == MessageStatus.pending &&
+          m.content == message.content,
+    );
+
+    if (optimisticIndex != -1) {
+      updated = List.from(currentMessages);
+      updated[optimisticIndex] = message.copyWith(
+        localId: currentMessages[optimisticIndex].localId,
+      );
+    } else {
+      updated = [...currentMessages, message];
+    }
+
+    _emitWithMessages(emit, updated);
+  }
+
+  void _onMemberJoined(
+    _MemberJoinedEvent event,
+    Emitter<SquadMissionState> emit,
+  ) {
+    final raw = event.raw;
+    final userId = raw['user_id'] as String?;
+    if (userId == null) return;
+
+    // Avoid duplicates
+    if (state.missionMembers.any((m) => m.userId == userId)) return;
+
+    final newMember = MissionChatMember(
+      userId: userId,
+      joinedAt:
+          DateTime.tryParse(raw['joined_at'] as String? ?? '') ??
+          DateTime.now(),
+      isCaptain: false,
+    );
+
+    // Recalculate captain flag: first by joined_at
+    final updated = [...state.missionMembers, newMember]
+      ..sort((a, b) => a.joinedAt.compareTo(b.joinedAt));
+
+    final withCaptain = updated.asMap().entries.map((e) {
+      return MissionChatMember(
+        userId: e.value.userId,
+        name: e.value.name,
+        profileImage: e.value.profileImage,
+        joinedAt: e.value.joinedAt,
+        isCaptain: e.key == 0,
+      );
+    }).toList();
+
+    emit(state.copWith(missionMembers: withCaptain));
+  }
+
+  void _onMemberLeft(_MemberLeftEvent event, Emitter<SquadMissionState> emit) {
+    final updated =
+        state.missionMembers.where((m) => m.userId != event.userId).toList()
+          ..sort((a, b) => a.joinedAt.compareTo(b.joinedAt));
+
+    final withCaptain = updated.asMap().entries.map((e) {
+      return MissionChatMember(
+        userId: e.value.userId,
+        name: e.value.name,
+        profileImage: e.value.profileImage,
+        joinedAt: e.value.joinedAt,
+        isCaptain: e.key == 0,
+      );
+    }).toList();
+
+    emit(state.copWith(missionMembers: withCaptain));
   }
 
   // ─── Helpers ────────────────────────────────────────────────────────────────
@@ -59,6 +268,7 @@ class SquadMissionBloc extends Bloc<SquadMissionEvent, SquadMissionState> {
     emit(state.copWith(chatResponse: updated));
   }
 
+  // ─── Event handlers ──────────────────────────────────────────────────────
   Future<void> _joinMissions(
     JoinSquadMissionEvent event,
     Emitter<SquadMissionState> emit,
@@ -133,6 +343,9 @@ class SquadMissionBloc extends Bloc<SquadMissionEvent, SquadMissionState> {
             chatResponse: state.chatResponse,
           ),
         );
+
+        // Start listening for member changes once we have the initial list
+        subscribeToMembers();
       },
     );
   }
@@ -211,6 +424,11 @@ class SquadMissionBloc extends Bloc<SquadMissionEvent, SquadMissionState> {
             missionMembers: state.missionMembers,
           ),
         );
+
+        // Start listening for new messages once we have the chat room ID
+        if (chat.chatRoom != null) {
+          subscribeToChat(chat.chatRoom!.id);
+        }
       },
     );
   }
@@ -244,10 +462,6 @@ class SquadMissionBloc extends Bloc<SquadMissionEvent, SquadMissionState> {
         ),
       ),
       (olderChat) {
-        // Prepend older messages in front of existing ones.
-        // olderChat.messages is already sorted oldest→newest by the server.
-        // Filter out any local pending/failed messages that are still in
-        // the list to avoid duplicates when we eventually get them from server.
         final existingMessages = state.chatResponse?.messages ?? [];
 
         final merged = [
@@ -257,7 +471,7 @@ class SquadMissionBloc extends Bloc<SquadMissionEvent, SquadMissionState> {
 
         final updatedChat = (state.chatResponse ?? olderChat).copyWith(
           messages: merged,
-          hasMore: olderChat.hasMore, // update pagination flag
+          hasMore: olderChat.hasMore,
         );
 
         emit(state.copWith(chatResponse: updatedChat));
@@ -281,14 +495,13 @@ class SquadMissionBloc extends Bloc<SquadMissionEvent, SquadMissionState> {
   ) async {
     final localId = _uuid.v4();
 
-    // 1. Build an optimistic pending message and append it to the list
     final optimisticMessage = ChatMessage(
       id: -DateTime.now().millisecondsSinceEpoch, // temp negative ID
       chatRoomId: event.chatRoomId,
       userId: event.currentUserId,
       isSystem: false,
       content: event.content,
-      mediaUrl: event.media, // local file path — your UI can handle this
+      mediaUrl: event.media,
       mediaType: event.media != null
           ? (event.media!.endsWith('.mp4') ? 'video' : 'image')
           : null,
@@ -302,14 +515,13 @@ class SquadMissionBloc extends Bloc<SquadMissionEvent, SquadMissionState> {
       localId: localId,
     );
 
-    final messagesWithOptimistic = [
+    final messagesWithOptimistic = <ChatMessage>[
       ...(state.chatResponse?.messages ?? []),
-      optimisticMessage, // newest at end (bottom of chat)
+      optimisticMessage,
     ];
 
     _emitWithMessages(emit, messagesWithOptimistic);
 
-    // 2. Actually send
     final res = await repo.sendMissionChat(
       missionId: missionId,
       chatRoomId: event.chatRoomId,
@@ -320,7 +532,6 @@ class SquadMissionBloc extends Bloc<SquadMissionEvent, SquadMissionState> {
 
     res.fold(
       (err) {
-        // Mark the optimistic message as failed
         final failed = _replaceMessage(
           state.chatResponse?.messages ?? [],
           localId,
@@ -339,7 +550,6 @@ class SquadMissionBloc extends Bloc<SquadMissionEvent, SquadMissionState> {
         );
       },
       (sentMessage) {
-        // Replace optimistic message with real one from server
         final confirmed = _replaceMessage(
           state.chatResponse?.messages ?? [],
           localId,
@@ -466,4 +676,21 @@ class SquadMissionBloc extends Bloc<SquadMissionEvent, SquadMissionState> {
       ),
     );
   }
+}
+
+// ─── Private realtime events — not exposed outside the bloc ──────────────────
+
+class _NewRealtimeMessageEvent extends SquadMissionEvent {
+  final Map<String, dynamic> raw;
+  _NewRealtimeMessageEvent({required this.raw});
+}
+
+class _MemberJoinedEvent extends SquadMissionEvent {
+  final Map<String, dynamic> raw;
+  _MemberJoinedEvent({required this.raw});
+}
+
+class _MemberLeftEvent extends SquadMissionEvent {
+  final String userId;
+  _MemberLeftEvent({required this.userId});
 }

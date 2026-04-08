@@ -64,3 +64,26 @@ class SquadMission {
     );
   }
 }
+
+extension SquadMissionX on SquadMission {
+  String get timeLeft => getTimeLeft(endsAt);
+}
+
+String getTimeLeft(DateTime? endsAt) {
+  if (endsAt == null) return "∞";
+
+  final now = DateTime.now();
+
+  if (now.isAfter(endsAt)) return "Ended";
+
+  final difference = endsAt.difference(now);
+
+  if (difference.inDays >= 1) {
+    return "${difference.inDays} Day${difference.inDays == 1 ? '' : 's'} left";
+  } else if (difference.inHours >= 1) {
+    return "${difference.inHours} Hour${difference.inHours == 1 ? '' : 's'} left";
+  } else {
+    final minutes = difference.inMinutes;
+    return "${minutes <= 0 ? 1 : minutes} Minute${minutes == 1 ? '' : 's'} left";
+  }
+}

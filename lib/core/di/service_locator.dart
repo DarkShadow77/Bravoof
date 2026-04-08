@@ -60,6 +60,8 @@ import '../../features/dashboard/squad/data/repository/squad_repository_impl.dar
 import '../../features/dashboard/squad/presentation/bloc/activity_bloc.dart';
 import '../../features/dashboard/squad/presentation/bloc/brand_bloc.dart';
 import '../../features/dashboard/squad/presentation/bloc/squad_bloc.dart';
+import '../../features/dashboard/squad/presentation/bloc/squad_individual_bloc.dart';
+import '../../features/dashboard/squad/presentation/bloc/squad_mission_bloc.dart';
 
 final sl = GetIt.instance;
 
@@ -141,6 +143,17 @@ Future<void> initDI() async {
     AuthLinkBloc(repo: sl<AuthLinkRepository>()),
   );
   sl.registerSingleton<SquadBloc>(SquadBloc(repo: sl<SquadRepository>()));
+  sl.registerFactoryParam<SquadIndividualBloc, String, void>(
+    (squadId, _) =>
+        SquadIndividualBloc(squadId: squadId, repo: sl<SquadRepository>()),
+  );
+  sl.registerFactoryParam<SquadMissionBloc, String, int>(
+    (squadId, missionId) => SquadMissionBloc(
+      squadId: squadId,
+      missionId: missionId,
+      repo: sl<SquadRepository>(),
+    ),
+  );
   sl.registerSingleton<BrandBloc>(BrandBloc(repo: sl<BrandRepository>()));
   sl.registerSingleton<RecentActivityBloc>(
     RecentActivityBloc(repo: sl<RecentActivityRepository>()),

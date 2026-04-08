@@ -10,12 +10,10 @@ import '../../../../../app/view/widgets/button/icon_text_button.dart';
 import '../../../../../app/view/widgets/cached_image_widget.dart';
 import '../../../../../core/constants/app_assets.dart';
 import '../../../../../core/constants/app_colors.dart';
-import '../../../../../core/di/service_locator.dart';
 import '../../../../../core/utils/helpers.dart';
 import '../../../../../utility/ui_tool_mix.dart';
 import '../../data/model/response/squad_model.dart';
 import '../bloc/squad_bloc.dart';
-import '../bloc/squad_individual_bloc.dart';
 import '../page/squad_details_page.dart';
 import 'join_squad_dialog.dart';
 import 'leave_squad_dialog.dart';
@@ -94,12 +92,7 @@ class SquadTile extends StatelessWidget with UIToolMixin {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(
-            builder: (_) => BlocProvider<SquadIndividualBloc>(
-              create: (_) => sl<SquadIndividualBloc>(param1: squad.id),
-              child: SquadDetailsPage(squad: squad),
-            ),
-          ),
+          MaterialPageRoute(builder: (_) => SquadDetailsPage(squad: squad)),
         );
       },
       behavior: HitTestBehavior.opaque,

@@ -148,7 +148,6 @@ class _SquadPageState extends State<SquadPage> {
                         ),
                         BrandsCard(),
                         SizedBox(height: 10.h),
-
                         Padding(
                           padding: EdgeInsets.symmetric(
                             vertical: 12.h,

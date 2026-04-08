@@ -8,12 +8,14 @@ class GradientProgress extends StatelessWidget {
     super.key,
     required this.height,
     required this.progress,
+    this.radius = 100,
     this.color,
     this.backgroundColor,
   });
 
   final double height;
   final double progress;
+  final double radius;
   final List<Color>? color;
   final Color? backgroundColor;
   @override
@@ -21,7 +23,7 @@ class GradientProgress extends StatelessWidget {
     final mainColour = color ?? [Color(0xFFA259FF), Color(0xFFDEC4FF)];
     final bgColor = backgroundColor ?? AppColors.grey200;
     return ClipRRect(
-      borderRadius: BorderRadius.circular(100.r),
+      borderRadius: BorderRadius.circular(radius.r),
       child: Container(
         height: height.h,
         width: double.infinity,
