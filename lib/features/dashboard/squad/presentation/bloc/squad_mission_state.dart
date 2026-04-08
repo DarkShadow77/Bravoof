@@ -62,6 +62,18 @@ class SquadMissionSuccessState extends SquadMissionState {
   });
 }
 
+class JoinedSquadMissionState extends SquadMissionState {
+  final JoinedSquadMission joinedSquadMission;
+  final int missionId;
+
+  const JoinedSquadMissionState({
+    required this.joinedSquadMission,
+    required this.missionId,
+    required super.missionMembers,
+    required super.chatResponse,
+  });
+}
+
 class SquadMissionErrorState extends SquadMissionState {
   final SquadMissionType type;
   final int missionId;

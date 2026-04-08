@@ -17,8 +17,13 @@ class SquadMission {
   final int usersJoined;
   final bool active;
   final DateTime createdAt;
-  final DateTime endsAt;
+  final DateTime? endsAt;
   final MissionStatus userStatus;
+  final bool isJoined;
+  final bool isFull;
+  final bool hasExpired;
+  final bool canJoin;
+  final int? chatRoomId;
 
   SquadMission({
     required this.id,
@@ -36,11 +41,21 @@ class SquadMission {
     required this.usersJoined,
     required this.active,
     required this.createdAt,
-    required this.endsAt,
+    this.endsAt,
     required this.userStatus,
+    this.isJoined = false,
+    this.isFull = false,
+    this.hasExpired = false,
+    this.canJoin = false,
+    this.chatRoomId,
   });
 
   factory SquadMission.fromJson(Map<String, dynamic> json) {
+    DateTime? endsAt;
+    if (json['ends_at'] != null) {
+      endsAt = DateTime.tryParse(json['ends_at']);
+    }
+
     return SquadMission(
       id: json['id'] ?? 0,
       squadId: json['squad_id'] ?? "",
@@ -59,14 +74,46 @@ class SquadMission {
       usersJoined: json['users_joined'] ?? 0,
       active: json['active'] ?? true,
       createdAt: DateTime.parse(json['created_at']),
-      endsAt: DateTime.parse(json['ends_at']),
+      endsAt: endsAt,
       userStatus: statusFromDb(json['user_status'] ?? ''),
+      isJoined: json['is_joined'] ?? false,
+      isFull: json['is_full'] ?? false,
+      hasExpired: json['has_expired'] ?? false,
+      canJoin: json['can_join'] ?? false,
+      chatRoomId: json['chat_room_id'] as int?,
+    );
+  }
+}
+
+class JoinedSquadMission {
+  final int chatRoomId;
+  final bool isCaptain;
+
+  JoinedSquadMission({required this.chatRoomId, this.isCaptain = false});
+
+  factory JoinedSquadMission.fromJson(Map<String, dynamic> json) {
+    return JoinedSquadMission(
+      chatRoomId: json['chat_room_id'],
+      isCaptain: json['is_captain'] ?? false,
     );
   }
 }
 
 extension SquadMissionX on SquadMission {
   String get timeLeft => getTimeLeft(endsAt);
+
+  /// Label for the primary action button on the mission card/detail page
+  String get actionLabel {
+    if (isJoined)
+      return 'Chat';
+    else if (hasExpired)
+      return 'Expired';
+    else if (isFull)
+      return 'Full';
+    return 'Join Mission';
+  }
+
+  bool get isActionable => canJoin || isJoined;
 }
 
 String getTimeLeft(DateTime? endsAt) {

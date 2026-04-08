@@ -37,13 +37,13 @@ class JoinSquadDialog extends StatefulWidget {
 
 class _JoinSquadDialogState extends State<JoinSquadDialog> with UIToolMixin {
   _loadingState(BuildContext context, SquadLoadingState state) {
-    if (state.type == SquadType.joinSquad || state.squadId == widget.squad.id) {
+    if (state.type == SquadType.joinSquad && state.squadId == widget.squad.id) {
       outerLoadingDialog(text: "Joining Squad");
     }
   }
 
   _successState(BuildContext context, SquadSuccessState state) {
-    if (state.type == SquadType.joinSquad || state.squadId == widget.squad.id) {
+    if (state.type == SquadType.joinSquad && state.squadId == widget.squad.id) {
       if (Get.isDialogOpen == true) {
         Navigator.of(context, rootNavigator: true).pop();
       }
@@ -62,7 +62,7 @@ class _JoinSquadDialogState extends State<JoinSquadDialog> with UIToolMixin {
   }
 
   _failureState(BuildContext context, SquadErrorState state) {
-    if (state.type == SquadType.joinSquad || state.squadId == widget.squad.id) {
+    if (state.type == SquadType.joinSquad && state.squadId == widget.squad.id) {
       if (Get.isDialogOpen == true) {
         Navigator.of(context, rootNavigator: true).pop();
       }

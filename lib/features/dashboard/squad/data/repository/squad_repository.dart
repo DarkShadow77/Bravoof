@@ -15,7 +15,9 @@ abstract class SquadRepository {
     required String squadId,
   });
 
-  Future<Either<String, String>> joinSquadMission({required int missionId});
+  Future<Either<String, JoinedSquadMission>> joinSquadMission({
+    required int missionId,
+  });
 
   Future<Either<String, List<MissionChatMember>>> fetchMissionMembers({
     required int missionId,

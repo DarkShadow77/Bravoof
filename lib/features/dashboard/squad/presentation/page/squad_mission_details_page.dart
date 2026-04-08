@@ -3,6 +3,7 @@ import 'package:bravoo/core/constants/app_assets.dart';
 import 'package:bravoo/core/constants/fonts.dart';
 import 'package:bravoo/features/dashboard/squad/data/model/response/squad_mission_model.dart';
 import 'package:bravoo/features/dashboard/squad/data/model/response/squad_model.dart';
+import 'package:bravoo/features/dashboard/squad/presentation/bloc/activity_bloc.dart';
 import 'package:fade_shimmer/fade_shimmer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -14,17 +15,18 @@ import 'package:share_plus/share_plus.dart';
 import '../../../../../app/styles/text_styles.dart';
 import '../../../../../app/view/widgets/button/icon_text_button.dart';
 import '../../../../../app/view/widgets/cached_image_widget.dart';
+import '../../../../../app/view/widgets/loading/outer_loading.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/di/service_locator.dart';
 import '../../../../../core/utils/helpers.dart';
 import '../../../../../utility/ui_tool_mix.dart';
+import '../../../../common/app_enum.dart';
 import '../../../earn/presentation/pages/invite_earn.dart';
 import '../../../profile/presentation/bloc/profile_bloc.dart';
 import '../bloc/squad_bloc.dart';
 import '../bloc/squad_individual_bloc.dart';
 import '../bloc/squad_mission_bloc.dart';
-import '../widget/join_squad_dialog.dart';
-import '../widget/leave_squad_dialog.dart';
+import '../widget/joined_squad_mission_dialog.dart';
 
 class SquadMissionDetailsPage extends StatefulWidget {
   const SquadMissionDetailsPage({
@@ -73,323 +75,377 @@ class _SquadMissionDetailsPageState extends State<SquadMissionDetailsPage>
     super.dispose();
   }
 
+  _loadingState(BuildContext context, SquadMissionLoadingState state) {
+    if (state.type == SquadMissionType.joinMission &&
+        state.missionId == squadMission.id) {
+      outerLoadingDialog(text: "Joining Squad Mission");
+    } else if (state.type == SquadMissionType.leaveMission &&
+        state.missionId == squadMission.id) {
+      outerLoadingDialog(text: "Leaving Squad Mission");
+    }
+  }
+
+  _successState(BuildContext context, SquadMissionSuccessState state) {
+    if (state.type == SquadMissionType.leaveMission &&
+        state.missionId == squadMission.id) {
+      if (Get.isDialogOpen == true) {
+        Navigator.of(context, rootNavigator: true).pop();
+      }
+      context.read<SquadIndividualBloc>().add(FetchSquadMissionsEvent());
+      context.read<RecentActivityBloc>().add(FetchActivityEvent());
+    }
+  }
+
+  _joinedState(BuildContext context, JoinedSquadMissionState state) {
+    if (state.missionId == squadMission.id) {
+      if (Get.isDialogOpen == true) {
+        Navigator.of(context, rootNavigator: true).pop();
+      }
+      context.read<SquadIndividualBloc>().add(FetchSquadMissionsEvent());
+      context.read<RecentActivityBloc>().add(FetchActivityEvent());
+      joinedSquadMissionDialog(
+        squadMission: squadMission,
+        joinedSquadMission: state.joinedSquadMission,
+      );
+    }
+  }
+
+  _failureState(BuildContext context, SquadMissionErrorState state) {
+    if ((state.type == SquadMissionType.joinMission ||
+            state.type == SquadMissionType.leaveMission) &&
+        state.missionId == squadMission.id) {
+      if (Get.isDialogOpen == true) {
+        Navigator.of(context, rootNavigator: true).pop();
+      }
+      showMessage(state.message, context, status: true);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<SquadBloc, SquadState>(
-      builder: (context, squadState) {
-        squad = squadState.squads.firstWhere((e) => e.id == squad.id);
-        return BlocBuilder<SquadIndividualBloc, SquadIndividualState>(
-          builder: (context, squadIndividualState) {
-            squadMission = squadIndividualState.missions.firstWhere(
-              (e) => e.id == squadMission.id,
-            );
-            final textColor = hexToColor(squad.textColor);
-            final double progress = squadMission.maxUsers == 0
-                ? 0.0
-                : squadMission.usersJoined / squadMission.maxUsers;
-            final double safeProgress = progress.clamp(0.0, 1.0);
+    return BlocListener<SquadMissionBloc, SquadMissionState>(
+      listener: (context, state) {
+        if (state is SquadMissionLoadingState) {
+          _loadingState(context, state);
+        }
+        if (state is SquadMissionSuccessState) {
+          _successState(context, state);
+        }
+        if (state is JoinedSquadMissionState) {
+          _joinedState(context, state);
+        }
+        if (state is SquadMissionErrorState) {
+          _failureState(context, state);
+        }
+      },
+      child: BlocBuilder<SquadBloc, SquadState>(
+        builder: (context, squadState) {
+          squad = squadState.squads.firstWhere((e) => e.id == squad.id);
+          return BlocBuilder<SquadIndividualBloc, SquadIndividualState>(
+            builder: (context, squadIndividualState) {
+              squadMission = squadIndividualState.missions.firstWhere(
+                (e) => e.id == squadMission.id,
+              );
+              final double progress = squadMission.maxUsers == 0
+                  ? 0.0
+                  : squadMission.usersJoined / squadMission.maxUsers;
+              final double safeProgress = progress.clamp(0.0, 1.0);
 
-            return Scaffold(
-              body: Stack(
-                children: [
-                  Positioned.fill(
-                    child: Image.asset(
-                      "assets/images/earn_bg.png",
-                      fit: BoxFit.fill,
+              return Scaffold(
+                body: Stack(
+                  children: [
+                    Positioned.fill(
+                      child: Image.asset(
+                        "assets/images/earn_bg.png",
+                        fit: BoxFit.fill,
+                      ),
                     ),
-                  ),
-                  CustomScrollView(
-                    controller: _scrollController,
-                    physics: BouncingScrollPhysics(
-                      parent: AlwaysScrollableScrollPhysics(),
-                    ),
-                    slivers: [
-                      // App Bar with Image
-                      SliverAppBar(
-                        expandedHeight: 300.h,
-                        pinned: true,
-                        backgroundColor: Color(0xffFFE0E1),
-                        automaticallyImplyLeading: false,
-                        title: _CollapsedAppBar(
-                          isCollapsed: _isCollapsed,
-                          squadMission: squadMission,
-                        ),
-                        flexibleSpace: FlexibleSpaceBar(
-                          collapseMode: CollapseMode.pin,
-                          background: _ExpandedAppBar(
-                            squadMission: squadMission,
+                    CustomScrollView(
+                      controller: _scrollController,
+                      physics: BouncingScrollPhysics(
+                        parent: AlwaysScrollableScrollPhysics(),
+                      ),
+                      slivers: [
+                        // App Bar with Image
+                        SliverAppBar(
+                          expandedHeight: 300.h,
+                          pinned: true,
+                          backgroundColor: Color(0xffFFE0E1),
+                          automaticallyImplyLeading: false,
+                          title: _CollapsedAppBar(
                             isCollapsed: _isCollapsed,
+                            squadMission: squadMission,
+                          ),
+                          flexibleSpace: FlexibleSpaceBar(
+                            background: _ExpandedAppBar(
+                              squadMission: squadMission,
+                              isCollapsed: _isCollapsed,
+                            ),
                           ),
                         ),
-                      ),
-                      SliverList(
-                        delegate: SliverChildListDelegate([
-                          GradientProgress(
-                            height: 6.h,
-                            progress: safeProgress,
-                            radius: 0,
-                          ),
-                        ]),
-                      ),
-                      SliverPadding(
-                        padding: EdgeInsets.symmetric(horizontal: 16.w),
-                        sliver: SliverList(
+                        SliverList(
                           delegate: SliverChildListDelegate([
-                            SizedBox(height: 5.h),
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                RichText(
-                                  textAlign: TextAlign.start,
-                                  text: TextSpan(
-                                    text:
-                                        "${squadMission.usersJoined}/${squadMission.maxUsers} ",
-                                    children: [
-                                      TextSpan(
-                                        text: "Joined!",
-                                        style: TextStyles.smallSemibold12(
-                                          context,
-                                          opacity: .65,
-                                        ),
-                                      ),
-                                    ],
-                                    style: TextStyles.normalSemibold14(
-                                      context,
-                                      opacity: .65,
-                                    ),
-                                  ),
-                                ),
-                                RichText(
-                                  textAlign: TextAlign.end,
-                                  text: TextSpan(
-                                    text: "${squadMission.timeLeft}",
-                                    style: TextStyles.smallSemibold12(
-                                      context,
-                                      opacity: .65,
-                                    ),
-                                  ),
-                                ),
-                              ],
+                            GradientProgress(
+                              height: 6.h,
+                              progress: safeProgress,
+                              radius: 0,
                             ),
-                            SizedBox(height: 12.h),
-                            _buildShareContainer(context),
-                            SizedBox(height: 8.h),
-                            IconTextButton(
-                              onPressed: () {
-                                if (squad.isFull) {
-                                  showMessage(
-                                    "${squad.name.capitalize} Squad is Full",
-                                    context,
-                                    status: true,
-                                  );
-                                } else if (squad.cooldownDaysRemaining > 1) {
-                                  showMessage(
-                                    "Please wait ${squad.cooldownDaysRemaining} more day(s) before joining",
-                                    context,
-                                    status: true,
-                                  );
-                                } else if (squad.canJoin) {
-                                  joinSquadDialog(squad: squad);
-                                } else if (squad.isJoined) {
-                                  leaveSquadDialog(squad: squad);
-                                }
-                              },
-                              text: squad.isFull
-                                  ? "Full"
-                                  : squad.isJoined
-                                  ? "Leave ${squad.name.capitalize} Squad"
-                                  : "Join ${squad.name.capitalize} Squad",
-                              textColor: AppColors.white,
-                              color: squad.isJoined
-                                  ? AppColors.error
-                                  : squad.isFull
-                                  ? AppColors.grey550
-                                  : textColor,
-                            ),
-                            SizedBox(height: 20.h),
-                            RichText(
-                              textAlign: TextAlign.center,
-                              text: TextSpan(
-                                text: "Overview",
-                                style: TextStyles.titleSemiBold20(context)
-                                    .copyWith(
-                                      height: 1.h,
-                                      fontFamily: AppFonts.baloo2,
-                                    ),
-                              ),
-                            ),
-                            SizedBox(height: 8.h),
-                            RichText(
-                              textAlign: TextAlign.center,
-                              text: TextSpan(
-                                text: squadMission.about.isEmpty
-                                    ? "No Description"
-                                    : squadMission.about,
-                                style: TextStyles.smallMedium12(
-                                  context,
-                                  opacity: .75,
-                                ),
-                              ),
-                            ),
-                            SizedBox(height: 20.h),
-                            Container(
-                              padding: EdgeInsets.symmetric(
-                                vertical: 19.h,
-                                horizontal: 16.w,
-                              ),
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  colors: [
-                                    AppColors.white,
-                                    hexToColor(squad.gradientColor.end),
-                                    hexToColor(squad.gradientColor.start),
-                                  ],
-                                  begin: Alignment.bottomCenter,
-                                  end: Alignment.topCenter,
-                                ),
-                                borderRadius: BorderRadius.circular(12.r),
-                              ),
-                              child: Column(
-                                spacing: 16.h,
+                          ]),
+                        ),
+                        SliverPadding(
+                          padding: EdgeInsets.symmetric(horizontal: 16.w),
+                          sliver: SliverList(
+                            delegate: SliverChildListDelegate([
+                              SizedBox(height: 5.h),
+                              Row(
                                 crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.center,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Row(
-                                    spacing: 7.w,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Expanded(
-                                        child: _buildSquadDetailContainer(
-                                          context,
-                                          title: "Squad",
-                                          value:
-                                              "${squad.name.capitalize} Squad",
-                                        ),
-                                      ),
-                                      Expanded(
-                                        child: _buildSquadDetailContainer(
-                                          context,
-                                          title: "Who can play?",
-                                          value: "Squad members",
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  Row(
-                                    spacing: 7.w,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Expanded(
-                                        child: _buildSquadDetailContainer(
-                                          context,
-                                          title: "Reward",
-                                          valueWidget: Row(
-                                            spacing: 4.w,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              Image.asset(
-                                                AssetsPngImages.one50,
-                                                height: 20.r,
-                                                width: 20.r,
-                                              ),
-                                              RichText(
-                                                maxLines: 1,
-                                                overflow: TextOverflow.ellipsis,
-                                                text: TextSpan(
-                                                  text:
-                                                      "${formatAmount(squadMission.points)}",
-                                                  style:
-                                                      TextStyles.bodySemiBold16(
-                                                        context,
-                                                      ).copyWith(
-                                                        fontFamily:
-                                                            AppFonts.baloo2,
-                                                        height: 1.1.h,
-                                                      ),
-                                                ),
-                                              ),
-                                            ],
+                                  RichText(
+                                    textAlign: TextAlign.start,
+                                    text: TextSpan(
+                                      text:
+                                          "${squadMission.usersJoined}/${squadMission.maxUsers} ",
+                                      children: [
+                                        TextSpan(
+                                          text: "Joined!",
+                                          style: TextStyles.smallSemibold12(
+                                            context,
+                                            opacity: .65,
                                           ),
                                         ),
+                                      ],
+                                      style: TextStyles.normalSemibold14(
+                                        context,
+                                        opacity: .65,
                                       ),
-                                      Expanded(
-                                        child: _buildSquadDetailContainer(
-                                          context,
-                                          title: "How many can join?",
-                                          value:
-                                              "${squadMission.maxUsers} people",
-                                        ),
+                                    ),
+                                  ),
+                                  RichText(
+                                    textAlign: TextAlign.end,
+                                    text: TextSpan(
+                                      text: "${squadMission.timeLeft}",
+                                      style: TextStyles.smallSemibold12(
+                                        context,
+                                        opacity: .65,
                                       ),
-                                    ],
+                                    ),
                                   ),
                                 ],
                               ),
-                            ),
-                            SizedBox(height: 23.h),
-                          ]),
-                        ),
-                      ),
-                      SliverPadding(
-                        padding: EdgeInsets.symmetric(horizontal: 16.w),
-                        sliver: SliverList(
-                          delegate: SliverChildListDelegate([
-                            SizedBox(height: 20.h),
-                            RichText(
-                              textAlign: TextAlign.start,
-                              text: TextSpan(
-                                text:
-                                    "More ${squad.name.capitalize} Squad  Missions",
-                                style: TextStyles.normalSemibold14(context),
+                              SizedBox(height: 12.h),
+                              _buildShareContainer(context),
+                              SizedBox(height: 8.h),
+                              if (squadMission.isJoined)
+                                BlocBuilder<
+                                  SquadMissionBloc,
+                                  SquadMissionState
+                                >(
+                                  builder: (context, missionState) {
+                                    final isLeaving =
+                                        missionState
+                                            is SquadMissionLoadingState &&
+                                        missionState.type ==
+                                            SquadMissionType.leaveMission;
+
+                                    return IconTextButton(
+                                      onPressed: () {
+                                        context.read<SquadMissionBloc>().add(
+                                          LeaveSquadMissionEvent(),
+                                        );
+                                      },
+                                      height: 48.h,
+                                      text: "Leave Mission",
+                                      buttonState: isLeaving
+                                          ? AppButtonState.loading
+                                          : AppButtonState.idle,
+                                      color: AppColors.error,
+                                      textColor: AppColors.white,
+                                    );
+                                  },
+                                ),
+                              SizedBox(height: 20.h),
+                              RichText(
+                                textAlign: TextAlign.center,
+                                text: TextSpan(
+                                  text: "Overview",
+                                  style: TextStyles.titleSemiBold20(context)
+                                      .copyWith(
+                                        height: 1.h,
+                                        fontFamily: AppFonts.baloo2,
+                                      ),
+                                ),
                               ),
-                            ),
-                          ]),
+                              SizedBox(height: 8.h),
+                              RichText(
+                                textAlign: TextAlign.center,
+                                text: TextSpan(
+                                  text: squadMission.about.isEmpty
+                                      ? "No Description"
+                                      : squadMission.about,
+                                  style: TextStyles.smallMedium12(
+                                    context,
+                                    opacity: .75,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(height: 20.h),
+                              Container(
+                                padding: EdgeInsets.symmetric(
+                                  vertical: 19.h,
+                                  horizontal: 16.w,
+                                ),
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      AppColors.white,
+                                      hexToColor(squad.gradientColor.end),
+                                      hexToColor(squad.gradientColor.start),
+                                    ],
+                                    begin: Alignment.bottomCenter,
+                                    end: Alignment.topCenter,
+                                  ),
+                                  borderRadius: BorderRadius.circular(12.r),
+                                ),
+                                child: Column(
+                                  spacing: 16.h,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Row(
+                                      spacing: 7.w,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Expanded(
+                                          child: _buildSquadDetailContainer(
+                                            context,
+                                            title: "Squad",
+                                            value:
+                                                "${squad.name.capitalize} Squad",
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: _buildSquadDetailContainer(
+                                            context,
+                                            title: "Who can play?",
+                                            value: "Squad members",
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    Row(
+                                      spacing: 7.w,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Expanded(
+                                          child: _buildSquadDetailContainer(
+                                            context,
+                                            title: "Reward",
+                                            valueWidget: Row(
+                                              spacing: 4.w,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Image.asset(
+                                                  AssetsPngImages.one50,
+                                                  height: 20.r,
+                                                  width: 20.r,
+                                                ),
+                                                RichText(
+                                                  maxLines: 1,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  text: TextSpan(
+                                                    text:
+                                                        "${formatAmount(squadMission.points)}",
+                                                    style:
+                                                        TextStyles.bodySemiBold16(
+                                                          context,
+                                                        ).copyWith(
+                                                          fontFamily:
+                                                              AppFonts.baloo2,
+                                                          height: 1.1.h,
+                                                        ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: _buildSquadDetailContainer(
+                                            context,
+                                            title: "How many can join?",
+                                            value:
+                                                "${squadMission.maxUsers} people",
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              SizedBox(height: 23.h),
+                            ]),
+                          ),
                         ),
-                      ),
-                      BlocBuilder<SquadIndividualBloc, SquadIndividualState>(
-                        builder: (context, state) {
-                          final squadMissions = state.missions
-                              .where((e) => e.id != squadMission.id)
-                              .toList();
-                          bool isLoading =
-                              state is SquadIndividualLoadingState &&
-                              state.type == SquadIndividualType.fetch;
-                          return MoreSquadMissionCard(
-                            isLoading: isLoading,
-                            squadMissions: squadMissions,
-                            squad: squad,
-                          );
-                        },
-                      ),
-                      SliverPadding(
-                        padding: EdgeInsets.only(
-                          bottom: MediaQuery.of(context).viewPadding.top,
+                        SliverPadding(
+                          padding: EdgeInsets.symmetric(horizontal: 16.w),
+                          sliver: SliverList(
+                            delegate: SliverChildListDelegate([
+                              SizedBox(height: 20.h),
+                              RichText(
+                                textAlign: TextAlign.start,
+                                text: TextSpan(
+                                  text:
+                                      "More ${squad.name.capitalize} Squad  Missions",
+                                  style: TextStyles.normalSemibold14(context),
+                                ),
+                              ),
+                            ]),
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            );
-          },
-        );
-      },
+                        BlocBuilder<SquadIndividualBloc, SquadIndividualState>(
+                          builder: (context, state) {
+                            final squadMissions = state.missions
+                                .where((e) => e.id != squadMission.id)
+                                .toList();
+                            bool isLoading =
+                                state is SquadIndividualLoadingState &&
+                                state.type == SquadIndividualType.fetch;
+                            return MoreSquadMissionCard(
+                              isLoading: isLoading,
+                              squadMissions: squadMissions,
+                              squad: squad,
+                            );
+                          },
+                        ),
+                        SliverPadding(
+                          padding: EdgeInsets.only(
+                            bottom: MediaQuery.of(context).viewPadding.top,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              );
+            },
+          );
+        },
+      ),
     );
   }
 
   Container _buildShareContainer(BuildContext context) {
     const double avatarSize = 35;
     const double overlap = 23;
-    final participants = squad.members;
-    final shown = participants.take(3).toList();
-    final overflow = participants.length - 3;
-    // Total items = shown avatars + optional +N bubble
-    final itemCount = shown.length + (overflow > 0 ? 1 : 0);
-    final double totalWidth = avatarSize + (itemCount - 1) * overlap;
+    final shown = squad.members.take(3).toList();
+    final double totalWidth = avatarSize + (shown.length - 1) * overlap;
     return Container(
       padding: EdgeInsets.symmetric(vertical: 15.h, horizontal: 14.w),
       decoration: BoxDecoration(
@@ -412,18 +468,15 @@ class _SquadMissionDetailsPageState extends State<SquadMissionDetailsPage>
             height: avatarSize.h,
             width: totalWidth.w,
             child: Stack(
-              children: [
-                // Render avatars back-to-front so later ones overlap earlier
-                ...List.generate(shown.length, (i) {
-                  return Positioned(
-                    left: (i * overlap).w,
-                    child: _buildBorderedAvatar(
-                      imageUrl: shown[i].profileImage,
-                      size: avatarSize,
-                    ),
-                  );
-                }),
-              ],
+              children: List.generate(shown.length, (i) {
+                return Positioned(
+                  left: (i * overlap).w,
+                  child: _buildBorderedAvatar(
+                    imageUrl: shown[i].profileImage,
+                    size: avatarSize,
+                  ),
+                );
+              }),
             ),
           ),
           Expanded(
@@ -610,10 +663,34 @@ class _CollapsedAppBar extends StatelessWidget {
             width: 80.w,
             child: IconTextButton(
               height: 28,
-              onPressed: () {},
-              text: "Join Mission",
+              onPressed: () {
+                if (squadMission.canJoin) {
+                  context.read<SquadMissionBloc>().add(JoinSquadMissionEvent());
+                } else if (squadMission.isJoined &&
+                    squadMission.chatRoomId != null) {
+                  /* Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => BlocProvider.value(
+                        value: context.read<SquadMissionBloc>(),
+                        child: SquadMissionChatPage(
+                          missionId: squadMission.id,
+                          chatRoomId: squadMission.chatRoomId!,
+                          squad: squad,
+                          squadMission: squadMission,
+                        ),
+                      ),
+                    ),
+                  );*/
+                }
+              },
+              text: squadMission.actionLabel,
               textSize: 8,
-              color: AppColors.black,
+              color: squadMission.isJoined
+                  ? AppColors.black
+                  : squadMission.hasExpired || squadMission.isFull
+                  ? AppColors.grey550
+                  : AppColors.black,
               textColor: AppColors.white,
               paddingW: 0,
               paddingH: 0,
@@ -626,10 +703,8 @@ class _CollapsedAppBar extends StatelessWidget {
 }
 
 class _ExpandedAppBar extends StatelessWidget {
-  const _ExpandedAppBar({
-    required this.squadMission,
-    required bool isCollapsed,
-  }) : _isCollapsed = isCollapsed;
+  const _ExpandedAppBar({required this.squadMission, required bool isCollapsed})
+    : _isCollapsed = isCollapsed;
 
   final SquadMission squadMission;
   final bool _isCollapsed;
@@ -725,15 +800,47 @@ class _ExpandedAppBar extends StatelessWidget {
                           ),
                         ),
                         SizedBox(height: 10.h),
-                        IconTextButton(
-                          height: 36,
-                          onPressed: () {},
-                          text: "Join Mission",
-                          textSize: 12,
-                          color: AppColors.white,
-                          textColor: AppColors.black,
-                          paddingW: 0,
-                          paddingH: 0,
+                        BlocBuilder<SquadMissionBloc, SquadMissionState>(
+                          builder: (context, missionState) {
+                            final isJoining =
+                                missionState is SquadMissionLoadingState &&
+                                missionState.type ==
+                                    SquadMissionType.joinMission;
+
+                            return IconTextButton(
+                              onPressed: () {
+                                if (squadMission.isJoined) {
+                                  if (squadMission.chatRoomId != null) {
+                                    /*Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) => BlocProvider.value(
+                                          value: context.read<SquadMissionBloc>(),
+                                          child: SquadMissionChatPage(
+                                            missionId: squadMission.id,
+                                            chatRoomId: squadMission.chatRoomId!,
+                                            squad: squad,
+                                            squadMission: squadMission,
+                                          ),
+                                        ),
+                                      ),
+                                    );*/
+                                  }
+                                } else if (squadMission.canJoin) {
+                                  context.read<SquadMissionBloc>().add(
+                                    JoinSquadMissionEvent(),
+                                  );
+                                }
+                              },
+                              height: 56,
+                              text: squadMission.actionLabel,
+                              buttonState: isJoining
+                                  ? AppButtonState.loading
+                                  : AppButtonState.idle,
+                              color: _primaryButtonColor(squadMission),
+                              textColor: _primaryButtonTextColor(squadMission),
+                            );
+                          },
                         ),
                       ],
                     ),
@@ -745,6 +852,18 @@ class _ExpandedAppBar extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  Color _primaryButtonColor(SquadMission mission) {
+    if (mission.isJoined) return AppColors.black;
+    if (mission.hasExpired || mission.isFull) return AppColors.grey550;
+    return AppColors.white;
+  }
+
+  Color _primaryButtonTextColor(SquadMission mission) {
+    if (mission.isJoined) return AppColors.white;
+    if (mission.hasExpired || mission.isFull) return AppColors.white;
+    return AppColors.black;
   }
 }
 

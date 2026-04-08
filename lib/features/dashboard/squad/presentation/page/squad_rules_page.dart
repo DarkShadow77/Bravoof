@@ -39,9 +39,8 @@ class _SquadRulesPageState extends State<SquadRulesPage> with UIToolMixin {
               parent: AlwaysScrollableScrollPhysics(),
             ),
             slivers: [
-              // App Bar
               SliverAppBar(
-                backgroundColor: Colors.transparent,
+                backgroundColor: Color(0xffFFE0E1),
                 automaticallyImplyLeading: false,
                 pinned: true,
                 centerTitle: false,

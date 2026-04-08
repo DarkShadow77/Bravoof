@@ -4,6 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart' hide MultipartFile;
 import 'package:uuid/uuid.dart';
 
 import '../../data/model/response/squad_mission_chat_model.dart';
+import '../../data/model/response/squad_mission_model.dart';
 import '../../data/repository/squad_repository.dart';
 
 part 'squad_mission_event.dart';
@@ -294,11 +295,10 @@ class SquadMissionBloc extends Bloc<SquadMissionEvent, SquadMissionState> {
           chatResponse: state.chatResponse,
         ),
       ),
-      (message) => emit(
-        SquadMissionSuccessState(
-          type: SquadMissionType.joinMission,
+      (joinedSquadMission) => emit(
+        JoinedSquadMissionState(
+          joinedSquadMission: joinedSquadMission,
           missionId: missionId,
-          message: message,
           missionMembers: state.missionMembers,
           chatResponse: state.chatResponse,
         ),

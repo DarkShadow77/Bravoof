@@ -58,15 +58,14 @@ class SquadRepositoryImpl extends SquadRepository {
     );
   }
 
-  Future<Either<String, String>> joinSquadMission({
+  Future<Either<String, JoinedSquadMission>> joinSquadMission({
     required int missionId,
   }) async {
     return ApiService.instance!.invokeEdgeFunction(
       functionName: 'join-squad-mission',
       body: {"missionId": missionId},
       fallbackErrorMessage: 'Failed to Join Squad Mission',
-      onSuccess: (data) =>
-          data["message"] ?? "Successfully Joined squad mission",
+      onSuccess: (data) => JoinedSquadMission.fromJson(data["data"]),
     );
   }
 
