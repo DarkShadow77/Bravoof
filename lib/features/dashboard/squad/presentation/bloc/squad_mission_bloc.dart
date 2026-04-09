@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' hide MultipartFile;
@@ -14,12 +16,17 @@ class SquadMissionBloc extends Bloc<SquadMissionEvent, SquadMissionState> {
   final SquadRepository repo;
   final String squadId;
   final int missionId;
+  bool _isCurrentlyTrackedAsTyping = false;
 
   final _supabase = Supabase.instance.client;
   final _uuid = const Uuid();
+  final _currentUserId = Supabase.instance.client.auth.currentUser?.id ?? '';
+
+  Timer? _typingTimer;
 
   RealtimeChannel? _messagesChannel;
   RealtimeChannel? _membersChannel;
+  RealtimeChannel? _typingChannel;
 
   SquadMissionBloc({
     required this.repo,
@@ -34,10 +41,12 @@ class SquadMissionBloc extends Bloc<SquadMissionEvent, SquadMissionState> {
     on<SendSquadMissionMessageEvent>(_sendMissionChat);
     on<RetrySendSquadMissionMessageEvent>(_retrySendMissionChat);
     on<SubmitSquadMissionEvent>(_submitMission);
+    on<UserTypingEvent>(_onUserTyping);
     // Internal events fired by Realtime — not dispatched by the UI
     on<_NewRealtimeMessageEvent>(_onNewRealtimeMessage);
     on<_MemberJoinedEvent>(_onMemberJoined);
     on<_MemberLeftEvent>(_onMemberLeft);
+    on<_TypingPresenceChangedEvent>(_onTypingPresenceChanged);
   }
 
   void subscribeToChat(int chatRoomId) {
@@ -104,15 +113,44 @@ class SquadMissionBloc extends Bloc<SquadMissionEvent, SquadMissionState> {
         .subscribe();
   }
 
+  void subscribeToTyping() {
+    _typingChannel?.unsubscribe();
+
+    _typingChannel = _supabase
+        .channel('typing_$missionId')
+        .onPresenceSync((payload) {
+          // ✅ presenceState() returns List<SinglePresenceState>
+          final state = _typingChannel?.presenceState() ?? [];
+          add(_TypingPresenceChangedEvent(presenceState: state));
+        })
+        .onPresenceJoin((payload) {
+          final state = _typingChannel?.presenceState() ?? [];
+          add(_TypingPresenceChangedEvent(presenceState: state));
+        })
+        .onPresenceLeave((payload) {
+          final state = _typingChannel?.presenceState() ?? [];
+          add(_TypingPresenceChangedEvent(presenceState: state));
+        })
+        .subscribe((status, [error]) async {
+          if (status == RealtimeSubscribeStatus.subscribed) {
+            await _typingChannel?.track({'user_id': _currentUserId});
+          }
+        });
+  }
+
   void unsubscribe() {
     _messagesChannel?.unsubscribe();
     _membersChannel?.unsubscribe();
+    _typingChannel?.unsubscribe();
     _messagesChannel = null;
     _membersChannel = null;
+    _typingChannel = null;
   }
 
   @override
   Future<void> close() {
+    _typingTimer?.cancel();
+    _isCurrentlyTrackedAsTyping = false;
     unsubscribe();
     return super.close();
   }
@@ -177,9 +215,11 @@ class SquadMissionBloc extends Bloc<SquadMissionEvent, SquadMissionState> {
     );
 
     if (optimisticIndex != -1) {
+      final optimistic = currentMessages[optimisticIndex];
       updated = List.from(currentMessages);
       updated[optimisticIndex] = message.copyWith(
-        localId: currentMessages[optimisticIndex].localId,
+        localId: optimistic.localId,
+        replyTo: optimistic.replyTo,
       );
     } else {
       updated = [...currentMessages, message];
@@ -240,6 +280,28 @@ class SquadMissionBloc extends Bloc<SquadMissionEvent, SquadMissionState> {
     }).toList();
 
     emit(state.copWith(missionMembers: withCaptain));
+  }
+
+  void _onTypingPresenceChanged(
+    _TypingPresenceChangedEvent event,
+    Emitter<SquadMissionState> emit,
+  ) {
+    final typingIds = <String>[];
+
+    for (final singlePresence in event.presenceState) {
+      // Each SinglePresenceState has a .presences list
+      for (final presence in singlePresence.presences) {
+        final payload = presence.payload; // Map<String, dynamic>
+        final userId = payload['user_id'] as String?;
+        final isTyping = payload['is_typing'] as bool? ?? false;
+
+        if (userId != null && userId != _currentUserId && isTyping) {
+          typingIds.add(userId);
+        }
+      }
+    }
+
+    emit(state.copWith(typingUserIds: typingIds));
   }
 
   // ─── Helpers ────────────────────────────────────────────────────────────────
@@ -332,14 +394,14 @@ class SquadMissionBloc extends Bloc<SquadMissionEvent, SquadMissionState> {
         ),
       ),
       (members) {
-        emit(state.copWith(missionMembers: members));
+        emit(state.copWith(missionMembers: members.members));
 
         emit(
           SquadMissionSuccessState(
             type: SquadMissionType.fetchMissionMembers,
             missionId: missionId,
             message: "Fetched Members Successfully",
-            missionMembers: members,
+            missionMembers: members.members,
             chatResponse: state.chatResponse,
           ),
         );
@@ -428,6 +490,7 @@ class SquadMissionBloc extends Bloc<SquadMissionEvent, SquadMissionState> {
         // Start listening for new messages once we have the chat room ID
         if (chat.chatRoom != null) {
           subscribeToChat(chat.chatRoom!.id);
+          subscribeToTyping();
         }
       },
     );
@@ -676,6 +739,43 @@ class SquadMissionBloc extends Bloc<SquadMissionEvent, SquadMissionState> {
       ),
     );
   }
+
+  void _onUserTyping(
+    UserTypingEvent event,
+    Emitter<SquadMissionState> emit,
+  ) async {
+    if (event.isTyping) {
+      // Cancel previous timer — extend the window on every keystroke
+      _typingTimer?.cancel();
+
+      // Only track if not already tracked as typing
+      // to avoid flooding Supabase presence with updates
+      if (!_isCurrentlyTrackedAsTyping) {
+        _isCurrentlyTrackedAsTyping = true;
+        await _typingChannel?.track({
+          'user_id': _currentUserId,
+          'is_typing': true,
+        });
+      }
+
+      // Reset the auto-stop timer on every keystroke
+      _typingTimer = Timer(const Duration(seconds: 2), () async {
+        _isCurrentlyTrackedAsTyping = false;
+        await _typingChannel?.track({
+          'user_id': _currentUserId,
+          'is_typing': false,
+        });
+      });
+    } else {
+      // Explicitly stopped (sent message)
+      _typingTimer?.cancel();
+      _isCurrentlyTrackedAsTyping = false;
+      await _typingChannel?.track({
+        'user_id': _currentUserId,
+        'is_typing': false,
+      });
+    }
+  }
 }
 
 // ─── Private realtime events — not exposed outside the bloc ──────────────────
@@ -693,4 +793,9 @@ class _MemberJoinedEvent extends SquadMissionEvent {
 class _MemberLeftEvent extends SquadMissionEvent {
   final String userId;
   _MemberLeftEvent({required this.userId});
+}
+
+class _TypingPresenceChangedEvent extends SquadMissionEvent {
+  final List<SinglePresenceState> presenceState;
+  _TypingPresenceChangedEvent({required this.presenceState});
 }

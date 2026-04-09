@@ -15,16 +15,23 @@ enum SquadMissionType {
 class SquadMissionState {
   final List<MissionChatMember> missionMembers;
   final MissionChatResponse? chatResponse;
+  final List<String> typingUserIds;
 
-  const SquadMissionState({required this.missionMembers, this.chatResponse});
+  const SquadMissionState({
+    required this.missionMembers,
+    this.chatResponse,
+    this.typingUserIds = const [],
+  });
 
   SquadMissionState copWith({
     List<MissionChatMember>? missionMembers,
     MissionChatResponse? chatResponse,
+    List<String>? typingUserIds,
   }) {
     return SquadMissionState(
       missionMembers: missionMembers ?? this.missionMembers,
       chatResponse: chatResponse ?? this.chatResponse,
+      typingUserIds: typingUserIds ?? this.typingUserIds,
     );
   }
 }

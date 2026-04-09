@@ -491,7 +491,7 @@ class SquadMissionCard extends StatelessWidget {
                 children: [
                   FadeShimmer(
                     width: double.infinity,
-                    height: 153.h,
+                    height: 145.h,
                     baseColor: AppColors.darkPrimary05,
                     highlightColor: AppColors.grey300.withValues(alpha: .25),
                   ),
@@ -666,7 +666,7 @@ class SquadMissionCard extends StatelessWidget {
                     CachedImageSize(
                       imageUrl: squadMission.image,
                       width: double.infinity,
-                      height: 153.h,
+                      height: 145.h,
                       color: AppColors.grey300.withValues(alpha: .25),
                       fit: BoxFit.cover,
                       child: Container(

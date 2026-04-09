@@ -32,15 +32,14 @@ class ChatMessageReply {
   });
 
   factory ChatMessageReply.fromJson(Map<String, dynamic> json) {
+    final rawSender = ChatMessage._unwrap(json['user_profile']);
     return ChatMessageReply(
       id: json['id'],
       content: json['content'],
       mediaUrl: json['media_url'],
       mediaType: json['media_type'],
       userId: json['user_id'] ?? '',
-      sender: json['user_profile'] != null
-          ? ChatMessageSender.fromJson(json['user_profile'])
-          : null,
+      sender: rawSender != null ? ChatMessageSender.fromJson(rawSender) : null,
     );
   }
 }
@@ -90,6 +89,7 @@ class ChatMessage {
     String? mediaUrl,
     String? mediaType,
     String? localId,
+    ChatMessageReply? replyTo,
   }) {
     return ChatMessage(
       id: id ?? this.id,
@@ -102,13 +102,22 @@ class ChatMessage {
       replyToId: replyToId,
       createdAt: createdAt,
       sender: sender,
-      replyTo: replyTo,
+      replyTo: replyTo ?? this.replyTo,
       status: status ?? this.status,
       localId: localId ?? this.localId,
     );
   }
 
+  static dynamic _unwrap(dynamic val) {
+    if (val == null) return null;
+    if (val is List) return val.isEmpty ? null : val.first;
+    return val;
+  }
+
   factory ChatMessage.fromJson(Map<String, dynamic> json) {
+    final rawSender = _unwrap(json['user_profile']);
+    final rawReply = _unwrap(json['reply_to']);
+
     return ChatMessage(
       id: json['id'],
       chatRoomId: json['chat_room_id'],
@@ -119,21 +128,31 @@ class ChatMessage {
       mediaType: json['media_type'],
       replyToId: json['reply_to_id'],
       createdAt: DateTime.parse(json['created_at']),
-      sender: json['user_profile'] != null
-          ? ChatMessageSender.fromJson(
-              json['user_profile'] is List
-                  ? (json['user_profile'] as List).first
-                  : json['user_profile'],
-            )
-          : null,
-      replyTo: json['reply_to'] != null
-          ? ChatMessageReply.fromJson(
-              json['reply_to'] is List
-                  ? (json['reply_to'] as List).first
-                  : json['reply_to'],
-            )
-          : null,
+      sender: rawSender != null ? ChatMessageSender.fromJson(rawSender) : null,
+      replyTo: rawReply != null ? ChatMessageReply.fromJson(rawReply) : null,
       status: MessageStatus.sent,
+    );
+  }
+}
+
+class MissionChatMembers {
+  final List<MissionChatMember> members;
+  final String captainId;
+  final bool isCurrentUserCaptain;
+
+  MissionChatMembers({
+    required this.members,
+    required this.captainId,
+    required this.isCurrentUserCaptain,
+  });
+
+  factory MissionChatMembers.fromJson(Map<String, dynamic> json) {
+    return MissionChatMembers(
+      members: (json['members'] as List<dynamic>? ?? [])
+          .map((e) => MissionChatMember.fromJson(e))
+          .toList(),
+      captainId: json['captain_id'] ?? "",
+      isCurrentUserCaptain: json['is_current_user_captain'] ?? false,
     );
   }
 }
@@ -167,12 +186,12 @@ class MissionChatMember {
 class MissionChatRoom {
   final int id;
   final int squadMissionId;
-  final DateTime createdAt;
+  final DateTime? createdAt;
 
   MissionChatRoom({
     required this.id,
     required this.squadMissionId,
-    required this.createdAt,
+    this.createdAt,
   });
 
   factory MissionChatRoom.fromJson(Map<String, dynamic> json) {

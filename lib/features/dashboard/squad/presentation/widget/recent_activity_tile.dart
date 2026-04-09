@@ -273,59 +273,64 @@ class RecentActivityTile extends StatelessWidget {
         final itemCount = shown.length + (overflow > 0 ? 1 : 0);
         final double totalWidth = avatarSize + (itemCount - 1) * overlap;
 
-        return SizedBox(
-          height: avatarSize.h,
-          width: totalWidth.w,
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              // Render avatars back-to-front so later ones overlap earlier
-              ...List.generate(shown.length, (i) {
-                return Positioned(
-                  left: (i * overlap).w,
-                  child: _buildBorderedAvatar(
-                    imageUrl: shown[i].profileImage,
-                    size: avatarSize,
-                  ),
-                );
-              }),
-              // +N bubble on top of the last avatar
-              if (overflow > 0)
-                Positioned(
-                  left: (shown.length * overlap).w,
-                  child: Container(
-                    height: avatarSize.h,
-                    width: avatarSize.w,
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          hexToColor(gradientColor.end),
-                          hexToColor(gradientColor.start),
-                        ],
-                        begin: Alignment.bottomCenter,
-                        end: Alignment.topCenter,
-                      ),
-                      shape: BoxShape.circle,
-                      border: Border.all(color: AppColors.white50, width: 3.w),
+        return Center(
+          child: SizedBox(
+            height: avatarSize.h,
+            width: totalWidth.w,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                // Render avatars back-to-front so later ones overlap earlier
+                ...List.generate(shown.length, (i) {
+                  return Positioned(
+                    left: (i * overlap).w,
+                    child: _buildBorderedAvatar(
+                      imageUrl: shown[i].profileImage,
+                      size: avatarSize,
                     ),
-                    child: Center(
-                      child: RichText(
-                        maxLines: 1,
-                        text: TextSpan(
-                          text: '+${formatAmount(overflow, uniComp: true)}',
-                          style: TextStyles.titleSemiBold20(context).copyWith(
-                            color: hexToColor(
-                              activity.squad?.textColor ??
-                                  activity.brand?.textColor ??
-                                  '#FFFFFF',
+                  );
+                }),
+                // +N bubble on top of the last avatar
+                if (overflow > 0)
+                  Positioned(
+                    left: (shown.length * overlap).w,
+                    child: Container(
+                      height: avatarSize.h,
+                      width: avatarSize.w,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            hexToColor(gradientColor.end),
+                            hexToColor(gradientColor.start),
+                          ],
+                          begin: Alignment.bottomCenter,
+                          end: Alignment.topCenter,
+                        ),
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: AppColors.white50,
+                          width: 3.w,
+                        ),
+                      ),
+                      child: Center(
+                        child: RichText(
+                          maxLines: 1,
+                          text: TextSpan(
+                            text: '+${formatAmount(overflow, uniComp: true)}',
+                            style: TextStyles.titleSemiBold20(context).copyWith(
+                              color: hexToColor(
+                                activity.squad?.textColor ??
+                                    activity.brand?.textColor ??
+                                    '#FFFFFF',
+                              ),
                             ),
                           ),
                         ),
                       ),
                     ),
                   ),
-                ),
-            ],
+              ],
+            ),
           ),
         );
       case ActivityType.unknown:

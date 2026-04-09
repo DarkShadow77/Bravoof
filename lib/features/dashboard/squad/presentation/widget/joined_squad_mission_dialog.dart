@@ -15,6 +15,7 @@ import '../../data/model/response/squad_mission_model.dart';
 Future<dynamic> joinedSquadMissionDialog({
   required SquadMission squadMission,
   required JoinedSquadMission joinedSquadMission,
+  required VoidCallback onTap,
 }) async {
   return Get.dialog(
     name: "joined_squad_mission_dialog",
@@ -23,6 +24,7 @@ Future<dynamic> joinedSquadMissionDialog({
     JoinedSquadMissionDialog(
       squadMission: squadMission,
       joinedSquadMission: joinedSquadMission,
+      onTap: onTap,
     ),
   );
 }
@@ -32,10 +34,12 @@ class JoinedSquadMissionDialog extends StatelessWidget {
     super.key,
     required this.squadMission,
     required this.joinedSquadMission,
+    required this.onTap,
   });
 
   final SquadMission squadMission;
   final JoinedSquadMission joinedSquadMission;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -153,7 +157,10 @@ class JoinedSquadMissionDialog extends StatelessWidget {
                     SizedBox(height: 18.h),
                     IconTextButton(
                       height: 50,
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.pop(context);
+                        onTap();
+                      },
                       text: "Start Mission",
                       color: AppColors.black,
                       textColor: AppColors.white,

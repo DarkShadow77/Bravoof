@@ -69,18 +69,15 @@ class SquadRepositoryImpl extends SquadRepository {
     );
   }
 
-  Future<Either<String, List<MissionChatMember>>> fetchMissionMembers({
+  Future<Either<String, MissionChatMembers>> fetchMissionMembers({
     required int missionId,
   }) async {
-    return ApiService.instance!.invokeEdgeFunction<List<MissionChatMember>>(
+    return ApiService.instance!.invokeEdgeFunction<MissionChatMembers>(
       functionName: 'fetch-squad-mission-members',
       body: {},
-      queryParams: {"missionId": missionId},
+      queryParams: {"missionId": missionId.toString()},
       fallbackErrorMessage: 'Failed to Fetch Squad Mission Members',
-      onSuccess: (data) {
-        final mission = data["data"] as List;
-        return mission.map((e) => MissionChatMember.fromJson(e)).toList();
-      },
+      onSuccess: (data) => MissionChatMembers.fromJson(data["data"]),
     );
   }
 
@@ -102,7 +99,7 @@ class SquadRepositoryImpl extends SquadRepository {
     return ApiService.instance!.invokeEdgeFunction<MissionChatResponse>(
       functionName: 'fetch-squad-mission-chat',
       body: {},
-      queryParams: {"missionId": missionId, "before": before},
+      queryParams: {"missionId": missionId.toString(), "before": before},
       fallbackErrorMessage: 'Failed to Fetch Squad Mission Chat',
       onSuccess: (data) => MissionChatResponse.fromJson(data["data"]),
     );

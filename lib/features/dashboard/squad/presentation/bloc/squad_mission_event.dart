@@ -48,3 +48,8 @@ class SubmitSquadMissionEvent extends SquadMissionEvent {
 
   SubmitSquadMissionEvent({this.image, required this.text});
 }
+
+class UserTypingEvent extends SquadMissionEvent {
+  final bool isTyping;
+  UserTypingEvent({required this.isTyping});
+}

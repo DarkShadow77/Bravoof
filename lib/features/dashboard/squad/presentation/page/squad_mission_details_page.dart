@@ -4,6 +4,7 @@ import 'package:bravoo/core/constants/fonts.dart';
 import 'package:bravoo/features/dashboard/squad/data/model/response/squad_mission_model.dart';
 import 'package:bravoo/features/dashboard/squad/data/model/response/squad_model.dart';
 import 'package:bravoo/features/dashboard/squad/presentation/bloc/activity_bloc.dart';
+import 'package:bravoo/features/dashboard/squad/presentation/widget/squad_mission_instruction_dialog.dart';
 import 'package:fade_shimmer/fade_shimmer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -27,6 +28,7 @@ import '../bloc/squad_bloc.dart';
 import '../bloc/squad_individual_bloc.dart';
 import '../bloc/squad_mission_bloc.dart';
 import '../widget/joined_squad_mission_dialog.dart';
+import 'squad_mission_chat_page.dart';
 
 class SquadMissionDetailsPage extends StatefulWidget {
   const SquadMissionDetailsPage({
@@ -106,6 +108,23 @@ class _SquadMissionDetailsPageState extends State<SquadMissionDetailsPage>
       joinedSquadMissionDialog(
         squadMission: squadMission,
         joinedSquadMission: state.joinedSquadMission,
+        onTap: () => squadMissionInstructionDialog(
+          squadMission: squadMission,
+          showChat: true,
+          onChatPressed: () => Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => BlocProvider.value(
+                value: context.read<SquadMissionBloc>(),
+                child: SquadMissionChatPage(
+                  missionTitle: squadMission.title,
+                  missionId: squadMission.id,
+                  chatRoomId: squadMission.chatRoomId!,
+                ),
+              ),
+            ),
+          ),
+        ),
       );
     }
   }
@@ -668,20 +687,19 @@ class _CollapsedAppBar extends StatelessWidget {
                   context.read<SquadMissionBloc>().add(JoinSquadMissionEvent());
                 } else if (squadMission.isJoined &&
                     squadMission.chatRoomId != null) {
-                  /* Navigator.push(
+                  Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (_) => BlocProvider.value(
                         value: context.read<SquadMissionBloc>(),
                         child: SquadMissionChatPage(
+                          missionTitle: squadMission.title,
                           missionId: squadMission.id,
                           chatRoomId: squadMission.chatRoomId!,
-                          squad: squad,
-                          squadMission: squadMission,
                         ),
                       ),
                     ),
-                  );*/
+                  );
                 }
               },
               text: squadMission.actionLabel,
@@ -811,20 +829,21 @@ class _ExpandedAppBar extends StatelessWidget {
                               onPressed: () {
                                 if (squadMission.isJoined) {
                                   if (squadMission.chatRoomId != null) {
-                                    /*Navigator.push(
+                                    Navigator.push(
                                       context,
                                       MaterialPageRoute(
                                         builder: (_) => BlocProvider.value(
-                                          value: context.read<SquadMissionBloc>(),
+                                          value: context
+                                              .read<SquadMissionBloc>(),
                                           child: SquadMissionChatPage(
+                                            missionTitle: squadMission.title,
                                             missionId: squadMission.id,
-                                            chatRoomId: squadMission.chatRoomId!,
-                                            squad: squad,
-                                            squadMission: squadMission,
+                                            chatRoomId:
+                                                squadMission.chatRoomId!,
                                           ),
                                         ),
                                       ),
-                                    );*/
+                                    );
                                   }
                                 } else if (squadMission.canJoin) {
                                   context.read<SquadMissionBloc>().add(
