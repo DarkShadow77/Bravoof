@@ -42,6 +42,15 @@ class ChatMessageReply {
       sender: rawSender != null ? ChatMessageSender.fromJson(rawSender) : null,
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'content': content,
+      'media_url': mediaUrl,
+      'media_type': mediaType,
+    };
+  }
 }
 
 enum MessageStatus { sent, pending, failed }

@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -521,6 +522,9 @@ class _ChatMessageBubble extends StatelessWidget {
 
     return GestureDetector(
       onLongPress: () => onReply(message),
+      onTap: () {
+        log("Message ${message.id}: Reply to ${message.replyTo?.toJson()}");
+      },
       child: Padding(
         padding: EdgeInsets.only(bottom: 4.h),
         child: Row(

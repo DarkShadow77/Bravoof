@@ -12,7 +12,7 @@ class StreakRepositoryImpl extends StreakRepository {
   }) async {
     return ApiService.instance!.invokeEdgeFunction<StreakResponse>(
       functionName: 'fetch-streak',
-      body: {'userId': userId},
+      body: {},
       fallbackErrorMessage: 'Failed to Fetch Streak',
       onSuccess: (data) => StreakResponse.fromJson(data['data']),
     );
@@ -24,8 +24,8 @@ class StreakRepositoryImpl extends StreakRepository {
     final String deviceTimezone = tz.local.name;
     return ApiService.instance!.invokeEdgeFunction<StreakResponse>(
       functionName: 'check-in',
-      body: {'userId': userId, 'timezone': deviceTimezone},
-      fallbackErrorMessage: 'Failed to CheckIn',
+      body: {'timezone': deviceTimezone},
+      fallbackErrorMessage: 'Failed to Check In',
       onSuccess: (data) => StreakResponse.fromJson(data['data']),
     );
   }
