@@ -49,6 +49,7 @@ class SkillUpStep {
   final DateTime? unlockExpiresAt;
   // final UnlockSource? unlockSource;
   final MissionStatus status;
+  final String submissionType;
 
   SkillUpStep({
     required this.id,
@@ -63,6 +64,7 @@ class SkillUpStep {
     required this.status,
     this.unlockExpiresAt,
     // this.unlockSource,
+    required this.submissionType,
   });
 
   factory SkillUpStep.fromJson(Map<String, dynamic> json) {
@@ -79,19 +81,13 @@ class SkillUpStep {
 
     SkillUpContentBlock? parseContent(dynamic value) {
       if (value == null) return null;
-
-      // Supabase returns JSONB as Map, not String
-      if (value is Map<String, dynamic>) {
+      if (value is Map<String, dynamic>)
         return SkillUpContentBlock.fromJson(value);
-      }
-
-      // Fallback if stored as string
       if (value is String) {
         return SkillUpContentBlock.fromJson(
           Map<String, dynamic>.from(jsonDecode(value)),
         );
       }
-
       return null;
     }
 
@@ -113,8 +109,12 @@ class SkillUpStep {
           ? UnlockSource.fromDb(unlock['unlock_source'])
           : null,*/
       status: status,
+      submissionType: json['submission_type'] ?? 'photo',
     );
   }
+
+  bool get isPhotoSubmission => submissionType == 'photo';
+  bool get isTextSubmission => submissionType == 'text';
 }
 
 extension SkillUpStepX on SkillUpStep {

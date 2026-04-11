@@ -11,12 +11,10 @@ import 'skill_up_repository.dart';
 class SkillUpRepositoryImpl extends SkillUpRepository {
   final supabase = Supabase.instance.client;
 
-  Future<Either<String, List<SkillUpMission>>> fetchSkillUpMission({
-    required String userId,
-  }) async {
+  Future<Either<String, List<SkillUpMission>>> fetchSkillUpMission() async {
     return ApiService.instance!.invokeEdgeFunction<List<SkillUpMission>>(
       functionName: 'fetch-skill-up-missions',
-      body: {"userId": userId},
+      body: {},
       fallbackErrorMessage: 'Failed to Fetch Skill Up Mission',
       onSuccess: (data) {
         final mission = data["data"] as List;
@@ -28,19 +26,27 @@ class SkillUpRepositoryImpl extends SkillUpRepository {
   Future<Either<String, void>> completeSkillUpStep({
     required int skillUpMissionId,
     required int stepId,
-    required String userId,
-    required String evidenceImage,
+    String? evidenceImage,
+    String? evidenceText,
   }) async {
     final token = supabase.auth.currentSession?.accessToken ?? "";
-    final formData = FormData.fromMap({
+    final Map<String, dynamic> fields = {
       'step_id': stepId,
       'skill_up_mission_id': skillUpMissionId,
-      'userId': userId,
-      'evidence_image': await MultipartFile.fromFile(
+    };
+
+    if (evidenceImage != null) {
+      fields['evidence_image'] = await MultipartFile.fromFile(
         evidenceImage,
         filename: evidenceImage.split('/').last,
-      ),
-    });
+      );
+    }
+
+    if (evidenceText != null) {
+      fields['evidence_text'] = evidenceText;
+    }
+
+    final formData = FormData.fromMap(fields);
 
     final response = await ApiService.instance!.postRequest(
       "functions/v1/complete-skill-up-mission",
@@ -62,16 +68,11 @@ class SkillUpRepositoryImpl extends SkillUpRepository {
 
   Future<Either<String, void>> unlockSkillUpStep({
     required int stepId,
-    required String userId,
     required UnlockSource source,
   }) async {
     return ApiService.instance!.invokeEdgeFunction<void>(
       functionName: 'unlock-skill-up-step',
-      body: {
-        "userId": userId,
-        "stepId": stepId,
-        "source": source.name.toUpperCase(),
-      },
+      body: {"stepId": stepId, "source": source.name.toUpperCase()},
       fallbackErrorMessage: 'Failed to Unlock Skill Up Mission',
       onSuccess: (data) => "Successfully Unlocked Skill Up",
     );

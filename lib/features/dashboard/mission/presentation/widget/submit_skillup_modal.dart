@@ -1,6 +1,7 @@
 import 'package:bravoo/app/view/widgets/button/icon_text_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:form_field_validator/form_field_validator.dart';
 import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:image_picker/image_picker.dart';
@@ -11,8 +12,12 @@ import '../../../../../app/view/widgets/bottom_modals/show_modal_sheet.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/fonts.dart';
 import '../../../../../core/utils/helpers.dart';
+import '../../../../common/flowva_text_field.dart';
 
-Future submitSkillUpModal({required Function(String?) onPressed}) {
+Future submitSkillUpModal({
+  required Function(String?) onPressed,
+  required String submissionType,
+}) {
   return Get.bottomSheet(
     isScrollControlled: true,
     ignoreSafeArea: true,
@@ -22,14 +27,19 @@ Future submitSkillUpModal({required Function(String?) onPressed}) {
     barrierColor: Colors.transparent,
     enterBottomSheetDuration: const Duration(milliseconds: 200),
     exitBottomSheetDuration: const Duration(milliseconds: 200),
-    SubmitSkillUpModal(onPressed: onPressed),
+    SubmitSkillUpModal(onPressed: onPressed, submissionType: submissionType),
   );
 }
 
 class SubmitSkillUpModal extends StatefulWidget {
-  const SubmitSkillUpModal({super.key, required this.onPressed});
+  const SubmitSkillUpModal({
+    super.key,
+    required this.onPressed,
+    required this.submissionType,
+  });
 
   final Function(String?) onPressed;
+  final String submissionType;
 
   @override
   State<SubmitSkillUpModal> createState() => _SubmitSkillUpModalState();
@@ -37,28 +47,41 @@ class SubmitSkillUpModal extends StatefulWidget {
 
 class _SubmitSkillUpModalState extends State<SubmitSkillUpModal> {
   final ImagePicker _picker = ImagePicker();
+  final TextEditingController _textController = TextEditingController();
 
   String? pickedImage;
 
-  pickImage(ImageSource imageSource) async {
-    try {
-      final XFile? pickedFile = await _picker.pickImage(source: imageSource);
+  bool get isPhoto => widget.submissionType == 'photo';
 
-      setState(() {
-        pickedImage = pickedFile!.path;
-      });
+  bool get canSubmit =>
+      isPhoto ? pickedImage != null : _textController.text.trim().isNotEmpty;
+
+  String get _submissionValue =>
+      isPhoto ? pickedImage! : _textController.text.trim();
+
+  @override
+  void dispose() {
+    _textController.dispose();
+    super.dispose();
+  }
+
+  pickImage() async {
+    try {
+      final XFile? pickedFile = await _picker.pickImage(
+        source: ImageSource.gallery,
+      );
+      if (pickedFile != null) {
+        setState(() => pickedImage = pickedFile.path);
+      }
     } catch (e) {
-      print(e);
-      setState(() {
-        // _pickImageError = e;
-      });
+      debugPrint('Image pick error: $e');
     }
   }
 
   @override
   Widget build(BuildContext ctx) {
     return ShowModalSheet(
-      maxHeight: 400.h,
+      maxHeight: isPhoto ? 400.h : 480.h,
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 52.w),
         child: Column(
@@ -124,52 +147,62 @@ class _SubmitSkillUpModalState extends State<SubmitSkillUpModal> {
               textAlign: TextAlign.start,
               overflow: TextOverflow.ellipsis,
               text: TextSpan(
-                text: "Upload your image as screenshot below:",
+                text: isPhoto
+                    ? "Upload your image as screenshot below:"
+                    : "Type your answer below:",
                 style: TextStyles.normalSemibold14(context),
               ),
             ),
             SizedBox(height: 36.h),
-            GestureDetector(
-              onTap: () => pickImage(ImageSource.gallery),
-              child: Container(
-                padding: EdgeInsets.symmetric(vertical: 12, horizontal: 10),
-                decoration: BoxDecoration(
-                  color: Color(0xFFF9F9F9),
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Color(0xFFFE9E9E9)),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    RichText(
-                      text: TextSpan(
-                        text: pickedImage != null
-                            ? '${shortenFileName(p.basename(pickedImage!))}'
-                            : "Click to upload your image",
-                        style: TextStyles.smallSemibold12(
-                          context,
-                        ).copyWith(color: AppColors.grey400),
-                      ),
-                    ),
-                    HugeIcon(icon: HugeIcons.strokeRoundedImageCrop),
-                  ],
-                ),
-              ),
-            ),
-            SizedBox(height: 36.h),
-            pickedImage != null
-                ? IconTextButton(
-                    color: AppColors.black,
-                    textColor: AppColors.white,
-                    onPressed: () => widget.onPressed(pickedImage),
-                    text: "Submit mission ✅",
-                  )
-                : IconTextButton(
-                    color: AppColors.grey300,
-                    textColor: AppColors.white,
-                    onPressed: () {},
-                    text: "Submit mission ✅",
+            if (isPhoto)
+              GestureDetector(
+                onTap: pickImage,
+                child: Container(
+                  padding: EdgeInsets.symmetric(vertical: 12, horizontal: 10),
+                  decoration: BoxDecoration(
+                    color: Color(0xFFF9F9F9),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Color(0xFFFE9E9E9)),
                   ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      RichText(
+                        text: TextSpan(
+                          text: pickedImage != null
+                              ? shortenFileName(p.basename(pickedImage!))
+                              : "Click to upload your image",
+                          style: TextStyles.smallSemibold12(
+                            context,
+                          ).copyWith(color: AppColors.grey400),
+                        ),
+                      ),
+                      HugeIcon(icon: HugeIcons.strokeRoundedImageCrop),
+                    ],
+                  ),
+                ),
+              )
+            else
+              AppTextFeild(
+                maxLines: 4,
+                controller: _textController,
+                hintText: "Write your answer here...",
+                validator: MultiValidator([
+                  RequiredValidator(errorText: "Answer is required"),
+                ]).call,
+                onChanged: (value) {
+                  setState(() {});
+                },
+              ),
+            SizedBox(height: 36.h),
+            IconTextButton(
+              color: canSubmit ? AppColors.black : AppColors.grey300,
+              textColor: AppColors.white,
+              onPressed: canSubmit
+                  ? () => widget.onPressed(_submissionValue)
+                  : () {},
+              text: "Submit mission ✅",
+            ),
             SizedBox(height: 20.h + MediaQuery.of(context).padding.bottom),
           ],
         ),

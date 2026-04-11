@@ -27,9 +27,7 @@ class SkillUpBloc extends Bloc<SkillUpEvent, SkillUpState> {
         ),
       );
 
-    final missionRes = await repo.fetchSkillUpMission(
-      userId: supabase.auth.currentUser!.id,
-    );
+    final missionRes = await repo.fetchSkillUpMission();
 
     missionRes.fold(
       (err) => emit(
@@ -60,8 +58,8 @@ class SkillUpBloc extends Bloc<SkillUpEvent, SkillUpState> {
     final res = await repo.completeSkillUpStep(
       skillUpMissionId: event.missionId,
       stepId: event.stepId,
-      userId: supabase.auth.currentUser!.id,
       evidenceImage: event.imageUrl,
+      evidenceText: event.evidenceText,
     );
 
     res.fold(
@@ -93,7 +91,6 @@ class SkillUpBloc extends Bloc<SkillUpEvent, SkillUpState> {
     );
 
     final res = await repo.unlockSkillUpStep(
-      userId: supabase.auth.currentUser!.id,
       stepId: event.stepId,
       source: event.source,
     );

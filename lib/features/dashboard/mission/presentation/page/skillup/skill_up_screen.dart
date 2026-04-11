@@ -87,13 +87,19 @@ class _SkillUpScreenState extends State<SkillUpScreen> with UIToolMixin {
                     content: mission.contentTwo!,
                     mainPressed: () {
                       submitSkillUpModal(
+                        submissionType: mission.submissionType,
                         onPressed: (value) {
                           if (value != null) {
                             context.read<SkillUpBloc>().add(
                               CompleteSkillUpMission(
                                 missionId: skill.id,
                                 stepId: mission.id,
-                                imageUrl: value,
+                                imageUrl: mission.isPhotoSubmission
+                                    ? value
+                                    : null,
+                                evidenceText: mission.isTextSubmission
+                                    ? value
+                                    : null,
                               ),
                             );
                           }
@@ -380,13 +386,22 @@ class SkillMissionCard extends StatelessWidget with UIToolMixin {
                                       content: mission.contentTwo!,
                                       mainPressed: () {
                                         submitSkillUpModal(
+                                          submissionType:
+                                              mission.submissionType,
                                           onPressed: (value) {
                                             if (value != null) {
                                               context.read<SkillUpBloc>().add(
                                                 CompleteSkillUpMission(
                                                   missionId: skill.id,
                                                   stepId: mission.id,
-                                                  imageUrl: value,
+                                                  imageUrl:
+                                                      mission.isPhotoSubmission
+                                                      ? value
+                                                      : null,
+                                                  evidenceText:
+                                                      mission.isTextSubmission
+                                                      ? value
+                                                      : null,
                                                 ),
                                               );
                                             }

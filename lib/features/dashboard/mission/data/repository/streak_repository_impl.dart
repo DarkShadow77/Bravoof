@@ -10,9 +10,10 @@ class StreakRepositoryImpl extends StreakRepository {
   Future<Either<String, StreakResponse>> fetchStreak({
     required String userId,
   }) async {
+    final String deviceTimezone = tz.local.name;
     return ApiService.instance!.invokeEdgeFunction<StreakResponse>(
       functionName: 'fetch-streak',
-      body: {},
+      body: {'timezone': deviceTimezone},
       fallbackErrorMessage: 'Failed to Fetch Streak',
       onSuccess: (data) => StreakResponse.fromJson(data['data']),
     );
