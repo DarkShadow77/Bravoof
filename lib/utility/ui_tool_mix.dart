@@ -4,14 +4,13 @@ import 'package:hugeicons/hugeicons.dart';
 
 mixin UIToolMixin {
   void showMessage(
-      String message,
-      BuildContext context, {
-        Color color = Colors.red,
-        styleColor = Colors.white,
-        iconColor = Colors.black,
-        bool status = false,
-      }) {
-
+    String message,
+    BuildContext context, {
+    Color color = Colors.red,
+    styleColor = Colors.white,
+    iconColor = Colors.black,
+    bool status = false,
+  }) {
     final overlay = Overlay.of(context);
     final entry = OverlayEntry(
       builder: (context) => Positioned(
@@ -23,24 +22,31 @@ mixin UIToolMixin {
           child: Container(
             padding: const EdgeInsets.all(12),
             decoration: BoxDecoration(
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black26,
-                    blurRadius: 6,
-                    offset: Offset(0, 3),
-                  ),
-                ],
-                color: Color(0xFFF1F1F1),
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color:Color(0xFFCDCDCD) )
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black26,
+                  blurRadius: 6,
+                  offset: Offset(0, 3),
+                ),
+              ],
+              color: Color(0xFFF1F1F1),
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: Color(0xFFCDCDCD)),
             ),
             child: Row(
               children: [
-                status? Container(
-                    height: 20,
-                    width: 20,
-                    color: Colors.white,
-                    child: HugeIcon(icon:HugeIcons.strokeRoundedCancel01,strokeWidth: 4,color: Color(0xFFB60000))): Icon(Icons.check_circle, color: Colors.green),
+                status
+                    ? Container(
+                        height: 20,
+                        width: 20,
+                        color: Colors.white,
+                        child: HugeIcon(
+                          icon: HugeIcons.strokeRoundedCancel01,
+                          strokeWidth: 4,
+                          color: Color(0xFFB60000),
+                        ),
+                      )
+                    : Icon(Icons.check_circle, color: Colors.green),
                 SizedBox(width: 8),
                 Expanded(
                   child: Text(
@@ -64,5 +70,4 @@ mixin UIToolMixin {
 
     Future.delayed(const Duration(seconds: 3)).then((_) => entry.remove());
   }
-
 }

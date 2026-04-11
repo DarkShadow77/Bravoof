@@ -68,16 +68,22 @@ class SkillUpStep {
   });
 
   factory SkillUpStep.fromJson(Map<String, dynamic> json) {
-    final unlock = (json['skill_up_step_unlocks'] as List?)?.firstOrNull;
-    final progress = (json['skill_up_user_progress'] as List?)?.firstOrNull;
+    // Filter to only this user's unlock/progress records
+    final unlockList = json['skill_up_step_unlocks'] as List?;
+    final progressList = json['skill_up_user_progress'] as List?;
 
-    final isUnlocked =
-        unlock != null &&
-        DateTime.parse(unlock['expires_at']).isAfter(DateTime.now());
+    // Take the first (should only ever be one per user after filtering)
+    final unlock = unlockList?.firstOrNull;
+    final progress = progressList?.firstOrNull;
+
+    // Unlock is valid only if expires_at is in the future
+    final unlockExpiresAt = unlock != null
+        ? DateTime.tryParse(unlock['expires_at'] ?? '')
+        : null;
 
     final status = progress == null
         ? MissionStatus.notJoined
-        : statusFromDb(progress['status']);
+        : statusFromDb((progress['status'] ?? "") as String);
 
     SkillUpContentBlock? parseContent(dynamic value) {
       if (value == null) return null;
@@ -101,10 +107,7 @@ class SkillUpStep {
       contentOne: parseContent(json['content_one']),
       contentTwo: parseContent(json['content_two']),
       locked: json['locked'] ?? false,
-      unlockExpiresAt: unlock != null
-          ? DateTime.parse(unlock['expires_at'])
-          : null,
-
+      unlockExpiresAt: unlockExpiresAt,
       /*unlockSource: unlock != null
           ? UnlockSource.fromDb(unlock['unlock_source'])
           : null,*/
@@ -112,6 +115,21 @@ class SkillUpStep {
       submissionType: json['submission_type'] ?? 'photo',
     );
   }
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'step_order': stepOrder,
+    'title': title,
+    'subject': subject,
+    'min_points': minPoints,
+    'max_points': maxPoints,
+    'content_one': contentOne?.toJson(),
+    'content_two': contentTwo?.toJson(),
+    'locked': locked,
+    'unlock_expires_at': unlockExpiresAt?.toIso8601String(),
+    'status': statusToDb(status),
+    'submission_type': submissionType,
+  };
 
   bool get isPhotoSubmission => submissionType == 'photo';
   bool get isTextSubmission => submissionType == 'text';
@@ -121,9 +139,7 @@ extension SkillUpStepX on SkillUpStep {
   /// Is this step currently unlocked for the user?
   bool get isUnlocked {
     if (!locked) return true;
-
     if (unlockExpiresAt == null) return false;
-
     return unlockExpiresAt!.isAfter(DateTime.now());
   }
 
@@ -136,6 +152,14 @@ extension SkillUpStepX on SkillUpStep {
 
   /// Should show "Unlock Mission" button
   bool get needsUnlock => locked && !isUnlocked;
+
+  bool get isPending => status == MissionStatus.pending;
+  bool get isApproved => status == MissionStatus.completed;
+  bool get isRejected => status == MissionStatus.rejected;
+  bool get isNotJoined => status == MissionStatus.notJoined;
+
+  /// User can start/restart the mission
+  bool get canStart => isNotJoined || isRejected;
 }
 
 class SkillUpContentBlock {
@@ -159,6 +183,13 @@ class SkillUpContentBlock {
       link: json['link'] != null ? ContentLink.fromJson(json['link']) : null,
     );
   }
+
+  Map<String, dynamic> toJson() => {
+    'title': title,
+    'subtitle': subtitle,
+    'content': content,
+    if (link != null) 'link': link!.toJson(),
+  };
 }
 
 class ContentLink {
@@ -170,4 +201,6 @@ class ContentLink {
   factory ContentLink.fromJson(Map<String, dynamic> json) {
     return ContentLink(url: json['url'] ?? '', type: json['type'] ?? '');
   }
+
+  Map<String, dynamic> toJson() => {'url': url, 'type': type};
 }

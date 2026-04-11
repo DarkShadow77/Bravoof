@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:bravoo/app/view/widgets/button/icon_text_button.dart';
 import 'package:bravoo/core/constants/app_assets.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +13,6 @@ import '../../../../../../app/view/widgets/loading/outer_loading.dart';
 import '../../../../../../core/constants/app_colors.dart';
 import '../../../../../../core/constants/fonts.dart';
 import '../../../../../../utility/ui_tool_mix.dart';
-import '../../../data/model/mission_status_enum.dart';
 import '../../../data/model/skill_up_mission_model.dart';
 import '../../bloc/skill_up_bloc.dart';
 import '../../widget/skill_up_success_dialog.dart';
@@ -36,6 +37,7 @@ class _SkillUpScreenState extends State<SkillUpScreen> with UIToolMixin {
   void initState() {
     super.initState();
     skill = widget.skill;
+    log("SkillUp Misssion ${skill.steps.map((e) => e.toJson())}");
   }
 
   _loadingState(BuildContext context, SkillUpLoading state, int stepId) {
@@ -253,9 +255,8 @@ class SkillMissionCard extends StatelessWidget with UIToolMixin {
 
   @override
   Widget build(BuildContext context) {
-    bool notJoined =
-        mission.status == MissionStatus.notJoined ||
-        mission.status == MissionStatus.rejected;
+    bool canStart = mission.canStart;
+    bool isPending = mission.isPending;
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
       decoration: BoxDecoration(
@@ -295,7 +296,7 @@ class SkillMissionCard extends StatelessWidget with UIToolMixin {
               Expanded(
                 child: GradientProgress(
                   height: 14,
-                  progress: (notJoined ? 10 : 100) / 100,
+                  progress: (canStart ? 10 : 100) / 100,
                 ),
               ),
               Container(
@@ -368,7 +369,7 @@ class SkillMissionCard extends StatelessWidget with UIToolMixin {
                     style: TextStyles.smallRegular12(context, opacity: 0.6),
                   ),
                 if (mission.isUnlocked) ...[
-                  if (notJoined)
+                  if (canStart)
                     IconTextButton(
                       onPressed: () {
                         Navigator.push(
@@ -433,15 +434,22 @@ class SkillMissionCard extends StatelessWidget with UIToolMixin {
                       text: "Start Mission",
                       textColor: AppColors.white,
                     )
-                  else
+                  else if (isPending)
                     IconTextButton(
                       onPressed: () {
-                        showMessage(
-                          "Mission Already Completed",
-                          context,
-                          color: Colors.white,
-                          styleColor: Colors.black,
-                        );
+                        showMessage("Submission under review", context);
+                      },
+                      color: AppColors.grey400.withValues(
+                        alpha: .85,
+                      ), // or whatever fits
+                      borderColor: AppColors.grey400.withValues(alpha: .15),
+                      text: "Under Review",
+                      textColor: AppColors.white50,
+                    )
+                  else // isApproved
+                    IconTextButton(
+                      onPressed: () {
+                        showMessage("Mission Already Completed", context);
                       },
                       color: AppColors.grey400.withValues(alpha: .85),
                       borderColor: AppColors.grey400.withValues(alpha: .15),
@@ -461,12 +469,12 @@ class SkillMissionCard extends StatelessWidget with UIToolMixin {
                           );
                         },
                         onVideo: () {
-                          context.read<SkillUpBloc>().add(
+                          /*context.read<SkillUpBloc>().add(
                             UnlockSkillUpMission(
                               stepId: mission.id,
                               source: UnlockSource.video,
                             ),
-                          );
+                          );*/
                         },
                       );
                     },
