@@ -316,6 +316,8 @@ class _SquadMissionChatPageState extends State<SquadMissionChatPage>
       if (Get.isDialogOpen == true) {
         Navigator.of(context, rootNavigator: true).pop();
       }
+      Navigator.of(context, rootNavigator: true).pop();
+
       context.read<SquadIndividualBloc>().add(FetchSquadMissionsEvent());
       showModalBottomSheet(
         context: context,
