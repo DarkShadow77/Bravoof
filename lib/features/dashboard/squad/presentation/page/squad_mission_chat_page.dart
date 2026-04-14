@@ -607,12 +607,17 @@ class _ChatAppBar extends StatelessWidget {
                     spacing: 4.w,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
+                      HugeIcon(
+                        icon: HugeIcons.strokeRoundedInvoice01,
+                        size: 12.sp,
+                        color: AppColors.orange400,
+                      ),
                       RichText(
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         text: TextSpan(
                           text: "Mission Info",
-                          style: TextStyles.smallSemibold12(
+                          style: TextStyles.cardSemibold10(
                             context,
                           ).copyWith(color: AppColors.orange400),
                         ),
