@@ -157,7 +157,7 @@ class SquadRepositoryImpl extends SquadRepository {
     });
 
     final response = await ApiService.instance!.postRequest(
-      "functions/v1/complete-squad-mission",
+      "functions/v1/submit-squad-mission",
       formData,
       accessToken: token,
       apiKey: dotenv.env["ANON_KEY"] ?? "",
