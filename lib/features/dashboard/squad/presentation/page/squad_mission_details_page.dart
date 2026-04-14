@@ -119,6 +119,14 @@ class _SquadMissionDetailsPageState extends State<SquadMissionDetailsPage>
                 child: SquadMissionChatPage(
                   mission: squadMission,
                   chatRoomId: squadMission.chatRoomId!,
+                  onMissionSubmitted: () {
+                    context.read<SquadIndividualBloc>().add(
+                      FetchSquadMissionsEvent(),
+                    );
+                    context.read<RecentActivityBloc>().add(
+                      FetchActivityEvent(),
+                    );
+                  },
                 ),
               ),
             ),
@@ -694,6 +702,14 @@ class _CollapsedAppBar extends StatelessWidget {
                         child: SquadMissionChatPage(
                           mission: squadMission,
                           chatRoomId: squadMission.chatRoomId!,
+                          onMissionSubmitted: () {
+                            context.read<SquadIndividualBloc>().add(
+                              FetchSquadMissionsEvent(),
+                            );
+                            context.read<RecentActivityBloc>().add(
+                              FetchActivityEvent(),
+                            );
+                          },
                         ),
                       ),
                     ),
@@ -837,6 +853,16 @@ class _ExpandedAppBar extends StatelessWidget {
                                             mission: squadMission,
                                             chatRoomId:
                                                 squadMission.chatRoomId!,
+                                            onMissionSubmitted: () {
+                                              context
+                                                  .read<SquadIndividualBloc>()
+                                                  .add(
+                                                    FetchSquadMissionsEvent(),
+                                                  );
+                                              context
+                                                  .read<RecentActivityBloc>()
+                                                  .add(FetchActivityEvent());
+                                            },
                                           ),
                                         ),
                                       ),

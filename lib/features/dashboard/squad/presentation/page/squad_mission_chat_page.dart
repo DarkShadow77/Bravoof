@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:bravoo/core/constants/app_assets.dart';
 import 'package:bravoo/core/utils/helpers.dart';
-import 'package:bravoo/features/dashboard/squad/presentation/bloc/squad_individual_bloc.dart';
 import 'package:bravoo/features/dashboard/squad/presentation/widget/squad_mission_instruction_dialog.dart';
 import 'package:bravoo/features/dashboard/squad/presentation/widget/submit_squad_mission_modal.dart';
 import 'package:flutter/material.dart';
@@ -34,10 +33,12 @@ class SquadMissionChatPage extends StatefulWidget {
     super.key,
     required this.mission,
     required this.chatRoomId,
+    this.onMissionSubmitted,
   });
 
   final SquadMission mission;
   final int chatRoomId;
+  final VoidCallback? onMissionSubmitted;
 
   @override
   State<SquadMissionChatPage> createState() => _SquadMissionChatPageState();
@@ -313,12 +314,16 @@ class _SquadMissionChatPageState extends State<SquadMissionChatPage>
   _successState(BuildContext context, SquadMissionSuccessState state) {
     if ((state.type == SquadMissionType.submitMission &&
         state.missionId == widget.mission.id)) {
-      if (Get.isDialogOpen == true) {
-        Navigator.of(context, rootNavigator: true).pop();
-      }
-      Navigator.of(context, rootNavigator: true).pop();
+      final rootNavigator = Navigator.of(context, rootNavigator: true);
+      final onSubmitted = widget.onMissionSubmitted;
 
-      context.read<SquadIndividualBloc>().add(FetchSquadMissionsEvent());
+      if (Get.isDialogOpen == true) {
+        rootNavigator.pop();
+      }
+      rootNavigator.pop();
+
+      onSubmitted?.call();
+
       showModalBottomSheet(
         context: context,
         isScrollControlled: true,
@@ -331,7 +336,7 @@ class _SquadMissionChatPageState extends State<SquadMissionChatPage>
           title: "Thank you for your submission. ",
           bodyText:
               "Once we confirm it, your reward will be added to your account within 5 days.",
-          b_text: "Back to missions",
+          b_text: "Back to Chat",
         ),
       );
     }
