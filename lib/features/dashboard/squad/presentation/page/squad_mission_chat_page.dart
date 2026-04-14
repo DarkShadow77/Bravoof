@@ -335,7 +335,7 @@ class _SquadMissionChatPageState extends State<SquadMissionChatPage>
         builder: (_) => MissionSuccess(
           title: "Thank you for your submission. ",
           bodyText:
-              "Once we confirm it, your reward will be added to your account within 5 days.",
+              "Once we confirm it, your reward will be added to your account.",
           b_text: "Back to Chat",
         ),
       );
