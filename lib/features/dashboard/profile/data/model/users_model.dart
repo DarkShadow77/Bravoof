@@ -4,6 +4,7 @@ class Users {
   final String profileImage;
   final String bio;
   final int totalEarned;
+  final DateTime createdAt;
 
   Users({
     required this.userId,
@@ -11,6 +12,7 @@ class Users {
     required this.profileImage,
     required this.bio,
     required this.totalEarned,
+    required this.createdAt,
   });
 
   factory Users.fromJson(Map<String, dynamic> json) {
@@ -20,6 +22,9 @@ class Users {
       profileImage: json['profile_image'] ?? '',
       bio: json['bio'] ?? '',
       totalEarned: json['total_earned'] ?? 0,
+      createdAt: DateTime.parse(
+        json['created_at'] ?? DateTime.now().toIso8601String(),
+      ),
     );
   }
 
@@ -31,6 +36,7 @@ class Users {
     data['profile_image'] = profileImage;
     data['bio'] = bio;
     data['total_earned'] = totalEarned;
+    data['created_at'] = createdAt;
     return data;
   }
 }

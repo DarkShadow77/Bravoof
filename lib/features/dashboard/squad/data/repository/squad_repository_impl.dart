@@ -144,7 +144,7 @@ class SquadRepositoryImpl extends SquadRepository {
   Future<Either<String, String>> submitMission({
     required int missionId,
     required String? image,
-    required String text,
+    required String? text,
   }) async {
     final token =
         Supabase.instance.client.auth.currentSession?.accessToken ?? "";

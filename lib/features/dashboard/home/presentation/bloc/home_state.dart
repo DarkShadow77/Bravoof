@@ -18,7 +18,7 @@ class HomeState extends Equatable {
   final SpotlightModel spotlight;
   final List<SpotlightModel> spotlights;
   final QuoteModel quote;
-  final List<UserProfile> referrals;
+  final List<Users> referrals;
   final LeaderboardResponseModel leaderboard;
   final HomeMessageModel homeMessage;
   final bool updateLater;
@@ -43,7 +43,7 @@ class HomeState extends Equatable {
     SpotlightModel? spotlight,
     List<SpotlightModel>? spotlights,
     QuoteModel? quote,
-    List<UserProfile>? referrals,
+    List<Users>? referrals,
     LeaderboardResponseModel? leaderboard,
     HomeMessageModel? homeMessage,
     bool? updateLater,

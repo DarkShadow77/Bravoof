@@ -804,7 +804,32 @@ class SquadMissionCard extends StatelessWidget {
                                   child: IconTextButton(
                                     height: 22.h,
                                     text: "Join Mission",
-                                    onPressed: () {},
+                                    onPressed: () => Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) => MultiBlocProvider(
+                                          providers: [
+                                            // Pass the EXISTING instance — don't create a new one
+                                            BlocProvider.value(
+                                              value: context
+                                                  .read<SquadIndividualBloc>(),
+                                            ),
+                                            // Create a NEW scoped SquadMissionBloc for this page
+                                            BlocProvider<SquadMissionBloc>(
+                                              create: (_) =>
+                                                  sl<SquadMissionBloc>(
+                                                    param1: squad.id,
+                                                    param2: squadMission.id,
+                                                  ),
+                                            ),
+                                          ],
+                                          child: SquadMissionDetailsPage(
+                                            squad: squad,
+                                            squadMission: squadMission,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
                                     paddingH: 0,
                                     paddingW: 0,
                                     textSize: 8,

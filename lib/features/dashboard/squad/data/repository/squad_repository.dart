@@ -41,6 +41,6 @@ abstract class SquadRepository {
   Future<Either<String, String>> submitMission({
     required int missionId,
     required String? image,
-    required String text,
+    required String? text,
   });
 }

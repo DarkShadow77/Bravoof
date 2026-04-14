@@ -1,39 +1,50 @@
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:bravoo/core/constants/app_assets.dart';
+import 'package:bravoo/core/utils/helpers.dart';
+import 'package:bravoo/features/dashboard/squad/presentation/bloc/squad_individual_bloc.dart';
+import 'package:bravoo/features/dashboard/squad/presentation/widget/squad_mission_instruction_dialog.dart';
+import 'package:bravoo/features/dashboard/squad/presentation/widget/submit_squad_mission_modal.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../../../../app/styles/text_styles.dart';
 import '../../../../../app/view/widgets/cached_image_widget.dart';
+import '../../../../../app/view/widgets/loading/outer_loading.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/fonts.dart';
+import '../../../../../utility/ui_tool_mix.dart';
+import '../../../../common/Mission_success.dart';
 import '../../data/model/response/squad_mission_chat_model.dart';
+import '../../data/model/response/squad_mission_model.dart';
 import '../bloc/squad_mission_bloc.dart';
 
 class SquadMissionChatPage extends StatefulWidget {
   const SquadMissionChatPage({
     super.key,
-    required this.missionTitle,
+    required this.mission,
     required this.chatRoomId,
-    required this.missionId,
   });
 
-  final String missionTitle;
+  final SquadMission mission;
   final int chatRoomId;
-  final int missionId;
 
   @override
   State<SquadMissionChatPage> createState() => _SquadMissionChatPageState();
 }
 
-class _SquadMissionChatPageState extends State<SquadMissionChatPage> {
+class _SquadMissionChatPageState extends State<SquadMissionChatPage>
+    with UIToolMixin {
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   final FocusNode _focusNode = FocusNode();
@@ -170,172 +181,297 @@ class _SquadMissionChatPageState extends State<SquadMissionChatPage> {
       context: context,
       backgroundColor: Colors.transparent,
       builder: (_) => Container(
-        margin: EdgeInsets.all(16.r),
+        padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 24.w),
         decoration: BoxDecoration(
           color: AppColors.white,
-          borderRadius: BorderRadius.circular(20.r),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(40.r)),
         ),
-        child: SafeArea(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              SizedBox(height: 8.h),
-              Container(
-                width: 40.w,
-                height: 4.h,
-                decoration: BoxDecoration(
-                  color: AppColors.grey300,
-                  borderRadius: BorderRadius.circular(2.r),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              height: 6.h,
+              width: 60.w,
+              decoration: BoxDecoration(
+                color: AppColors.grey500,
+                borderRadius: BorderRadius.circular(24.r),
+              ),
+            ),
+            SizedBox(height: 32.h),
+
+            Row(
+              spacing: 20.w,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Opacity(
+                  opacity: 0,
+                  child: Container(
+                    height: 21.r,
+                    width: 21.r,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: Color(0xFFF1F1F1),
+                      borderRadius: BorderRadius.circular(120),
+                      border: Border.all(width: 0.2, color: AppColors.black60),
+                    ),
+                    child: GestureDetector(
+                      onTap: () =>
+                          Navigator.of(context, rootNavigator: true).pop(),
+                      behavior: HitTestBehavior.opaque,
+                      child: HugeIcon(
+                        icon: HugeIcons.strokeRoundedCancel01,
+                        size: 12.sp,
+                      ),
+                    ),
+                  ),
                 ),
+                Expanded(
+                  child: RichText(
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.center,
+                    text: TextSpan(
+                      text: "Upload",
+                      style: TextStyles.bodySemiBold16(context, opacity: .65),
+                    ),
+                  ),
+                ),
+                Container(
+                  height: 21.r,
+                  width: 21.r,
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: Color(0xFFF1F1F1),
+                    borderRadius: BorderRadius.circular(120),
+                    border: Border.all(width: 0.2, color: AppColors.black60),
+                  ),
+                  child: GestureDetector(
+                    onTap: () =>
+                        Navigator.of(context, rootNavigator: true).pop(),
+                    behavior: HitTestBehavior.opaque,
+                    child: HugeIcon(
+                      icon: HugeIcons.strokeRoundedCancel01,
+                      size: 12.sp,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 20.h),
+            Container(
+              padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 12.w),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12.r),
+                border: Border.all(width: 1.w, color: AppColors.grey200),
               ),
-              SizedBox(height: 16.h),
-              _MediaOption(
-                icon: HugeIcons.strokeRoundedCamera01,
-                label: 'Camera Photo',
-                onTap: () {
-                  Navigator.pop(context);
-                  _pickMedia(ImageSource.camera);
-                },
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  _MediaOption(
+                    icon: HugeIcons.strokeRoundedCamera01,
+                    label: 'Camera Photo',
+                    onTap: () {
+                      Navigator.pop(context);
+                      _pickMedia(ImageSource.camera);
+                    },
+                  ),
+                  Divider(height: 1.h, color: AppColors.grey200),
+                  _MediaOption(
+                    icon: HugeIcons.strokeRoundedVideo01,
+                    label: 'Video',
+                    onTap: () {
+                      Navigator.pop(context);
+                      _pickMedia(ImageSource.gallery, isVideo: true);
+                    },
+                  ),
+                  Divider(height: 1.h, color: AppColors.grey200),
+                  _MediaOption(
+                    icon: HugeIcons.strokeRoundedImage01,
+                    label: 'Upload',
+                    onTap: () {
+                      Navigator.pop(context);
+                      _pickMedia(ImageSource.gallery);
+                    },
+                  ),
+                ],
               ),
-              _MediaOption(
-                icon: HugeIcons.strokeRoundedImage01,
-                label: 'Photo Library',
-                onTap: () {
-                  Navigator.pop(context);
-                  _pickMedia(ImageSource.gallery);
-                },
-              ),
-              _MediaOption(
-                icon: HugeIcons.strokeRoundedVideo01,
-                label: 'Video',
-                onTap: () {
-                  Navigator.pop(context);
-                  _pickMedia(ImageSource.gallery, isVideo: true);
-                },
-              ),
-              SizedBox(height: 16.h),
-            ],
-          ),
+            ),
+            SizedBox(height: MediaQuery.of(context).viewPadding.bottom + 16.h),
+          ],
         ),
       ),
     );
   }
 
+  _loadingState(BuildContext context, SquadMissionLoadingState state) {
+    if ((state.type == SquadMissionType.submitMission &&
+        state.missionId == widget.mission.id)) {
+      outerLoadingDialog(text: "Submitting Squad Mission");
+    }
+  }
+
+  _successState(BuildContext context, SquadMissionSuccessState state) {
+    if ((state.type == SquadMissionType.submitMission &&
+        state.missionId == widget.mission.id)) {
+      if (Get.isDialogOpen == true) {
+        Navigator.of(context, rootNavigator: true).pop();
+      }
+      context.read<SquadIndividualBloc>().add(FetchSquadMissionsEvent());
+      showModalBottomSheet(
+        context: context,
+        isScrollControlled: true,
+        barrierColor: Colors.transparent,
+        backgroundColor: Colors.transparent,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
+        ),
+        builder: (_) => MissionSuccess(
+          title: "Thank you for your submission. ",
+          bodyText:
+              "Once we confirm it, your reward will be added to your account within 5 days.",
+          b_text: "Back to missions",
+        ),
+      );
+    }
+  }
+
+  _failureState(BuildContext context, SquadMissionErrorState state) {
+    if ((state.type == SquadMissionType.submitMission &&
+        state.missionId == widget.mission.id)) {
+      if (Get.isDialogOpen == true) {
+        Navigator.of(context, rootNavigator: true).pop();
+      }
+      showMessage(state.message, context, status: true);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF5F0FF),
-      body: Stack(
-        children: [
-          Positioned.fill(
-            child: Image.asset('assets/images/earn_bg.png', fit: BoxFit.fill),
-          ),
-          Column(
-            children: [
-              _ChatAppBar(
-                missionTitle: widget.missionTitle,
-                missionId: widget.missionId,
-              ),
-              Expanded(
-                child: BlocConsumer<SquadMissionBloc, SquadMissionState>(
-                  listenWhen: (prev, curr) =>
-                      curr is SquadMissionSuccessState &&
-                      (curr.type == SquadMissionType.sendMissionChat ||
-                          curr.type == SquadMissionType.fetchChat),
-                  listener: (context, state) => _scrollToBottom(),
-                  builder: (context, state) {
-                    final messages = state.chatResponse?.messages ?? [];
-                    final isLoadingMore =
-                        state is SquadMissionLoadingState &&
-                        state.type == SquadMissionType.fetchMoreChat;
-                    final isLoading =
-                        state is SquadMissionLoadingState &&
-                        state.type == SquadMissionType.fetchChat;
+    return BlocListener<SquadMissionBloc, SquadMissionState>(
+      listener: (context, state) {
+        if (state is SquadMissionLoadingState) {
+          _loadingState(context, state);
+        }
+        if (state is SquadMissionSuccessState) {
+          _successState(context, state);
+        }
+        if (state is SquadMissionErrorState) {
+          _failureState(context, state);
+        }
+      },
+      child: Scaffold(
+        backgroundColor: const Color(0xFFF5F0FF),
+        body: Stack(
+          children: [
+            Positioned.fill(
+              child: Image.asset('assets/images/earn_bg.png', fit: BoxFit.fill),
+            ),
+            Column(
+              children: [
+                _ChatAppBar(mission: widget.mission),
+                Expanded(
+                  child: BlocConsumer<SquadMissionBloc, SquadMissionState>(
+                    listenWhen: (prev, curr) =>
+                        curr is SquadMissionSuccessState &&
+                        (curr.type == SquadMissionType.sendMissionChat ||
+                            curr.type == SquadMissionType.fetchChat),
+                    listener: (context, state) => _scrollToBottom(),
+                    builder: (context, state) {
+                      final messages = state.chatResponse?.messages ?? [];
+                      final isLoadingMore =
+                          state is SquadMissionLoadingState &&
+                          state.type == SquadMissionType.fetchMoreChat;
+                      final isLoading =
+                          state is SquadMissionLoadingState &&
+                          state.type == SquadMissionType.fetchChat;
 
-                    if (isLoading) {
-                      return const Center(
-                        child: CircularProgressIndicator(
-                          color: AppColors.primary,
-                        ),
-                      );
-                    }
-
-                    return ListView.builder(
-                      controller: _scrollController,
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 12.w,
-                        vertical: 8.h,
-                      ),
-                      itemCount: messages.length + (isLoadingMore ? 1 : 0),
-                      itemBuilder: (context, index) {
-                        if (isLoadingMore && index == 0) {
-                          return Padding(
-                            padding: EdgeInsets.all(8.r),
-                            child: const Center(
-                              child: CircularProgressIndicator(
-                                color: AppColors.primary,
-                              ),
-                            ),
-                          );
-                        }
-
-                        final msgIndex = isLoadingMore ? index - 1 : index;
-                        final message = messages[msgIndex];
-
-                        if (message.isSystem) {
-                          return _SystemMessageBubble(message: message);
-                        }
-
-                        final isMe = message.userId == _currentUserId;
-                        final showAvatar = !isMe;
-                        final isSameUserAsPrev =
-                            msgIndex > 0 &&
-                            messages[msgIndex - 1].userId == message.userId &&
-                            !messages[msgIndex - 1].isSystem;
-
-                        return _ChatMessageBubble(
-                          key: ValueKey(message.localId ?? message.id),
-                          message: message,
-                          isMe: isMe,
-                          showAvatar: showAvatar && !isSameUserAsPrev,
-                          avatarPlaceholder: showAvatar && isSameUserAsPrev,
-                          onReply: (msg) {
-                            setState(() => _replyingTo = msg);
-                            _focusNode.requestFocus();
-                          },
-                          onRetry: message.isFailed && message.localId != null
-                              ? () => context.read<SquadMissionBloc>().add(
-                                  RetrySendSquadMissionMessageEvent(
-                                    localId: message.localId!,
-                                  ),
-                                )
-                              : null,
+                      if (isLoading) {
+                        return const Center(
+                          child: CircularProgressIndicator(
+                            color: AppColors.primary,
+                          ),
                         );
-                      },
+                      }
+
+                      return ListView.builder(
+                        controller: _scrollController,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 12.w,
+                          vertical: 8.h,
+                        ),
+                        itemCount: messages.length + (isLoadingMore ? 1 : 0),
+                        itemBuilder: (context, index) {
+                          if (isLoadingMore && index == 0) {
+                            return Padding(
+                              padding: EdgeInsets.all(8.r),
+                              child: Center(
+                                child: LoadingAnimationWidget.staggeredDotsWave(
+                                  color: AppColors.primary,
+                                  size: 16.sp,
+                                ),
+                              ),
+                            );
+                          }
+
+                          final msgIndex = isLoadingMore ? index - 1 : index;
+                          final message = messages[msgIndex];
+
+                          if (message.isSystem) {
+                            return _SystemMessageBubble(message: message);
+                          }
+
+                          final isMe = message.userId == _currentUserId;
+                          final showAvatar = !isMe;
+                          final isSameUserAsPrev =
+                              msgIndex > 0 &&
+                              messages[msgIndex - 1].userId == message.userId &&
+                              !messages[msgIndex - 1].isSystem;
+
+                          return _ChatMessageBubble(
+                            key: ValueKey(message.localId ?? message.id),
+                            message: message,
+                            isMe: isMe,
+                            showAvatar: showAvatar && !isSameUserAsPrev,
+                            avatarPlaceholder: showAvatar && isSameUserAsPrev,
+                            onReply: (msg) {
+                              setState(() => _replyingTo = msg);
+                              _focusNode.requestFocus();
+                            },
+                            onRetry: message.isFailed && message.localId != null
+                                ? () => context.read<SquadMissionBloc>().add(
+                                    RetrySendSquadMissionMessageEvent(
+                                      localId: message.localId!,
+                                    ),
+                                  )
+                                : null,
+                          );
+                        },
+                      );
+                    },
+                  ),
+                ),
+                _TypingIndicator(),
+                _ChatInputBar(
+                  controller: _messageController,
+                  focusNode: _focusNode,
+                  replyingTo: _replyingTo,
+                  selectedMedia: _selectedMediaPath,
+                  isImage: _isImage,
+                  onCancelReply: () => setState(() => _replyingTo = null),
+                  onCancelMedia: () =>
+                      setState(() => _selectedMediaPath = null),
+                  onPickMedia: _showMediaPicker,
+                  onSend: _sendMessage,
+                  onTypingChanged: (isTyping) {
+                    context.read<SquadMissionBloc>().add(
+                      UserTypingEvent(isTyping: isTyping),
                     );
                   },
                 ),
-              ),
-              _TypingIndicator(),
-              _ChatInputBar(
-                controller: _messageController,
-                focusNode: _focusNode,
-                replyingTo: _replyingTo,
-                selectedMedia: _selectedMediaPath,
-                isImage: _isImage,
-                onCancelReply: () => setState(() => _replyingTo = null),
-                onCancelMedia: () => setState(() => _selectedMediaPath = null),
-                onPickMedia: _showMediaPicker,
-                onSend: _sendMessage,
-                onTypingChanged: (isTyping) {
-                  context.read<SquadMissionBloc>().add(
-                    UserTypingEvent(isTyping: isTyping),
-                  );
-                },
-              ),
-            ],
-          ),
-        ],
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -344,17 +480,20 @@ class _SquadMissionChatPageState extends State<SquadMissionChatPage> {
 // ─── App Bar ─────────────────────────────────────────────────────────────────
 
 class _ChatAppBar extends StatelessWidget {
-  const _ChatAppBar({required this.missionTitle, required this.missionId});
+  const _ChatAppBar({required this.mission});
 
-  final String missionTitle;
-  final int missionId;
+  final SquadMission mission;
 
   @override
   Widget build(BuildContext context) {
+    final supabase = Supabase.instance.client;
     return BlocBuilder<SquadMissionBloc, SquadMissionState>(
       builder: (context, state) {
         final members = state.missionMembers;
-        final preview = members.take(5).toList();
+        final preview = members.take(members.length > 5 ? 4 : 5).toList();
+        bool isCaptain =
+            (state.chatResponse?.captainId ?? "") ==
+            supabase.auth.currentUser!.id;
 
         return Container(
           color: Colors.transparent,
@@ -365,6 +504,8 @@ class _ChatAppBar extends StatelessWidget {
             right: 16.w,
           ),
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            spacing: 8.w,
             children: [
               GestureDetector(
                 onTap: () => Navigator.pop(context),
@@ -377,12 +518,11 @@ class _ChatAppBar extends StatelessWidget {
                   ),
                   child: Icon(
                     Icons.arrow_back_ios_new_rounded,
-                    size: 16.r,
+                    size: 16.sp,
                     color: AppColors.darkPrimary,
                   ),
                 ),
               ),
-              SizedBox(width: 10.w),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -391,40 +531,117 @@ class _ChatAppBar extends StatelessWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       text: TextSpan(
-                        text: missionTitle,
+                        text: mission.title,
                         style: TextStyles.bodyBold16(
                           context,
                         ).copyWith(fontFamily: AppFonts.baloo2),
                       ),
                     ),
-                    if (members.isNotEmpty)
-                      Text(
-                        '${members.length} member${members.length == 1 ? '' : 's'}',
-                        style: TextStyles.smallSemibold12(
-                          context,
-                          opacity: .55,
+                    // Member avatars row
+                    if (preview.isNotEmpty)
+                      SizedBox(
+                        width: (preview.length * 22.0 + 32).w,
+                        height: 36.h,
+                        child: Stack(
+                          children: [
+                            for (int i = preview.length - 1; i >= 0; i--)
+                              Positioned(
+                                left: i * 22.0.w,
+                                child: _MemberAvatar(
+                                  member: preview[i],
+                                  isCaptain: preview[i].isCaptain,
+                                ),
+                              ),
+                            Positioned(
+                              left: (preview.length * 22.0).w,
+                              child: Container(
+                                width: 32.r,
+                                height: 32.r,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Color(0xffFFE0E1),
+                                  border: Border.all(
+                                    width: 1.w,
+                                    color: AppColors.white,
+                                  ),
+                                ),
+                                child: Center(
+                                  child: RichText(
+                                    text: TextSpan(
+                                      text:
+                                          '+${formatAmount(members.length - preview.length, uniComp: true)}',
+                                      style: TextStyles.smallSemibold12(
+                                        context,
+                                      ).copyWith(color: AppColors.orange400),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                   ],
                 ),
               ),
-              SizedBox(width: 8.w),
-              // Member avatars row
-              if (preview.isNotEmpty)
-                SizedBox(
-                  width: (preview.length * 22.0 + 14).w,
-                  height: 36.h,
-                  child: Stack(
+              GestureDetector(
+                onTap: () =>
+                    squadMissionInstructionDialog(squadMission: mission),
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(20.r),
+                    border: Border.all(
+                      width: 1.2.w,
+                      color: AppColors.orange400,
+                    ),
+                  ),
+                  child: Row(
+                    spacing: 4.w,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      for (int i = preview.length - 1; i >= 0; i--)
-                        Positioned(
-                          left: i * 22.0.w,
-                          child: _MemberAvatar(
-                            member: preview[i],
-                            isCaptain: preview[i].isCaptain,
-                          ),
+                      RichText(
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        text: TextSpan(
+                          text: "Mission Info",
+                          style: TextStyles.smallSemibold12(
+                            context,
+                          ).copyWith(color: AppColors.orange400),
                         ),
+                      ),
                     ],
+                  ),
+                ),
+              ),
+              if (isCaptain)
+                GestureDetector(
+                  onTap: () {
+                    submitSquadMissionModal(
+                      onPressed: (value) {
+                        if (value != null) {
+                          context.read<SquadMissionBloc>().add(
+                            SubmitSquadMissionEvent(
+                              image: mission.isPhotoSubmission ? value : null,
+                              text: mission.isTextSubmission ? value : null,
+                            ),
+                          );
+                        }
+                      },
+                      submissionType: mission.submissionType,
+                    );
+                  },
+                  child: Container(
+                    padding: EdgeInsets.all(2.r),
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(width: 1.w, color: AppColors.primary),
+                    ),
+                    child: Icon(
+                      Icons.add,
+                      size: 14.sp,
+                      color: AppColors.primary,
+                    ),
                   ),
                 ),
             ],
@@ -447,43 +664,42 @@ class _MemberAvatar extends StatelessWidget {
       clipBehavior: Clip.none,
       children: [
         Container(
-          width: 34.r,
-          height: 34.r,
+          width: 32.r,
+          height: 32.r,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             border: Border.all(
-              color: isCaptain ? AppColors.primary : AppColors.white,
-              width: isCaptain ? 2 : 1.5,
+              color: isCaptain ? AppColors.orange400 : AppColors.white,
+              width: 1.w,
             ),
           ),
           child: ClipOval(
             child: member.profileImage != null
                 ? CachedImageSize(
                     imageUrl: member.profileImage!,
-                    width: 34.r,
-                    height: 34.r,
+                    width: 32.r,
+                    height: 32.r,
                     fit: BoxFit.cover,
-                    child: const SizedBox.shrink(),
                   )
                 : _DefaultAvatar(name: member.name),
           ),
         ),
         if (isCaptain)
           Positioned(
-            bottom: -2,
-            right: -2,
+            top: -2,
+            left: -2,
             child: Container(
               width: 14.r,
               height: 14.r,
               decoration: BoxDecoration(
-                color: AppColors.primary,
+                color: AppColors.orange400,
                 shape: BoxShape.circle,
-                border: Border.all(color: AppColors.white, width: 1.5),
+                border: Border.all(color: AppColors.white, width: 1.w),
               ),
               child: Icon(
                 Icons.star_rounded,
                 color: AppColors.white,
-                size: 8.r,
+                size: 8.sp,
               ),
             ),
           ),
@@ -671,6 +887,7 @@ class _SystemMessageBubble extends StatelessWidget {
             width: 30.r,
             height: 30.r,
             margin: EdgeInsets.only(right: 6.w),
+            clipBehavior: Clip.antiAlias,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               gradient: LinearGradient(
@@ -679,7 +896,14 @@ class _SystemMessageBubble extends StatelessWidget {
                 end: Alignment.bottomRight,
               ),
             ),
-            child: Icon(Icons.bolt_rounded, color: AppColors.white, size: 16.r),
+            child: Center(
+              child: SvgPicture.asset(
+                AssetsLogo.logo,
+                width: 16.w,
+                height: 16.h,
+                colorFilter: ColorFilter.mode(AppColors.white, BlendMode.srcIn),
+              ),
+            ),
           ),
           Flexible(
             child: Container(
@@ -693,9 +917,11 @@ class _SystemMessageBubble extends StatelessWidget {
                   bottomRight: Radius.circular(16.r),
                 ),
               ),
-              child: Text(
-                message.content ?? '',
-                style: TextStyles.smallSemibold12(context, opacity: .75),
+              child: RichText(
+                text: TextSpan(
+                  text: message.content ?? '',
+                  style: TextStyles.smallSemibold12(context, opacity: .75),
+                ),
               ),
             ),
           ),
@@ -1162,7 +1388,7 @@ class _ChatInputBarState extends State<_ChatInputBar> {
         left: 12.w,
         right: 12.w,
         top: 8.h,
-        bottom: MediaQuery.of(context).padding.bottom + 8.h,
+        bottom: MediaQuery.of(context).viewPadding.bottom + 8.h,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -1286,29 +1512,28 @@ class _ChatInputBarState extends State<_ChatInputBar> {
             ),
           // Input row
           Row(
+            spacing: 8.w,
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               // Media pick button
               GestureDetector(
                 onTap: widget.onPickMedia,
                 child: Container(
-                  width: 40.r,
-                  height: 40.r,
-                  margin: EdgeInsets.only(right: 8.w),
+                  width: 48.r,
+                  height: 48.r,
                   decoration: BoxDecoration(
-                    color: AppColors.white.withValues(alpha: 0.9),
                     shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColors.black.withValues(alpha: 0.07),
-                        blurRadius: 6,
-                      ),
-                    ],
+                    border: Border.all(
+                      width: 1.w,
+                      color: AppColors.grey400.withValues(alpha: .5),
+                    ),
                   ),
-                  child: HugeIcon(
-                    icon: HugeIcons.strokeRoundedAttachment01,
-                    size: 18.r,
-                    color: AppColors.darkPrimary.withValues(alpha: 0.7),
+                  child: Center(
+                    child: HugeIcon(
+                      icon: HugeIcons.strokeRoundedImageCrop,
+                      size: 20.sp,
+                      color: AppColors.grey400,
+                    ),
                   ),
                 ),
               ),
@@ -1317,8 +1542,8 @@ class _ChatInputBarState extends State<_ChatInputBar> {
                 child: Container(
                   constraints: BoxConstraints(maxHeight: 120.h),
                   decoration: BoxDecoration(
-                    color: AppColors.white.withValues(alpha: 0.92),
-                    borderRadius: BorderRadius.circular(22.r),
+                    color: AppColors.white80,
+                    borderRadius: BorderRadius.circular(2000.r),
                     boxShadow: [
                       BoxShadow(
                         color: AppColors.black.withValues(alpha: 0.07),
@@ -1349,14 +1574,13 @@ class _ChatInputBarState extends State<_ChatInputBar> {
                   ),
                 ),
               ),
-              SizedBox(width: 8.w),
               // Send button
               GestureDetector(
                 onTap: canSend ? widget.onSend : null,
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
-                  width: 40.r,
-                  height: 40.r,
+                  width: 48.r,
+                  height: 48.r,
                   decoration: BoxDecoration(
                     color: canSend
                         ? AppColors.primary
@@ -1375,7 +1599,7 @@ class _ChatInputBarState extends State<_ChatInputBar> {
                   child: Icon(
                     Icons.send_rounded,
                     color: AppColors.white,
-                    size: 18.r,
+                    size: 20.sp,
                   ),
                 ),
               ),
@@ -1437,18 +1661,24 @@ class _MediaOption extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      onTap: onTap,
-      leading: Container(
-        width: 40.r,
-        height: 40.r,
-        decoration: BoxDecoration(
-          color: AppColors.primary.withValues(alpha: 0.1),
-          shape: BoxShape.circle,
-        ),
-        child: HugeIcon(icon: icon, color: AppColors.primary, size: 20.r),
+    return Container(
+      height: 44.h,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Expanded(
+            child: RichText(
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              text: TextSpan(
+                text: label,
+                style: TextStyles.smallMedium12(context, opacity: .65),
+              ),
+            ),
+          ),
+          HugeIcon(icon: icon, color: AppColors.black50, size: 20.sp),
+        ],
       ),
-      title: Text(label, style: TextStyles.normalSemibold14(context)),
     );
   }
 }

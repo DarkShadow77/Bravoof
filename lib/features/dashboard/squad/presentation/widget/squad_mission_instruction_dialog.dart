@@ -18,7 +18,7 @@ import '../../data/model/response/squad_mission_model.dart';
 
 Future<dynamic> squadMissionInstructionDialog({
   required SquadMission squadMission,
-  required VoidCallback onChatPressed,
+  VoidCallback? onChatPressed,
   bool showChat = false,
 }) async {
   return Get.dialog(
@@ -42,7 +42,7 @@ class SquadMissionInstructionDialog extends StatefulWidget {
   });
 
   final SquadMission squadMission;
-  final VoidCallback onChatPressed;
+  final VoidCallback? onChatPressed;
   final bool showChat;
 
   @override
@@ -237,17 +237,18 @@ class _SquadMissionInstructionDialogState
                         ),
                       ],
                     ),
-                    SizedBox(height: 30.h),
-                    if (widget.showChat)
+                    if (widget.showChat) ...[
+                      SizedBox(height: 30.h),
                       IconTextButton(
                         onPressed: () {
                           Navigator.pop(context);
-                          widget.onChatPressed();
+                          widget.onChatPressed!();
                         },
                         text: "Go to Chat Room",
                         textColor: AppColors.white,
                         color: AppColors.black,
                       ),
+                    ],
                   ],
                 ),
               ),

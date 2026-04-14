@@ -24,7 +24,7 @@ class StreakBloc extends Bloc<StreakEvent, StreakState> {
       StreakLoadingState(type: StreakType.fetchStreak, streak: state.streak),
     );
 
-    final res = await repo.fetchStreak(userId: supabase.auth.currentUser!.id);
+    final res = await repo.fetchStreak();
 
     Logger().d("Fetch Streak Response $res");
 
@@ -53,7 +53,7 @@ class StreakBloc extends Bloc<StreakEvent, StreakState> {
   Future<void> _checkIn(CheckInEvent event, Emitter emit) async {
     emit(StreakLoadingState(type: StreakType.checkIn, streak: state.streak));
 
-    final res = await repo.checkIn(userId: supabase.auth.currentUser!.id);
+    final res = await repo.checkIn();
 
     res.fold(
       (err) => emit(

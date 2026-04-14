@@ -1,4 +1,5 @@
 import 'package:bravoo/app/view/widgets/cached_image_widget.dart';
+import 'package:bravoo/features/dashboard/profile/data/model/users_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -9,7 +10,6 @@ import 'package:intl/intl.dart';
 import '../../../../../app/styles/text_styles.dart';
 import '../../../../../core/constants/app_colors.dart';
 import '../../../home/presentation/bloc/home_cubit.dart';
-import '../../../profile/data/model/user_profile.dart';
 
 class ReferralHistory {
   final String name;
@@ -63,8 +63,8 @@ class ReferralHistoryPage extends StatefulWidget {
 
 class _ReferralHistoryPageState extends State<ReferralHistoryPage> {
   String searchText = "";
-  List<UserProfile> referrals = [];
-  List<UserProfile> searchedReferrals = [];
+  List<Users> referrals = [];
+  List<Users> searchedReferrals = [];
 
   @override
   void initState() {
@@ -99,7 +99,7 @@ class _ReferralHistoryPageState extends State<ReferralHistoryPage> {
       builder: (context, state) {
         referrals = state.referrals;
         search();
-        final grouped = <String, List<UserProfile>>{};
+        final grouped = <String, List<Users>>{};
         for (final tx in searchedReferrals) {
           final key =
               '${_monthName((tx.createdAt).month)} ${(tx.createdAt).year}'; // e.g. October 2025
@@ -225,7 +225,7 @@ class _ReferralHistoryPageState extends State<ReferralHistoryPage> {
 Widget _buildReferralCard(
   BuildContext context,
   String month,
-  List<UserProfile> items,
+  List<Users> items,
 ) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
@@ -261,7 +261,7 @@ Widget _buildReferralCard(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               CachedImageRadius(
-                imageUrl: e.profilePic,
+                imageUrl: e.profileImage,
                 size: 44,
                 fit: BoxFit.cover,
                 circle: true,

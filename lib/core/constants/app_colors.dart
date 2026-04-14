@@ -112,6 +112,7 @@ class AppColors {
 
   //State-Colors ---Orange
   static const Color orange = Color(0xFFFE5613);
+  static const Color orange400 = Color(0xFFF77A38);
   static const Color orange300 = Color(0xFFFDA161);
   static Color get orange70 => orange.withValues(alpha: .70);
   static Color get orange50 => orange.withValues(alpha: .50);

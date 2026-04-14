@@ -1,7 +1,6 @@
 import 'package:bravoo/app/styles/text_styles.dart';
 import 'package:bravoo/app/view/widgets/cached_image_widget.dart';
 import 'package:bravoo/app/view/widgets/gradient_progress.dart';
-import 'package:bravoo/core/constants/app_assets.dart';
 import 'package:bravoo/core/utils/helpers.dart';
 import 'package:bravoo/features/common/ui_tool_mixin/ui_tool_mixin.dart';
 import 'package:bravoo/features/dashboard/profile/data/model/user_profile.dart';
@@ -12,7 +11,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -214,17 +212,8 @@ class _FlowvaHomePageState extends State<FlowvaHomePage>
                           child: Column(
                             children: [
                               SizedBox(height: 18.h),
-                              if (SessionManager().firstTimeUserVal ==
-                                  "YES") ...[
-                                MessageContainer(
-                                  onTap: () {
-                                    setState(() {
-                                      SessionManager().firstTimeUserVal = "NO";
-                                    });
-                                  },
-                                ),
-                                SizedBox(height: 16.h),
-                              ],
+                              MessageContainer(),
+                              SizedBox(height: 16.h),
                               ToolCardCarousel(),
                               SizedBox(height: 20.h),
                               MissionAwaitWidget(),
@@ -350,9 +339,8 @@ class _FlowvaHomePageState extends State<FlowvaHomePage>
 }
 
 class MessageContainer extends StatelessWidget {
-  const MessageContainer({super.key, required this.onTap});
+  const MessageContainer({super.key});
 
-  final VoidCallback onTap;
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<HomeCubit, HomeState>(
@@ -391,20 +379,6 @@ class MessageContainer extends StatelessWidget {
                         style: TextStyles.normalBold14(context).copyWith(
                           color: hexToColor(homeMessage.mainTextColor),
                         ),
-                      ),
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: onTap,
-                    behavior: HitTestBehavior.opaque,
-                    child: SvgPicture.asset(
-                      AssetsSvgIcons.close,
-                      width: 14.r,
-                      height: 14.r,
-                      fit: BoxFit.contain,
-                      colorFilter: ColorFilter.mode(
-                        hexToColor(homeMessage.textColor),
-                        BlendMode.srcIn,
                       ),
                     ),
                   ),

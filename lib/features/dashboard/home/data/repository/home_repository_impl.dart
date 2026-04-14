@@ -2,7 +2,7 @@ import 'package:bravoo/features/dashboard/home/data/model/campaign_response.dart
 import 'package:dartz/dartz.dart';
 
 import '../../../../../core/services/api_service.dart';
-import '../../../profile/data/model/user_profile.dart';
+import '../../../profile/data/model/users_model.dart';
 import '../model/dynamic_carousel_model.dart';
 import '../model/home_message_model.dart';
 import '../model/leaderboard_response_model.dart';
@@ -75,26 +75,22 @@ class HomeRepositoryImpl extends HomeRepository {
     );
   }
 
-  Future<Either<String, List<UserProfile>>> getAllUserReferrals({
-    required String userId,
-  }) async {
-    return ApiService.instance!.invokeEdgeFunction<List<UserProfile>>(
+  Future<Either<String, List<Users>>> getAllUserReferrals() async {
+    return ApiService.instance!.invokeEdgeFunction<List<Users>>(
       functionName: 'fetch-user-referrals',
-      body: {"userId": userId},
+      body: {},
       fallbackErrorMessage: 'Failed to Retrieve Users Referral',
       onSuccess: (data) {
         final referral = data["data"] as List;
-        return referral.map((e) => UserProfile.fromJson(e)).toList();
+        return referral.map((e) => Users.fromJson(e)).toList();
       },
     );
   }
 
-  Future<Either<String, LeaderboardResponseModel>> fetchLeaderboard({
-    required String userId,
-  }) async {
+  Future<Either<String, LeaderboardResponseModel>> fetchLeaderboard() async {
     return ApiService.instance!.invokeEdgeFunction<LeaderboardResponseModel>(
       functionName: 'fetch-leaderboard',
-      body: {"userId": userId},
+      body: {},
       fallbackErrorMessage: 'Failed to Retrieve Leaderboard',
       onSuccess: (data) => LeaderboardResponseModel.fromJson(data["data"]),
     );

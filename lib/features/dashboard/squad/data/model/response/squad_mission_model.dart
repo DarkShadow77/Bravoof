@@ -83,6 +83,9 @@ class SquadMission {
       chatRoomId: json['chat_room_id'] as int?,
     );
   }
+
+  bool get isPhotoSubmission => submissionType == 'photo';
+  bool get isTextSubmission => submissionType == 'text';
 }
 
 class JoinedSquadMission {

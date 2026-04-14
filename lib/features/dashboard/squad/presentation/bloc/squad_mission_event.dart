@@ -44,7 +44,7 @@ class RetrySendSquadMissionMessageEvent extends SquadMissionEvent {
 
 class SubmitSquadMissionEvent extends SquadMissionEvent {
   final String? image;
-  final String text;
+  final String? text;
 
   SubmitSquadMissionEvent({this.image, required this.text});
 }

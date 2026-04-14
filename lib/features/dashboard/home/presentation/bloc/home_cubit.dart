@@ -4,6 +4,7 @@ import 'package:bravoo/features/dashboard/home/data/model/leaderboard_response_m
 import 'package:bravoo/features/dashboard/home/data/model/spotlight_model.dart';
 import 'package:bravoo/features/dashboard/home/data/repository/home_repository.dart';
 import 'package:bravoo/features/dashboard/home/data/repository/home_repository_impl.dart';
+import 'package:bravoo/features/dashboard/profile/data/model/users_model.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -14,7 +15,6 @@ import '../../../mission/presentation/bloc/featured_mission_bloc.dart';
 import '../../../mission/presentation/bloc/new_social_mission_bloc.dart';
 import '../../../mission/presentation/bloc/social_mission_bloc.dart';
 import '../../../mission/presentation/bloc/sponsored_mission_bloc.dart';
-import '../../../profile/data/model/user_profile.dart';
 import '../../data/model/dynamic_carousel_model.dart';
 import '../../data/model/home_message_model.dart';
 import '../../data/model/quote_model.dart';
@@ -476,9 +476,7 @@ class HomeCubit extends Cubit<HomeState> {
   }
 
   void getUserReferrals() async {
-    final res = await homeRepository.getAllUserReferrals(
-      userId: supabase.auth.currentUser!.id,
-    );
+    final res = await homeRepository.getAllUserReferrals();
 
     res.fold((err) => print(err), (list) {
       print('Referrals: ${list.map((e) => e.toJson())}');
@@ -503,9 +501,7 @@ class HomeCubit extends Cubit<HomeState> {
       ),
     );
 
-    final res = await homeRepository.fetchLeaderboard(
-      userId: supabase.auth.currentUser!.id,
-    );
+    final res = await homeRepository.fetchLeaderboard();
 
     res.fold(
       (failure) => emit(

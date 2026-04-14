@@ -117,8 +117,7 @@ class _SquadMissionDetailsPageState extends State<SquadMissionDetailsPage>
               builder: (_) => BlocProvider.value(
                 value: context.read<SquadMissionBloc>(),
                 child: SquadMissionChatPage(
-                  missionTitle: squadMission.title,
-                  missionId: squadMission.id,
+                  mission: squadMission,
                   chatRoomId: squadMission.chatRoomId!,
                 ),
               ),
@@ -693,8 +692,7 @@ class _CollapsedAppBar extends StatelessWidget {
                       builder: (_) => BlocProvider.value(
                         value: context.read<SquadMissionBloc>(),
                         child: SquadMissionChatPage(
-                          missionTitle: squadMission.title,
-                          missionId: squadMission.id,
+                          mission: squadMission,
                           chatRoomId: squadMission.chatRoomId!,
                         ),
                       ),
@@ -836,8 +834,7 @@ class _ExpandedAppBar extends StatelessWidget {
                                           value: context
                                               .read<SquadMissionBloc>(),
                                           child: SquadMissionChatPage(
-                                            missionTitle: squadMission.title,
-                                            missionId: squadMission.id,
+                                            mission: squadMission,
                                             chatRoomId:
                                                 squadMission.chatRoomId!,
                                           ),

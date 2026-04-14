@@ -12,6 +12,7 @@ import 'package:share_plus/share_plus.dart';
 import '../../../../../app/view/widgets/cached_image_widget.dart';
 import '../../../home/presentation/bloc/home_cubit.dart';
 import '../../../profile/data/model/user_profile.dart';
+import '../../../profile/data/model/users_model.dart';
 import '../../../profile/presentation/bloc/profile_bloc.dart';
 import '../widgets/referr_campaign.dart';
 
@@ -39,7 +40,7 @@ class InviteAndEarnPage extends StatefulWidget {
 class _InviteAndEarnPageState extends State<InviteAndEarnPage> {
   UserProfile userProfile = UserProfile.empty();
 
-  List<UserProfile> referrals = [];
+  List<Users> referrals = [];
   late ProfileBloc profileBloc;
 
   @override
@@ -242,7 +243,7 @@ class _InviteAndEarnPageState extends State<InviteAndEarnPage> {
                               itemBuilder: (context, index) {
                                 final user = referrals[index];
                                 return _buildReferralCard(
-                                  avatar: user.profilePic,
+                                  avatar: user.profileImage,
                                   name: user.name,
                                   time: user.createdAt.toIso8601String(),
                                 );
