@@ -28,10 +28,6 @@ class SquadIndividualLoadingState extends SquadIndividualState {
   });
 }
 
-class SquadIndividualLoadedState extends SquadIndividualState {
-  const SquadIndividualLoadedState({required super.missions});
-}
-
 class SquadIndividualSuccessState extends SquadIndividualState {
   final SquadIndividualType type;
   final int? missionId;

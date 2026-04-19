@@ -1,4 +1,4 @@
-import 'package:bravoo/features/dashboard/profile/data/model/user_profile.dart';
+import 'package:bravoo/features/dashboard/profile/data/model/users_model.dart';
 import 'package:dartz/dartz.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -20,18 +20,17 @@ class CampaignRepositoryImpl extends CampaignRepository {
   }
 
   @override
-  Future<Either<String, List<UserProfile>>> getUserReferralsForCampaign({
-    required String userId,
+  Future<Either<String, List<Users>>> getUserReferralsForCampaign({
     required int campaignId,
   }) async {
-    return ApiService.instance!.invokeEdgeFunction<List<UserProfile>>(
+    return ApiService.instance!.invokeEdgeFunction<List<Users>>(
       functionName: 'get-campaign-referrals',
-      body: {'userId': userId, 'campaignId': campaignId},
+      body: {'campaignId': campaignId},
       fallbackErrorMessage: 'Failed to get campaign referrals',
       onSuccess: (data) {
         final List<dynamic> referralsList = data['data'] as List<dynamic>;
         return referralsList
-            .map((json) => UserProfile.fromJson(json as Map<String, dynamic>))
+            .map((json) => Users.fromJson(json as Map<String, dynamic>))
             .toList();
       },
     );

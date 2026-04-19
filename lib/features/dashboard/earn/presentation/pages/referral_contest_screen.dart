@@ -888,11 +888,10 @@ class ReferralContainer extends StatefulWidget {
 }
 
 class _ReferralContainerState extends State<ReferralContainer> {
-  List<UserProfile> referredUsers = [];
+  List<Users> referredUsers = [];
 
   UserProfile userProfile = UserProfile.empty();
 
-  List<UserProfile> referrals = [];
   late ProfileBloc profileBloc;
 
   @override
@@ -1067,7 +1066,7 @@ class _ReferralContainerState extends State<ReferralContainer> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 CachedImageRadius(
-                                  imageUrl: user.profilePic,
+                                  imageUrl: user.profileImage,
                                   size: 24.r,
                                   circle: true,
                                   color: textColor.withValues(alpha: .1),

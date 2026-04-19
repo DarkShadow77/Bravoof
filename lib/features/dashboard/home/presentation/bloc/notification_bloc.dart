@@ -1,7 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:logger/logger.dart';
 import 'package:meta/meta.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../../core/services/local_notification_service.dart';
 import '../../data/model/notification_model.dart';
@@ -12,7 +11,7 @@ part 'notification_state.dart';
 
 class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
   final NotificationRepository repo;
-  final supabase = Supabase.instance.client;
+
   NotificationBloc({required this.repo})
     : super(
         NotificationInitialState(
@@ -39,9 +38,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       ),
     );
 
-    final notificationRes = await repo.fetchNotifications(
-      userId: supabase.auth.currentUser!.id,
-    );
+    final notificationRes = await repo.fetchNotifications();
 
     notificationRes.fold(
       (err) => emit(
@@ -107,7 +104,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
     await LocalNotificationService.instance().clearBadge();
 
     // Then persist to backend
-    await repo.markAllNotificationAsRead(userId: supabase.auth.currentUser!.id);
+    await repo.markAllNotificationAsRead();
   }
 
   Future<void> _clearAllNotification(
@@ -123,9 +120,7 @@ class NotificationBloc extends Bloc<NotificationEvent, NotificationState> {
       ),
     );
 
-    final res = await repo.clearNotification(
-      userId: supabase.auth.currentUser!.id,
-    );
+    final res = await repo.clearNotification();
 
     res.fold(
       (err) => emit(

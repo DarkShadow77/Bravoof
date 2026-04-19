@@ -2,32 +2,33 @@ import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' hide MultipartFile;
 
-import '../../../mission/data/model/mission_status_enum.dart';
 import '../../data/model/response/brand_mission_model.dart';
 import '../../data/repository/brand_repository.dart';
 
-part 'brand_mission_event.dart';
-part 'brand_mission_state.dart';
+part 'brand_individual_event.dart';
+part 'brand_individual_state.dart';
 
-class BrandMissionsBloc extends Bloc<BrandMissionsEvent, BrandMissionsState> {
+class BrandIndividualBloc
+    extends Bloc<BrandIndividualEvent, BrandIndividualState> {
   final BrandRepository repo;
   final String brandId;
 
   final supabase = Supabase.instance.client;
 
-  BrandMissionsBloc({required this.repo, required this.brandId})
+  BrandIndividualBloc({required this.repo, required this.brandId})
     : super(BrandMissionsInitialState(missions: [])) {
     on<FetchBrandMissionsEvent>(_fetchMissions);
-    on<CompleteBrandMissionEvent>(_completeMission);
+    add(FetchBrandMissionsEvent());
+    // on<CompleteBrandMissionEvent>(_completeMission);
   }
 
   Future<void> _fetchMissions(
     FetchBrandMissionsEvent event,
-    Emitter<BrandMissionsState> emit,
+    Emitter<BrandIndividualState> emit,
   ) async {
     emit(
-      BrandMissionsLoadingState(
-        type: BrandMissionsType.fetch,
+      BrandIndividualLoadingState(
+        type: BrandIndividualType.fetch,
         missions: state.missions,
       ),
     );
@@ -36,23 +37,32 @@ class BrandMissionsBloc extends Bloc<BrandMissionsEvent, BrandMissionsState> {
 
     res.fold(
       (err) => emit(
-        BrandMissionsErrorState(
-          type: BrandMissionsType.fetch,
+        BrandIndividualErrorState(
+          type: BrandIndividualType.fetch,
           message: err,
           missions: state.missions,
         ),
       ),
-      (missions) => emit(BrandMissionsLoadedState(missions: missions)),
+      (missions) {
+        emit(state.copyWith(missions: missions));
+        emit(
+          BrandIndividualSuccessState(
+            type: BrandIndividualType.fetch,
+            message: "Fetched Brand Missions Successfully",
+            missions: missions,
+          ),
+        );
+      },
     );
   }
 
-  Future<void> _completeMission(
+  /*Future<void> _completeMission(
     CompleteBrandMissionEvent event,
-    Emitter<BrandMissionsState> emit,
+    Emitter<BrandIndividualState> emit,
   ) async {
     emit(
-      BrandMissionsLoadingState(
-        type: BrandMissionsType.complete,
+      BrandIndividualLoadingState(
+        type: BrandIndividualType.complete,
         missionId: event.missionId,
         missions: state.missions,
       ),
@@ -67,8 +77,8 @@ class BrandMissionsBloc extends Bloc<BrandMissionsEvent, BrandMissionsState> {
 
     res.fold(
       (err) => emit(
-        BrandMissionsErrorState(
-          type: BrandMissionsType.complete,
+        BrandIndividualErrorState(
+          type: BrandIndividualType.complete,
           missionId: event.missionId,
           message: err,
           missions: state.missions,
@@ -97,7 +107,7 @@ class BrandMissionsBloc extends Bloc<BrandMissionsEvent, BrandMissionsState> {
 
         emit(
           BrandMissionsSuccessState(
-            type: BrandMissionsType.complete,
+            type: BrandIndividualType.complete,
             missionId: event.missionId,
             missions: updated,
             message: message,
@@ -105,5 +115,5 @@ class BrandMissionsBloc extends Bloc<BrandMissionsEvent, BrandMissionsState> {
         );
       },
     );
-  }
+  }*/
 }

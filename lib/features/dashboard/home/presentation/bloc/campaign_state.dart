@@ -4,7 +4,7 @@ enum CampaignType { claimReward, claimWinnerReward }
 
 class CampaignState extends Equatable {
   final int totalParticipants;
-  final List<UserProfile> referrals;
+  final List<Users> referrals;
   final bool isUserInCampaign;
   final bool hasClaimed;
 
@@ -17,7 +17,7 @@ class CampaignState extends Equatable {
 
   CampaignState copyWith({
     int? totalParticipants,
-    List<UserProfile>? referrals,
+    List<Users>? referrals,
     bool? isUserInCampaign,
     bool? hasClaimed,
   }) {

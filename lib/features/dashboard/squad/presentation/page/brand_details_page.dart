@@ -1,8 +1,7 @@
 import 'package:bravoo/app/view/widgets/gradient_progress.dart';
 import 'package:bravoo/core/constants/app_assets.dart';
 import 'package:bravoo/core/constants/fonts.dart';
-import 'package:bravoo/features/dashboard/squad/data/model/response/squad_mission_model.dart';
-import 'package:bravoo/features/dashboard/squad/data/model/response/squad_model.dart';
+import 'package:bravoo/features/dashboard/squad/data/model/response/brand_model.dart';
 import 'package:fade_shimmer/fade_shimmer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -21,40 +20,41 @@ import '../../../../../core/utils/helpers.dart';
 import '../../../../../utility/ui_tool_mix.dart';
 import '../../../earn/presentation/pages/invite_earn.dart';
 import '../../../profile/presentation/bloc/profile_bloc.dart';
-import '../bloc/squad_bloc.dart';
-import '../bloc/squad_individual_bloc.dart';
-import '../bloc/squad_mission_bloc.dart';
-import '../widget/join_squad_dialog.dart';
-import '../widget/leave_squad_dialog.dart';
-import 'squad_mission_details_page.dart';
+import '../../data/model/response/brand_mission_model.dart';
+import '../bloc/brand_bloc.dart';
+import '../bloc/brand_individual_bloc.dart';
 
-class SquadDetailsPage extends StatefulWidget {
-  const SquadDetailsPage({super.key, required this.squad});
+class BrandDetailsPage extends StatefulWidget {
+  const BrandDetailsPage({super.key, required this.brand});
 
-  final Squad squad;
+  final Brand brand;
 
   @override
-  State<SquadDetailsPage> createState() => _SquadDetailsPageState();
+  State<BrandDetailsPage> createState() => _BrandDetailsPageState();
 }
 
-class _SquadDetailsPageState extends State<SquadDetailsPage> with UIToolMixin {
-  late Squad squad;
+class _BrandDetailsPageState extends State<BrandDetailsPage> with UIToolMixin {
+  late Brand brand;
+
+  Color textColor = AppColors.error;
+  Color inverseTextColor = AppColors.black;
 
   @override
   void initState() {
-    squad = widget.squad;
+    brand = widget.brand;
     super.initState();
-    context.read<SquadBloc>().add(FetchSquadsEvent());
+    context.read<BrandBloc>().add(FetchBrandsEvent());
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<SquadIndividualBloc>(
-      create: (_) => sl<SquadIndividualBloc>(param1: squad.id),
-      child: BlocBuilder<SquadBloc, SquadState>(
-        builder: (context, squadState) {
-          squad = squadState.squads.firstWhere((e) => e.id == squad.id);
-          final textColor = hexToColor(squad.textColor);
+    return BlocProvider<BrandIndividualBloc>(
+      create: (_) => sl<BrandIndividualBloc>(param1: brand.id),
+      child: BlocBuilder<BrandBloc, BrandState>(
+        builder: (context, brandState) {
+          brand = brandState.brands.firstWhere((e) => e.id == brand.id);
+          textColor = hexToColor(brand.textColor);
+          inverseTextColor = hexToColor(brand.inverseTextColor);
           return Scaffold(
             body: Stack(
               children: [
@@ -94,7 +94,7 @@ class _SquadDetailsPageState extends State<SquadDetailsPage> with UIToolMixin {
                             child: RichText(
                               textAlign: TextAlign.center,
                               text: TextSpan(
-                                text: "Join Squad",
+                                text: brand.name.capitalize,
                                 style: TextStyles.titleSemiBold20(context),
                               ),
                             ),
@@ -125,7 +125,7 @@ class _SquadDetailsPageState extends State<SquadDetailsPage> with UIToolMixin {
                                 width: 116.w,
                                 height: 98.h,
                                 decoration: BoxDecoration(
-                                  color: AppColors.white80,
+                                  color: hexToColor(brand.logoBgColor),
                                   borderRadius: BorderRadius.circular(16.r),
                                   border: Border.all(
                                     width: 3.w,
@@ -134,9 +134,9 @@ class _SquadDetailsPageState extends State<SquadDetailsPage> with UIToolMixin {
                                 ),
                                 child: Center(
                                   child: CachedImageRadius(
-                                    imageUrl: squad.image,
+                                    imageUrl: brand.logo,
                                     circle: true,
-                                    size: 80,
+                                    size: 70,
                                     fit: BoxFit.cover,
                                     color: Colors.transparent,
                                   ),
@@ -145,18 +145,6 @@ class _SquadDetailsPageState extends State<SquadDetailsPage> with UIToolMixin {
                             ],
                           ),
                           SizedBox(height: 8.h),
-                          RichText(
-                            textAlign: TextAlign.center,
-                            text: TextSpan(
-                              text: "${squad.name.capitalize} Squad",
-                              style: TextStyles.titleSemiBold20(context)
-                                  .copyWith(
-                                    height: 1.h,
-                                    fontFamily: AppFonts.baloo2,
-                                  ),
-                            ),
-                          ),
-                          SizedBox(height: 4.h),
                           Row(
                             spacing: 2.w,
                             crossAxisAlignment: CrossAxisAlignment.center,
@@ -168,10 +156,9 @@ class _SquadDetailsPageState extends State<SquadDetailsPage> with UIToolMixin {
                                 color: AppColors.grey500,
                               ),
                               RichText(
-                                textAlign: TextAlign.center,
                                 text: TextSpan(
                                   text:
-                                      "Created ${formatSmartDate(squad.createdAt.toIso8601String(), showTime: false)}",
+                                      "Created ${formatSmartDate(brand.createdAt.toIso8601String(), showTime: false)}",
                                   style: TextStyles.cardBold10(
                                     context,
                                   ).copyWith(color: AppColors.grey500),
@@ -183,9 +170,9 @@ class _SquadDetailsPageState extends State<SquadDetailsPage> with UIToolMixin {
                           RichText(
                             textAlign: TextAlign.center,
                             text: TextSpan(
-                              text: squad.about.isEmpty
+                              text: brand.about.isEmpty
                                   ? "No Description"
-                                  : squad.about,
+                                  : brand.about,
                               style: TextStyles.smallMedium12(
                                 context,
                                 opacity: .75,
@@ -201,9 +188,10 @@ class _SquadDetailsPageState extends State<SquadDetailsPage> with UIToolMixin {
                             decoration: BoxDecoration(
                               gradient: LinearGradient(
                                 colors: [
-                                  AppColors.white,
-                                  hexToColor(squad.gradientColor.end),
-                                  hexToColor(squad.gradientColor.start),
+                                  textColor,
+                                  hexToColor(brand.gradientColor.end),
+                                  hexToColor(brand.gradientColor.end),
+                                  hexToColor(brand.gradientColor.start),
                                 ],
                                 begin: Alignment.bottomCenter,
                                 end: Alignment.topCenter,
@@ -220,17 +208,17 @@ class _SquadDetailsPageState extends State<SquadDetailsPage> with UIToolMixin {
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
                                     Expanded(
-                                      child: _buildSquadDetailContainer(
+                                      child: _buildBrandDetailContainer(
                                         context,
-                                        title: "Squad",
-                                        value: "${squad.name.capitalize} Squad",
+                                        title: "Brand",
+                                        value: "${brand.name.capitalize}",
                                       ),
                                     ),
                                     Expanded(
-                                      child: _buildSquadDetailContainer(
+                                      child: _buildBrandDetailContainer(
                                         context,
                                         title: "Who can play?",
-                                        value: "Squad members",
+                                        value: "Followers",
                                       ),
                                     ),
                                   ],
@@ -240,17 +228,17 @@ class _SquadDetailsPageState extends State<SquadDetailsPage> with UIToolMixin {
                                   crossAxisAlignment: CrossAxisAlignment.center,
                                   children: [
                                     Expanded(
-                                      child: _buildSquadDetailContainer(
+                                      child: _buildBrandDetailContainer(
                                         context,
                                         title: "Reward",
                                         value: "Yes",
                                       ),
                                     ),
                                     Expanded(
-                                      child: _buildSquadDetailContainer(
+                                      child: _buildBrandDetailContainer(
                                         context,
                                         title: "How many can join?",
-                                        value: "${squad.maxUsers} people",
+                                        value: "∞",
                                       ),
                                     ),
                                   ],
@@ -259,44 +247,43 @@ class _SquadDetailsPageState extends State<SquadDetailsPage> with UIToolMixin {
                             ),
                           ),
                           SizedBox(height: 8.h),
-                          IconTextButton(
+                          /*IconTextButton(
                             onPressed: () {
-                              if (squad.isFull) {
+                              if (brand.isFull) {
                                 showMessage(
-                                  "${squad.name.capitalize} Squad is Full",
+                                  "${brand.name.capitalize} Brand is Full",
                                   context,
                                   status: true,
                                 );
-                              } else if (squad.cooldownDaysRemaining > 1) {
+                              } else if (brand.cooldownDaysRemaining > 1) {
                                 showMessage(
-                                  "Please wait ${squad.cooldownDaysRemaining} more day(s) before joining",
+                                  "Please wait ${brand.cooldownDaysRemaining} more day(s) before joining",
                                   context,
                                   status: true,
                                 );
-                              } else if (squad.canJoin) {
-                                joinSquadDialog(squad: squad);
-                              } else if (squad.isJoined) {
-                                leaveSquadDialog(squad: squad);
+                              } else if (brand.canJoin) {
+                                joinBrandDialog(squad: brand);
+                              } else if (brand.isJoined) {
+                                leaveBrandDialog(squad: brand);
                               }
                             },
-                            text: squad.isFull
+                            text: brand.isFull
                                 ? "Full"
-                                : squad.isJoined
-                                ? "Leave ${squad.name.capitalize} Squad"
-                                : "Join ${squad.name.capitalize} Squad",
+                                : brand.isJoined
+                                ? "Leave ${brand.name.capitalize} Brand"
+                                : "Join ${brand.name.capitalize} Brand",
                             textColor: AppColors.white,
-                            color: squad.isJoined
+                            color: brand.isJoined
                                 ? AppColors.error
-                                : squad.isFull
+                                : brand.isFull
                                 ? AppColors.grey550
                                 : textColor,
-                          ),
+                          ),*/
                           SizedBox(height: 23.h),
                           RichText(
                             textAlign: TextAlign.start,
                             text: TextSpan(
-                              text:
-                                  "Members ${squad.usersJoined}/${squad.maxUsers}",
+                              text: "Followers ${brand.followerCount}",
                               style: TextStyles.normalSemibold14(context)
                                   .copyWith(
                                     fontFamily: AppFonts.baloo2,
@@ -310,13 +297,13 @@ class _SquadDetailsPageState extends State<SquadDetailsPage> with UIToolMixin {
                     ),
                     SliverList(
                       delegate: SliverChildListDelegate([
-                        if (squad.members.isEmpty)
+                        if (brand.followers.isEmpty)
                           SizedBox(
                             height: 80.h,
                             child: Center(
                               child: RichText(
                                 text: TextSpan(
-                                  text: "No Members Yet",
+                                  text: "No Followers Yet",
                                   style: TextStyles.smallSemibold12(
                                     context,
                                     opacity: .65,
@@ -330,12 +317,12 @@ class _SquadDetailsPageState extends State<SquadDetailsPage> with UIToolMixin {
                             height: 80.h,
                             child: ListView.separated(
                               shrinkWrap: true,
-                              itemCount: squad.members.length,
+                              itemCount: brand.followers.length,
                               scrollDirection: Axis.horizontal,
                               padding: EdgeInsets.symmetric(horizontal: 16.w),
                               physics: BouncingScrollPhysics(),
                               itemBuilder: (context, index) {
-                                final member = squad.members[index];
+                                final follower = brand.followers[index];
                                 return SizedBox(
                                   width: 60.w,
                                   child: Column(
@@ -345,7 +332,7 @@ class _SquadDetailsPageState extends State<SquadDetailsPage> with UIToolMixin {
                                         CrossAxisAlignment.center,
                                     children: [
                                       CachedImageRadius(
-                                        imageUrl: member.profileImage,
+                                        imageUrl: follower.profileImage,
                                         size: 60,
                                         fit: BoxFit.cover,
                                         circle: true,
@@ -356,7 +343,7 @@ class _SquadDetailsPageState extends State<SquadDetailsPage> with UIToolMixin {
                                         overflow: TextOverflow.ellipsis,
                                         textAlign: TextAlign.center,
                                         text: TextSpan(
-                                          text: "${member.name.capitalize}",
+                                          text: "${follower.name.capitalize}",
                                           style: TextStyles.smallBold12(context)
                                               .copyWith(
                                                 fontFamily: AppFonts.baloo2,
@@ -381,23 +368,23 @@ class _SquadDetailsPageState extends State<SquadDetailsPage> with UIToolMixin {
                           RichText(
                             textAlign: TextAlign.start,
                             text: TextSpan(
-                              text: "${squad.name.capitalize} Squad  Missions",
+                              text: "${brand.name.capitalize} Missions",
                               style: TextStyles.normalSemibold14(context),
                             ),
                           ),
                         ]),
                       ),
                     ),
-                    BlocBuilder<SquadIndividualBloc, SquadIndividualState>(
+                    BlocBuilder<BrandIndividualBloc, BrandIndividualState>(
                       builder: (context, state) {
-                        final squadMissions = state.missions;
+                        final brandMission = state.missions;
                         bool isLoading =
-                            state is SquadIndividualLoadingState &&
-                            state.type == SquadIndividualType.fetch;
-                        return SquadMissionCard(
-                          squad: squad,
+                            state is BrandIndividualLoadingState &&
+                            state.type == BrandIndividualType.fetch;
+                        return BrandMissionCard(
+                          brand: brand,
                           isLoading: isLoading,
-                          squadMissions: squadMissions,
+                          brandMissions: brandMission,
                         );
                       },
                     ),
@@ -416,7 +403,7 @@ class _SquadDetailsPageState extends State<SquadDetailsPage> with UIToolMixin {
     );
   }
 
-  Widget _buildSquadDetailContainer(
+  Widget _buildBrandDetailContainer(
     BuildContext context, {
     required String title,
     required String value,
@@ -424,7 +411,7 @@ class _SquadDetailsPageState extends State<SquadDetailsPage> with UIToolMixin {
     return Container(
       padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 8.w),
       decoration: BoxDecoration(
-        color: AppColors.white,
+        color: textColor,
         borderRadius: BorderRadius.circular(6.r),
       ),
       child: Column(
@@ -437,7 +424,9 @@ class _SquadDetailsPageState extends State<SquadDetailsPage> with UIToolMixin {
             textAlign: TextAlign.start,
             text: TextSpan(
               text: title,
-              style: TextStyles.smallRegular12(context),
+              style: TextStyles.smallRegular12(
+                context,
+              ).copyWith(color: inverseTextColor),
             ),
           ),
           RichText(
@@ -446,9 +435,11 @@ class _SquadDetailsPageState extends State<SquadDetailsPage> with UIToolMixin {
             textAlign: TextAlign.start,
             text: TextSpan(
               text: value,
-              style: TextStyles.bodySemiBold16(
-                context,
-              ).copyWith(fontFamily: AppFonts.baloo2, height: 1.h),
+              style: TextStyles.bodySemiBold16(context).copyWith(
+                fontFamily: AppFonts.baloo2,
+                height: 1.h,
+                color: inverseTextColor,
+              ),
             ),
           ),
         ],
@@ -457,21 +448,21 @@ class _SquadDetailsPageState extends State<SquadDetailsPage> with UIToolMixin {
   }
 }
 
-class SquadMissionCard extends StatelessWidget {
-  const SquadMissionCard({
+class BrandMissionCard extends StatelessWidget {
+  const BrandMissionCard({
     super.key,
     required this.isLoading,
-    required this.squadMissions,
-    required this.squad,
+    required this.brandMissions,
+    required this.brand,
   });
 
   final bool isLoading;
-  final List<SquadMission> squadMissions;
-  final Squad squad;
+  final List<BrandMission> brandMissions;
+  final Brand brand;
 
   @override
   Widget build(BuildContext context) {
-    if (isLoading && squadMissions.isEmpty)
+    if (isLoading && brandMissions.isEmpty)
       return SliverPadding(
         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
         sliver: SliverGrid.builder(
@@ -597,7 +588,7 @@ class SquadMissionCard extends StatelessWidget {
           ),
         ),
       );
-    else if (squadMissions.isEmpty)
+    else if (brandMissions.isEmpty)
       return SliverPadding(
         padding: EdgeInsets.symmetric(horizontal: 16.w),
         sliver: SliverToBoxAdapter(
@@ -607,7 +598,7 @@ class SquadMissionCard extends StatelessWidget {
               child: RichText(
                 textAlign: TextAlign.start,
                 text: TextSpan(
-                  text: "No Squad Missions",
+                  text: "No Brand Missions",
                   style: TextStyles.smallSemibold12(context, opacity: .65),
                 ),
               ),
@@ -619,38 +610,38 @@ class SquadMissionCard extends StatelessWidget {
       return SliverPadding(
         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
         sliver: SliverGrid.builder(
-          itemCount: squadMissions.length,
+          itemCount: brandMissions.length,
           itemBuilder: (context, index) {
-            final squadMission = squadMissions[index];
-            final double progress = squadMission.maxUsers == 0
+            final brandMission = brandMissions[index];
+            final double progress = brandMission.maxUsers == 0
                 ? 0.0
-                : squadMission.usersJoined / squadMission.maxUsers;
+                : brandMission.usersJoined / brandMission.maxUsers;
             final double safeProgress = progress.clamp(0.0, 1.0);
             return GestureDetector(
-              onTap: () => Navigator.push(
+              /*onTap: () => Navigator.push(
                 context,
                 MaterialPageRoute(
                   builder: (_) => MultiBlocProvider(
                     providers: [
                       // Pass the EXISTING instance — don't create a new one
                       BlocProvider.value(
-                        value: context.read<SquadIndividualBloc>(),
+                        value: context.read<BrandIndividualBloc>(),
                       ),
-                      // Create a NEW scoped SquadMissionBloc for this page
-                      BlocProvider<SquadMissionBloc>(
-                        create: (_) => sl<SquadMissionBloc>(
-                          param1: squad.id,
-                          param2: squadMission.id,
+                      // Create a NEW scoped BrandMissionBloc for this page
+                      BlocProvider<BrandMissionBloc>(
+                        create: (_) => sl<BrandMissionBloc>(
+                          param1: brand.id,
+                          param2: brandMission.id,
                         ),
                       ),
                     ],
-                    child: SquadMissionDetailsPage(
-                      squad: squad,
-                      squadMission: squadMission,
+                    child: BrandMissionDetailsPage(
+                      squad: brand,
+                      squadMission: brandMission,
                     ),
                   ),
                 ),
-              ),
+              ),*/
               child: Container(
                 width: double.infinity,
                 height: double.infinity,
@@ -664,7 +655,7 @@ class SquadMissionCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     CachedImageSize(
-                      imageUrl: squadMission.image,
+                      imageUrl: brandMission.image,
                       width: double.infinity,
                       height: 145.h,
                       color: AppColors.grey300.withValues(alpha: .25),
@@ -713,7 +704,7 @@ class SquadMissionCard extends StatelessWidget {
                                     overflow: TextOverflow.ellipsis,
                                     text: TextSpan(
                                       text:
-                                          "${formatAmount(squadMission.points)}",
+                                          "${formatAmount(brandMission.points)}",
                                       style: TextStyles.cardBold10(
                                         context,
                                       ).copyWith(color: AppColors.white),
@@ -725,7 +716,7 @@ class SquadMissionCard extends StatelessWidget {
                             RichText(
                               textAlign: TextAlign.start,
                               text: TextSpan(
-                                text: "${squadMission.timeLeft}",
+                                text: "${brandMission.timeLeft}",
                                 style: TextStyles.smallCardSemibold8(context)
                                     .copyWith(
                                       fontFamily: AppFonts.baloo2,
@@ -750,7 +741,7 @@ class SquadMissionCard extends StatelessWidget {
                         textAlign: TextAlign.start,
                         text: TextSpan(
                           text:
-                              "${squadMission.usersJoined}/${squadMission.maxUsers} joined",
+                              "${brandMission.usersJoined}/${brandMission.maxUsers} joined",
                           style: TextStyles.smallCardRegular8(
                             context,
                             opacity: .65,
@@ -774,7 +765,7 @@ class SquadMissionCard extends StatelessWidget {
                               overflow: TextOverflow.ellipsis,
                               textAlign: TextAlign.start,
                               text: TextSpan(
-                                text: squadMission.title,
+                                text: brandMission.title,
                                 style: TextStyles.smallBold12(context).copyWith(
                                   fontSize: 13.sp,
                                   fontFamily: AppFonts.baloo2,
@@ -787,7 +778,7 @@ class SquadMissionCard extends StatelessWidget {
                               overflow: TextOverflow.ellipsis,
                               textAlign: TextAlign.start,
                               text: TextSpan(
-                                text: squadMission.subtitle,
+                                text: brandMission.subtitle,
                                 style: TextStyles.cardRegular10(context)
                                     .copyWith(
                                       fontSize: 11.sp,
@@ -803,10 +794,10 @@ class SquadMissionCard extends StatelessWidget {
                                 Expanded(
                                   child: IconTextButton(
                                     height: 22.h,
-                                    text: squadMission.isJoined
+                                    text: brandMission.isJoined
                                         ? "Leave Mission"
-                                        : squadMission.actionLabel,
-                                    onPressed: () => Navigator.push(
+                                        : brandMission.actionLabel,
+                                    onPressed: () {} /* => Navigator.push(
                                       context,
                                       MaterialPageRoute(
                                         builder: (_) => MultiBlocProvider(
@@ -814,29 +805,29 @@ class SquadMissionCard extends StatelessWidget {
                                             // Pass the EXISTING instance — don't create a new one
                                             BlocProvider.value(
                                               value: context
-                                                  .read<SquadIndividualBloc>(),
+                                                  .read<BrandIndividualBloc>(),
                                             ),
-                                            // Create a NEW scoped SquadMissionBloc for this page
-                                            BlocProvider<SquadMissionBloc>(
+                                            // Create a NEW scoped BrandMissionBloc for this page
+                                            BlocProvider<BrandMissionBloc>(
                                               create: (_) =>
-                                                  sl<SquadMissionBloc>(
-                                                    param1: squad.id,
-                                                    param2: squadMission.id,
+                                                  sl<BrandMissionBloc>(
+                                                    param1: brand.id,
+                                                    param2: brandMission.id,
                                                   ),
                                             ),
                                           ],
-                                          child: SquadMissionDetailsPage(
-                                            squad: squad,
-                                            squadMission: squadMission,
+                                          child: BrandMissionDetailsPage(
+                                            squad: brand,
+                                            squadMission: brandMission,
                                           ),
                                         ),
                                       ),
-                                    ),
+                                    )*/,
                                     paddingH: 0,
                                     paddingW: 0,
                                     textSize: 8,
                                     textColor: AppColors.white,
-                                    color: _primaryButtonColor(squadMission),
+                                    color: _primaryButtonColor(brandMission),
                                   ),
                                 ),
                                 BlocBuilder<ProfileBloc, ProfileState>(
@@ -896,7 +887,7 @@ class SquadMissionCard extends StatelessWidget {
       );
   }
 
-  Color _primaryButtonColor(SquadMission mission) {
+  Color _primaryButtonColor(BrandMission mission) {
     if (mission.isJoined) return AppColors.error;
     if (mission.hasExpired || mission.isFull) return AppColors.grey550;
     return AppColors.black;

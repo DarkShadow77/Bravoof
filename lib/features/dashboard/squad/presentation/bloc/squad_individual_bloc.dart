@@ -46,7 +46,7 @@ class SquadIndividualBloc
       (missions) {
         emit(state.copyWith(missions: missions));
         emit(
-          SquadIndividualErrorState(
+          SquadIndividualSuccessState(
             type: SquadIndividualType.fetch,
             message: "Fetched Squad Missions Successfully",
             missions: missions,

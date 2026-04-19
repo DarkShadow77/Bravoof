@@ -8,12 +8,10 @@ import 'notification_repository.dart';
 class NotificationRepositoryImpl extends NotificationRepository {
   final supabase = Supabase.instance.client;
 
-  Future<Either<String, List<NotificationModel>>> fetchNotifications({
-    required String userId,
-  }) async {
+  Future<Either<String, List<NotificationModel>>> fetchNotifications() async {
     return ApiService.instance!.invokeEdgeFunction<List<NotificationModel>>(
       functionName: 'get-user-notifications',
-      body: {'user_id': userId},
+      body: {},
       fallbackErrorMessage: 'Failed to Retrieve Notifications',
       onSuccess: (data) {
         final notification = data["data"] as List;
@@ -33,23 +31,19 @@ class NotificationRepositoryImpl extends NotificationRepository {
     );
   }
 
-  Future<Either<String, String>> markAllNotificationAsRead({
-    required String userId,
-  }) async {
+  Future<Either<String, String>> markAllNotificationAsRead() async {
     return ApiService.instance!.invokeEdgeFunction<String>(
       functionName: 'mark-all-notifications-read',
-      body: {'user_id': userId},
+      body: {},
       fallbackErrorMessage: 'All Notification as Read failed',
       onSuccess: (data) => "Successfully Marked All Notification as Read",
     );
   }
 
-  Future<Either<String, String>> clearNotification({
-    required String userId,
-  }) async {
+  Future<Either<String, String>> clearNotification() async {
     return ApiService.instance!.invokeEdgeFunction<String>(
       functionName: 'clear-user-notifications',
-      body: {'user_id': userId},
+      body: {},
       fallbackErrorMessage: 'Clear All Notification failed',
       onSuccess: (data) => "Successfully Cleared All Notification",
     );

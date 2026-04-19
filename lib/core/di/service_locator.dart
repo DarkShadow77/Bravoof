@@ -59,6 +59,7 @@ import '../../features/dashboard/squad/data/repository/squad_repository.dart';
 import '../../features/dashboard/squad/data/repository/squad_repository_impl.dart';
 import '../../features/dashboard/squad/presentation/bloc/activity_bloc.dart';
 import '../../features/dashboard/squad/presentation/bloc/brand_bloc.dart';
+import '../../features/dashboard/squad/presentation/bloc/brand_individual_bloc.dart';
 import '../../features/dashboard/squad/presentation/bloc/squad_bloc.dart';
 import '../../features/dashboard/squad/presentation/bloc/squad_individual_bloc.dart';
 import '../../features/dashboard/squad/presentation/bloc/squad_mission_bloc.dart';
@@ -155,6 +156,10 @@ Future<void> initDI() async {
     ),
   );
   sl.registerSingleton<BrandBloc>(BrandBloc(repo: sl<BrandRepository>()));
+  sl.registerFactoryParam<BrandIndividualBloc, String, void>(
+    (brandId, _) =>
+        BrandIndividualBloc(brandId: brandId, repo: sl<BrandRepository>()),
+  );
   sl.registerSingleton<RecentActivityBloc>(
     RecentActivityBloc(repo: sl<RecentActivityRepository>()),
   );

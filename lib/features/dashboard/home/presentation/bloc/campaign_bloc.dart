@@ -3,7 +3,7 @@ import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../../../profile/data/model/user_profile.dart';
+import '../../../profile/data/model/users_model.dart';
 import '../../data/repository/campaign_repository.dart';
 
 part 'campaign_event.dart';
@@ -47,10 +47,7 @@ class CampaignBloc extends Bloc<CampaignEvent, CampaignState> {
     LoadUserReferralsForCampaign event,
     Emitter emit,
   ) async {
-    final res = await repo.getUserReferralsForCampaign(
-      userId: supabase.auth.currentUser!.id,
-      campaignId: campaignId,
-    );
+    final res = await repo.getUserReferralsForCampaign(campaignId: campaignId);
 
     res.fold(
       (err) => print(err),

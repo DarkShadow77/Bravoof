@@ -1,14 +1,13 @@
 import 'package:dartz/dartz.dart';
 
-import '../../../profile/data/model/user_profile.dart';
+import '../../../profile/data/model/users_model.dart';
 
 abstract class CampaignRepository {
   Future<Either<String, int>> getTotalJoinedForCampaign({
     required int campaignId,
   });
 
-  Future<Either<String, List<UserProfile>>> getUserReferralsForCampaign({
-    required String userId,
+  Future<Either<String, List<Users>>> getUserReferralsForCampaign({
     required int campaignId,
   });
 
