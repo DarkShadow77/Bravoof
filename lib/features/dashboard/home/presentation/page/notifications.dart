@@ -1,6 +1,7 @@
 import 'package:bravoo/app/styles/text_styles.dart';
 import 'package:bravoo/core/constants/app_assets.dart';
 import 'package:bravoo/features/dashboard/home/data/model/notification_model.dart';
+import 'package:bravoo/features/dashboard/profile/presentation/bloc/profile_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
@@ -25,6 +26,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
     final notificationBloc = context.read<NotificationBloc>();
     notifications = notificationBloc.state.notification;
     notificationBloc.add(LoadNotifications());
+    context.read<ProfileBloc>().add(SendNotificationEvent());
   }
 
   DateTime _dateOnly(DateTime d) => DateTime(d.year, d.month, d.day);

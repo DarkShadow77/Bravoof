@@ -18,21 +18,6 @@ class ProfileRepositoryImpl extends ProfileRepository {
   final supabase = Supabase.instance.client;
   final firebase = FirebaseMessagingService.instance();
 
-  /*Future<Either<String, UserProfile>> fetchUserProfile() async {
-    try {
-      final response = await supabase
-          .from('user_profile')
-          .select()
-          .eq('user_id', supabase.auth.currentUser!.id)
-          .single();
-
-      UserProfile userProfile = UserProfile.fromJson(response);
-      return Right(userProfile);
-    } catch (e) {
-      return Left(e.toString());
-    }
-  }*/
-
   Future<Either<String, UserProfile>> fetchUserProfile() async {
     return ApiService.instance!.invokeEdgeFunction<UserProfile>(
       functionName: 'get-profile',
@@ -161,7 +146,6 @@ class ProfileRepositoryImpl extends ProfileRepository {
     return ApiService.instance!.invokeEdgeFunction<String>(
       functionName: 'save-user-logo-activity',
       body: {
-        'userId': userId,
         "platform": Platform.isAndroid ? "android" : "ios",
         "logoName": logoString,
       },
@@ -187,7 +171,7 @@ class ProfileRepositoryImpl extends ProfileRepository {
   Future<Either<String, void>> deleteFCMToken() async {
     return ApiService.instance!.invokeEdgeFunction<void>(
       functionName: 'delete-fcm-token',
-      body: {"fcm_token": firebase.getFcmToken()},
+      body: {"fcm_token": await firebase.getFcmToken()},
       fallbackErrorMessage: "Failed to Delete FCM Token",
       onSuccess: (data) => "Successfully Deleted FCM Token",
     );

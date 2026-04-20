@@ -9,10 +9,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
-import 'package:logger/logger.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../../core/services/firebase_messaging_service.dart';
+import '../../../../../core/utils/logger.dart';
 import '../../../../../utility/ui_tool_mix.dart';
 import '../../../home/presentation/bloc/notification_bloc.dart';
 
@@ -235,7 +235,7 @@ class CustomTile extends StatelessWidget {
   final String? subtitle;
   final Widget? trailing;
   final Widget? leading;
-  Function() apply;
+  final Function() apply;
 
   CustomTile({
     super.key,
@@ -291,6 +291,7 @@ class _NotificationWidgetState extends State<NotificationWidget>
     with UIToolMixin {
   final supabase = Supabase.instance.client;
   final firebase = FirebaseMessagingService.instance();
+  final logger = AppLogger();
 
   bool notificationsEnabled = false;
   bool rewardsEnabled = false;
@@ -323,10 +324,8 @@ class _NotificationWidgetState extends State<NotificationWidget>
 
     final state = notificationBloc.state;
 
-    Logger().d("Notifications Enabled $osEnabled");
-    Logger().d(
-      "Preference State ${state.rewardEnabled}, ${state.offerEnabled}",
-    );
+    logger.d("Notifications Enabled $osEnabled");
+    logger.d("Preference State ${state.rewardEnabled}, ${state.offerEnabled}");
     setState(() {
       notificationsEnabled = osEnabled;
 

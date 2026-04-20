@@ -5,6 +5,7 @@ import 'package:logger/logger.dart';
 import 'package:meta/meta.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../../../../core/utils/logger.dart';
 import '../../data/model/user_profile.dart';
 import '../../data/repository/profile_repository.dart';
 
@@ -14,7 +15,7 @@ part 'profile_state.dart';
 class ProfileBloc extends HydratedBloc<ProfileEvent, ProfileState> {
   final ProfileRepository repo;
 
-  Logger logger = Logger();
+  final logger = AppLogger();
   final supabase = Supabase.instance.client;
 
   ProfileBloc({required this.repo})
@@ -44,20 +45,14 @@ class ProfileBloc extends HydratedBloc<ProfileEvent, ProfileState> {
     final response = await repo.fetchUserProfile();
 
     response.fold(
-      (failure) {
-        logger.e("Failed to get Profile $failure");
-        emit(
-          ProfileFailureState(
-            type: ProfileType.getProfile,
-            message: failure.toString(),
-            profile: state.profile,
-          ),
-        );
-      },
+      (failure) => emit(
+        ProfileFailureState(
+          type: ProfileType.getProfile,
+          message: failure.toString(),
+          profile: state.profile,
+        ),
+      ),
       (user) {
-        logger.t("Get Profile Successful");
-
-        //Update the state of the Profile
         emit(state.copyWith(profile: user));
         emit(
           ProfileSuccessState(
@@ -87,18 +82,14 @@ class ProfileBloc extends HydratedBloc<ProfileEvent, ProfileState> {
     );
 
     response.fold(
-      (failure) {
-        logger.e("Failed to Update Profile");
-        emit(
-          ProfileFailureState(
-            type: ProfileType.updateProfile,
-            message: failure,
-            profile: state.profile,
-          ),
-        );
-      },
+      (failure) => emit(
+        ProfileFailureState(
+          type: ProfileType.updateProfile,
+          message: failure,
+          profile: state.profile,
+        ),
+      ),
       (user) {
-        logger.t("Profile Updated  Successfully");
         emit(state.copyWith(profile: user));
         emit(
           ProfileSuccessState(
@@ -125,19 +116,14 @@ class ProfileBloc extends HydratedBloc<ProfileEvent, ProfileState> {
     final response = await repo.updateCoverPic(imageFile: event.imageFile);
 
     response.fold(
-      (failure) {
-        logger.e("Failed to Update Cover Pic");
-        emit(
-          ProfileFailureState(
-            type: ProfileType.updateCoverPic,
-            message: failure,
-            profile: state.profile,
-          ),
-        );
-      },
+      (failure) => emit(
+        ProfileFailureState(
+          type: ProfileType.updateCoverPic,
+          message: failure,
+          profile: state.profile,
+        ),
+      ),
       (user) {
-        logger.t("Cover Pic Updated  Successfully");
-
         add(GetProfileEvent());
         emit(
           ProfileSuccessState(
@@ -206,26 +192,20 @@ class ProfileBloc extends HydratedBloc<ProfileEvent, ProfileState> {
     );
 
     response.fold(
-      (failure) {
-        logger.e("Failed to Delete Account");
-        emit(
-          ProfileFailureState(
-            type: ProfileType.deleteAccount,
-            message: failure,
-            profile: state.profile,
-          ),
-        );
-      },
-      (user) {
-        logger.t(user);
-        emit(
-          ProfileSuccessState(
-            type: ProfileType.deleteAccount,
-            message: user,
-            profile: state.profile,
-          ),
-        );
-      },
+      (failure) => emit(
+        ProfileFailureState(
+          type: ProfileType.deleteAccount,
+          message: failure,
+          profile: state.profile,
+        ),
+      ),
+      (user) => emit(
+        ProfileSuccessState(
+          type: ProfileType.deleteAccount,
+          message: user,
+          profile: state.profile,
+        ),
+      ),
     );
   }
 
@@ -341,27 +321,20 @@ class ProfileBloc extends HydratedBloc<ProfileEvent, ProfileState> {
     final response = await repo.saveFCMToken();
 
     response.fold(
-      (failure) {
-        logger.e("Failed to Save Fcm Token");
-        emit(
-          ProfileFailureState(
-            type: ProfileType.saveFcmToken,
-            message: failure,
-            profile: state.profile,
-          ),
-        );
-      },
-      (user) {
-        logger.w("Saved FCM Token Successfully");
-
-        emit(
-          ProfileSuccessState(
-            type: ProfileType.saveFcmToken,
-            message: "Saved FCM Token Successfully",
-            profile: state.profile,
-          ),
-        );
-      },
+      (failure) => emit(
+        ProfileFailureState(
+          type: ProfileType.saveFcmToken,
+          message: failure,
+          profile: state.profile,
+        ),
+      ),
+      (user) => emit(
+        ProfileSuccessState(
+          type: ProfileType.saveFcmToken,
+          message: "Saved FCM Token Successfully",
+          profile: state.profile,
+        ),
+      ),
     );
   }
 
@@ -379,27 +352,20 @@ class ProfileBloc extends HydratedBloc<ProfileEvent, ProfileState> {
     final response = await repo.deleteFCMToken();
 
     response.fold(
-      (failure) {
-        logger.e("Failed to Delete Fcm Token");
-        emit(
-          ProfileFailureState(
-            type: ProfileType.deleteFcmToken,
-            message: failure,
-            profile: state.profile,
-          ),
-        );
-      },
-      (user) {
-        logger.w("Deleted FCM Token Successfully");
-
-        emit(
-          ProfileSuccessState(
-            type: ProfileType.deleteFcmToken,
-            message: "Deleted FCM Token Successfully",
-            profile: state.profile,
-          ),
-        );
-      },
+      (failure) => emit(
+        ProfileFailureState(
+          type: ProfileType.deleteFcmToken,
+          message: failure,
+          profile: state.profile,
+        ),
+      ),
+      (user) => emit(
+        ProfileSuccessState(
+          type: ProfileType.deleteFcmToken,
+          message: "Deleted FCM Token Successfully",
+          profile: state.profile,
+        ),
+      ),
     );
   }
 
@@ -417,27 +383,20 @@ class ProfileBloc extends HydratedBloc<ProfileEvent, ProfileState> {
     final response = await repo.sendPushNotification();
 
     response.fold(
-      (failure) {
-        logger.e("Failed to Send Notification");
-        emit(
-          ProfileFailureState(
-            type: ProfileType.sendNotification,
-            message: failure,
-            profile: state.profile,
-          ),
-        );
-      },
-      (user) {
-        logger.w("Sent Notification Successfully");
-
-        emit(
-          ProfileSuccessState(
-            type: ProfileType.sendNotification,
-            message: "Sent Notification Successfully",
-            profile: state.profile,
-          ),
-        );
-      },
+      (failure) => emit(
+        ProfileFailureState(
+          type: ProfileType.sendNotification,
+          message: failure,
+          profile: state.profile,
+        ),
+      ),
+      (user) => emit(
+        ProfileSuccessState(
+          type: ProfileType.sendNotification,
+          message: "Sent Notification Successfully",
+          profile: state.profile,
+        ),
+      ),
     );
   }
 
@@ -477,7 +436,7 @@ class ProfileBloc extends HydratedBloc<ProfileEvent, ProfileState> {
         profile: profile,
       );
     } catch (e) {
-      Logger().e("Failed to restore ProfileBloc fromJson: $e");
+      logger.e("Failed to restore ProfileBloc fromJson: $e");
       return null;
     }
   }
@@ -487,7 +446,7 @@ class ProfileBloc extends HydratedBloc<ProfileEvent, ProfileState> {
     try {
       return (state.profile).toJson();
     } catch (e) {
-      Logger().e("Failed to persist ProfileBloc toJson: $e");
+      logger.e("Failed to persist ProfileBloc toJson: $e");
       return null;
     }
   }
