@@ -30,9 +30,7 @@ class RedeemBloc extends Bloc<RedeemEvent, RedeemState> {
       ),
     );
 
-    final redeemRes = await repo.fetchRedeemHistory(
-      userId: supabase.auth.currentUser!.id,
-    );
+    final redeemRes = await repo.fetchRedeemHistory();
 
     redeemRes.fold(
       (err) => emit(

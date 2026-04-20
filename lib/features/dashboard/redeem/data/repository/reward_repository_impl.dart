@@ -9,32 +9,16 @@ import 'redeem_repository.dart';
 class RedeemRepositoryImpl extends RedeemRepository {
   final supabase = Supabase.instance.client;
 
-  Future<Either<String, List<RedeemHistory>>> fetchRedeemHistory({
-    required String userId,
-  }) async {
-    try {
-      final res = await supabase
-          .from('reward_redemptions')
-          .select('''
-          id,
-          reward_type,
-          coins_spent,
-          metadata,
-          created_at
-        ''')
-          .eq('user_id', userId)
-          .order('created_at', ascending: false);
-
-      if (res.isEmpty) {
-        return Right([]);
-      }
-
-      final redeemHistory = res.map((e) => RedeemHistory.fromJson(e)).toList();
-
-      return Right(redeemHistory);
-    } catch (e) {
-      return Left(e.toString());
-    }
+  Future<Either<String, List<RedeemHistory>>> fetchRedeemHistory() async {
+    return ApiService.instance!.invokeEdgeFunction<List<RedeemHistory>>(
+      functionName: 'fetch-redeem-history',
+      body: {},
+      fallbackErrorMessage: 'Failed to Fetch Redeem History',
+      onSuccess: (data) {
+        final mission = data["data"] as List;
+        return mission.map((e) => RedeemHistory.fromJson(e)).toList();
+      },
+    );
   }
 
   Future<Either<String, String>> redeemAirtimeData({

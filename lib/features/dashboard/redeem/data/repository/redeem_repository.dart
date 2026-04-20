@@ -6,9 +6,7 @@ import '../redeem_history_model.dart';
 abstract class RedeemRepository {
   final supabase = Supabase.instance.client;
 
-  Future<Either<String, List<RedeemHistory>>> fetchRedeemHistory({
-    required String userId,
-  });
+  Future<Either<String, List<RedeemHistory>>> fetchRedeemHistory();
 
   Future<Either<String, String>> redeemAirtimeData({
     required String rewardType,
