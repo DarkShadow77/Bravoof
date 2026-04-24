@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:bravoo/app/view/widgets/gradient_progress.dart';
 import 'package:bravoo/core/constants/app_assets.dart';
 import 'package:bravoo/core/constants/fonts.dart';
@@ -8,6 +10,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:liquid_glass_renderer/liquid_glass_renderer.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../../../../app/styles/text_styles.dart';
@@ -38,6 +41,8 @@ class _BrandDetailsPageState extends State<BrandDetailsPage> with UIToolMixin {
 
   Color textColor = AppColors.error;
   Color inverseTextColor = AppColors.black;
+  Color endColor = Colors.transparent;
+  Color startColor = Colors.transparent;
 
   @override
   void initState() {
@@ -55,13 +60,33 @@ class _BrandDetailsPageState extends State<BrandDetailsPage> with UIToolMixin {
           brand = brandState.brands.firstWhere((e) => e.id == brand.id);
           textColor = hexToColor(brand.textColor);
           inverseTextColor = hexToColor(brand.inverseTextColor);
+
+          endColor = hexToColor(brand.gradientColor.end);
+          startColor = hexToColor(brand.gradientColor.start);
           return Scaffold(
+            backgroundColor: hexToColor(brand.gradientColor.end),
             body: Stack(
               children: [
                 Positioned.fill(
                   child: Image.asset(
                     "assets/images/earn_bg.png",
                     fit: BoxFit.fill,
+                  ),
+                ),
+                Positioned.fill(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          hexToColor(brand.gradientColor.end),
+                          hexToColor(brand.gradientColor.end),
+                          hexToColor(brand.gradientColor.start),
+                          hexToColor(brand.gradientColor.start),
+                        ],
+                        begin: Alignment.bottomCenter,
+                        end: Alignment.topCenter,
+                      ),
+                    ),
                   ),
                 ),
                 CustomScrollView(
@@ -71,7 +96,7 @@ class _BrandDetailsPageState extends State<BrandDetailsPage> with UIToolMixin {
                   slivers: [
                     // App Bar
                     SliverAppBar(
-                      backgroundColor: Color(0xffFFE0E1),
+                      backgroundColor: hexToColor(brand.gradientColor.start),
                       automaticallyImplyLeading: false,
                       pinned: true,
                       centerTitle: false,
@@ -80,12 +105,12 @@ class _BrandDetailsPageState extends State<BrandDetailsPage> with UIToolMixin {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           CircleAvatar(
-                            backgroundColor: AppColors.black05,
+                            backgroundColor: textColor.withValues(alpha: .05),
                             child: GestureDetector(
                               onTap: () => Navigator.pop(context),
                               child: HugeIcon(
                                 icon: HugeIcons.strokeRoundedArrowLeft02,
-                                color: Colors.black,
+                                color: textColor,
                                 strokeWidth: 1.5,
                               ),
                             ),
@@ -95,7 +120,9 @@ class _BrandDetailsPageState extends State<BrandDetailsPage> with UIToolMixin {
                               textAlign: TextAlign.center,
                               text: TextSpan(
                                 text: brand.name.capitalize,
-                                style: TextStyles.titleSemiBold20(context),
+                                style: TextStyles.titleSemiBold20(
+                                  context,
+                                ).copyWith(color: textColor),
                               ),
                             ),
                           ),
@@ -121,24 +148,44 @@ class _BrandDetailsPageState extends State<BrandDetailsPage> with UIToolMixin {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Container(
-                                width: 116.w,
-                                height: 98.h,
-                                decoration: BoxDecoration(
-                                  color: hexToColor(brand.logoBgColor),
-                                  borderRadius: BorderRadius.circular(16.r),
-                                  border: Border.all(
-                                    width: 3.w,
-                                    color: AppColors.white,
-                                  ),
+                              LiquidGlassLayer(
+                                settings: LiquidGlassSettings(
+                                  lightAngle: 0.3 * pi,
+                                  ambientStrength: .8,
+                                  glassColor: textColor.withValues(alpha: .05),
+                                  thickness: 60,
                                 ),
-                                child: Center(
-                                  child: CachedImageRadius(
-                                    imageUrl: brand.logo,
-                                    circle: true,
-                                    size: 70,
-                                    fit: BoxFit.cover,
-                                    color: Colors.transparent,
+                                child: LiquidGlass(
+                                  shape: LiquidRoundedSuperellipse(
+                                    borderRadius: 1000.r,
+                                  ),
+                                  child: Container(
+                                    width: 98.w,
+                                    height: 98.h,
+                                    clipBehavior: Clip.antiAlias,
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: 5.w,
+                                      vertical: 5.h,
+                                    ),
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: Colors.transparent,
+                                    ),
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: hexToColor(brand.logoBgColor),
+                                      ),
+                                      child: Center(
+                                        child: CachedImageRadius(
+                                          imageUrl: brand.logo,
+                                          circle: true,
+                                          size: 60,
+                                          fit: BoxFit.cover,
+                                          color: Colors.transparent,
+                                        ),
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ),
@@ -153,15 +200,16 @@ class _BrandDetailsPageState extends State<BrandDetailsPage> with UIToolMixin {
                               HugeIcon(
                                 icon: HugeIcons.strokeRoundedCalendar03,
                                 size: 16.sp,
-                                color: AppColors.grey500,
+                                color: textColor.withValues(alpha: .65),
                               ),
                               RichText(
                                 text: TextSpan(
                                   text:
                                       "Created ${formatSmartDate(brand.createdAt.toIso8601String(), showTime: false)}",
-                                  style: TextStyles.cardBold10(
-                                    context,
-                                  ).copyWith(color: AppColors.grey500),
+                                  style: TextStyles.cardBold10(context)
+                                      .copyWith(
+                                        color: textColor.withValues(alpha: .65),
+                                      ),
                                 ),
                               ),
                             ],
@@ -173,77 +221,80 @@ class _BrandDetailsPageState extends State<BrandDetailsPage> with UIToolMixin {
                               text: brand.about.isEmpty
                                   ? "No Description"
                                   : brand.about,
-                              style: TextStyles.smallMedium12(
-                                context,
-                                opacity: .75,
+                              style: TextStyles.smallMedium12(context).copyWith(
+                                color: textColor.withValues(alpha: .75),
                               ),
                             ),
                           ),
                           SizedBox(height: 8.h),
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                              vertical: 19.h,
-                              horizontal: 16.w,
+                          LiquidGlassLayer(
+                            settings: LiquidGlassSettings(
+                              lightAngle: 0.2 * pi,
+                              ambientStrength: .5,
                             ),
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                colors: [
-                                  textColor,
-                                  hexToColor(brand.gradientColor.end),
-                                  hexToColor(brand.gradientColor.end),
-                                  hexToColor(brand.gradientColor.start),
-                                ],
-                                begin: Alignment.bottomCenter,
-                                end: Alignment.topCenter,
+                            child: LiquidGlass(
+                              shape: LiquidRoundedSuperellipse(
+                                borderRadius: 18.r,
                               ),
-                              borderRadius: BorderRadius.circular(12.r),
-                            ),
-                            child: Column(
-                              spacing: 16.h,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Row(
-                                  spacing: 7.w,
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                  vertical: 19.h,
+                                  horizontal: 16.w,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: textColor.withValues(alpha: .15),
+                                  borderRadius: BorderRadius.circular(18.r),
+                                ),
+                                child: Column(
+                                  spacing: 16.h,
                                   crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Expanded(
-                                      child: _buildBrandDetailContainer(
-                                        context,
-                                        title: "Brand",
-                                        value: "${brand.name.capitalize}",
-                                      ),
+                                    Row(
+                                      spacing: 7.w,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Expanded(
+                                          child: _buildBrandDetailContainer(
+                                            context,
+                                            title: "Brand",
+                                            value: "${brand.name.capitalize}",
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: _buildBrandDetailContainer(
+                                            context,
+                                            title: "Who can play?",
+                                            value: "Followers",
+                                          ),
+                                        ),
+                                      ],
                                     ),
-                                    Expanded(
-                                      child: _buildBrandDetailContainer(
-                                        context,
-                                        title: "Who can play?",
-                                        value: "Followers",
-                                      ),
+                                    Row(
+                                      spacing: 7.w,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Expanded(
+                                          child: _buildBrandDetailContainer(
+                                            context,
+                                            title: "Reward",
+                                            value: "Yes",
+                                          ),
+                                        ),
+                                        Expanded(
+                                          child: _buildBrandDetailContainer(
+                                            context,
+                                            title: "How many can join?",
+                                            value: "∞",
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ],
                                 ),
-                                Row(
-                                  spacing: 7.w,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    Expanded(
-                                      child: _buildBrandDetailContainer(
-                                        context,
-                                        title: "Reward",
-                                        value: "Yes",
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: _buildBrandDetailContainer(
-                                        context,
-                                        title: "How many can join?",
-                                        value: "∞",
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
+                              ),
                             ),
                           ),
                           SizedBox(height: 8.h),
@@ -286,6 +337,7 @@ class _BrandDetailsPageState extends State<BrandDetailsPage> with UIToolMixin {
                               text: "Followers ${brand.followerCount}",
                               style: TextStyles.normalSemibold14(context)
                                   .copyWith(
+                                    color: textColor,
                                     fontFamily: AppFonts.baloo2,
                                     height: 1.h,
                                   ),
@@ -304,10 +356,13 @@ class _BrandDetailsPageState extends State<BrandDetailsPage> with UIToolMixin {
                               child: RichText(
                                 text: TextSpan(
                                   text: "No Followers Yet",
-                                  style: TextStyles.smallSemibold12(
-                                    context,
-                                    opacity: .65,
-                                  ),
+                                  style:
+                                      TextStyles.smallSemibold12(
+                                        context,
+                                        opacity: .65,
+                                      ).copyWith(
+                                        color: textColor.withValues(alpha: .65),
+                                      ),
                                 ),
                               ),
                             ),
@@ -369,7 +424,9 @@ class _BrandDetailsPageState extends State<BrandDetailsPage> with UIToolMixin {
                             textAlign: TextAlign.start,
                             text: TextSpan(
                               text: "${brand.name.capitalize} Missions",
-                              style: TextStyles.normalSemibold14(context),
+                              style: TextStyles.normalSemibold14(
+                                context,
+                              ).copyWith(color: textColor),
                             ),
                           ),
                         ]),
@@ -408,41 +465,48 @@ class _BrandDetailsPageState extends State<BrandDetailsPage> with UIToolMixin {
     required String title,
     required String value,
   }) {
-    return Container(
-      padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 8.w),
-      decoration: BoxDecoration(
-        color: textColor,
-        borderRadius: BorderRadius.circular(6.r),
-      ),
-      child: Column(
-        spacing: 8.h,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          RichText(
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            textAlign: TextAlign.start,
-            text: TextSpan(
-              text: title,
-              style: TextStyles.smallRegular12(
-                context,
-              ).copyWith(color: inverseTextColor),
-            ),
+    return LiquidGlassLayer(
+      settings: LiquidGlassSettings(lightAngle: 10, ambientStrength: .3),
+      child: LiquidGlass(
+        shape: LiquidRoundedSuperellipse(borderRadius: 6.r),
+        child: Container(
+          padding: EdgeInsets.symmetric(vertical: 8.h, horizontal: 8.w),
+          decoration: BoxDecoration(
+            color: textColor.withValues(alpha: .75),
+            borderRadius: BorderRadius.circular(12.r),
           ),
-          RichText(
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            textAlign: TextAlign.start,
-            text: TextSpan(
-              text: value,
-              style: TextStyles.bodySemiBold16(context).copyWith(
-                fontFamily: AppFonts.baloo2,
-                height: 1.h,
-                color: inverseTextColor,
+          clipBehavior: Clip.antiAlias,
+          child: Column(
+            spacing: 8.h,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              RichText(
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.start,
+                text: TextSpan(
+                  text: title,
+                  style: TextStyles.smallRegular12(
+                    context,
+                  ).copyWith(color: inverseTextColor),
+                ),
               ),
-            ),
+              RichText(
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                textAlign: TextAlign.start,
+                text: TextSpan(
+                  text: value,
+                  style: TextStyles.bodySemiBold16(context).copyWith(
+                    fontFamily: AppFonts.baloo2,
+                    height: 1.h,
+                    color: inverseTextColor,
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
@@ -599,7 +663,9 @@ class BrandMissionCard extends StatelessWidget {
                 textAlign: TextAlign.start,
                 text: TextSpan(
                   text: "No Brand Missions",
-                  style: TextStyles.smallSemibold12(context, opacity: .65),
+                  style: TextStyles.smallSemibold12(context).copyWith(
+                    color: hexToColor(brand.textColor).withValues(alpha: .65),
+                  ),
                 ),
               ),
             ),

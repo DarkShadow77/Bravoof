@@ -3,6 +3,18 @@ import 'dart:ui';
 import 'package:intl/intl.dart';
 import 'package:path/path.dart' as p;
 
+import '../../app/theme/app_themes.dart';
+
+Color surfaceColor() {
+  return AppTheme.lightScheme.surface;
+}
+
+Color lighten(Color color, [double amount = 0.2, Color? mainColor]) {
+  final mColor = mainColor ?? surfaceColor();
+  assert(amount >= 0 && amount <= 1);
+  return Color.alphaBlend(mColor.withValues(alpha: amount), color);
+}
+
 String formatAmount(
   num value, {
   bool compact = true,

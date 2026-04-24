@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:bravoo/core/services/local_notification_service.dart';
+import 'package:bravoo/core/utils/logger.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +19,8 @@ class FirebaseMessagingService {
 
   //Factory constructor to provide singleton instance
   factory FirebaseMessagingService.instance() => _instance;
+
+  final _logger = AppLogger();
 
   //Reference to local notification service for displaying notifications
   LocalNotificationService? _localNotificationService;
@@ -53,31 +56,43 @@ class FirebaseMessagingService {
 
   Future<String> getAppVersion() async {
     final info = await PackageInfo.fromPlatform();
-    debugPrint("App Version: $info");
+    _logger.d("App Version: $info");
     return '${info.version}+${info.buildNumber}';
   }
 
   Future<String?> getFcmToken() async {
     try {
       // Android 13+ requires explicit permission
-      NotificationSettings settings = await FirebaseMessaging.instance
-          .requestPermission();
+      final settings = await FirebaseMessaging.instance.requestPermission();
 
       if (settings.authorizationStatus != AuthorizationStatus.authorized &&
           settings.authorizationStatus != AuthorizationStatus.provisional) {
-        debugPrint("❌ Push notification permission not granted");
+        _logger.w("❌ Push notification permission not granted");
         return null;
       }
 
-      // Small delay helps avoid SERVICE_NOT_AVAILABLE on cold start
-      await Future.delayed(const Duration(seconds: 1));
+      String? token;
+      try {
+        token = await FirebaseMessaging.instance.getToken();
+      } catch (_) {
+        // SERVICE_NOT_AVAILABLE — fall through to stream approach
+      }
 
-      final token = await FirebaseMessaging.instance.getToken();
-      debugPrint("✅ Push notifications token: $token");
+      if (token != null) {
+        _logger.d("✅ Push notifications token: $token");
+        return token;
+      }
 
+      // Wait for token via refresh stream (fires when service becomes available)
+      _logger.t("⏳ Waiting for FCM token via onTokenRefresh...");
+      token = await FirebaseMessaging.instance.onTokenRefresh.first.timeout(
+        const Duration(seconds: 15),
+      );
+
+      _logger.d("✅ FCM token received via refresh: $token");
       return token;
     } catch (e) {
-      debugPrint("⚠️ Failed to get FCM token: $e");
+      _logger.w("⚠️ Failed to get FCM token: $e");
       return null;
     }
   }
@@ -113,9 +128,6 @@ class FirebaseMessagingService {
 
   //Retrieve and manage the FCM token for push notifications
   Future<void> _handlePushNotificationToken() async {
-    //Get the FCM token for the device
-    getFcmToken();
-
     //Listen for token refresh events
     FirebaseMessaging.instance.onTokenRefresh
         .listen((fcmToken) {

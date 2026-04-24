@@ -102,6 +102,7 @@ dependencies:
   provider: ^6.1.5+1
   flutter_timezone: ^5.0.1
   video_player: ^2.10.1
+  liquid_glass_renderer: ^0.2.0-dev.4
 
 
 dev_dependencies:

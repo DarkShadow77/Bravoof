@@ -97,7 +97,8 @@ class _VerifyOtpPageState extends State<VerifyOtpPage> with UIToolMixin {
       setState(() => _isOnboarding = false);
     }
     if (state.type == AuthType.resendOtp ||
-        state.type == AuthType.completeOnboarding) {
+        state.type == AuthType.completeOnboarding ||
+        state.type == AuthType.sendOtp) {
       Future.delayed((Duration(milliseconds: 500)), () {
         if (Get.isDialogOpen == true)
           Navigator.of(context, rootNavigator: true).pop();

@@ -34,6 +34,8 @@ class _AppState extends State<App> {
     if (session != null) {
       profileBloc.add(LogUserLoginActivityEvent(eventType: "app_open"));
       context.read<HomeCubit>().checkIncompleteMissions();
+      profileBloc.add(GetProfileEvent());
+      profileBloc.add(SaveFCMTokenEvent());
     }
 
     Supabase.instance.client.auth.onAuthStateChange.listen((data) {
