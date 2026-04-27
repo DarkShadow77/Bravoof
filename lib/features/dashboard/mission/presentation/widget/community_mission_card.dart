@@ -163,13 +163,8 @@ class _TopSection extends StatelessWidget {
                       borderRadius: BorderRadius.circular(8.r),
                     ),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        Image.asset('assets/images/mission_10.png', height: 80),
-                        Image.asset(
-                          'assets/images/mission_pro.png',
-                          height: 80,
-                        ),
                         Column(
                           spacing: 5.h,
                           children: [

@@ -23,6 +23,8 @@ class HomeState extends Equatable {
   final HomeMessageModel homeMessage;
   final bool updateLater;
   final bool hasIncompleteMissions;
+  final bool hasIncompleteSquadMissions;
+  final bool hasIncompleteBrandMissions;
 
   HomeState({
     required this.campaign,
@@ -35,6 +37,8 @@ class HomeState extends Equatable {
     required this.homeMessage,
     required this.updateLater,
     required this.hasIncompleteMissions,
+    required this.hasIncompleteSquadMissions,
+    required this.hasIncompleteBrandMissions,
   });
 
   HomeState copyWith({
@@ -48,6 +52,8 @@ class HomeState extends Equatable {
     HomeMessageModel? homeMessage,
     bool? updateLater,
     bool? hasIncompleteMissions,
+    bool? hasIncompleteSquadMissions,
+    bool? hasIncompleteBrandMissions,
   }) {
     return HomeState(
       campaign: campaign ?? this.campaign,
@@ -61,6 +67,10 @@ class HomeState extends Equatable {
       updateLater: updateLater ?? this.updateLater,
       hasIncompleteMissions:
           hasIncompleteMissions ?? this.hasIncompleteMissions,
+      hasIncompleteSquadMissions:
+          hasIncompleteSquadMissions ?? this.hasIncompleteSquadMissions,
+      hasIncompleteBrandMissions:
+          hasIncompleteBrandMissions ?? this.hasIncompleteBrandMissions,
     );
   }
 
@@ -76,6 +86,8 @@ class HomeState extends Equatable {
     homeMessage,
     updateLater,
     hasIncompleteMissions,
+    hasIncompleteSquadMissions,
+    hasIncompleteBrandMissions,
   ];
 }
 
@@ -91,6 +103,8 @@ final class HomeInitialState extends HomeState {
     required super.homeMessage,
     required super.updateLater,
     required super.hasIncompleteMissions,
+    required super.hasIncompleteSquadMissions,
+    required super.hasIncompleteBrandMissions,
   });
 
   @override
@@ -111,6 +125,8 @@ final class HomeLoadingState extends HomeState {
     required super.homeMessage,
     required super.updateLater,
     required super.hasIncompleteMissions,
+    required super.hasIncompleteSquadMissions,
+    required super.hasIncompleteBrandMissions,
   });
 
   @override
@@ -133,6 +149,8 @@ final class HomeSuccessState extends HomeState {
     required super.homeMessage,
     required super.updateLater,
     required super.hasIncompleteMissions,
+    required super.hasIncompleteSquadMissions,
+    required super.hasIncompleteBrandMissions,
   });
 
   @override
@@ -155,6 +173,8 @@ final class HomeFailureState extends HomeState {
     required super.homeMessage,
     required super.updateLater,
     required super.hasIncompleteMissions,
+    required super.hasIncompleteSquadMissions,
+    required super.hasIncompleteBrandMissions,
   });
 
   @override

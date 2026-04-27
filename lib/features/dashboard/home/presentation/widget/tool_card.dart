@@ -71,6 +71,13 @@ class _ToolCardCarouselState extends State<ToolCardCarousel> {
           builder: (context, state) {
             // Build carousel dynamically based on state
             final carouselWidgets = _buildCarouselItems(state, pState);
+            final isLoading = _isCarouselLoading(state);
+
+            // Show shimmer placeholders while loading
+            if ((isLoading && carouselWidgets.isEmpty) ||
+                carouselWidgets.isEmpty) {
+              return _buildShimmerLoading();
+            }
 
             return Column(
               children: [
@@ -174,6 +181,55 @@ class _ToolCardCarouselState extends State<ToolCardCarousel> {
     );
   }
 
+  bool _isCarouselLoading(HomeState state) {
+    // True while any of the initial data fetches are still in flight
+    if (state is HomeLoadingState) {
+      return state.type == HomeType.getCampaign ||
+          state.type == HomeType.getSpotlight ||
+          state.type == HomeType.getExtraCard ||
+          state.type == HomeType.getQuote;
+    }
+    return false;
+  }
+
+  Widget _buildShimmerLoading() {
+    return Column(
+      children: [
+        Container(
+          height: 240.h,
+          margin: EdgeInsets.symmetric(horizontal: 16.w),
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular(24.r)),
+          clipBehavior: Clip.antiAlias,
+          child: FadeShimmer(
+            width: double.infinity,
+            height: double.infinity,
+            radius: 24.r,
+            baseColor: AppColors.darkPrimary05,
+            highlightColor: AppColors.grey300.withValues(alpha: .25),
+          ),
+        ),
+        SizedBox(height: 12.h),
+        // Shimmer dots indicator
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: List.generate(
+            3,
+            (index) => AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              margin: EdgeInsets.symmetric(horizontal: 2.w),
+              width: index == 0 ? 18.w : 6.w,
+              height: 6.h,
+              decoration: BoxDecoration(
+                color: AppColors.darkPrimary20,
+                borderRadius: BorderRadius.circular(6.r),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   List<Widget> _buildCarouselItems(HomeState state, ProfileState pState) {
     List<Widget> items = [];
     // Active campaign
@@ -210,7 +266,9 @@ class _ToolCardCarouselState extends State<ToolCardCarousel> {
     }
 
     // Quote
-    items.add(QuoteCard());
+    if (state.quote.quote.isNotEmpty) {
+      items.add(QuoteCard());
+    }
 
     return items;
   }

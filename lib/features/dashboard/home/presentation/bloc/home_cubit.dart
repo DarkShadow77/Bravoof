@@ -15,6 +15,8 @@ import '../../../mission/presentation/bloc/featured_mission_bloc.dart';
 import '../../../mission/presentation/bloc/new_social_mission_bloc.dart';
 import '../../../mission/presentation/bloc/social_mission_bloc.dart';
 import '../../../mission/presentation/bloc/sponsored_mission_bloc.dart';
+import '../../../squad/presentation/bloc/brand_bloc.dart';
+import '../../../squad/presentation/bloc/squad_bloc.dart';
 import '../../data/model/dynamic_carousel_model.dart';
 import '../../data/model/home_message_model.dart';
 import '../../data/model/quote_model.dart';
@@ -30,12 +32,16 @@ class HomeCubit extends Cubit<HomeState> {
   NewSocialMissionBloc? newSocialMissionBloc;
   SocialMissionBloc? socialMissionBloc;
   SponsoredMissionBloc? sponsoredMissionBloc;
+  SquadBloc? squadBloc;
+  BrandBloc? brandBloc;
   HomeCubit({
     this.communityMissionBloc,
     this.featuredMissionBloc,
     this.newSocialMissionBloc,
     this.socialMissionBloc,
     this.sponsoredMissionBloc,
+    this.squadBloc,
+    this.brandBloc,
   }) : super(
          HomeInitialState(
            campaign: [],
@@ -48,6 +54,8 @@ class HomeCubit extends Cubit<HomeState> {
            homeMessage: HomeMessageModel.empty(),
            updateLater: false,
            hasIncompleteMissions: false,
+           hasIncompleteSquadMissions: false,
+           hasIncompleteBrandMissions: false,
          ),
        );
 
@@ -124,6 +132,36 @@ class HomeCubit extends Cubit<HomeState> {
     emit(state.copyWith(hasIncompleteMissions: hasIncomplete));
   }
 
+  void checkIncompleteSquadMissions() {
+    if (squadBloc == null) return;
+
+    // Find squads the user has joined
+    final joinedSquads = squadBloc!.state.squads
+        .where((s) => s.isJoined)
+        .toList();
+
+    // A squad has incomplete missions if it has missions the user hasn't
+    // completed — we detect this from the squad's mission_count being > 0
+    // and the user being a member (the individual bloc handles the detail,
+    // but here we use the squad-level signal you already have)
+    final hasIncomplete = joinedSquads.isNotEmpty;
+
+    emit(state.copyWith(hasIncompleteSquadMissions: hasIncomplete));
+  }
+
+  void checkIncompleteBrandMissions() {
+    if (brandBloc == null) return;
+
+    // Find brands the user follows that have active missions
+    final followedBrandsWithMissions = brandBloc!.state.brands
+        .where((b) => b.isFollowing && b.missionCount > 0)
+        .toList();
+
+    final hasIncomplete = followedBrandsWithMissions.isNotEmpty;
+
+    emit(state.copyWith(hasIncompleteBrandMissions: hasIncomplete));
+  }
+
   void fetchCampaigns() async {
     if (state.campaign.isEmpty)
       emit(
@@ -139,6 +177,8 @@ class HomeCubit extends Cubit<HomeState> {
           homeMessage: state.homeMessage,
           updateLater: state.updateLater,
           hasIncompleteMissions: state.hasIncompleteMissions,
+          hasIncompleteSquadMissions: state.hasIncompleteSquadMissions,
+          hasIncompleteBrandMissions: state.hasIncompleteBrandMissions,
         ),
       );
 
@@ -159,6 +199,8 @@ class HomeCubit extends Cubit<HomeState> {
           homeMessage: state.homeMessage,
           updateLater: state.updateLater,
           hasIncompleteMissions: state.hasIncompleteMissions,
+          hasIncompleteSquadMissions: state.hasIncompleteSquadMissions,
+          hasIncompleteBrandMissions: state.hasIncompleteBrandMissions,
         ),
       ),
       (campaign) {
@@ -177,6 +219,8 @@ class HomeCubit extends Cubit<HomeState> {
             homeMessage: state.homeMessage,
             updateLater: state.updateLater,
             hasIncompleteMissions: state.hasIncompleteMissions,
+            hasIncompleteSquadMissions: state.hasIncompleteSquadMissions,
+            hasIncompleteBrandMissions: state.hasIncompleteBrandMissions,
           ),
         );
       },
@@ -197,6 +241,8 @@ class HomeCubit extends Cubit<HomeState> {
         homeMessage: state.homeMessage,
         updateLater: state.updateLater,
         hasIncompleteMissions: state.hasIncompleteMissions,
+        hasIncompleteSquadMissions: state.hasIncompleteSquadMissions,
+        hasIncompleteBrandMissions: state.hasIncompleteBrandMissions,
       ),
     );
 
@@ -217,6 +263,8 @@ class HomeCubit extends Cubit<HomeState> {
           homeMessage: state.homeMessage,
           updateLater: state.updateLater,
           hasIncompleteMissions: state.hasIncompleteMissions,
+          hasIncompleteSquadMissions: state.hasIncompleteSquadMissions,
+          hasIncompleteBrandMissions: state.hasIncompleteBrandMissions,
         ),
       ),
       (extraCard) {
@@ -235,6 +283,8 @@ class HomeCubit extends Cubit<HomeState> {
             homeMessage: state.homeMessage,
             updateLater: state.updateLater,
             hasIncompleteMissions: state.hasIncompleteMissions,
+            hasIncompleteSquadMissions: state.hasIncompleteSquadMissions,
+            hasIncompleteBrandMissions: state.hasIncompleteBrandMissions,
           ),
         );
       },
@@ -256,6 +306,8 @@ class HomeCubit extends Cubit<HomeState> {
           homeMessage: state.homeMessage,
           updateLater: state.updateLater,
           hasIncompleteMissions: state.hasIncompleteMissions,
+          hasIncompleteSquadMissions: state.hasIncompleteSquadMissions,
+          hasIncompleteBrandMissions: state.hasIncompleteBrandMissions,
         ),
       );
 
@@ -276,6 +328,8 @@ class HomeCubit extends Cubit<HomeState> {
           homeMessage: state.homeMessage,
           updateLater: state.updateLater,
           hasIncompleteMissions: state.hasIncompleteMissions,
+          hasIncompleteSquadMissions: state.hasIncompleteSquadMissions,
+          hasIncompleteBrandMissions: state.hasIncompleteBrandMissions,
         ),
       ),
       (spotlight) {
@@ -294,6 +348,8 @@ class HomeCubit extends Cubit<HomeState> {
             homeMessage: state.homeMessage,
             updateLater: state.updateLater,
             hasIncompleteMissions: state.hasIncompleteMissions,
+            hasIncompleteSquadMissions: state.hasIncompleteSquadMissions,
+            hasIncompleteBrandMissions: state.hasIncompleteBrandMissions,
           ),
         );
       },
@@ -315,6 +371,8 @@ class HomeCubit extends Cubit<HomeState> {
           homeMessage: state.homeMessage,
           updateLater: state.updateLater,
           hasIncompleteMissions: state.hasIncompleteMissions,
+          hasIncompleteSquadMissions: state.hasIncompleteSquadMissions,
+          hasIncompleteBrandMissions: state.hasIncompleteBrandMissions,
         ),
       );
 
@@ -335,6 +393,8 @@ class HomeCubit extends Cubit<HomeState> {
           homeMessage: state.homeMessage,
           updateLater: state.updateLater,
           hasIncompleteMissions: state.hasIncompleteMissions,
+          hasIncompleteSquadMissions: state.hasIncompleteSquadMissions,
+          hasIncompleteBrandMissions: state.hasIncompleteBrandMissions,
         ),
       ),
       (spotlights) {
@@ -353,6 +413,8 @@ class HomeCubit extends Cubit<HomeState> {
             homeMessage: state.homeMessage,
             updateLater: state.updateLater,
             hasIncompleteMissions: state.hasIncompleteMissions,
+            hasIncompleteSquadMissions: state.hasIncompleteSquadMissions,
+            hasIncompleteBrandMissions: state.hasIncompleteBrandMissions,
           ),
         );
       },
@@ -373,6 +435,8 @@ class HomeCubit extends Cubit<HomeState> {
         homeMessage: state.homeMessage,
         updateLater: state.updateLater,
         hasIncompleteMissions: state.hasIncompleteMissions,
+        hasIncompleteSquadMissions: state.hasIncompleteSquadMissions,
+        hasIncompleteBrandMissions: state.hasIncompleteBrandMissions,
       ),
     );
 
@@ -393,6 +457,8 @@ class HomeCubit extends Cubit<HomeState> {
           homeMessage: state.homeMessage,
           updateLater: state.updateLater,
           hasIncompleteMissions: state.hasIncompleteMissions,
+          hasIncompleteSquadMissions: state.hasIncompleteSquadMissions,
+          hasIncompleteBrandMissions: state.hasIncompleteBrandMissions,
         ),
       ),
       (homeMessage) {
@@ -411,6 +477,8 @@ class HomeCubit extends Cubit<HomeState> {
             homeMessage: homeMessage,
             updateLater: state.updateLater,
             hasIncompleteMissions: state.hasIncompleteMissions,
+            hasIncompleteSquadMissions: state.hasIncompleteSquadMissions,
+            hasIncompleteBrandMissions: state.hasIncompleteBrandMissions,
           ),
         );
       },
@@ -431,6 +499,8 @@ class HomeCubit extends Cubit<HomeState> {
         homeMessage: state.homeMessage,
         updateLater: state.updateLater,
         hasIncompleteMissions: state.hasIncompleteMissions,
+        hasIncompleteSquadMissions: state.hasIncompleteSquadMissions,
+        hasIncompleteBrandMissions: state.hasIncompleteBrandMissions,
       ),
     );
 
@@ -451,6 +521,8 @@ class HomeCubit extends Cubit<HomeState> {
           homeMessage: state.homeMessage,
           updateLater: state.updateLater,
           hasIncompleteMissions: state.hasIncompleteMissions,
+          hasIncompleteSquadMissions: state.hasIncompleteSquadMissions,
+          hasIncompleteBrandMissions: state.hasIncompleteBrandMissions,
         ),
       ),
       (quote) {
@@ -469,6 +541,8 @@ class HomeCubit extends Cubit<HomeState> {
             homeMessage: state.homeMessage,
             updateLater: state.updateLater,
             hasIncompleteMissions: state.hasIncompleteMissions,
+            hasIncompleteSquadMissions: state.hasIncompleteSquadMissions,
+            hasIncompleteBrandMissions: state.hasIncompleteBrandMissions,
           ),
         );
       },
@@ -498,6 +572,8 @@ class HomeCubit extends Cubit<HomeState> {
         homeMessage: state.homeMessage,
         updateLater: state.updateLater,
         hasIncompleteMissions: state.hasIncompleteMissions,
+        hasIncompleteSquadMissions: state.hasIncompleteSquadMissions,
+        hasIncompleteBrandMissions: state.hasIncompleteBrandMissions,
       ),
     );
 
@@ -518,6 +594,8 @@ class HomeCubit extends Cubit<HomeState> {
           homeMessage: state.homeMessage,
           updateLater: state.updateLater,
           hasIncompleteMissions: state.hasIncompleteMissions,
+          hasIncompleteSquadMissions: state.hasIncompleteSquadMissions,
+          hasIncompleteBrandMissions: state.hasIncompleteBrandMissions,
         ),
       ),
       (leaderboard) {
@@ -535,6 +613,8 @@ class HomeCubit extends Cubit<HomeState> {
             updateLater: state.updateLater,
             homeMessage: state.homeMessage,
             hasIncompleteMissions: state.hasIncompleteMissions,
+            hasIncompleteSquadMissions: state.hasIncompleteSquadMissions,
+            hasIncompleteBrandMissions: state.hasIncompleteBrandMissions,
             leaderboard: leaderboard,
           ),
         );

@@ -173,7 +173,9 @@ class _MyAppState extends State<MyApp> {
             ..newSocialMissionBloc = sl<NewSocialMissionBloc>()
             ..socialMissionBloc = sl<SocialMissionBloc>()
             ..sponsoredMissionBloc = sl<SponsoredMissionBloc>()
-            ..communityMissionBloc = sl<CommunityMissionBloc>(),
+            ..communityMissionBloc = sl<CommunityMissionBloc>()
+            ..squadBloc = sl<SquadBloc>()
+            ..brandBloc = sl<BrandBloc>(),
         ),
       ],
       child: ScreenUtilInit(

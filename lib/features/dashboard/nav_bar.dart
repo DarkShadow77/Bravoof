@@ -113,6 +113,8 @@ class _BottomNavBarState extends State<BottomNavBar> {
     context.read<NotificationBloc>().add(LoadNotifications());
     context.read<SquadBloc>().add(FetchSquadsEvent());
     context.read<BrandBloc>().add(FetchBrandsEvent());
+    context.read<HomeCubit>().checkIncompleteSquadMissions();
+    context.read<HomeCubit>().checkIncompleteBrandMissions();
     context.read<RecentActivityBloc>().add(FetchActivityEvent());
 
     // Refresh home data
@@ -136,13 +138,29 @@ class _BottomNavBarState extends State<BottomNavBar> {
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (canPop, result) => _onWillPop(),
-      child: BlocListener<ProfileBloc, ProfileState>(
-        listenWhen: (previous, current) =>
-            previous.profile.userId.isEmpty &&
-            current.profile.userId.isNotEmpty,
-        listener: (context, state) {
-          _fetchDetails();
-        },
+      child: MultiBlocListener(
+        listeners: [
+          BlocListener<ProfileBloc, ProfileState>(
+            listenWhen: (previous, current) =>
+                previous.profile.userId.isEmpty &&
+                current.profile.userId.isNotEmpty,
+            listener: (context, state) {
+              _fetchDetails();
+            },
+          ),
+          BlocListener<SquadBloc, SquadState>(
+            listenWhen: (prev, curr) => prev.squads != curr.squads,
+            listener: (context, state) {
+              context.read<HomeCubit>().checkIncompleteSquadMissions();
+            },
+          ),
+          BlocListener<BrandBloc, BrandState>(
+            listenWhen: (prev, curr) => prev.brands != curr.brands,
+            listener: (context, state) {
+              context.read<HomeCubit>().checkIncompleteBrandMissions();
+            },
+          ),
+        ],
         child: Scaffold(
           body: IndexedStack(
             index: currentIndex,
@@ -236,19 +254,39 @@ class _BottomNavBarState extends State<BottomNavBar> {
                       label: "Mission",
                     ),
                     BottomNavigationBarItem(
-                      icon: currentIndex == 2
-                          ? SvgPicture.asset(
-                              AssetsNavbar.squadActive,
-                              width: 24.w,
-                              height: 24.h,
-                              fit: BoxFit.contain,
-                            )
-                          : SvgPicture.asset(
-                              AssetsNavbar.squad,
-                              width: 24.w,
-                              height: 24.h,
-                              fit: BoxFit.contain,
-                            ),
+                      icon: SizedBox(
+                        width: 24.w,
+                        child: Stack(
+                          children: [
+                            currentIndex == 2
+                                ? SvgPicture.asset(
+                                    AssetsNavbar.squadActive,
+                                    width: 24.w,
+                                    height: 24.h,
+                                    fit: BoxFit.contain,
+                                  )
+                                : SvgPicture.asset(
+                                    AssetsNavbar.squad,
+                                    width: 24.w,
+                                    height: 24.h,
+                                    fit: BoxFit.contain,
+                                  ),
+                            if (state.hasIncompleteSquadMissions ||
+                                state.hasIncompleteBrandMissions)
+                              Align(
+                                alignment: Alignment.topRight,
+                                child: Container(
+                                  width: 12.r,
+                                  height: 12.r,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: AppColors.orange,
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
                       label: "Squad",
                     ),
                     BottomNavigationBarItem(

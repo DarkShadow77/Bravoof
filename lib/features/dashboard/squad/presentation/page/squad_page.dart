@@ -1,6 +1,8 @@
 import 'package:bravoo/features/dashboard/home/data/model/campaign_response.dart';
+import 'package:bravoo/features/dashboard/squad/presentation/page/brands_page.dart';
 import 'package:bravoo/features/dashboard/squad/presentation/page/recent_activity_page.dart';
 import 'package:bravoo/features/dashboard/squad/presentation/page/squad_rules_page.dart';
+import 'package:fade_shimmer/fade_shimmer.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -140,7 +142,12 @@ class _SquadPageState extends State<SquadPage> {
                                     opacity: .67,
                                   ),
                                   recognizer: TapGestureRecognizer()
-                                    ..onTap = () {},
+                                    ..onTap = () => Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (ctx) => BrandsPage(),
+                                      ),
+                                    ),
                                 ),
                               ),
                             ],
@@ -248,6 +255,12 @@ class _CardCarouselState extends State<CardCarousel> {
       builder: (context, state) {
         // Build carousel dynamically based on state
         final carouselWidgets = _buildCarouselItems(state);
+        final isLoading = _isCarouselLoading(state);
+
+        // Show shimmer placeholders while loading
+        if ((isLoading && carouselWidgets.isEmpty) || carouselWidgets.isEmpty) {
+          return _buildShimmerLoading();
+        }
 
         return Column(
           children: [
@@ -346,6 +359,52 @@ class _CardCarouselState extends State<CardCarousel> {
           ],
         );
       },
+    );
+  }
+
+  bool _isCarouselLoading(HomeState state) {
+    // True while any of the initial data fetches are still in flight
+    if (state is HomeLoadingState) {
+      return state.type == HomeType.getCampaign;
+    }
+    return false;
+  }
+
+  Widget _buildShimmerLoading() {
+    return Column(
+      children: [
+        Container(
+          height: 240.h,
+          margin: EdgeInsets.symmetric(horizontal: 16.w),
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular(24.r)),
+          clipBehavior: Clip.antiAlias,
+          child: FadeShimmer(
+            width: double.infinity,
+            height: double.infinity,
+            radius: 24.r,
+            baseColor: AppColors.darkPrimary05,
+            highlightColor: AppColors.grey300.withValues(alpha: .25),
+          ),
+        ),
+        SizedBox(height: 12.h),
+        // Shimmer dots indicator
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: List.generate(
+            1,
+            (index) => AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              margin: EdgeInsets.symmetric(horizontal: 2.w),
+              width: index == 0 ? 18.w : 6.w,
+              height: 6.h,
+              decoration: BoxDecoration(
+                color: AppColors.darkPrimary20,
+                borderRadius: BorderRadius.circular(6.r),
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 
