@@ -162,30 +162,38 @@ class _TopSection extends StatelessWidget {
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(8.r),
                     ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
+                    child: Column(
+                      spacing: 5.h,
                       children: [
-                        Column(
-                          spacing: 5.h,
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Image.asset(
                               'assets/images/one_50.png',
                               width: 48.w,
                               height: 48.h,
                             ),
-                            RichText(
-                              text: TextSpan(
-                                text: formatAmount(
-                                  communityMission?.point ?? 0,
-                                ),
-                                style: TextStyles.smallBold12(context).copyWith(
-                                  color: AppColors.primary,
-                                  fontFamily: AppFonts.baloo2,
-                                  height: 1.sp,
-                                ),
-                              ),
+                            Image.asset(
+                              'assets/images/one_50.png',
+                              width: 48.w,
+                              height: 48.h,
+                            ),
+                            Image.asset(
+                              'assets/images/one_50.png',
+                              width: 48.w,
+                              height: 48.h,
                             ),
                           ],
+                        ),
+                        RichText(
+                          text: TextSpan(
+                            text: formatAmount(communityMission?.point ?? 0),
+                            style: TextStyles.smallBold12(context).copyWith(
+                              color: AppColors.primary,
+                              fontFamily: AppFonts.baloo2,
+                              height: 1.sp,
+                            ),
+                          ),
                         ),
                       ],
                     ),
