@@ -3,7 +3,6 @@ import '../../../../mission/data/model/mission_status_enum.dart';
 
 class SquadMission {
   final int id;
-  final String squadId;
   final String title;
   final String subtitle;
   final String image;
@@ -27,7 +26,6 @@ class SquadMission {
 
   SquadMission({
     required this.id,
-    required this.squadId,
     required this.title,
     required this.subtitle,
     required this.image,
@@ -58,7 +56,6 @@ class SquadMission {
 
     return SquadMission(
       id: json['id'] ?? 0,
-      squadId: json['squad_id'] ?? "",
       title: json['title'] ?? '',
       subtitle: json['subtitle'] ?? "",
       image: json['image'] ?? "",
@@ -86,6 +83,7 @@ class SquadMission {
 
   bool get isPhotoSubmission => submissionType == 'photo';
   bool get isTextSubmission => submissionType == 'text';
+  bool get isVideoSubmission => submissionType == 'video';
 }
 
 class JoinedSquadMission {

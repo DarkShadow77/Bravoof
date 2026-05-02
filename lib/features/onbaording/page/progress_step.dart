@@ -232,6 +232,8 @@ class _StepProgressPageState extends State<StepProgressPage>
     context.read<ProfileBloc>().add(SaveFCMTokenEvent());
     // context.read<ProfileBloc>().add(UpdateLocationEvent());
     context.read<HomeCubit>().checkIncompleteMissions();
+    context.read<HomeCubit>().checkIncompleteSquadMissions();
+    context.read<HomeCubit>().checkIncompleteBrandMissions();
     Navigator.of(context).pushAndRemoveUntil(
       PageTransition(
         type: PageTransitionType.fade,

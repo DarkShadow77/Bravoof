@@ -558,19 +558,21 @@ class _SpotlightCardState extends State<SpotlightCard> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
+                        spacing: 10.w,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Expanded(
                             child: RichText(
                               text: TextSpan(
                                 text: spotlight.title,
-                                style: TextStyles.bodyBold16(
-                                  context,
-                                ).copyWith(color: textColor),
+                                style: TextStyles.smallBold12(context).copyWith(
+                                  fontSize: 13.sp,
+                                  fontWeight: FontWeight.w900,
+                                  color: textColor,
+                                ),
                               ),
                             ),
                           ),
-
                           Visibility(
                             visible: !widget.isMainPage,
                             child: SizedBox(

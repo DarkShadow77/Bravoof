@@ -159,6 +159,8 @@ class _ReferCampaignState extends State<ReferCampaign> {
                           text: TextSpan(
                             text: campaign.name.toString(),
                             style: TextStyles.smallBold12(context).copyWith(
+                              fontSize: 13.sp,
+                              fontWeight: FontWeight.w900,
                               color: widget.transparent ? null : textColor,
                             ),
                           ),

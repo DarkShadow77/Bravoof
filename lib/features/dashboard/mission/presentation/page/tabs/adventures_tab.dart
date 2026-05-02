@@ -2,7 +2,6 @@ import 'package:bravoo/app/styles/text_styles.dart';
 import 'package:bravoo/core/constants/fonts.dart';
 import 'package:bravoo/features/common/ui_tool_mixin/ui_tool_mixin.dart';
 import 'package:bravoo/features/dashboard/earn/data/models/mission_res.dart';
-import 'package:bravoo/features/dashboard/earn/presentation/widgets/referr_campaign.dart';
 import 'package:bravoo/features/dashboard/mission/presentation/bloc/growth_mission_bloc.dart';
 import 'package:bravoo/session/session_manager.dart';
 import 'package:flutter/material.dart';
@@ -50,8 +49,6 @@ class _AdventuresTabState extends State<AdventuresTab> with UIToolMixin {
         child: Column(
           children: [
             CommunityMissionCard(),
-            SizedBox(height: 20.h),
-            SizedBox(height: 240.h, child: ReferCampaign()),
             SizedBox(height: 20.h),
             _buildGrowthMission(),
             SizedBox(height: 20.h),

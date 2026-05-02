@@ -345,7 +345,10 @@ class SquadMissionBloc extends Bloc<SquadMissionEvent, SquadMissionState> {
       ),
     );
 
-    final res = await repo.joinSquadMission(missionId: missionId);
+    final res = await repo.joinSquadMission(
+      missionId: missionId,
+      squadId: squadId,
+    );
 
     res.fold(
       (err) => emit(
@@ -381,7 +384,10 @@ class SquadMissionBloc extends Bloc<SquadMissionEvent, SquadMissionState> {
       ),
     );
 
-    final res = await repo.fetchMissionMembers(missionId: missionId);
+    final res = await repo.fetchMissionMembers(
+      missionId: missionId,
+      squadId: squadId,
+    );
 
     res.fold(
       (err) => emit(
@@ -425,7 +431,10 @@ class SquadMissionBloc extends Bloc<SquadMissionEvent, SquadMissionState> {
       ),
     );
 
-    final res = await repo.leaveSquadMission(missionId: missionId);
+    final res = await repo.leaveSquadMission(
+      missionId: missionId,
+      squadId: squadId,
+    );
 
     res.fold(
       (err) => emit(
@@ -462,7 +471,7 @@ class SquadMissionBloc extends Bloc<SquadMissionEvent, SquadMissionState> {
       ),
     );
 
-    final res = await repo.fetchChat(missionId: missionId);
+    final res = await repo.fetchChat(missionId: missionId, squadId: squadId);
 
     res.fold(
       (err) => emit(
@@ -511,6 +520,7 @@ class SquadMissionBloc extends Bloc<SquadMissionEvent, SquadMissionState> {
 
     final res = await repo.fetchChat(
       missionId: missionId,
+      squadId: squadId,
       before: event.before,
     );
 
@@ -714,8 +724,10 @@ class SquadMissionBloc extends Bloc<SquadMissionEvent, SquadMissionState> {
 
     final res = await repo.submitMission(
       missionId: missionId,
+      squadId: squadId,
       image: event.image,
       text: event.text,
+      isVideo: event.isVideo,
     );
 
     res.fold(

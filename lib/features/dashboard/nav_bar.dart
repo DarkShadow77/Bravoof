@@ -95,6 +95,9 @@ class _BottomNavBarState extends State<BottomNavBar> {
       final profileUserId = context.read<ProfileBloc>().state.profile.userId;
       if (session != null && profileUserId.isNotEmpty) {
         _fetchDetails();
+
+        context.read<HomeCubit>().checkIncompleteSquadMissions();
+        context.read<HomeCubit>().checkIncompleteBrandMissions();
       }
       ;
     });
@@ -113,8 +116,8 @@ class _BottomNavBarState extends State<BottomNavBar> {
     context.read<NotificationBloc>().add(LoadNotifications());
     context.read<SquadBloc>().add(FetchSquadsEvent());
     context.read<BrandBloc>().add(FetchBrandsEvent());
-    context.read<HomeCubit>().checkIncompleteSquadMissions();
-    context.read<HomeCubit>().checkIncompleteBrandMissions();
+    // context.read<HomeCubit>().checkIncompleteSquadMissions();
+    // context.read<HomeCubit>().checkIncompleteBrandMissions();
     context.read<RecentActivityBloc>().add(FetchActivityEvent());
 
     // Refresh home data
@@ -130,6 +133,8 @@ class _BottomNavBarState extends State<BottomNavBar> {
       context.read<HomeCubit>().fetchExtraHomeCard();
     } else if (currentIndex == 1) {
       context.read<HomeCubit>().checkComplete();
+    } else if (currentIndex == 2) {
+      context.read<HomeCubit>().checkSquadComplete();
     }
   }
 
@@ -151,13 +156,13 @@ class _BottomNavBarState extends State<BottomNavBar> {
           BlocListener<SquadBloc, SquadState>(
             listenWhen: (prev, curr) => prev.squads != curr.squads,
             listener: (context, state) {
-              context.read<HomeCubit>().checkIncompleteSquadMissions();
+              // context.read<HomeCubit>().checkIncompleteSquadMissions();
             },
           ),
           BlocListener<BrandBloc, BrandState>(
             listenWhen: (prev, curr) => prev.brands != curr.brands,
             listener: (context, state) {
-              context.read<HomeCubit>().checkIncompleteBrandMissions();
+              // context.read<HomeCubit>().checkIncompleteBrandMissions();
             },
           ),
         ],

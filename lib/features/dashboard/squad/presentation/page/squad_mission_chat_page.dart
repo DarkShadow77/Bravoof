@@ -559,32 +559,33 @@ class _ChatAppBar extends StatelessWidget {
                                   isCaptain: preview[i].isCaptain,
                                 ),
                               ),
-                            Positioned(
-                              left: (preview.length * 22.0).w,
-                              child: Container(
-                                width: 32.r,
-                                height: 32.r,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: Color(0xffFFE0E1),
-                                  border: Border.all(
-                                    width: 1.w,
-                                    color: AppColors.white,
+                            if (members.length > 4)
+                              Positioned(
+                                left: (preview.length * 22.0).w,
+                                child: Container(
+                                  width: 32.r,
+                                  height: 32.r,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Color(0xffFFE0E1),
+                                    border: Border.all(
+                                      width: 1.w,
+                                      color: AppColors.white,
+                                    ),
                                   ),
-                                ),
-                                child: Center(
-                                  child: RichText(
-                                    text: TextSpan(
-                                      text:
-                                          '+${formatAmount(members.length - preview.length, uniComp: true)}',
-                                      style: TextStyles.smallSemibold12(
-                                        context,
-                                      ).copyWith(color: AppColors.orange400),
+                                  child: Center(
+                                    child: RichText(
+                                      text: TextSpan(
+                                        text:
+                                            '+${formatAmount(members.length - preview.length, uniComp: true)}',
+                                        style: TextStyles.smallSemibold12(
+                                          context,
+                                        ).copyWith(color: AppColors.orange400),
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
-                            ),
                           ],
                         ),
                       ),
@@ -636,6 +637,7 @@ class _ChatAppBar extends StatelessWidget {
                             SubmitSquadMissionEvent(
                               image: mission.isPhotoSubmission ? value : null,
                               text: mission.isTextSubmission ? value : null,
+                              isVideo: mission.isVideoSubmission,
                             ),
                           );
                         }

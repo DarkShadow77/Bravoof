@@ -45,8 +45,13 @@ class RetrySendSquadMissionMessageEvent extends SquadMissionEvent {
 class SubmitSquadMissionEvent extends SquadMissionEvent {
   final String? image;
   final String? text;
+  final bool isVideo;
 
-  SubmitSquadMissionEvent({this.image, required this.text});
+  SubmitSquadMissionEvent({
+    this.image,
+    required this.text,
+    required this.isVideo,
+  });
 }
 
 class UserTypingEvent extends SquadMissionEvent {

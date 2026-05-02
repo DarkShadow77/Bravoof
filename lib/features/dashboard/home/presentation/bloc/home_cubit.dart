@@ -132,6 +132,15 @@ class HomeCubit extends Cubit<HomeState> {
     emit(state.copyWith(hasIncompleteMissions: hasIncomplete));
   }
 
+  void checkSquadComplete() async {
+    emit(
+      state.copyWith(
+        hasIncompleteSquadMissions: false,
+        hasIncompleteBrandMissions: false,
+      ),
+    );
+  }
+
   void checkIncompleteSquadMissions() {
     if (squadBloc == null) return;
 

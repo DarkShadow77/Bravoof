@@ -17,16 +17,22 @@ abstract class SquadRepository {
 
   Future<Either<String, JoinedSquadMission>> joinSquadMission({
     required int missionId,
+    required String squadId,
   });
 
   Future<Either<String, MissionChatMembers>> fetchMissionMembers({
     required int missionId,
+    required String squadId,
   });
 
-  Future<Either<String, String>> leaveSquadMission({required int missionId});
+  Future<Either<String, String>> leaveSquadMission({
+    required int missionId,
+    required String squadId,
+  });
 
   Future<Either<String, MissionChatResponse>> fetchChat({
     required int missionId,
+    required String squadId,
     String? before,
   });
 
@@ -40,7 +46,9 @@ abstract class SquadRepository {
 
   Future<Either<String, String>> submitMission({
     required int missionId,
+    required String squadId,
     required String? image,
     required String? text,
+    required bool isVideo,
   });
 }

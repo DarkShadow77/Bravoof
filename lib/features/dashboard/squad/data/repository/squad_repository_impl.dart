@@ -60,10 +60,11 @@ class SquadRepositoryImpl extends SquadRepository {
 
   Future<Either<String, JoinedSquadMission>> joinSquadMission({
     required int missionId,
+    required String squadId,
   }) async {
     return ApiService.instance!.invokeEdgeFunction(
       functionName: 'join-squad-mission',
-      body: {"missionId": missionId},
+      body: {"missionId": missionId, "squadId": squadId},
       fallbackErrorMessage: 'Failed to Join Squad Mission',
       onSuccess: (data) => JoinedSquadMission.fromJson(data["data"]),
     );
@@ -71,11 +72,12 @@ class SquadRepositoryImpl extends SquadRepository {
 
   Future<Either<String, MissionChatMembers>> fetchMissionMembers({
     required int missionId,
+    required String squadId,
   }) async {
     return ApiService.instance!.invokeEdgeFunction<MissionChatMembers>(
       functionName: 'fetch-squad-mission-members',
       body: {},
-      queryParams: {"missionId": missionId.toString()},
+      queryParams: {"missionId": missionId.toString(), "squadId": squadId},
       fallbackErrorMessage: 'Failed to Fetch Squad Mission Members',
       onSuccess: (data) => MissionChatMembers.fromJson(data["data"]),
     );
@@ -83,10 +85,11 @@ class SquadRepositoryImpl extends SquadRepository {
 
   Future<Either<String, String>> leaveSquadMission({
     required int missionId,
+    required String squadId,
   }) async {
     return ApiService.instance!.invokeEdgeFunction(
       functionName: 'leave-squad-mission',
-      body: {"missionId": missionId},
+      body: {"missionId": missionId, "squadId": squadId},
       fallbackErrorMessage: 'Failed to Leave Squad Mission',
       onSuccess: (data) => data["message"] ?? "Successfully Left squad mission",
     );
@@ -94,12 +97,17 @@ class SquadRepositoryImpl extends SquadRepository {
 
   Future<Either<String, MissionChatResponse>> fetchChat({
     required int missionId,
+    required String squadId,
     String? before,
   }) async {
     return ApiService.instance!.invokeEdgeFunction<MissionChatResponse>(
       functionName: 'fetch-squad-mission-chat',
       body: {},
-      queryParams: {"missionId": missionId.toString(), "before": before},
+      queryParams: {
+        "missionId": missionId.toString(),
+        "squadId": squadId,
+        "before": before,
+      },
       fallbackErrorMessage: 'Failed to Fetch Squad Mission Chat',
       onSuccess: (data) => MissionChatResponse.fromJson(data["data"]),
     );
@@ -143,14 +151,20 @@ class SquadRepositoryImpl extends SquadRepository {
 
   Future<Either<String, String>> submitMission({
     required int missionId,
+    required String squadId,
     required String? image,
     required String? text,
+    required bool isVideo,
   }) async {
     final token =
         Supabase.instance.client.auth.currentSession?.accessToken ?? "";
     final formData = FormData.fromMap({
       'missionId': missionId,
-      'evidenceImage': image != null
+      'squadId': squadId,
+      'evidenceImage': !isVideo && image != null
+          ? await MultipartFile.fromFile(image, filename: image.split('/').last)
+          : null,
+      'evidenceVideo': isVideo && image != null
           ? await MultipartFile.fromFile(image, filename: image.split('/').last)
           : null,
       'evidenceText': text,

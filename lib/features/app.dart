@@ -34,6 +34,8 @@ class _AppState extends State<App> {
     if (session != null) {
       profileBloc.add(LogUserLoginActivityEvent(eventType: "app_open"));
       context.read<HomeCubit>().checkIncompleteMissions();
+      context.read<HomeCubit>().checkIncompleteSquadMissions();
+      context.read<HomeCubit>().checkIncompleteBrandMissions();
       profileBloc.add(GetProfileEvent());
       profileBloc.add(SaveFCMTokenEvent());
     }

@@ -232,7 +232,7 @@ class _SquadMissionDetailsPageState extends State<SquadMissionDetailsPage>
                                     textAlign: TextAlign.start,
                                     text: TextSpan(
                                       text:
-                                          "${squadMission.usersJoined}/${squadMission.maxUsers} ",
+                                          "${formatAmount(squadMission.usersJoined)}/${formatAmount(squadMission.maxUsers)} ",
                                       children: [
                                         TextSpan(
                                           text: "Joined!",
@@ -407,7 +407,7 @@ class _SquadMissionDetailsPageState extends State<SquadMissionDetailsPage>
                                             context,
                                             title: "How many can join?",
                                             value:
-                                                "${squadMission.maxUsers} people",
+                                                "${formatAmount(squadMission.maxUsers, uniComp: true)} people",
                                           ),
                                         ),
                                       ],

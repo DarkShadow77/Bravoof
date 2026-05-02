@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:bravoo/app/view/widgets/gradient_progress.dart';
 import 'package:bravoo/core/constants/app_assets.dart';
 import 'package:bravoo/core/constants/fonts.dart';
@@ -250,7 +252,8 @@ class _SquadDetailsPageState extends State<SquadDetailsPage> with UIToolMixin {
                                       child: _buildSquadDetailContainer(
                                         context,
                                         title: "How many can join?",
-                                        value: "${squad.maxUsers} people",
+                                        value:
+                                            "${formatAmount(squad.maxUsers, uniComp: true)} people",
                                       ),
                                     ),
                                   ],
@@ -296,7 +299,7 @@ class _SquadDetailsPageState extends State<SquadDetailsPage> with UIToolMixin {
                             textAlign: TextAlign.start,
                             text: TextSpan(
                               text:
-                                  "Members ${squad.usersJoined}/${squad.maxUsers}",
+                                  "Members ${formatAmount(squad.members.length)}/${formatAmount(squad.maxUsers)}",
                               style: TextStyles.normalSemibold14(context)
                                   .copyWith(
                                     fontFamily: AppFonts.baloo2,
@@ -381,7 +384,7 @@ class _SquadDetailsPageState extends State<SquadDetailsPage> with UIToolMixin {
                           RichText(
                             textAlign: TextAlign.start,
                             text: TextSpan(
-                              text: "${squad.name.capitalize} Squad  Missions",
+                              text: "Squad  Missions",
                               style: TextStyles.normalSemibold14(context),
                             ),
                           ),
@@ -616,282 +619,329 @@ class SquadMissionCard extends StatelessWidget {
         ),
       );
     else
-      return SliverPadding(
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
-        sliver: SliverGrid.builder(
-          itemCount: squadMissions.length,
-          itemBuilder: (context, index) {
-            final squadMission = squadMissions[index];
-            final double progress = squadMission.maxUsers == 0
-                ? 0.0
-                : squadMission.usersJoined / squadMission.maxUsers;
-            final double safeProgress = progress.clamp(0.0, 1.0);
-            return GestureDetector(
-              onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => MultiBlocProvider(
-                    providers: [
-                      // Pass the EXISTING instance — don't create a new one
-                      BlocProvider.value(
-                        value: context.read<SquadIndividualBloc>(),
-                      ),
-                      // Create a NEW scoped SquadMissionBloc for this page
-                      BlocProvider<SquadMissionBloc>(
-                        create: (_) => sl<SquadMissionBloc>(
-                          param1: squad.id,
-                          param2: squadMission.id,
+      return SliverToBoxAdapter(
+        child: Stack(
+          children: [
+            GridView.builder(
+              shrinkWrap: true,
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+              physics: NeverScrollableScrollPhysics(),
+              itemCount: squadMissions.length,
+              itemBuilder: (context, index) {
+                final squadMission = squadMissions[index];
+                final double progress = squadMission.maxUsers == 0
+                    ? 0.0
+                    : squadMission.usersJoined / squadMission.maxUsers;
+                final double safeProgress = progress.clamp(0.0, 1.0);
+                return GestureDetector(
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => MultiBlocProvider(
+                        providers: [
+                          // Pass the EXISTING instance — don't create a new one
+                          BlocProvider.value(
+                            value: context.read<SquadIndividualBloc>(),
+                          ),
+                          // Create a NEW scoped SquadMissionBloc for this page
+                          BlocProvider<SquadMissionBloc>(
+                            create: (_) => sl<SquadMissionBloc>(
+                              param1: squad.id,
+                              param2: squadMission.id,
+                            ),
+                          ),
+                        ],
+                        child: SquadMissionDetailsPage(
+                          squad: squad,
+                          squadMission: squadMission,
                         ),
                       ),
-                    ],
-                    child: SquadMissionDetailsPage(
-                      squad: squad,
-                      squadMission: squadMission,
+                    ),
+                  ),
+                  child: Container(
+                    width: double.infinity,
+                    height: double.infinity,
+                    clipBehavior: Clip.antiAlias,
+                    decoration: BoxDecoration(
+                      color: AppColors.white,
+                      borderRadius: BorderRadius.circular(20.r),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        CachedImageSize(
+                          imageUrl: squadMission.image,
+                          width: double.infinity,
+                          height: 145.h,
+                          color: AppColors.grey300.withValues(alpha: .25),
+                          fit: BoxFit.cover,
+                          child: Container(
+                            width: double.infinity,
+                            height: double.infinity,
+                            color: AppColors.black25,
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 6.w,
+                              vertical: 6.h,
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Container(
+                                  margin: EdgeInsets.symmetric(
+                                    horizontal: 2.w,
+                                    vertical: 2.h,
+                                  ),
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 5.w,
+                                    vertical: 4.h,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.primary20,
+                                    borderRadius: BorderRadius.circular(100.r),
+                                    border: Border.all(
+                                      width: 1.w,
+                                      color: AppColors.primary,
+                                    ),
+                                  ),
+                                  child: Row(
+                                    spacing: 4.w,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Image.asset(
+                                        AssetsPngImages.one50,
+                                        height: 12.r,
+                                        width: 12.r,
+                                      ),
+                                      RichText(
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        text: TextSpan(
+                                          text:
+                                              "${formatAmount(squadMission.points)}",
+                                          style: TextStyles.cardBold10(
+                                            context,
+                                          ).copyWith(color: AppColors.white),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                RichText(
+                                  textAlign: TextAlign.start,
+                                  text: TextSpan(
+                                    text: "${squadMission.timeLeft}",
+                                    style:
+                                        TextStyles.smallCardSemibold8(
+                                          context,
+                                        ).copyWith(
+                                          fontFamily: AppFonts.baloo2,
+                                          height: 1.h,
+                                          color: AppColors.white,
+                                        ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        GradientProgress(
+                          height: 6.h,
+                          progress: safeProgress,
+                          radius: 0,
+                        ),
+                        SizedBox(height: 2.h),
+                        Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 8.w),
+                          child: RichText(
+                            textAlign: TextAlign.start,
+                            text: TextSpan(
+                              text:
+                                  "${squadMission.usersJoined}/${squadMission.maxUsers} joined",
+                              style:
+                                  TextStyles.smallCardRegular8(
+                                    context,
+                                    opacity: .65,
+                                  ).copyWith(
+                                    fontFamily: AppFonts.baloo2,
+                                    height: 1.h,
+                                  ),
+                            ),
+                          ),
+                        ),
+                        Expanded(
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 8.w,
+                              vertical: 10.h,
+                            ),
+                            child: Column(
+                              spacing: 6.h,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                RichText(
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  textAlign: TextAlign.start,
+                                  text: TextSpan(
+                                    text: squadMission.title,
+                                    style: TextStyles.smallBold12(context)
+                                        .copyWith(
+                                          fontSize: 13.sp,
+                                          fontFamily: AppFonts.baloo2,
+                                          height: 1.h,
+                                        ),
+                                  ),
+                                ),
+                                RichText(
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  textAlign: TextAlign.start,
+                                  text: TextSpan(
+                                    text: squadMission.subtitle,
+                                    style: TextStyles.cardRegular10(context)
+                                        .copyWith(
+                                          fontSize: 11.sp,
+                                          fontFamily: AppFonts.baloo2,
+                                          height: 1.h,
+                                        ),
+                                  ),
+                                ),
+                                Row(
+                                  spacing: 10.w,
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  children: [
+                                    Expanded(
+                                      child: IconTextButton(
+                                        height: 22.h,
+                                        text: squadMission.isJoined
+                                            ? "Leave Mission"
+                                            : squadMission.actionLabel,
+                                        onPressed: () => Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (_) => MultiBlocProvider(
+                                              providers: [
+                                                // Pass the EXISTING instance — don't create a new one
+                                                BlocProvider.value(
+                                                  value: context
+                                                      .read<
+                                                        SquadIndividualBloc
+                                                      >(),
+                                                ),
+                                                // Create a NEW scoped SquadMissionBloc for this page
+                                                BlocProvider<SquadMissionBloc>(
+                                                  create: (_) =>
+                                                      sl<SquadMissionBloc>(
+                                                        param1: squad.id,
+                                                        param2: squadMission.id,
+                                                      ),
+                                                ),
+                                              ],
+                                              child: SquadMissionDetailsPage(
+                                                squad: squad,
+                                                squadMission: squadMission,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        paddingH: 0,
+                                        paddingW: 0,
+                                        textSize: 8,
+                                        textColor: AppColors.white,
+                                        color: _primaryButtonColor(
+                                          squadMission,
+                                        ),
+                                      ),
+                                    ),
+                                    BlocBuilder<ProfileBloc, ProfileState>(
+                                      builder: (context, state) {
+                                        return GestureDetector(
+                                          onTap: () => SharePlus.instance.share(
+                                            ShareParams(
+                                              text: referralMessage(
+                                                state.profile.referralCode,
+                                              ),
+                                            ),
+                                          ),
+                                          child: Container(
+                                            width: 25.r,
+                                            height: 25.r,
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color: AppColors.white,
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  offset: Offset(0, 2),
+                                                  blurRadius: 7.94.r,
+                                                  color: AppColors.black10,
+                                                ),
+                                              ],
+                                            ),
+                                            child: Center(
+                                              child: HugeIcon(
+                                                icon: HugeIcons
+                                                    .strokeRoundedShare08,
+                                                size: 12.sp,
+                                                color: AppColors.black,
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                mainAxisExtent: 280.h,
+                crossAxisSpacing: 23.w,
+                mainAxisSpacing: 24.h,
+              ),
+            ),
+            if (!squad.isJoined)
+              Positioned.fill(
+                child: ClipRRect(
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 6, sigmaY: 6),
+                    child: Container(
+                      color: AppColors.white20,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          HugeIcon(
+                            icon: HugeIcons.strokeRoundedLockKey,
+                            size: 32.sp,
+                            color: AppColors.black,
+                          ),
+                          SizedBox(height: 8.h),
+                          RichText(
+                            textAlign: TextAlign.center,
+                            text: TextSpan(
+                              text: "Join squad to see missions",
+                              style: TextStyles.normalSemibold14(context),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
               ),
-              child: Container(
-                width: double.infinity,
-                height: double.infinity,
-                clipBehavior: Clip.antiAlias,
-                decoration: BoxDecoration(
-                  color: AppColors.white,
-                  borderRadius: BorderRadius.circular(20.r),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    CachedImageSize(
-                      imageUrl: squadMission.image,
-                      width: double.infinity,
-                      height: 145.h,
-                      color: AppColors.grey300.withValues(alpha: .25),
-                      fit: BoxFit.cover,
-                      child: Container(
-                        width: double.infinity,
-                        height: double.infinity,
-                        color: AppColors.black25,
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 6.w,
-                          vertical: 6.h,
-                        ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            Container(
-                              margin: EdgeInsets.symmetric(
-                                horizontal: 2.w,
-                                vertical: 2.h,
-                              ),
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 5.w,
-                                vertical: 4.h,
-                              ),
-                              decoration: BoxDecoration(
-                                color: AppColors.primary20,
-                                borderRadius: BorderRadius.circular(100.r),
-                                border: Border.all(
-                                  width: 1.w,
-                                  color: AppColors.primary,
-                                ),
-                              ),
-                              child: Row(
-                                spacing: 4.w,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Image.asset(
-                                    AssetsPngImages.one50,
-                                    height: 12.r,
-                                    width: 12.r,
-                                  ),
-                                  RichText(
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    text: TextSpan(
-                                      text:
-                                          "${formatAmount(squadMission.points)}",
-                                      style: TextStyles.cardBold10(
-                                        context,
-                                      ).copyWith(color: AppColors.white),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            RichText(
-                              textAlign: TextAlign.start,
-                              text: TextSpan(
-                                text: "${squadMission.timeLeft}",
-                                style: TextStyles.smallCardSemibold8(context)
-                                    .copyWith(
-                                      fontFamily: AppFonts.baloo2,
-                                      height: 1.h,
-                                      color: AppColors.white,
-                                    ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    GradientProgress(
-                      height: 6.h,
-                      progress: safeProgress,
-                      radius: 0,
-                    ),
-                    SizedBox(height: 2.h),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 8.w),
-                      child: RichText(
-                        textAlign: TextAlign.start,
-                        text: TextSpan(
-                          text:
-                              "${squadMission.usersJoined}/${squadMission.maxUsers} joined",
-                          style: TextStyles.smallCardRegular8(
-                            context,
-                            opacity: .65,
-                          ).copyWith(fontFamily: AppFonts.baloo2, height: 1.h),
-                        ),
-                      ),
-                    ),
-                    Expanded(
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 8.w,
-                          vertical: 10.h,
-                        ),
-                        child: Column(
-                          spacing: 6.h,
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            RichText(
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              textAlign: TextAlign.start,
-                              text: TextSpan(
-                                text: squadMission.title,
-                                style: TextStyles.smallBold12(context).copyWith(
-                                  fontSize: 13.sp,
-                                  fontFamily: AppFonts.baloo2,
-                                  height: 1.h,
-                                ),
-                              ),
-                            ),
-                            RichText(
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              textAlign: TextAlign.start,
-                              text: TextSpan(
-                                text: squadMission.subtitle,
-                                style: TextStyles.cardRegular10(context)
-                                    .copyWith(
-                                      fontSize: 11.sp,
-                                      fontFamily: AppFonts.baloo2,
-                                      height: 1.h,
-                                    ),
-                              ),
-                            ),
-                            Row(
-                              spacing: 10.w,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: [
-                                Expanded(
-                                  child: IconTextButton(
-                                    height: 22.h,
-                                    text: squadMission.isJoined
-                                        ? "Leave Mission"
-                                        : squadMission.actionLabel,
-                                    onPressed: () => Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (_) => MultiBlocProvider(
-                                          providers: [
-                                            // Pass the EXISTING instance — don't create a new one
-                                            BlocProvider.value(
-                                              value: context
-                                                  .read<SquadIndividualBloc>(),
-                                            ),
-                                            // Create a NEW scoped SquadMissionBloc for this page
-                                            BlocProvider<SquadMissionBloc>(
-                                              create: (_) =>
-                                                  sl<SquadMissionBloc>(
-                                                    param1: squad.id,
-                                                    param2: squadMission.id,
-                                                  ),
-                                            ),
-                                          ],
-                                          child: SquadMissionDetailsPage(
-                                            squad: squad,
-                                            squadMission: squadMission,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    paddingH: 0,
-                                    paddingW: 0,
-                                    textSize: 8,
-                                    textColor: AppColors.white,
-                                    color: _primaryButtonColor(squadMission),
-                                  ),
-                                ),
-                                BlocBuilder<ProfileBloc, ProfileState>(
-                                  builder: (context, state) {
-                                    return GestureDetector(
-                                      onTap: () => SharePlus.instance.share(
-                                        ShareParams(
-                                          text: referralMessage(
-                                            state.profile.referralCode,
-                                          ),
-                                        ),
-                                      ),
-                                      child: Container(
-                                        width: 25.r,
-                                        height: 25.r,
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          color: AppColors.white,
-                                          boxShadow: [
-                                            BoxShadow(
-                                              offset: Offset(0, 2),
-                                              blurRadius: 7.94.r,
-                                              color: AppColors.black10,
-                                            ),
-                                          ],
-                                        ),
-                                        child: Center(
-                                          child: HugeIcon(
-                                            icon:
-                                                HugeIcons.strokeRoundedShare08,
-                                            size: 12.sp,
-                                            color: AppColors.black,
-                                          ),
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          },
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            mainAxisExtent: 280.h,
-            crossAxisSpacing: 23.w,
-            mainAxisSpacing: 24.h,
-          ),
+          ],
         ),
       );
   }
