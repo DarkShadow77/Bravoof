@@ -1,6 +1,6 @@
-import 'package:bloc/bloc.dart';
+import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:meta/meta.dart';
-import 'package:supabase_flutter/supabase_flutter.dart' hide MultipartFile;
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../data/model/response/squad_mission_model.dart';
 import '../../data/repository/squad_repository.dart';
@@ -9,7 +9,7 @@ part 'squad_individual_event.dart';
 part 'squad_individual_state.dart';
 
 class SquadIndividualBloc
-    extends Bloc<SquadIndividualEvent, SquadIndividualState> {
+    extends HydratedBloc<SquadIndividualEvent, SquadIndividualState> {
   final SquadRepository repo;
   final String squadId;
 
@@ -116,4 +116,30 @@ class SquadIndividualBloc
       },
     );
   }*/
+
+  /// Scopes hydrated storage per user + squad combination
+  @override
+  String get id => '${supabase.auth.currentUser!.id}_$squadId';
+
+  @override
+  SquadIndividualState? fromJson(Map<String, dynamic> json) {
+    try {
+      final missions = (json['missions'] as List<dynamic>)
+          .map((e) => SquadMission.fromJson(e as Map<String, dynamic>))
+          .toList();
+      return SquadIndividualInitialState(missions: missions);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  @override
+  Map<String, dynamic>? toJson(SquadIndividualState state) {
+    // Only persist stable states — never persist loading/error
+    if (state is SquadIndividualLoadingState ||
+        state is SquadIndividualErrorState) {
+      return null;
+    }
+    return {'missions': state.missions.map((m) => m.toJson()).toList()};
+  }
 }

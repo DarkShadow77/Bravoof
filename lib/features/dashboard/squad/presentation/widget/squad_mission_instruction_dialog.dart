@@ -157,7 +157,6 @@ class _SquadMissionInstructionDialogState
                             contents: _buildContextTile(
                               context,
                               instruction: instruction,
-                              isLast: isLast,
                             ),
                             node: TimelineNode(
                               indicatorPosition: .3,
@@ -262,7 +261,6 @@ class _SquadMissionInstructionDialogState
   Widget _buildContextTile(
     BuildContext context, {
     required MissionInstruction instruction,
-    required bool isLast,
   }) {
     return Container(
       width: double.infinity,
@@ -272,73 +270,25 @@ class _SquadMissionInstructionDialogState
         color: AppColors.white,
         borderRadius: BorderRadius.circular(16.r),
       ),
-      child: isLast
-          ? Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 14.w,
-                    vertical: 14.h,
-                  ),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16.r),
-                    border: Border.all(
-                      width: 1.r,
-                      color: AppColors.grey300.withValues(alpha: .5),
-                    ),
-                  ),
-                  child: MarkdownBody(
-                    data: instruction.text,
-                    onTapLink: (text, href, title) async {
-                      if (href != null) {
-                        final uri = Uri.parse(href);
-                        if (await canLaunchUrl(uri)) {
-                          await launchUrl(
-                            uri,
-                            mode: LaunchMode.externalApplication,
-                          );
-                        }
-                      }
-                    },
-                    styleSheet: MarkdownStyleSheet(
-                      a: TextStyle(
-                        color: AppColors.primary,
-                        decoration: TextDecoration.underline,
-                      ),
-                      p: TextStyles.normalSemibold14(context),
-                      strong: TextStyles.normalBold14(context),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.symmetric(vertical: 10.h),
-                  child: Divider(
-                    height: 1,
-                    color: AppColors.grey300.withValues(alpha: .5),
-                  ),
-                ),
-              ],
-            )
-          : MarkdownBody(
-              data: instruction.text,
-              onTapLink: (text, href, title) async {
-                if (href != null) {
-                  final uri = Uri.parse(href);
-                  if (await canLaunchUrl(uri)) {
-                    await launchUrl(uri, mode: LaunchMode.externalApplication);
-                  }
-                }
-              },
-              styleSheet: MarkdownStyleSheet(
-                a: TextStyle(
-                  color: AppColors.primary,
-                  decoration: TextDecoration.underline,
-                ),
-                p: TextStyles.normalSemibold14(context),
-                strong: TextStyles.normalBold14(context),
-              ),
-            ),
+      child: MarkdownBody(
+        data: instruction.text,
+        onTapLink: (text, href, title) async {
+          if (href != null) {
+            final uri = Uri.parse(href);
+            if (await canLaunchUrl(uri)) {
+              await launchUrl(uri, mode: LaunchMode.externalApplication);
+            }
+          }
+        },
+        styleSheet: MarkdownStyleSheet(
+          a: TextStyle(
+            color: AppColors.primary,
+            decoration: TextDecoration.underline,
+          ),
+          p: TextStyles.normalSemibold14(context),
+          strong: TextStyles.normalBold14(context),
+        ),
+      ),
     );
   }
 }

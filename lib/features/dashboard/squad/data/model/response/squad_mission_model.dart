@@ -81,6 +81,30 @@ class SquadMission {
     );
   }
 
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'title': title,
+    'subtitle': subtitle,
+    'image': image,
+    'about': about,
+    'hashtags': hashtags,
+    'instruction_title': instructionTitle,
+    'instructions': instructions.map((e) => e.toJson()).toList(),
+    'points': points,
+    'submission_type': submissionType,
+    'max_users': maxUsers,
+    'users_joined': usersJoined,
+    'active': active,
+    'created_at': createdAt.toIso8601String(),
+    'ends_at': endsAt?.toIso8601String(),
+    'user_status': statusToDb(userStatus),
+    'is_joined': isJoined,
+    'is_full': isFull,
+    'has_expired': hasExpired,
+    'can_join': canJoin,
+    'chat_room_id': chatRoomId,
+  };
+
   bool get isPhotoSubmission => submissionType == 'photo';
   bool get isTextSubmission => submissionType == 'text';
   bool get isVideoSubmission => submissionType == 'video';
