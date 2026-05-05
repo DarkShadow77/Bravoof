@@ -334,7 +334,8 @@ class _BrandDetailsPageState extends State<BrandDetailsPage> with UIToolMixin {
                           RichText(
                             textAlign: TextAlign.start,
                             text: TextSpan(
-                              text: "Followers ${brand.followerCount}",
+                              text:
+                                  "Followers (${formatAmount(brand.followerCount)})",
                               style: TextStyles.normalSemibold14(context)
                                   .copyWith(
                                     color: textColor,

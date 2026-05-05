@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:bloc/bloc.dart';
+import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' hide MultipartFile;
 import 'package:uuid/uuid.dart';
@@ -12,7 +12,8 @@ import '../../data/repository/squad_repository.dart';
 part 'squad_mission_event.dart';
 part 'squad_mission_state.dart';
 
-class SquadMissionBloc extends Bloc<SquadMissionEvent, SquadMissionState> {
+class SquadMissionBloc
+    extends HydratedBloc<SquadMissionEvent, SquadMissionState> {
   final SquadRepository repo;
   final String squadId;
   final int missionId;
@@ -787,6 +788,39 @@ class SquadMissionBloc extends Bloc<SquadMissionEvent, SquadMissionState> {
         'is_typing': false,
       });
     }
+  }
+
+  @override
+  String get id => '${_currentUserId}_${squadId}_$missionId';
+
+  @override
+  SquadMissionState? fromJson(Map<String, dynamic> json) {
+    try {
+      final membersJson = json['mission_members'] as List<dynamic>? ?? [];
+      final chatJson = json['chat_response'] as Map<String, dynamic>?;
+
+      return SquadMissionInitialState(
+        missionMembers: membersJson
+            .map((e) => MissionChatMember.fromJson(e as Map<String, dynamic>))
+            .toList(),
+        chatResponse: chatJson != null
+            ? MissionChatResponse.fromJson(chatJson)
+            : null,
+      );
+    } catch (_) {
+      return null;
+    }
+  }
+
+  @override
+  Map<String, dynamic>? toJson(SquadMissionState state) {
+    if (state is SquadMissionLoadingState || state is SquadMissionErrorState) {
+      return null;
+    }
+    return {
+      'mission_members': state.missionMembers.map((m) => m.toJson()).toList(),
+      'chat_response': state.chatResponse?.toJson(),
+    };
   }
 }
 

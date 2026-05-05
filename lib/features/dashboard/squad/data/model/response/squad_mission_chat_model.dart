@@ -12,6 +12,12 @@ class ChatMessageSender {
       profileImage: json['profile_image'],
     );
   }
+
+  Map<String, dynamic> toJson() => {
+    'user_id': userId,
+    'name': name,
+    'profile_image': profileImage,
+  };
 }
 
 class ChatMessageReply {
@@ -49,6 +55,8 @@ class ChatMessageReply {
       'content': content,
       'media_url': mediaUrl,
       'media_type': mediaType,
+      'user_id': userId,
+      'user_profile': sender?.toJson(),
     };
   }
 }
@@ -142,6 +150,23 @@ class ChatMessage {
       status: MessageStatus.sent,
     );
   }
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'chat_room_id': chatRoomId,
+    'user_id': userId,
+    'is_system': isSystem,
+    'content': content,
+    'media_url': mediaUrl,
+    'media_type': mediaType,
+    'reply_to_id': replyToId,
+    'created_at': createdAt.toIso8601String(),
+    'user_profile': sender?.toJson(),
+    'reply_to': replyTo?.toJson(),
+    // Never persist pending/failed messages
+    'status': status == MessageStatus.sent ? 'sent' : null,
+    'local_id': localId,
+  };
 }
 
 class MissionChatMembers {
@@ -164,6 +189,12 @@ class MissionChatMembers {
       isCurrentUserCaptain: json['is_current_user_captain'] ?? false,
     );
   }
+
+  Map<String, dynamic> toJson() => {
+    'members': members.map((m) => m.toJson()).toList(),
+    'captain_id': captainId,
+    'is_current_user_captain': isCurrentUserCaptain,
+  };
 }
 
 class MissionChatMember {
@@ -190,6 +221,14 @@ class MissionChatMember {
       isCaptain: json['is_captain'] ?? false,
     );
   }
+
+  Map<String, dynamic> toJson() => {
+    'user_id': userId,
+    'name': name,
+    'profile_image': profileImage,
+    'joined_at': joinedAt.toIso8601String(),
+    'is_captain': isCaptain,
+  };
 }
 
 class MissionChatRoom {
@@ -210,6 +249,12 @@ class MissionChatRoom {
       createdAt: DateTime.parse(json['created_at']),
     );
   }
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'squad_mission_id': squadMissionId,
+    'created_at': createdAt?.toIso8601String(),
+  };
 }
 
 class MissionChatResponse {
@@ -250,4 +295,15 @@ class MissionChatResponse {
       isCurrentUserCaptain: json['is_current_user_captain'] ?? false,
     );
   }
+
+  Map<String, dynamic> toJson() => {
+    'chat_room': chatRoom?.toJson(),
+    'messages': messages
+        .where((m) => m.status == MessageStatus.sent) // drop optimistic/failed
+        .map((m) => m.toJson())
+        .toList(),
+    'has_more': hasMore,
+    'captain_id': captainId,
+    'is_current_user_captain': isCurrentUserCaptain,
+  };
 }

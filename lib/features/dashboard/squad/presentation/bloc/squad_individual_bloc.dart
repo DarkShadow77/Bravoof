@@ -119,7 +119,7 @@ class SquadIndividualBloc
 
   /// Scopes hydrated storage per user + squad combination
   @override
-  String get id => '${supabase.auth.currentUser!.id}_$squadId';
+  String get id => '${supabase.auth.currentUser?.id ?? ""}_$squadId';
 
   @override
   SquadIndividualState? fromJson(Map<String, dynamic> json) {
