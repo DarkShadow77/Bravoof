@@ -47,11 +47,7 @@ class SubmitSquadMissionEvent extends SquadMissionEvent {
   final String? text;
   final bool isVideo;
 
-  SubmitSquadMissionEvent({
-    this.image,
-    required this.text,
-    required this.isVideo,
-  });
+  SubmitSquadMissionEvent({this.image, this.text, required this.isVideo});
 }
 
 class UserTypingEvent extends SquadMissionEvent {

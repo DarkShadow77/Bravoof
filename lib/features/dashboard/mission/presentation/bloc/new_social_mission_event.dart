@@ -15,12 +15,14 @@ class CheckCompletedStatus extends NewSocialMissionEvent {
 
 class CompleteNewSocialMission extends NewSocialMissionEvent {
   final int missionId;
-  final String imageUrl;
-  final String text;
+  final String? image;
+  final String? text;
+  final bool isVideo;
 
   CompleteNewSocialMission({
     required this.missionId,
-    required this.imageUrl,
-    required this.text,
+    this.image,
+    this.text,
+    required this.isVideo,
   });
 }

@@ -176,9 +176,35 @@ class _InviteAndEarnPageState extends State<InviteAndEarnPage> {
                           ],
                         ),
                         SizedBox(height: 16.h),
+                        BlocBuilder<HomeCubit, HomeState>(
+                          builder: (context, state) {
+                            final now = DateTime.now();
 
-                        ReferCampaign(showMargin: false, expanded: true),
+                            // Active campaign
+                            final activeCampaigns = state.campaign
+                                .where((c) => c.campaignEndDate.isAfter(now))
+                                .toList();
 
+                            if (activeCampaigns.isNotEmpty) {
+                              // Sort to get the most recent active campaign
+                              activeCampaigns.sort(
+                                (a, b) => b.campaignEndDate.compareTo(
+                                  a.campaignEndDate,
+                                ),
+                              );
+                              return SizedBox(
+                                height: 240.h,
+                                child: ReferCampaign(
+                                  campaign: activeCampaigns[0],
+                                  campaignList: state.campaign,
+                                  showMargin: false,
+                                  expanded: true,
+                                ),
+                              );
+                            }
+                            return SizedBox.shrink();
+                          },
+                        ),
                         SizedBox(height: 10.h),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,

@@ -232,9 +232,23 @@ class _ToolCardCarouselState extends State<ToolCardCarousel> {
 
   List<Widget> _buildCarouselItems(HomeState state, ProfileState pState) {
     List<Widget> items = [];
+    final now = DateTime.now();
+
     // Active campaign
-    if (state.campaign.isNotEmpty) {
-      items.add(ReferCampaign());
+    final activeCampaigns = state.campaign
+        .where((c) => c.campaignEndDate.isAfter(now))
+        .toList();
+
+    if (activeCampaigns.isNotEmpty) {
+      // Sort to get the most recent active campaign
+      activeCampaigns.sort(
+        (a, b) => b.campaignEndDate.compareTo(a.campaignEndDate),
+      );
+      for (final campaign in activeCampaigns) {
+        items.add(
+          ReferCampaign(campaign: campaign, campaignList: state.campaign),
+        );
+      }
     }
 
     // Winner announcement (most recently ended campaign)

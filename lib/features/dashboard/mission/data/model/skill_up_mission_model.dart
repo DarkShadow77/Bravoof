@@ -133,6 +133,7 @@ class SkillUpStep {
 
   bool get isPhotoSubmission => submissionType == 'photo';
   bool get isTextSubmission => submissionType == 'text';
+  bool get isVideoSubmission => submissionType == 'video';
 }
 
 extension SkillUpStepX on SkillUpStep {

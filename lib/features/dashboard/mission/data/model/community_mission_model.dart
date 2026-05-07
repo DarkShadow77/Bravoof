@@ -1,3 +1,5 @@
+import 'mission_status_enum.dart';
+
 class CommunityMission {
   final int id;
   final String title;
@@ -11,6 +13,8 @@ class CommunityMission {
   final int point;
   final String instructionTitle;
   final String submissionType;
+  final bool hasJoined;
+  final MissionStatus? userStatus;
 
   CommunityMission({
     required this.id,
@@ -25,6 +29,8 @@ class CommunityMission {
     required this.point,
     required this.instructionTitle,
     required this.submissionType,
+    this.hasJoined = false,
+    this.userStatus,
   });
 
   factory CommunityMission.fromJson(Map<String, dynamic> json) {
@@ -43,6 +49,9 @@ class CommunityMission {
       point: json['points'] ?? 0,
       instructionTitle: json['instruction_title'] ?? '',
       submissionType: json['submission_type'] ?? '',
+      userStatus: json['user_status'] != null
+          ? statusFromDb(json['user_status'].toString())
+          : null,
     );
   }
 

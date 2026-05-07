@@ -8,8 +8,9 @@ abstract class SkillUpRepository {
   Future<Either<String, void>> completeSkillUpStep({
     required int skillUpMissionId,
     required int stepId,
-    String? evidenceImage,
-    String? evidenceText,
+    required String? image,
+    required String? text,
+    required bool isVideo,
   });
 
   Future<Either<String, void>> unlockSkillUpStep({

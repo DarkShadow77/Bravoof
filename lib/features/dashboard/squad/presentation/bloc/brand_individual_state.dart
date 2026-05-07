@@ -4,17 +4,35 @@ enum BrandIndividualType { fetch, complete }
 
 @immutable
 class BrandIndividualState {
-  final List<BrandMission> missions;
+  final List<SponsoredMission> sponsoredMissions;
+  final List<FeaturedMission> featuredMissions;
+  final List<CampaignResponseModel> campaigns;
 
-  const BrandIndividualState({required this.missions});
+  const BrandIndividualState({
+    required this.sponsoredMissions,
+    required this.featuredMissions,
+    required this.campaigns,
+  });
 
-  BrandIndividualState copyWith({List<BrandMission>? missions}) {
-    return BrandIndividualState(missions: missions ?? this.missions);
+  BrandIndividualState copyWith({
+    List<SponsoredMission>? sponsoredMissions,
+    List<FeaturedMission>? featuredMissions,
+    List<CampaignResponseModel>? campaigns,
+  }) {
+    return BrandIndividualState(
+      sponsoredMissions: sponsoredMissions ?? this.sponsoredMissions,
+      featuredMissions: featuredMissions ?? this.featuredMissions,
+      campaigns: campaigns ?? this.campaigns,
+    );
   }
 }
 
 class BrandMissionsInitialState extends BrandIndividualState {
-  const BrandMissionsInitialState({required super.missions});
+  const BrandMissionsInitialState({
+    required super.sponsoredMissions,
+    required super.featuredMissions,
+    required super.campaigns,
+  });
 }
 
 class BrandIndividualLoadingState extends BrandIndividualState {
@@ -24,7 +42,9 @@ class BrandIndividualLoadingState extends BrandIndividualState {
   const BrandIndividualLoadingState({
     required this.type,
     this.missionId,
-    required super.missions,
+    required super.sponsoredMissions,
+    required super.featuredMissions,
+    required super.campaigns,
   });
 }
 
@@ -37,7 +57,9 @@ class BrandIndividualSuccessState extends BrandIndividualState {
     required this.type,
     this.missionId,
     required this.message,
-    required super.missions,
+    required super.sponsoredMissions,
+    required super.featuredMissions,
+    required super.campaigns,
   });
 }
 
@@ -50,6 +72,8 @@ class BrandIndividualErrorState extends BrandIndividualState {
     required this.type,
     this.missionId,
     required this.message,
-    required super.missions,
+    required super.sponsoredMissions,
+    required super.featuredMissions,
+    required super.campaigns,
   });
 }

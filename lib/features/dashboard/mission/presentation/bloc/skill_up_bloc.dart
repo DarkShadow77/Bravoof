@@ -58,8 +58,9 @@ class SkillUpBloc extends Bloc<SkillUpEvent, SkillUpState> {
     final res = await repo.completeSkillUpStep(
       skillUpMissionId: event.missionId,
       stepId: event.stepId,
-      evidenceImage: event.imageUrl,
-      evidenceText: event.evidenceText,
+      image: event.image,
+      text: event.text,
+      isVideo: event.isVideo,
     );
 
     res.fold(

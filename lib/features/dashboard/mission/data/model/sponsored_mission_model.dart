@@ -1,5 +1,6 @@
 import 'community_mission_model.dart';
 import 'featured_mission_model.dart';
+import 'mission_status_enum.dart';
 
 class SponsoredMission {
   final int id;
@@ -16,6 +17,8 @@ class SponsoredMission {
   final String submissionType;
   final int maxUsers;
   final int usersJoined;
+  final bool hasJoined;
+  final MissionStatus? userStatus;
 
   SponsoredMission({
     required this.id,
@@ -32,6 +35,8 @@ class SponsoredMission {
     required this.submissionType,
     required this.maxUsers,
     required this.usersJoined,
+    this.hasJoined = false,
+    this.userStatus,
   });
 
   factory SponsoredMission.fromJson(Map<String, dynamic> json) {
@@ -52,6 +57,10 @@ class SponsoredMission {
       submissionType: json['submission_type'] ?? '',
       maxUsers: json['max_users'] ?? 0,
       usersJoined: json['users_joined'] ?? 0,
+      hasJoined: json['has_joined'] ?? false,
+      userStatus: json['user_status'] != null
+          ? statusFromDb(json['user_status'].toString())
+          : null,
     );
   }
 }

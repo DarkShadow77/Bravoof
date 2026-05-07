@@ -152,7 +152,7 @@ class SquadTile extends StatelessWidget with UIToolMixin {
                   overflow: TextOverflow.ellipsis,
                   text: TextSpan(
                     text:
-                        "${formatAmount(squad.usersJoined, uniComp: true)}/${formatAmount(squad.maxUsers, uniComp: true)}",
+                        "${formatAmount(squad.members.length, uniComp: true)}/${formatAmount(squad.maxUsers, uniComp: true)}",
                     style: TextStyles.cardMedium10(
                       context,
                     ).copyWith(color: textColor.withValues(alpha: .5)),

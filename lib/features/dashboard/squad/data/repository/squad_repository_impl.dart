@@ -120,8 +120,7 @@ class SquadRepositoryImpl extends SquadRepository {
     required String? replyToId,
     required String? media,
   }) async {
-    final token =
-        Supabase.instance.client.auth.currentSession?.accessToken ?? "";
+    final token = supabase.auth.currentSession?.accessToken ?? "";
     final formData = FormData.fromMap({
       'missionId': missionId,
       'chatRoomId': chatRoomId,
@@ -156,8 +155,7 @@ class SquadRepositoryImpl extends SquadRepository {
     required String? text,
     required bool isVideo,
   }) async {
-    final token =
-        Supabase.instance.client.auth.currentSession?.accessToken ?? "";
+    final token = supabase.auth.currentSession?.accessToken ?? "";
     final formData = FormData.fromMap({
       'missionId': missionId,
       'squadId': squadId,

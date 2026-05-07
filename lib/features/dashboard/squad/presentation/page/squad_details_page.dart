@@ -57,6 +57,9 @@ class _SquadDetailsPageState extends State<SquadDetailsPage> with UIToolMixin {
         builder: (context, squadState) {
           squad = squadState.squads.firstWhere((e) => e.id == squad.id);
           final textColor = hexToColor(squad.textColor);
+          bool showOverflowMembers = squad.members.length > 10;
+          int previewMembers = showOverflowMembers ? 10 : squad.members.length;
+          int remainingMembers = squad.members.length - previewMembers;
           return Scaffold(
             body: Stack(
               children: [
@@ -333,11 +336,65 @@ class _SquadDetailsPageState extends State<SquadDetailsPage> with UIToolMixin {
                             height: 80.h,
                             child: ListView.separated(
                               shrinkWrap: true,
-                              itemCount: squad.members.length,
+                              itemCount:
+                                  previewMembers +
+                                  (showOverflowMembers ? 1 : 0),
                               scrollDirection: Axis.horizontal,
                               padding: EdgeInsets.symmetric(horizontal: 16.w),
                               physics: BouncingScrollPhysics(),
                               itemBuilder: (context, index) {
+                                // Last item = overflow circle
+                                if (showOverflowMembers &&
+                                    index == previewMembers) {
+                                  return SizedBox(
+                                    height: 80.h,
+                                    child: Align(
+                                      alignment: Alignment.topCenter,
+                                      child: Container(
+                                        height: 60.h,
+                                        width: 60.w,
+                                        decoration: BoxDecoration(
+                                          gradient: LinearGradient(
+                                            colors: [
+                                              hexToColor(
+                                                squad.gradientColor.end,
+                                              ).withValues(alpha: .5),
+                                              hexToColor(
+                                                squad.gradientColor.start,
+                                              ).withValues(alpha: .5),
+                                            ],
+                                            begin: Alignment.bottomCenter,
+                                            end: Alignment.topCenter,
+                                          ),
+                                          shape: BoxShape.circle,
+                                          border: Border.all(
+                                            color: AppColors.white50,
+                                            width: 3.w,
+                                          ),
+                                        ),
+                                        child: Center(
+                                          child: RichText(
+                                            maxLines: 1,
+                                            text: TextSpan(
+                                              text:
+                                                  '+${formatAmount(remainingMembers, uniComp: true)}',
+                                              style:
+                                                  TextStyles.titleSemiBold20(
+                                                    context,
+                                                  ).copyWith(
+                                                    color: hexToColor(
+                                                      squad.textColor,
+                                                    ),
+                                                  ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                }
+
+                                // Regular member item
                                 final member = squad.members[index];
                                 return SizedBox(
                                   width: 60.w,
@@ -346,6 +403,8 @@ class _SquadDetailsPageState extends State<SquadDetailsPage> with UIToolMixin {
                                     mainAxisSize: MainAxisSize.min,
                                     crossAxisAlignment:
                                         CrossAxisAlignment.center,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
                                       CachedImageRadius(
                                         imageUrl: member.profileImage,
@@ -371,7 +430,7 @@ class _SquadDetailsPageState extends State<SquadDetailsPage> with UIToolMixin {
                                   ),
                                 );
                               },
-                              separatorBuilder: (_, _) => SizedBox(width: 8.w),
+                              separatorBuilder: (_, __) => SizedBox(width: 8.w),
                             ),
                           ),
                       ]),

@@ -26,27 +26,22 @@ class SkillUpRepositoryImpl extends SkillUpRepository {
   Future<Either<String, void>> completeSkillUpStep({
     required int skillUpMissionId,
     required int stepId,
-    String? evidenceImage,
-    String? evidenceText,
+    required String? image,
+    required String? text,
+    required bool isVideo,
   }) async {
     final token = supabase.auth.currentSession?.accessToken ?? "";
-    final Map<String, dynamic> fields = {
+    final formData = FormData.fromMap({
       'step_id': stepId,
       'skill_up_mission_id': skillUpMissionId,
-    };
-
-    if (evidenceImage != null) {
-      fields['evidence_image'] = await MultipartFile.fromFile(
-        evidenceImage,
-        filename: evidenceImage.split('/').last,
-      );
-    }
-
-    if (evidenceText != null) {
-      fields['evidence_text'] = evidenceText;
-    }
-
-    final formData = FormData.fromMap(fields);
+      'evidence_image': !isVideo && image != null
+          ? await MultipartFile.fromFile(image, filename: image.split('/').last)
+          : null,
+      'evidenceVideo': isVideo && image != null
+          ? await MultipartFile.fromFile(image, filename: image.split('/').last)
+          : null,
+      'evidence_text': text,
+    });
 
     final response = await ApiService.instance!.postRequest(
       "functions/v1/complete-skill-up-mission",

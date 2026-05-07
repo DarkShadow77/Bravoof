@@ -189,7 +189,7 @@ class _SubmitSquadMissionModalState extends State<SubmitSquadMissionModal> {
             SizedBox(height: 36.h),
             if (isPhoto || isVideo) ...[
               if (_pickedFilePath != null)
-                _MediaPreview(
+                MediaPreview(
                   filePath: _pickedFilePath!,
                   isVideo: isVideo,
                   videoController: _videoInitialized ? _videoController : null,
@@ -206,7 +206,10 @@ class _SubmitSquadMissionModalState extends State<SubmitSquadMissionModal> {
                 GestureDetector(
                   onTap: pickImage,
                   child: Container(
-                    padding: EdgeInsets.symmetric(vertical: 12, horizontal: 10),
+                    padding: EdgeInsets.symmetric(
+                      vertical: 12.h,
+                      horizontal: 10.w,
+                    ),
                     decoration: BoxDecoration(
                       color: Color(0xFFF9F9F9),
                       borderRadius: BorderRadius.circular(12.r),
@@ -275,9 +278,7 @@ class _SubmitSquadMissionModalState extends State<SubmitSquadMissionModal> {
                 validator: MultiValidator([
                   RequiredValidator(errorText: "Answer is required"),
                 ]).call,
-                onChanged: (value) {
-                  setState(() {});
-                },
+                onChanged: (value) => setState(() {}),
               ),
             SizedBox(height: 36.h),
             IconTextButton(
@@ -296,8 +297,8 @@ class _SubmitSquadMissionModalState extends State<SubmitSquadMissionModal> {
   }
 }
 
-class _MediaPreview extends StatefulWidget {
-  const _MediaPreview({
+class MediaPreview extends StatefulWidget {
+  const MediaPreview({
     required this.filePath,
     required this.isVideo,
     required this.videoController,
@@ -310,10 +311,10 @@ class _MediaPreview extends StatefulWidget {
   final VoidCallback onRemove;
 
   @override
-  State<_MediaPreview> createState() => _MediaPreviewState();
+  State<MediaPreview> createState() => _MediaPreviewState();
 }
 
-class _MediaPreviewState extends State<_MediaPreview> {
+class _MediaPreviewState extends State<MediaPreview> {
   bool _playing = false;
 
   @override

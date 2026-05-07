@@ -17,6 +17,7 @@ import 'package:get/get.dart';
 
 import '../../../../../../app/view/widgets/loading/outer_loading.dart';
 import '../../../../../../utility/ui_tool_mix.dart';
+import '../../../../home/presentation/bloc/home_cubit.dart';
 import '../../../../profile/data/model/user_profile.dart';
 import '../../../../profile/presentation/bloc/profile_bloc.dart';
 import '../../widget/redeem_learn_more_modal.dart';
@@ -43,7 +44,32 @@ class _RedeemTabState extends State<RedeemTab>
       child: Column(
         children: [
           SizedBox(height: 20.h),
-          SizedBox(height: 240.h, child: ReferCampaign(transparent: true)),
+          BlocBuilder<HomeCubit, HomeState>(
+            builder: (context, state) {
+              final now = DateTime.now();
+
+              // Active campaign
+              final activeCampaigns = state.campaign
+                  .where((c) => c.campaignEndDate.isAfter(now))
+                  .toList();
+
+              if (activeCampaigns.isNotEmpty) {
+                // Sort to get the most recent active campaign
+                activeCampaigns.sort(
+                  (a, b) => b.campaignEndDate.compareTo(a.campaignEndDate),
+                );
+                return SizedBox(
+                  height: 240.h,
+                  child: ReferCampaign(
+                    campaign: activeCampaigns[0],
+                    campaignList: state.campaign,
+                    transparent: true,
+                  ),
+                );
+              }
+              return SizedBox.shrink();
+            },
+          ),
           SizedBox(height: 20.h),
           // 💡 Info Box
           Padding(

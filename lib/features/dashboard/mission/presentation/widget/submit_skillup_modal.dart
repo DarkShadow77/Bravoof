@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:bravoo/app/view/widgets/button/icon_text_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -6,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart' as p;
+import 'package:video_player/video_player.dart';
 
 import '../../../../../app/styles/text_styles.dart';
 import '../../../../../app/view/widgets/bottom_modals/show_modal_sheet.dart';
@@ -13,6 +16,7 @@ import '../../../../../core/constants/app_colors.dart';
 import '../../../../../core/constants/fonts.dart';
 import '../../../../../core/utils/helpers.dart';
 import '../../../../common/flowva_text_field.dart';
+import '../../../squad/presentation/widget/submit_squad_mission_modal.dart';
 
 Future submitSkillUpModal({
   required Function(String?) onPressed,
@@ -49,29 +53,56 @@ class _SubmitSkillUpModalState extends State<SubmitSkillUpModal> {
   final ImagePicker _picker = ImagePicker();
   final TextEditingController _textController = TextEditingController();
 
-  String? pickedImage;
+  String? _pickedFilePath;
 
   bool get isPhoto => widget.submissionType == 'photo';
+  bool get isVideo => widget.submissionType == 'video';
 
-  bool get canSubmit =>
-      isPhoto ? pickedImage != null : _textController.text.trim().isNotEmpty;
+  bool get canSubmit => isPhoto || isVideo
+      ? _pickedFilePath != null
+      : _textController.text.trim().isNotEmpty;
 
   String get _submissionValue =>
-      isPhoto ? pickedImage! : _textController.text.trim();
+      isPhoto || isVideo ? _pickedFilePath! : _textController.text.trim();
+
+  VideoPlayerController? _videoController;
+  bool _videoInitialized = false;
 
   @override
   void dispose() {
     _textController.dispose();
+    _videoController?.dispose();
     super.dispose();
   }
 
   pickImage() async {
     try {
-      final XFile? pickedFile = await _picker.pickImage(
-        source: ImageSource.gallery,
-      );
-      if (pickedFile != null) {
-        setState(() => pickedImage = pickedFile.path);
+      XFile? file;
+      if (isVideo) {
+        file = await _picker.pickVideo(source: ImageSource.gallery);
+      } else {
+        file = await _picker.pickImage(
+          source: ImageSource.gallery,
+          imageQuality: 80,
+        );
+      }
+
+      if (file == null) return;
+
+      // Dispose previous video controller
+      await _videoController?.dispose();
+      _videoController = null;
+
+      setState(() {
+        _pickedFilePath = file!.path;
+        _videoInitialized = false;
+      });
+
+      if (isVideo) {
+        final controller = VideoPlayerController.file(File(file.path));
+        _videoController = controller;
+        await controller.initialize();
+        setState(() => _videoInitialized = true);
       }
     } catch (e) {
       debugPrint('Image pick error: $e');
@@ -81,7 +112,6 @@ class _SubmitSkillUpModalState extends State<SubmitSkillUpModal> {
   @override
   Widget build(BuildContext ctx) {
     return ShowModalSheet(
-      maxHeight: isPhoto ? 400.h : 480.h,
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 52.w),
         child: Column(
@@ -147,42 +177,97 @@ class _SubmitSkillUpModalState extends State<SubmitSkillUpModal> {
               textAlign: TextAlign.start,
               overflow: TextOverflow.ellipsis,
               text: TextSpan(
-                text: isPhoto
-                    ? "Upload your image as screenshot below:"
+                text: isPhoto || isVideo
+                    ? "Upload your ${isPhoto ? "image" : "video"} as evidence below:"
                     : "Type your answer below:",
                 style: TextStyles.normalSemibold14(context),
               ),
             ),
             SizedBox(height: 36.h),
-            if (isPhoto)
-              GestureDetector(
-                onTap: pickImage,
-                child: Container(
-                  padding: EdgeInsets.symmetric(vertical: 12, horizontal: 10),
-                  decoration: BoxDecoration(
-                    color: Color(0xFFF9F9F9),
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: Color(0xFFFE9E9E9)),
+            if (isPhoto || isVideo) ...[
+              if (_pickedFilePath != null)
+                MediaPreview(
+                  filePath: _pickedFilePath!,
+                  isVideo: isVideo,
+                  videoController: _videoInitialized ? _videoController : null,
+                  onRemove: () {
+                    _videoController?.dispose();
+                    setState(() {
+                      _pickedFilePath = null;
+                      _videoController = null;
+                      _videoInitialized = false;
+                    });
+                  },
+                )
+              else
+                GestureDetector(
+                  onTap: pickImage,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(
+                      vertical: 12.h,
+                      horizontal: 10.w,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Color(0xFFF9F9F9),
+                      borderRadius: BorderRadius.circular(12.r),
+                      border: Border.all(color: Color(0xFFFE9E9E9)),
+                    ),
+                    child: Row(
+                      spacing: 8.w,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        HugeIcon(
+                          icon: HugeIcons.strokeRoundedImageCrop,
+                          size: 32.sp,
+                          color: AppColors.grey400,
+                        ),
+                        Expanded(
+                          child: RichText(
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            text: TextSpan(
+                              text: _pickedFilePath != null
+                                  ? shortenFileName(
+                                      p.basename(_pickedFilePath!),
+                                    )
+                                  : "Tap to upload photo or video",
+                              style: TextStyles.smallSemibold12(
+                                context,
+                              ).copyWith(color: AppColors.grey400),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
+                ),
+              if (_pickedFilePath != null) ...[
+                SizedBox(height: 8.h),
+                GestureDetector(
+                  onTap: pickImage,
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
+                      HugeIcon(
+                        icon: HugeIcons.strokeRoundedRefresh,
+                        size: 14.sp,
+                        color: AppColors.primary,
+                      ),
+                      SizedBox(width: 4.w),
                       RichText(
                         text: TextSpan(
-                          text: pickedImage != null
-                              ? shortenFileName(p.basename(pickedImage!))
-                              : "Click to upload your image",
+                          text: "Change file",
                           style: TextStyles.smallSemibold12(
                             context,
-                          ).copyWith(color: AppColors.grey400),
+                          ).copyWith(color: AppColors.primary),
                         ),
                       ),
-                      HugeIcon(icon: HugeIcons.strokeRoundedImageCrop),
                     ],
                   ),
                 ),
-              )
-            else
+              ],
+            ] else
               AppTextFeild(
                 maxLines: 4,
                 controller: _textController,
@@ -190,9 +275,7 @@ class _SubmitSkillUpModalState extends State<SubmitSkillUpModal> {
                 validator: MultiValidator([
                   RequiredValidator(errorText: "Answer is required"),
                 ]).call,
-                onChanged: (value) {
-                  setState(() {});
-                },
+                onChanged: (value) => setState(() {}),
               ),
             SizedBox(height: 36.h),
             IconTextButton(

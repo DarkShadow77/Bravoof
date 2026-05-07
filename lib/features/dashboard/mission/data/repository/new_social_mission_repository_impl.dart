@@ -26,19 +26,20 @@ class NewSocialMissionRepositoryImpl extends NewSocialMissionRepository {
 
   Future<Either<String, void>> completeMission({
     required int missionId,
-    required String userId,
-    required String imageUrl,
-    required String text,
+    required String? image,
+    required String? text,
+    required bool isVideo,
   }) async {
     final token =
         Supabase.instance.client.auth.currentSession?.accessToken ?? "";
     final formData = FormData.fromMap({
       'missionId': missionId,
-      'userId': userId,
-      'evidenceImage': await MultipartFile.fromFile(
-        imageUrl,
-        filename: imageUrl.split('/').last,
-      ),
+      'evidenceImage': !isVideo && image != null
+          ? await MultipartFile.fromFile(image, filename: image.split('/').last)
+          : null,
+      'evidenceVideo': isVideo && image != null
+          ? await MultipartFile.fromFile(image, filename: image.split('/').last)
+          : null,
       'evidenceText': text,
     });
 

@@ -21,11 +21,16 @@ import '../../../../../core/di/service_locator.dart';
 import '../../../../../core/utils/date_time_helper.dart';
 import '../../../../../core/utils/helpers.dart';
 import '../../../../../utility/ui_tool_mix.dart';
+import '../../../../common/app_enum.dart';
 import '../../../earn/presentation/pages/invite_earn.dart';
+import '../../../earn/presentation/widgets/referr_campaign.dart';
+import '../../../home/presentation/widget/campain_winner_card.dart';
 import '../../../profile/presentation/bloc/profile_bloc.dart';
 import '../../data/model/response/brand_mission_model.dart';
 import '../bloc/brand_bloc.dart';
 import '../bloc/brand_individual_bloc.dart';
+import '../widget/featured_brand_card.dart';
+import '../widget/sponsored_brand_card.dart';
 
 class BrandDetailsPage extends StatefulWidget {
   const BrandDetailsPage({super.key, required this.brand});
@@ -63,6 +68,12 @@ class _BrandDetailsPageState extends State<BrandDetailsPage> with UIToolMixin {
 
           endColor = hexToColor(brand.gradientColor.end);
           startColor = hexToColor(brand.gradientColor.start);
+
+          bool showOverflowFollowers = brand.followers.length > 10;
+          int previewFollowers = showOverflowFollowers
+              ? 10
+              : brand.followers.length;
+          int remainingFollowers = brand.followers.length - previewFollowers;
           return Scaffold(
             backgroundColor: hexToColor(brand.gradientColor.end),
             body: Stack(
@@ -283,13 +294,13 @@ class _BrandDetailsPageState extends State<BrandDetailsPage> with UIToolMixin {
                                             value: "Yes",
                                           ),
                                         ),
-                                        Expanded(
+                                        /* Expanded(
                                           child: _buildBrandDetailContainer(
                                             context,
                                             title: "How many can join?",
                                             value: "∞",
                                           ),
-                                        ),
+                                        ),*/
                                       ],
                                     ),
                                   ],
@@ -298,38 +309,34 @@ class _BrandDetailsPageState extends State<BrandDetailsPage> with UIToolMixin {
                             ),
                           ),
                           SizedBox(height: 8.h),
-                          /*IconTextButton(
-                            onPressed: () {
-                              if (brand.isFull) {
-                                showMessage(
-                                  "${brand.name.capitalize} Brand is Full",
-                                  context,
-                                  status: true,
-                                );
-                              } else if (brand.cooldownDaysRemaining > 1) {
-                                showMessage(
-                                  "Please wait ${brand.cooldownDaysRemaining} more day(s) before joining",
-                                  context,
-                                  status: true,
-                                );
-                              } else if (brand.canJoin) {
-                                joinBrandDialog(squad: brand);
-                              } else if (brand.isJoined) {
-                                leaveBrandDialog(squad: brand);
-                              }
+                          BlocBuilder<BrandBloc, BrandState>(
+                            builder: (context, state) {
+                              bool isLoading =
+                                  state is BrandLoadingState &&
+                                  state.type == BrandType.followUnfollowBrand &&
+                                  state.brandId == brand.id;
+                              return IconTextButton(
+                                onPressed: () {
+                                  if (!isLoading)
+                                    context.read<BrandBloc>().add(
+                                      FollowUnfollowBrandEvent(
+                                        brandId: brand.id,
+                                      ),
+                                    );
+                                },
+                                text: brand.isFollowing
+                                    ? "Leave Brand"
+                                    : "Follow Brand",
+                                textColor: AppColors.white,
+                                color: brand.isFollowing
+                                    ? AppColors.error
+                                    : inverseTextColor,
+                                buttonState: isLoading
+                                    ? AppButtonState.loading
+                                    : AppButtonState.idle,
+                              );
                             },
-                            text: brand.isFull
-                                ? "Full"
-                                : brand.isJoined
-                                ? "Leave ${brand.name.capitalize} Brand"
-                                : "Join ${brand.name.capitalize} Brand",
-                            textColor: AppColors.white,
-                            color: brand.isJoined
-                                ? AppColors.error
-                                : brand.isFull
-                                ? AppColors.grey550
-                                : textColor,
-                          ),*/
+                          ),
                           SizedBox(height: 23.h),
                           RichText(
                             textAlign: TextAlign.start,
@@ -370,44 +377,65 @@ class _BrandDetailsPageState extends State<BrandDetailsPage> with UIToolMixin {
                           )
                         else
                           SizedBox(
-                            height: 80.h,
+                            height: 60.h,
                             child: ListView.separated(
                               shrinkWrap: true,
-                              itemCount: brand.followers.length,
+                              itemCount:
+                                  previewFollowers +
+                                  (showOverflowFollowers ? 1 : 0),
                               scrollDirection: Axis.horizontal,
                               padding: EdgeInsets.symmetric(horizontal: 16.w),
                               physics: BouncingScrollPhysics(),
                               itemBuilder: (context, index) {
+                                // Last item = overflow circle
+                                if (showOverflowFollowers &&
+                                    index == previewFollowers) {
+                                  return LiquidGlassLayer(
+                                    settings: LiquidGlassSettings(
+                                      lightAngle: 0.3 * pi,
+                                      ambientStrength: .8,
+                                      glassColor: textColor.withValues(
+                                        alpha: .05,
+                                      ),
+                                      thickness: 60,
+                                    ),
+                                    child: LiquidGlass(
+                                      shape: LiquidRoundedSuperellipse(
+                                        borderRadius: 1000.r,
+                                      ),
+                                      child: Container(
+                                        height: 60.h,
+                                        width: 60.w,
+                                        padding: EdgeInsets.all(2.r),
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: Center(
+                                          child: RichText(
+                                            maxLines: 1,
+                                            text: TextSpan(
+                                              text:
+                                                  '+${formatAmount(remainingFollowers, uniComp: true)}',
+                                              style: TextStyles.titleSemiBold20(
+                                                context,
+                                              ).copyWith(color: textColor),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                }
+
                                 final follower = brand.followers[index];
                                 return SizedBox(
                                   width: 60.w,
-                                  child: Column(
-                                    spacing: 4.h,
-                                    mainAxisSize: MainAxisSize.min,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      CachedImageRadius(
-                                        imageUrl: follower.profileImage,
-                                        size: 60,
-                                        fit: BoxFit.cover,
-                                        circle: true,
-                                        color: AppColors.grey200,
-                                      ),
-                                      RichText(
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        textAlign: TextAlign.center,
-                                        text: TextSpan(
-                                          text: "${follower.name.capitalize}",
-                                          style: TextStyles.smallBold12(context)
-                                              .copyWith(
-                                                fontFamily: AppFonts.baloo2,
-                                                height: 1.h,
-                                              ),
-                                        ),
-                                      ),
-                                    ],
+                                  child: CachedImageRadius(
+                                    imageUrl: follower.profileImage,
+                                    size: 60,
+                                    fit: BoxFit.cover,
+                                    circle: true,
+                                    color: AppColors.grey200,
                                   ),
                                 );
                               },
@@ -417,6 +445,76 @@ class _BrandDetailsPageState extends State<BrandDetailsPage> with UIToolMixin {
                       ]),
                     ),
                     SliverPadding(
+                      padding: EdgeInsets.symmetric(horizontal: 16.w),
+                      sliver: SliverList(
+                        delegate: SliverChildListDelegate([
+                          SizedBox(height: 30.h),
+                          RichText(
+                            textAlign: TextAlign.start,
+                            text: TextSpan(
+                              text: "${brand.name.capitalize} Campaigns",
+                              style: TextStyles.normalSemibold14(
+                                context,
+                              ).copyWith(color: textColor),
+                            ),
+                          ),
+                        ]),
+                      ),
+                    ),
+                    SliverPadding(
+                      padding: EdgeInsets.symmetric(vertical: 20.h),
+                      sliver: SliverToBoxAdapter(
+                        child: CardCarousel(textColor: textColor),
+                      ),
+                    ),
+                    SliverPadding(
+                      padding: EdgeInsets.symmetric(horizontal: 16.w),
+                      sliver: SliverList(
+                        delegate: SliverChildListDelegate([
+                          SizedBox(height: 20.h),
+                          RichText(
+                            textAlign: TextAlign.start,
+                            text: TextSpan(
+                              text:
+                                  "${brand.name.capitalize} Sponsored Mission",
+                              style: TextStyles.normalSemibold14(
+                                context,
+                              ).copyWith(color: textColor),
+                            ),
+                          ),
+                        ]),
+                      ),
+                    ),
+                    SliverPadding(
+                      padding: EdgeInsets.symmetric(vertical: 20.h),
+                      sliver: SliverToBoxAdapter(
+                        child: SponsoredBrandCard(textColor: textColor),
+                      ),
+                    ),
+                    SliverPadding(
+                      padding: EdgeInsets.symmetric(horizontal: 16.w),
+                      sliver: SliverList(
+                        delegate: SliverChildListDelegate([
+                          SizedBox(height: 20.h),
+                          RichText(
+                            textAlign: TextAlign.start,
+                            text: TextSpan(
+                              text: "${brand.name.capitalize} Featured Mission",
+                              style: TextStyles.normalSemibold14(
+                                context,
+                              ).copyWith(color: textColor),
+                            ),
+                          ),
+                        ]),
+                      ),
+                    ),
+                    SliverPadding(
+                      padding: EdgeInsets.symmetric(vertical: 20.h),
+                      sliver: SliverToBoxAdapter(
+                        child: FeaturedBrandCard(textColor: textColor),
+                      ),
+                    ),
+                    /*SliverPadding(
                       padding: EdgeInsets.symmetric(horizontal: 16.w),
                       sliver: SliverList(
                         delegate: SliverChildListDelegate([
@@ -445,7 +543,7 @@ class _BrandDetailsPageState extends State<BrandDetailsPage> with UIToolMixin {
                           brandMissions: brandMission,
                         );
                       },
-                    ),
+                    ),*/
                     SliverPadding(
                       padding: EdgeInsets.only(
                         bottom: MediaQuery.of(context).viewPadding.top,
@@ -958,5 +1056,247 @@ class BrandMissionCard extends StatelessWidget {
     if (mission.isJoined) return AppColors.error;
     if (mission.hasExpired || mission.isFull) return AppColors.grey550;
     return AppColors.black;
+  }
+}
+
+class CardCarousel extends StatefulWidget {
+  CardCarousel({super.key, required this.textColor});
+
+  final Color textColor;
+  @override
+  State<CardCarousel> createState() => _CardCarouselState();
+}
+
+class _CardCarouselState extends State<CardCarousel> {
+  final _pageController = PageController(viewportFraction: 1);
+
+  double _currentPage = 0;
+  int currentPage = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController.addListener(() {
+      setState(() {
+        _currentPage = _pageController.page!;
+      });
+    });
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<BrandIndividualBloc, BrandIndividualState>(
+      builder: (context, state) {
+        // Build carousel dynamically based on state
+        final carouselWidgets = _buildCarouselItems(state);
+        final isLoading = _isCarouselLoading(state);
+
+        // Show shimmer placeholders while loading
+        if (isLoading && carouselWidgets.isEmpty) {
+          return _buildShimmerLoading();
+        } else if (carouselWidgets.isEmpty) {
+          return SizedBox(
+            height: 80.h,
+            child: Center(
+              child: RichText(
+                text: TextSpan(
+                  text: "No Campaign Missions Yet",
+                  style: TextStyles.smallSemibold12(
+                    context,
+                  ).copyWith(color: widget.textColor.withValues(alpha: .65)),
+                ),
+              ),
+            ),
+          );
+        }
+
+        return Column(
+          children: [
+            // PageView of cards
+            Container(
+              height: 240.h,
+              child: Center(
+                child: PageView.builder(
+                  padEnds: true,
+                  controller: _pageController,
+                  physics: BouncingScrollPhysics(),
+                  allowImplicitScrolling: true,
+                  scrollDirection: Axis.horizontal,
+                  itemCount: carouselWidgets.length,
+                  onPageChanged: (index) {
+                    setState(() {
+                      currentPage = index;
+                    });
+                  },
+                  itemBuilder: (context, index) {
+                    double scaleFactor = .8;
+                    double height = 230.h;
+                    Matrix4 matrix = Matrix4.identity();
+
+                    if (index == _currentPage.floor()) {
+                      var currScale =
+                          1 - (_currentPage - index) * (1 - scaleFactor);
+                      var currTrans = height * (1 - currScale) / 2;
+                      matrix = Matrix4.diagonal3Values(1.0, currScale, 1.0)
+                        ..setTranslationRaw(0, currTrans, 0);
+                    } else if (index == _currentPage.floor() + 1) {
+                      var currScale =
+                          scaleFactor +
+                          (_currentPage - index + 1) * (1 - scaleFactor);
+
+                      var currTrans = height * (1 - currScale) / 2;
+                      matrix = Matrix4.diagonal3Values(1.0, currScale, 1.0)
+                        ..setTranslationRaw(0, currTrans, 0);
+                    } else if (index == _currentPage.floor() - 1) {
+                      var currScale =
+                          1 - (_currentPage - index) * (1 - scaleFactor);
+                      var currTrans = height * (1 - currScale) / 2;
+                      matrix = Matrix4.diagonal3Values(1.0, currScale, 1.0)
+                        ..setTranslationRaw(0, currTrans, 0);
+                    } else {
+                      var currScale = .8;
+                      matrix = Matrix4.diagonal3Values(1.0, currScale, 1.0)
+                        ..setTranslationRaw(
+                          0,
+                          height * (1 - scaleFactor) / 2,
+                          0,
+                        );
+                    }
+                    return Transform(
+                      transform: matrix,
+                      child: Container(
+                        width: double.infinity,
+                        child: carouselWidgets[index],
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+            SizedBox(height: 12.h),
+            // Page Indicator
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: List.generate(
+                carouselWidgets.length,
+                (index) => GestureDetector(
+                  onTap: () {
+                    _pageController.animateToPage(
+                      index,
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.easeInOut,
+                    );
+                  },
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 300),
+                    margin: EdgeInsets.symmetric(horizontal: 2.w),
+                    width: index == currentPage ? 18.w : 6.w,
+                    height: 6.h,
+                    decoration: BoxDecoration(
+                      color: index == currentPage
+                          ? widget.textColor
+                          : widget.textColor.withValues(alpha: .2),
+                      borderRadius: BorderRadius.circular(6.r),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  bool _isCarouselLoading(BrandIndividualState state) {
+    // True while any of the initial data fetches are still in flight
+    if (state is BrandIndividualLoadingState) {
+      return state.type == BrandIndividualType.fetch;
+    }
+    return false;
+  }
+
+  Widget _buildShimmerLoading() {
+    return Column(
+      children: [
+        Container(
+          height: 240.h,
+          margin: EdgeInsets.symmetric(horizontal: 16.w),
+          decoration: BoxDecoration(borderRadius: BorderRadius.circular(24.r)),
+          clipBehavior: Clip.antiAlias,
+          child: FadeShimmer(
+            width: double.infinity,
+            height: double.infinity,
+            radius: 24.r,
+            baseColor: widget.textColor.withValues(alpha: .05),
+            highlightColor: widget.textColor.withValues(alpha: .1),
+          ),
+        ),
+        SizedBox(height: 12.h),
+        // Shimmer dots indicator
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: List.generate(
+            1,
+            (index) => AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              margin: EdgeInsets.symmetric(horizontal: 2.w),
+              width: index == 0 ? 18.w : 6.w,
+              height: 6.h,
+              decoration: BoxDecoration(
+                color: widget.textColor.withValues(alpha: .2),
+                borderRadius: BorderRadius.circular(6.r),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  List<Widget> _buildCarouselItems(BrandIndividualState state) {
+    List<Widget> items = [];
+    final now = DateTime.now();
+
+    // Active campaign
+    final activeCampaigns = state.campaigns
+        .where((c) => c.campaignEndDate.isAfter(now))
+        .toList();
+
+    if (activeCampaigns.isNotEmpty) {
+      // Sort to get the most recent active campaign
+      activeCampaigns.sort(
+        (a, b) => b.campaignEndDate.compareTo(a.campaignEndDate),
+      );
+      for (final campaign in activeCampaigns) {
+        items.add(
+          ReferCampaign(campaign: campaign, campaignList: state.campaigns),
+        );
+      }
+    }
+
+    // Winner announcement (most recently ended campaign)
+    final endedCampaigns = state.campaigns
+        .where((c) => c.campaignEndDate.isBefore(now))
+        .toList();
+
+    if (endedCampaigns.isNotEmpty) {
+      // Sort to get the most recent ended campaign
+      endedCampaigns.sort(
+        (a, b) => b.campaignEndDate.compareTo(a.campaignEndDate),
+      );
+      for (final campaign in endedCampaigns) {
+        items.add(CampaignWinnerCard(campaign: campaign));
+      }
+    }
+
+    return items;
   }
 }

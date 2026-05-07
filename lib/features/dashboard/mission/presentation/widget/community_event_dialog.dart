@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:ui';
 
 import 'package:bravoo/core/constants/fonts.dart';
@@ -7,21 +8,20 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:form_field_validator/form_field_validator.dart';
 import 'package:get/get.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:path/path.dart' as p;
 import 'package:timelines_plus/timelines_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:video_player/video_player.dart';
 
 import '../../../../../app/styles/text_styles.dart';
+import '../../../../../app/view/widgets/button/icon_text_button.dart';
 import '../../../../../app/view/widgets/loading/outer_loading.dart';
 import '../../../../../core/constants/app_colors.dart';
-import '../../../../../core/utils/helpers.dart';
 import '../../../../../utility/ui_tool_mix.dart';
 import '../../../../common/Mission_success.dart';
-import '../../../../common/flowva_button.dart';
 import '../../../../common/flowva_text_field.dart';
+import '../../../squad/presentation/widget/submit_squad_mission_modal.dart';
 import '../../data/model/community_mission_model.dart';
 import '../bloc/community_mission_bloc.dart';
 
@@ -47,22 +47,58 @@ class CommunityEventDialog extends StatefulWidget {
 
 class _AskingDialogState extends State<CommunityEventDialog> with UIToolMixin {
   final ImagePicker _picker = ImagePicker();
-  final TextEditingController answerController = TextEditingController();
+  final TextEditingController _textController = TextEditingController();
 
-  String? pickedImage;
+  String? _pickedFilePath;
 
-  pickImage(ImageSource imageSource) async {
+  bool get isVideo => widget.communityMission.submissionType == "video";
+  bool get isPhoto => widget.communityMission.submissionType == 'photo';
+
+  bool get canSubmit => isPhoto || isVideo
+      ? _pickedFilePath != null
+      : _textController.text.trim().isNotEmpty;
+
+  VideoPlayerController? _videoController;
+  bool _videoInitialized = false;
+
+  @override
+  void dispose() {
+    _textController.dispose();
+    _videoController?.dispose();
+    super.dispose();
+  }
+
+  pickImage() async {
     try {
-      final XFile? pickedFile = await _picker.pickImage(source: imageSource);
+      XFile? file;
+      if (isVideo) {
+        file = await _picker.pickVideo(source: ImageSource.gallery);
+      } else {
+        file = await _picker.pickImage(
+          source: ImageSource.gallery,
+          imageQuality: 80,
+        );
+      }
+
+      if (file == null) return;
+
+      // Dispose previous video controller
+      await _videoController?.dispose();
+      _videoController = null;
 
       setState(() {
-        pickedImage = pickedFile!.path;
+        _pickedFilePath = file!.path;
+        _videoInitialized = false;
       });
+
+      if (isVideo) {
+        final controller = VideoPlayerController.file(File(file.path));
+        _videoController = controller;
+        await controller.initialize();
+        setState(() => _videoInitialized = true);
+      }
     } catch (e) {
-      print(e);
-      setState(() {
-        // _pickImageError = e;
-      });
+      debugPrint('Image pick error: $e');
     }
   }
 
@@ -148,7 +184,6 @@ class _AskingDialogState extends State<CommunityEventDialog> with UIToolMixin {
                             child: Container(
                               height: 32.r,
                               width: 32.r,
-
                               alignment: Alignment.center,
                               decoration: BoxDecoration(
                                 color: Color(0xFFF1F1F1),
@@ -201,84 +236,90 @@ class _AskingDialogState extends State<CommunityEventDialog> with UIToolMixin {
                         ],
                       ),
                       SizedBox(height: 8.h),
-                      ListView.builder(
-                        shrinkWrap: true,
-                        padding: EdgeInsets.zero,
-                        physics: NeverScrollableScrollPhysics(),
-                        itemCount: widget.communityMission.instructions.length,
-                        itemBuilder: (context, index) {
-                          final instruction =
-                              widget.communityMission.instructions[index];
-                          bool isFirst = index == 0;
-                          bool isLast =
-                              index ==
-                              widget.communityMission.instructions.length - 1;
-                          return TimelineTile(
-                            nodePosition: 0,
-                            nodeAlign: TimelineNodeAlign.basic,
-                            contents: _buildContextTile(
-                              context,
-                              instruction: instruction,
-                              isLast: isLast,
-                            ),
-                            node: TimelineNode(
-                              indicatorPosition: .3,
-                              position: 0,
-                              startConnector: isFirst
-                                  ? null
-                                  : DashedLineConnector(
-                                      color: AppColors.grey300,
-                                    ),
-                              indicator: Container(
-                                width: 24.r,
-                                height: 24.r,
-                                decoration: BoxDecoration(
-                                  color: AppColors.black,
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Center(
-                                  child: RichText(
-                                    text: TextSpan(
-                                      text: "${index + 1}",
-                                      style: TextStyles.normalBold14(context)
-                                          .copyWith(
-                                            color: AppColors.white,
-                                            fontFamily: AppFonts.baloo,
-                                          ),
+                      ConstrainedBox(
+                        constraints: BoxConstraints(
+                          maxHeight: MediaQuery.of(context).size.height * 0.7,
+                        ),
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          padding: EdgeInsets.zero,
+                          physics: BouncingScrollPhysics(),
+                          itemCount:
+                              widget.communityMission.instructions.length,
+                          itemBuilder: (context, index) {
+                            final instruction =
+                                widget.communityMission.instructions[index];
+                            bool isFirst = index == 0;
+                            bool isLast =
+                                index ==
+                                widget.communityMission.instructions.length - 1;
+                            return TimelineTile(
+                              nodePosition: 0,
+                              nodeAlign: TimelineNodeAlign.basic,
+                              contents: _buildContextTile(
+                                context,
+                                instruction: instruction,
+                                isLast: isLast,
+                              ),
+                              node: TimelineNode(
+                                indicatorPosition: .3,
+                                position: 0,
+                                startConnector: isFirst
+                                    ? null
+                                    : DashedLineConnector(
+                                        color: AppColors.grey300,
+                                      ),
+                                indicator: Container(
+                                  width: 24.r,
+                                  height: 24.r,
+                                  decoration: BoxDecoration(
+                                    color: AppColors.black,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Center(
+                                    child: RichText(
+                                      text: TextSpan(
+                                        text: "${index + 1}",
+                                        style: TextStyles.normalBold14(context)
+                                            .copyWith(
+                                              color: AppColors.white,
+                                              fontFamily: AppFonts.baloo,
+                                            ),
+                                      ),
                                     ),
                                   ),
                                 ),
+                                endConnector: isLast
+                                    ? null
+                                    : DashedLineConnector(
+                                        color: AppColors.grey300,
+                                      ),
                               ),
-                              endConnector: isLast
-                                  ? null
-                                  : DashedLineConnector(
-                                      color: AppColors.grey300,
-                                    ),
-                            ),
-                          );
-                        },
+                            );
+                          },
+                        ),
                       ),
                       SizedBox(height: 8.h),
-                      pickedImage != null ||
-                              answerController.text.trim().isNotEmpty
-                          ? FlowvaButton.blueButton(
-                              name: "Mission complete",
-                              apply: () {
-                                context.read<CommunityMissionBloc>().add(
-                                  JoinCommunityMission(
-                                    missionId: widget.communityMission.id,
-                                    imageUrl: pickedImage!,
-                                    text: answerController.text.trim(),
-                                  ),
-                                );
-                              },
-                            )
-                          : SizedBox(
-                              height: 60,
-                              child: FlowvaButton.inactiveButton(
-                                name: "Mission complete",
+                      IconTextButton(
+                        height: 60.h,
+                        color: canSubmit ? AppColors.black : AppColors.grey300,
+                        textColor: AppColors.white,
+                        onPressed: () {
+                          if (canSubmit) {
+                            context.read<CommunityMissionBloc>().add(
+                              JoinCommunityMission(
+                                missionId: widget.communityMission.id,
+                                image: isVideo || isPhoto
+                                    ? _pickedFilePath
+                                    : null,
+                                text: _textController.text.trim(),
+                                isVideo: isVideo,
                               ),
-                            ),
+                            );
+                          }
+                        },
+                        text: "Mission Complete",
+                      ),
                     ],
                   ),
                 ),
@@ -351,46 +392,97 @@ class _AskingDialogState extends State<CommunityEventDialog> with UIToolMixin {
                 ),
                 if (widget.communityMission.submissionType == "text")
                   AppTextFeild(
-                    controller: answerController,
+                    controller: _textController,
                     hintText: "Type your answer here",
                     validator: MultiValidator([
                       RequiredValidator(errorText: "Answer is required"),
                     ]).call,
-                    onChanged: (value) {
-                      setState(() {});
-                    },
+                    onChanged: (value) => setState(() {}),
                   )
-                else if (widget.communityMission.submissionType == "photo")
-                  GestureDetector(
-                    onTap: () => pickImage(ImageSource.gallery),
-                    child: Container(
-                      padding: EdgeInsets.symmetric(
-                        vertical: 12,
-                        horizontal: 10,
+                else if (isPhoto || isVideo) ...[
+                  if (_pickedFilePath != null) ...[
+                    MediaPreview(
+                      filePath: _pickedFilePath!,
+                      isVideo: isVideo,
+                      videoController: _videoInitialized
+                          ? _videoController
+                          : null,
+                      onRemove: () {
+                        _videoController?.dispose();
+                        setState(() {
+                          _pickedFilePath = null;
+                          _videoController = null;
+                          _videoInitialized = false;
+                        });
+                      },
+                    ),
+                  ] else
+                    GestureDetector(
+                      onTap: pickImage,
+                      child: Container(
+                        padding: EdgeInsets.symmetric(
+                          vertical: 12.h,
+                          horizontal: 10.w,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Color(0xFFF9F9F9),
+                          borderRadius: BorderRadius.circular(12.r),
+                          border: Border.all(color: Color(0xFFFE9E9E9)),
+                        ),
+                        child: Row(
+                          spacing: 8.w,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Expanded(
+                              child: RichText(
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                text: TextSpan(
+                                  text: isVideo
+                                      ? "Upload video"
+                                      : "Upload screenshot",
+                                  style: TextStyles.smallSemibold12(
+                                    context,
+                                  ).copyWith(color: AppColors.grey400),
+                                ),
+                              ),
+                            ),
+                            HugeIcon(
+                              icon: HugeIcons.strokeRoundedImageCrop,
+                              color: AppColors.grey400,
+                            ),
+                          ],
+                        ),
                       ),
-                      decoration: BoxDecoration(
-                        color: Color(0xFFF9F9F9),
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: Color(0xFFFE9E9E9)),
-                      ),
+                    ),
+
+                  if (_pickedFilePath != null) ...[
+                    SizedBox(height: 8.h),
+                    GestureDetector(
+                      onTap: pickImage,
                       child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Text(
-                            pickedImage != null
-                                ? '${shortenFileName(p.basename(pickedImage!))}'
-                                : "Upload screenshot",
-                            style: GoogleFonts.manrope(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w400,
-                              color: Colors.black,
+                          HugeIcon(
+                            icon: HugeIcons.strokeRoundedRefresh,
+                            size: 14.sp,
+                            color: AppColors.primary,
+                          ),
+                          SizedBox(width: 4.w),
+                          RichText(
+                            text: TextSpan(
+                              text: "Change file",
+                              style: TextStyles.smallSemibold12(
+                                context,
+                              ).copyWith(color: AppColors.primary),
                             ),
                           ),
-                          HugeIcon(icon: HugeIcons.strokeRoundedImageCrop),
                         ],
                       ),
                     ),
-                  ),
+                  ],
+                ],
               ],
             )
           : MarkdownBody(

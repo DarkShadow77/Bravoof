@@ -138,11 +138,14 @@ class _SquadMissionInstructionDialogState
                       ],
                     ),
                     SizedBox(height: 8.h),
-                    Flexible(
+                    ConstrainedBox(
+                      constraints: BoxConstraints(
+                        maxHeight: MediaQuery.of(context).size.height * 0.7,
+                      ),
                       child: ListView.builder(
                         shrinkWrap: true,
                         padding: EdgeInsets.zero,
-                        physics: NeverScrollableScrollPhysics(),
+                        physics: BouncingScrollPhysics(),
                         itemCount: widget.squadMission.instructions.length,
                         itemBuilder: (context, index) {
                           final instruction =

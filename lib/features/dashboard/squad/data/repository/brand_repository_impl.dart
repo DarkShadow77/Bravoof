@@ -1,5 +1,8 @@
 import 'dart:developer';
 
+import 'package:bravoo/features/dashboard/home/data/model/campaign_response.dart';
+import 'package:bravoo/features/dashboard/mission/data/model/featured_mission_model.dart';
+import 'package:bravoo/features/dashboard/mission/data/model/sponsored_mission_model.dart';
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -7,7 +10,6 @@ import 'package:logger/logger.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' hide MultipartFile;
 
 import '../../../../../core/services/api_service.dart';
-import '../model/response/brand_mission_model.dart';
 import '../model/response/brand_model.dart';
 import 'brand_repository.dart';
 
@@ -39,16 +41,44 @@ class BrandRepositoryImpl extends BrandRepository {
     );
   }
 
-  Future<Either<String, List<BrandMission>>> fetchBrandMissions({
+  Future<Either<String, List<SponsoredMission>>> fetchBrandSponsoredMissions({
     required String brandId,
   }) async {
-    return ApiService.instance!.invokeEdgeFunction<List<BrandMission>>(
-      functionName: 'fetch-brand-missions',
+    return ApiService.instance!.invokeEdgeFunction<List<SponsoredMission>>(
+      functionName: 'fetch-brand-sponsored-missions',
       body: {"brandId": brandId},
-      fallbackErrorMessage: 'Failed to Fetch Brand Mission',
+      fallbackErrorMessage: 'Failed to Fetch Brand Sponsored Mission',
       onSuccess: (data) {
         final mission = data["data"] as List;
-        return mission.map((e) => BrandMission.fromJson(e)).toList();
+        return mission.map((e) => SponsoredMission.fromJson(e)).toList();
+      },
+    );
+  }
+
+  Future<Either<String, List<FeaturedMission>>> fetchBrandFeaturedMissions({
+    required String brandId,
+  }) async {
+    return ApiService.instance!.invokeEdgeFunction<List<FeaturedMission>>(
+      functionName: 'fetch-brand-featured-missions',
+      body: {"brandId": brandId},
+      fallbackErrorMessage: 'Failed to Fetch Brand Featured Mission',
+      onSuccess: (data) {
+        final mission = data["data"] as List;
+        return mission.map((e) => FeaturedMission.fromJson(e)).toList();
+      },
+    );
+  }
+
+  Future<Either<String, List<CampaignResponseModel>>> fetchBrandCampaigns({
+    required String brandId,
+  }) async {
+    return ApiService.instance!.invokeEdgeFunction<List<CampaignResponseModel>>(
+      functionName: 'fetch-brand-campaigns',
+      body: {"brandId": brandId},
+      fallbackErrorMessage: 'Failed to Retrieve Brand Campaigns',
+      onSuccess: (data) {
+        final campaign = data["data"] as List;
+        return campaign.map((e) => CampaignResponseModel.fromJson(e)).toList();
       },
     );
   }

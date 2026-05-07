@@ -1,4 +1,5 @@
 import 'community_mission_model.dart';
+import 'mission_status_enum.dart';
 
 class SocialMission {
   final int id;
@@ -9,6 +10,8 @@ class SocialMission {
   final DateTime createdAt;
   final int points;
   final String submissionType;
+  final bool hasJoined;
+  final MissionStatus? userStatus;
 
   SocialMission({
     required this.id,
@@ -19,6 +22,8 @@ class SocialMission {
     required this.createdAt,
     required this.points,
     required this.submissionType,
+    this.hasJoined = false,
+    this.userStatus,
   });
 
   factory SocialMission.fromJson(Map<String, dynamic> json) {
@@ -33,6 +38,10 @@ class SocialMission {
       createdAt: DateTime.parse(json['created_at']),
       points: json['points'] ?? 0,
       submissionType: json['submission_type'] ?? '',
+      hasJoined: json['has_joined'] ?? false,
+      userStatus: json['user_status'] != null
+          ? statusFromDb(json['user_status'].toString())
+          : null,
     );
   }
 

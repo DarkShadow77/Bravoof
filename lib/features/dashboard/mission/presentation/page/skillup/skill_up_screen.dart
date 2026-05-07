@@ -96,12 +96,9 @@ class _SkillUpScreenState extends State<SkillUpScreen> with UIToolMixin {
                               CompleteSkillUpMission(
                                 missionId: skill.id,
                                 stepId: mission.id,
-                                imageUrl: mission.isPhotoSubmission
-                                    ? value
-                                    : null,
-                                evidenceText: mission.isTextSubmission
-                                    ? value
-                                    : null,
+                                image: mission.isPhotoSubmission ? value : null,
+                                text: mission.isTextSubmission ? value : null,
+                                isVideo: mission.isVideoSubmission,
                               ),
                             );
                           }
@@ -395,14 +392,15 @@ class SkillMissionCard extends StatelessWidget with UIToolMixin {
                                                 CompleteSkillUpMission(
                                                   missionId: skill.id,
                                                   stepId: mission.id,
-                                                  imageUrl:
+                                                  image:
                                                       mission.isPhotoSubmission
                                                       ? value
                                                       : null,
-                                                  evidenceText:
-                                                      mission.isTextSubmission
+                                                  text: mission.isTextSubmission
                                                       ? value
                                                       : null,
+                                                  isVideo:
+                                                      mission.isVideoSubmission,
                                                 ),
                                               );
                                             }

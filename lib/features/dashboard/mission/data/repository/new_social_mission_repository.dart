@@ -11,9 +11,9 @@ abstract class NewSocialMissionRepository {
 
   Future<Either<String, void>> completeMission({
     required int missionId,
-    required String userId,
-    required String imageUrl,
-    required String text,
+    required String? image,
+    required String? text,
+    required bool isVideo,
   });
 
   Future<Either<String, MissionStatus>> hasJoined({

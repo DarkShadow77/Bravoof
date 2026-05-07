@@ -410,14 +410,28 @@ class _CardCarouselState extends State<CardCarousel> {
 
   List<Widget> _buildCarouselItems(HomeState state) {
     List<Widget> items = [];
+    final now = DateTime.now();
+
     // Active campaign
-    if (state.campaign.isNotEmpty) {
-      items.add(ReferCampaign());
+    final activeCampaigns = state.campaign
+        .where((c) => c.campaignEndDate.isAfter(now))
+        .toList();
+
+    if (activeCampaigns.isNotEmpty) {
+      // Sort to get the most recent active campaign
+      activeCampaigns.sort(
+        (a, b) => b.campaignEndDate.compareTo(a.campaignEndDate),
+      );
+      for (final campaign in activeCampaigns) {
+        items.add(
+          ReferCampaign(campaign: campaign, campaignList: state.campaign),
+        );
+      }
     }
 
     // Winner announcement (most recently ended campaign)
     final endedCampaigns = state.campaign
-        .where((c) => c.campaignEndDate.isBefore(DateTime.now()))
+        .where((c) => c.campaignEndDate.isBefore(now))
         .toList();
 
     if (endedCampaigns.isNotEmpty) {

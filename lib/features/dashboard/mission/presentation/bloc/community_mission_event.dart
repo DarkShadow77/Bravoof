@@ -13,12 +13,14 @@ class CheckJoinStatus extends CommunityMissionEvent {
 
 class JoinCommunityMission extends CommunityMissionEvent {
   final int missionId;
-  final String? imageUrl;
-  final String text;
+  final String? image;
+  final String? text;
+  final bool isVideo;
 
   JoinCommunityMission({
     required this.missionId,
-    required this.imageUrl,
-    required this.text,
+    this.image,
+    this.text,
+    required this.isVideo,
   });
 }
