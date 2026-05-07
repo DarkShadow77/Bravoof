@@ -1,31 +1,20 @@
 part of 'new_social_mission_bloc.dart';
 
-enum NewSocialMissionType {
-  fetchMission,
-  checkCompletedStatus,
-  completeMission,
-}
+enum NewSocialMissionType { fetchMission, completeMission }
 
 @immutable
 class NewSocialMissionState {
   final List<NewSocialMission> missions;
-  final List<MissionStatus> hasJoined;
 
-  NewSocialMissionState({required this.missions, required this.hasJoined});
+  NewSocialMissionState({required this.missions});
 
-  NewSocialMissionState copWith({
-    List<NewSocialMission>? missions,
-    List<MissionStatus>? hasJoined,
-  }) {
-    return NewSocialMissionState(
-      missions: missions ?? this.missions,
-      hasJoined: hasJoined ?? this.hasJoined,
-    );
+  NewSocialMissionState copWith({List<NewSocialMission>? missions}) {
+    return NewSocialMissionState(missions: missions ?? this.missions);
   }
 }
 
 class NewSocialMissionInitial extends NewSocialMissionState {
-  NewSocialMissionInitial({required super.missions, required super.hasJoined});
+  NewSocialMissionInitial({required super.missions});
 }
 
 class NewSocialMissionLoading extends NewSocialMissionState {
@@ -35,7 +24,6 @@ class NewSocialMissionLoading extends NewSocialMissionState {
     this.missionId,
     required this.type,
     required super.missions,
-    required super.hasJoined,
   });
 }
 
@@ -48,15 +36,10 @@ class NewSocialMissionError extends NewSocialMissionState {
     required this.message,
     required this.type,
     required super.missions,
-    required super.hasJoined,
   });
 }
 
 class NewSocialMissionJoined extends NewSocialMissionState {
   final int missionId;
-  NewSocialMissionJoined({
-    required this.missionId,
-    required super.missions,
-    required super.hasJoined,
-  });
+  NewSocialMissionJoined({required this.missionId, required super.missions});
 }

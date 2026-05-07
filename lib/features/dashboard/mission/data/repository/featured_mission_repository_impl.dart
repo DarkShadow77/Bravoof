@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -19,6 +21,7 @@ class FeaturedMissionRepositoryImpl extends FeaturedMissionRepository {
       fallbackErrorMessage: 'Failed to Fetch Featured Mission',
       onSuccess: (data) {
         final mission = data["data"] as List;
+        log("Featured Missions ${mission}");
         return mission.map((e) => FeaturedMission.fromJson(e)).toList();
       },
     );

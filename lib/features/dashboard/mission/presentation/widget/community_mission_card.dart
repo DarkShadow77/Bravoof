@@ -319,13 +319,13 @@ class _TimeSectionState extends State<_TimeSection> with UIToolMixin {
                 ),
               ),
               SizedBox(height: 10.h),
-              if (state.hasJoined == MissionStatus.pending ||
+              if (state.mission?.userStatus == MissionStatus.pending ||
                   differenceInSeconds == 0 ||
                   ((communityMission?.usersJoined ?? 0) >= 5000))
                 IconTextButton(
                   onPressed: () {
                     showMessage(
-                      state.hasJoined == MissionStatus.pending
+                      state.mission?.userStatus == MissionStatus.pending
                           ? "Mission Already Completed"
                           : differenceInSeconds == 0
                           ? "Mission Ended"
@@ -340,7 +340,7 @@ class _TimeSectionState extends State<_TimeSection> with UIToolMixin {
                   text: "Join this mission",
                   textColor: AppColors.white75,
                 )
-              else if (state.hasJoined == MissionStatus.completed)
+              else if (state.mission!.userStatus == MissionStatus.completed)
                 Image.asset("assets/images/mark.png")
               else
                 IconTextButton(

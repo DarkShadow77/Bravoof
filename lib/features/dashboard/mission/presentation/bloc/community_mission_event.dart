@@ -7,10 +7,6 @@ class LoadCommunityMission extends CommunityMissionEvent {
   LoadCommunityMission();
 }
 
-class CheckJoinStatus extends CommunityMissionEvent {
-  CheckJoinStatus();
-}
-
 class JoinCommunityMission extends CommunityMissionEvent {
   final int missionId;
   final String? image;

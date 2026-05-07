@@ -14,7 +14,7 @@ class CommunityMission {
   final String instructionTitle;
   final String submissionType;
   final bool hasJoined;
-  final MissionStatus? userStatus;
+  final MissionStatus userStatus;
 
   CommunityMission({
     required this.id,
@@ -30,7 +30,7 @@ class CommunityMission {
     required this.instructionTitle,
     required this.submissionType,
     this.hasJoined = false,
-    this.userStatus,
+    required this.userStatus,
   });
 
   factory CommunityMission.fromJson(Map<String, dynamic> json) {
@@ -51,7 +51,7 @@ class CommunityMission {
       submissionType: json['submission_type'] ?? '',
       userStatus: json['user_status'] != null
           ? statusFromDb(json['user_status'].toString())
-          : null,
+          : MissionStatus.notJoined,
     );
   }
 

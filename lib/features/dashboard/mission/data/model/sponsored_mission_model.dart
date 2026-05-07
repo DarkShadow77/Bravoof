@@ -18,7 +18,7 @@ class SponsoredMission {
   final int maxUsers;
   final int usersJoined;
   final bool hasJoined;
-  final MissionStatus? userStatus;
+  final MissionStatus userStatus;
 
   SponsoredMission({
     required this.id,
@@ -36,7 +36,7 @@ class SponsoredMission {
     required this.maxUsers,
     required this.usersJoined,
     this.hasJoined = false,
-    this.userStatus,
+    required this.userStatus,
   });
 
   factory SponsoredMission.fromJson(Map<String, dynamic> json) {
@@ -60,7 +60,7 @@ class SponsoredMission {
       hasJoined: json['has_joined'] ?? false,
       userStatus: json['user_status'] != null
           ? statusFromDb(json['user_status'].toString())
-          : null,
+          : MissionStatus.notJoined,
     );
   }
 }

@@ -1,27 +1,27 @@
 part of 'community_mission_bloc.dart';
 
-enum CommunityMissionType { fetchMission, checkJoinStatus, joinMission }
+enum CommunityMissionType { fetchMission, /*checkJoinStatus,*/ joinMission }
 
 @immutable
 class CommunityMissionState {
   final CommunityMission? mission;
-  final MissionStatus hasJoined;
+  // final MissionStatus hasJoined;
 
-  CommunityMissionState({required this.mission, required this.hasJoined});
+  CommunityMissionState({required this.mission,/* required this.hasJoined*/});
 
   CommunityMissionState copWith({
     CommunityMission? mission,
-    MissionStatus? hasJoined,
+    // MissionStatus? hasJoined,
   }) {
     return CommunityMissionState(
       mission: mission ?? this.mission,
-      hasJoined: hasJoined ?? this.hasJoined,
+      // hasJoined: hasJoined ?? this.hasJoined,
     );
   }
 }
 
 class CommunityMissionInitial extends CommunityMissionState {
-  CommunityMissionInitial({required super.mission, required super.hasJoined});
+  CommunityMissionInitial({required super.mission, /*required super.hasJoined*/});
 }
 
 class CommunityMissionLoading extends CommunityMissionState {
@@ -29,7 +29,7 @@ class CommunityMissionLoading extends CommunityMissionState {
   CommunityMissionLoading({
     required this.type,
     required super.mission,
-    required super.hasJoined,
+    // required super.hasJoined,
   });
 }
 
@@ -40,10 +40,10 @@ class CommunityMissionError extends CommunityMissionState {
     required this.message,
     required this.type,
     required super.mission,
-    required super.hasJoined,
+    // required super.hasJoined,
   });
 }
 
 class CommunityMissionJoined extends CommunityMissionState {
-  CommunityMissionJoined({required super.mission, required super.hasJoined});
+  CommunityMissionJoined({required super.mission,/* required super.hasJoined*/});
 }

@@ -15,14 +15,9 @@ import '../../data/model/new_social_mission_model.dart';
 import 'new_social_event_dialog.dart';
 
 class NewSocialCard extends StatelessWidget {
-  const NewSocialCard({
-    super.key,
-    required this.socialMission,
-    required this.missionStatus,
-  });
+  const NewSocialCard({super.key, required this.socialMission});
 
   final NewSocialMission socialMission;
-  final MissionStatus missionStatus;
 
   @override
   Widget build(BuildContext context) {
@@ -32,8 +27,8 @@ class NewSocialCard extends StatelessWidget {
     final double safeProgress = progress.clamp(0.0, 1.0);
 
     final joined =
-        (missionStatus == MissionStatus.pending ||
-        missionStatus == MissionStatus.completed);
+        (socialMission.userStatus == MissionStatus.pending ||
+        socialMission.userStatus == MissionStatus.completed);
     return Container(
       width: double.infinity,
       padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 13.w),

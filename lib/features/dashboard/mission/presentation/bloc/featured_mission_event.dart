@@ -7,12 +7,6 @@ class LoadFeaturedMission extends FeaturedMissionEvent {
   LoadFeaturedMission();
 }
 
-class CheckCompletedStatus extends FeaturedMissionEvent {
-  final int missionId;
-  final int index;
-  CheckCompletedStatus({required this.missionId, required this.index});
-}
-
 class CompleteFeaturedMission extends FeaturedMissionEvent {
   final int missionId;
   final String? image;

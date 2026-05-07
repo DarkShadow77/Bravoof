@@ -27,7 +27,6 @@ class _FeaturedCardState extends State<FeaturedCard> with UIToolMixin {
   final _pageController = PageController(viewportFraction: 1, initialPage: 0);
 
   List<FeaturedMission> featuredMissions = [];
-  List<MissionStatus> featuredMissionStatus = [];
 
   double _currentPage = 0;
   int currentPage = 0;
@@ -37,7 +36,6 @@ class _FeaturedCardState extends State<FeaturedCard> with UIToolMixin {
     super.initState();
     final featuredBloc = BlocProvider.of<FeaturedMissionBloc>(context);
     featuredMissions = featuredBloc.state.missions;
-    featuredMissionStatus = featuredBloc.state.hasJoined;
 
     _pageController.addListener(() {
       setState(() {
@@ -61,7 +59,6 @@ class _FeaturedCardState extends State<FeaturedCard> with UIToolMixin {
     return BlocBuilder<FeaturedMissionBloc, FeaturedMissionState>(
       builder: (context, state) {
         featuredMissions = state.missions;
-        featuredMissionStatus = state.hasJoined;
         bool loading =
             state is FeaturedMissionLoading &&
             state.type == FeaturedMissionType.fetchMission;
@@ -130,7 +127,7 @@ class _FeaturedCardState extends State<FeaturedCard> with UIToolMixin {
                     }
 
                     final featuredMission = featuredMissions[index];
-                    final missionStatus = featuredMissionStatus[index];
+                    final missionStatus = featuredMission.userStatus;
                     final joined =
                         (missionStatus == MissionStatus.pending ||
                         missionStatus == MissionStatus.completed);

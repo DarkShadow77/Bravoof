@@ -1,27 +1,20 @@
 part of 'featured_mission_bloc.dart';
 
-enum FeaturedMissionType { fetchMission, checkCompletedStatus, completeMission }
+enum FeaturedMissionType { fetchMission, completeMission }
 
 @immutable
 class FeaturedMissionState {
   final List<FeaturedMission> missions;
-  final List<MissionStatus> hasJoined;
 
-  FeaturedMissionState({required this.missions, required this.hasJoined});
+  FeaturedMissionState({required this.missions});
 
-  FeaturedMissionState copWith({
-    List<FeaturedMission>? missions,
-    List<MissionStatus>? hasJoined,
-  }) {
-    return FeaturedMissionState(
-      missions: missions ?? this.missions,
-      hasJoined: hasJoined ?? this.hasJoined,
-    );
+  FeaturedMissionState copWith({List<FeaturedMission>? missions}) {
+    return FeaturedMissionState(missions: missions ?? this.missions);
   }
 }
 
 class FeaturedMissionInitial extends FeaturedMissionState {
-  FeaturedMissionInitial({required super.missions, required super.hasJoined});
+  FeaturedMissionInitial({required super.missions});
 }
 
 class FeaturedMissionLoading extends FeaturedMissionState {
@@ -31,7 +24,6 @@ class FeaturedMissionLoading extends FeaturedMissionState {
     this.missionId,
     required this.type,
     required super.missions,
-    required super.hasJoined,
   });
 }
 
@@ -44,15 +36,10 @@ class FeaturedMissionError extends FeaturedMissionState {
     required this.message,
     required this.type,
     required super.missions,
-    required super.hasJoined,
   });
 }
 
 class FeaturedMissionJoined extends FeaturedMissionState {
   final int missionId;
-  FeaturedMissionJoined({
-    required this.missionId,
-    required super.missions,
-    required super.hasJoined,
-  });
+  FeaturedMissionJoined({required this.missionId, required super.missions});
 }

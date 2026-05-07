@@ -1,27 +1,23 @@
 part of 'social_mission_bloc.dart';
 
-enum SocialMissionType { fetchMission, checkCompletedStatus, completeMission }
+enum SocialMissionType { fetchMission, completeMission }
 
 @immutable
 class SocialMissionState {
   final List<SocialMission> missions;
-  final List<MissionStatus> hasJoined;
 
-  SocialMissionState({required this.missions, required this.hasJoined});
+  SocialMissionState({required this.missions});
 
   SocialMissionState copWith({
     List<SocialMission>? missions,
     List<MissionStatus>? hasJoined,
   }) {
-    return SocialMissionState(
-      missions: missions ?? this.missions,
-      hasJoined: hasJoined ?? this.hasJoined,
-    );
+    return SocialMissionState(missions: missions ?? this.missions);
   }
 }
 
 class SocialMissionInitial extends SocialMissionState {
-  SocialMissionInitial({required super.missions, required super.hasJoined});
+  SocialMissionInitial({required super.missions});
 }
 
 class SocialMissionLoading extends SocialMissionState {
@@ -31,7 +27,6 @@ class SocialMissionLoading extends SocialMissionState {
     this.missionId,
     required this.type,
     required super.missions,
-    required super.hasJoined,
   });
 }
 
@@ -44,15 +39,10 @@ class SocialMissionError extends SocialMissionState {
     required this.message,
     required this.type,
     required super.missions,
-    required super.hasJoined,
   });
 }
 
 class SocialMissionJoined extends SocialMissionState {
   final int missionId;
-  SocialMissionJoined({
-    required this.missionId,
-    required super.missions,
-    required super.hasJoined,
-  });
+  SocialMissionJoined({required this.missionId, required super.missions});
 }

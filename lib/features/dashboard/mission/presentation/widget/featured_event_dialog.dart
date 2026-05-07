@@ -131,13 +131,14 @@ class _AskingDialogState extends State<FeaturedEventDialog> with UIToolMixin {
 
           if (state is FeaturedMissionJoined &&
               state.missionId == widget.featuredMission.id) {
-            if (Get.isDialogOpen == true) {
-              Navigator.of(context, rootNavigator: true).pop();
-            }
-            if (Get.isDialogOpen == true) {
-              Navigator.of(context, rootNavigator: true).pop();
-            }
             context.read<FeaturedMissionBloc>().add(LoadFeaturedMission());
+
+            if (Get.isDialogOpen == true) {
+              Navigator.of(context, rootNavigator: true).pop();
+            }
+            if (Get.isDialogOpen == true) {
+              Navigator.of(context, rootNavigator: true).pop();
+            }
 
             showModalBottomSheet(
               context: context,

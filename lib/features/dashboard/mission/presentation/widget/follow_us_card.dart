@@ -26,13 +26,11 @@ class FollowUsCard extends StatefulWidget {
 
 class _FollowUsCardState extends State<FollowUsCard> {
   List<SocialMission> socialMissions = [];
-  List<MissionStatus> socialMissionStatus = [];
   @override
   void initState() {
     final socialBloc = BlocProvider.of<SocialMissionBloc>(context);
     socialBloc.add(LoadSocialMission());
     socialMissions = socialBloc.state.missions;
-    socialMissionStatus = socialBloc.state.hasJoined;
     super.initState();
   }
 
@@ -70,13 +68,12 @@ class _FollowUsCardState extends State<FollowUsCard> {
       child: BlocBuilder<SocialMissionBloc, SocialMissionState>(
         builder: (context, state) {
           socialMissions = state.missions;
-          socialMissionStatus = state.hasJoined;
 
-          final activeStatusLength = socialMissionStatus
+          final activeStatusLength = socialMissions
               .where(
                 (e) =>
-                    (e == MissionStatus.completed ||
-                    e == MissionStatus.pending),
+                    (e.userStatus == MissionStatus.completed ||
+                    e.userStatus == MissionStatus.pending),
               )
               .toList()
               .length;
@@ -217,13 +214,9 @@ class _FollowUsCardState extends State<FollowUsCard> {
                       children: socialMissions.asMap().entries.map((e) {
                         final index = e.key;
                         final socialMission = socialMissions[index];
-                        final missionStatus = socialMissionStatus[index];
 
                         return Expanded(
-                          child: _SocialCard(
-                            socialMission: socialMission,
-                            missionStatus: missionStatus,
-                          ),
+                          child: _SocialCard(socialMission: socialMission),
                         );
                       }).toList(),
                     ),
@@ -240,15 +233,14 @@ class _FollowUsCardState extends State<FollowUsCard> {
 
 class _SocialCard extends StatelessWidget {
   final SocialMission socialMission;
-  final MissionStatus missionStatus;
 
-  _SocialCard({required this.socialMission, required this.missionStatus});
+  _SocialCard({required this.socialMission});
 
   @override
   Widget build(BuildContext context) {
     final joined =
-        (missionStatus == MissionStatus.pending ||
-        missionStatus == MissionStatus.completed);
+        (socialMission.userStatus == MissionStatus.pending ||
+        socialMission.userStatus == MissionStatus.completed);
     // container with rounded corners and subtle background
     return GestureDetector(
       onTap: () {

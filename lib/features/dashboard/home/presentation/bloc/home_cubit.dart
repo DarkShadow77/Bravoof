@@ -73,7 +73,7 @@ class HomeCubit extends Cubit<HomeState> {
     // Check community missions
     if (communityMissionBloc != null) {
       final communityState = communityMissionBloc!.state;
-      final status = communityState.hasJoined;
+      final status = communityState.mission?.hasJoined;
       if (status == MissionStatus.notJoined ||
           status == MissionStatus.rejected) {
         hasIncomplete = true;
@@ -83,10 +83,10 @@ class HomeCubit extends Cubit<HomeState> {
     // Check featured missions
     if (featuredMissionBloc != null && !hasIncomplete) {
       final featuredState = featuredMissionBloc!.state;
-      if (featuredState.hasJoined.any(
-        (status) =>
-            status == MissionStatus.notJoined ||
-            status == MissionStatus.rejected,
+      if (featuredState.missions.any(
+        (mission) =>
+            mission.hasJoined == MissionStatus.notJoined ||
+            mission.hasJoined == MissionStatus.rejected,
       )) {
         hasIncomplete = true;
       }
@@ -95,10 +95,10 @@ class HomeCubit extends Cubit<HomeState> {
     // Check new social missions
     if (newSocialMissionBloc != null && !hasIncomplete) {
       final newSocialState = newSocialMissionBloc!.state;
-      if (newSocialState.hasJoined.any(
-        (status) =>
-            status == MissionStatus.notJoined ||
-            status == MissionStatus.rejected,
+      if (newSocialState.missions.any(
+        (mission) =>
+            mission.hasJoined == MissionStatus.notJoined ||
+            mission.hasJoined == MissionStatus.rejected,
       )) {
         hasIncomplete = true;
       }
@@ -107,10 +107,10 @@ class HomeCubit extends Cubit<HomeState> {
     // Check social missions
     if (socialMissionBloc != null && !hasIncomplete) {
       final socialState = socialMissionBloc!.state;
-      if (socialState.hasJoined.any(
-        (status) =>
-            status == MissionStatus.notJoined ||
-            status == MissionStatus.rejected,
+      if (socialState.missions.any(
+        (mission) =>
+            mission.hasJoined == MissionStatus.notJoined ||
+            mission.hasJoined == MissionStatus.rejected,
       )) {
         hasIncomplete = true;
       }
@@ -119,10 +119,10 @@ class HomeCubit extends Cubit<HomeState> {
     // Check sponsored missions
     if (sponsoredMissionBloc != null && !hasIncomplete) {
       final sponsoredState = sponsoredMissionBloc!.state;
-      if (sponsoredState.hasJoined.any(
-        (status) =>
-            status == MissionStatus.notJoined ||
-            status == MissionStatus.rejected,
+      if (sponsoredState.missions.any(
+        (mission) =>
+            mission.hasJoined == MissionStatus.notJoined ||
+            mission.hasJoined == MissionStatus.rejected,
       )) {
         hasIncomplete = true;
       }

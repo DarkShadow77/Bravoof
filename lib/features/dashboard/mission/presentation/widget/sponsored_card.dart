@@ -27,7 +27,6 @@ class _SponsoredCardState extends State<SponsoredCard> with UIToolMixin {
   final _pageController = PageController(viewportFraction: 1, initialPage: 0);
 
   List<SponsoredMission> sponsoredMissions = [];
-  List<MissionStatus> sponsoredMissionStatus = [];
 
   double _currentPage = 0;
   int currentPage = 0;
@@ -37,7 +36,6 @@ class _SponsoredCardState extends State<SponsoredCard> with UIToolMixin {
     super.initState();
     final sponsoredBloc = BlocProvider.of<SponsoredMissionBloc>(context);
     sponsoredMissions = sponsoredBloc.state.missions;
-    sponsoredMissionStatus = sponsoredBloc.state.hasJoined;
 
     _pageController.addListener(() {
       setState(() {
@@ -61,7 +59,6 @@ class _SponsoredCardState extends State<SponsoredCard> with UIToolMixin {
     return BlocBuilder<SponsoredMissionBloc, SponsoredMissionState>(
       builder: (context, state) {
         sponsoredMissions = state.missions;
-        sponsoredMissionStatus = state.hasJoined;
 
         bool loading =
             state is SponsoredMissionLoading &&
@@ -129,7 +126,7 @@ class _SponsoredCardState extends State<SponsoredCard> with UIToolMixin {
                     }
 
                     final sponsoredMission = sponsoredMissions[index];
-                    final missionStatus = sponsoredMissionStatus[index];
+                    final missionStatus = sponsoredMission.userStatus;
                     final joined =
                         (missionStatus == MissionStatus.pending ||
                         missionStatus == MissionStatus.completed);

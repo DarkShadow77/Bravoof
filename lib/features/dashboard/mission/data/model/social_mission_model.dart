@@ -11,7 +11,7 @@ class SocialMission {
   final int points;
   final String submissionType;
   final bool hasJoined;
-  final MissionStatus? userStatus;
+  final MissionStatus userStatus;
 
   SocialMission({
     required this.id,
@@ -23,7 +23,7 @@ class SocialMission {
     required this.points,
     required this.submissionType,
     this.hasJoined = false,
-    this.userStatus,
+    required this.userStatus,
   });
 
   factory SocialMission.fromJson(Map<String, dynamic> json) {
@@ -41,7 +41,7 @@ class SocialMission {
       hasJoined: json['has_joined'] ?? false,
       userStatus: json['user_status'] != null
           ? statusFromDb(json['user_status'].toString())
-          : null,
+          : MissionStatus.notJoined,
     );
   }
 

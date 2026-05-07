@@ -1,31 +1,23 @@
 part of 'sponsored_mission_bloc.dart';
 
-enum SponsoredMissionType {
-  fetchMission,
-  checkCompletedStatus,
-  completeMission,
-}
+enum SponsoredMissionType { fetchMission, completeMission }
 
 @immutable
 class SponsoredMissionState {
   final List<SponsoredMission> missions;
-  final List<MissionStatus> hasJoined;
 
-  SponsoredMissionState({required this.missions, required this.hasJoined});
+  SponsoredMissionState({required this.missions});
 
   SponsoredMissionState copWith({
     List<SponsoredMission>? missions,
     List<MissionStatus>? hasJoined,
   }) {
-    return SponsoredMissionState(
-      missions: missions ?? this.missions,
-      hasJoined: hasJoined ?? this.hasJoined,
-    );
+    return SponsoredMissionState(missions: missions ?? this.missions);
   }
 }
 
 class SponsoredMissionInitial extends SponsoredMissionState {
-  SponsoredMissionInitial({required super.missions, required super.hasJoined});
+  SponsoredMissionInitial({required super.missions});
 }
 
 class SponsoredMissionLoading extends SponsoredMissionState {
@@ -35,7 +27,6 @@ class SponsoredMissionLoading extends SponsoredMissionState {
     this.missionId,
     required this.type,
     required super.missions,
-    required super.hasJoined,
   });
 }
 
@@ -48,15 +39,10 @@ class SponsoredMissionError extends SponsoredMissionState {
     required this.message,
     required this.type,
     required super.missions,
-    required super.hasJoined,
   });
 }
 
 class SponsoredMissionJoined extends SponsoredMissionState {
   final int missionId;
-  SponsoredMissionJoined({
-    required this.missionId,
-    required super.missions,
-    required super.hasJoined,
-  });
+  SponsoredMissionJoined({required this.missionId, required super.missions});
 }
